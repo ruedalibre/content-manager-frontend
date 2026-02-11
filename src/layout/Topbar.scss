@@ -1,0 +1,24 @@
+.topbar {
+  height: 60px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 1rem;
+}
+
+.topbar__menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Desktop hide hamburger */
+
+@media (min-width: 768px) {
+  .topbar__menu-btn {
+    display: none;
+  }
+}

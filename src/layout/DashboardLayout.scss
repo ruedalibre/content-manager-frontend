@@ -1,0 +1,43 @@
+.dashboard-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Content wrapper */
+
+.dashboard-layout__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Main scroll area */
+
+.dashboard-layout__main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  .dashboard-layout {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Content wrapper */
+
+  .dashboard-layout__content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  /* Main scroll area */
+
+  .dashboard-layout__main {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    background: yellow;
+  }
+}

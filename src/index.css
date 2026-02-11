@@ -1,0 +1,18 @@
+/* Reset básico */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  font-family: system-ui, Arial, sans-serif;
+}
+
+body {
+  background: #f3f4f6;
+}
