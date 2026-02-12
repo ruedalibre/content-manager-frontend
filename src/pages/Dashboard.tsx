@@ -1,11 +1,15 @@
 export default function Dashboard() {
   return (
-    <div>
-      <h1>Dashboard Page</h1>
+    <div className="page">
 
-      {Array.from({ length: 100 }).map((_, i) => (
-        <p key={i}>Item {i}</p>
-      ))}
+      <h2 className="page__title">
+        Dashboard
+      </h2>
+
+      <div className="page__card">
+        Dashboard content goes here
+      </div>
+
     </div>
   )
 }

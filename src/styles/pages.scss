@@ -1,0 +1,18 @@
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page__title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #111827;
+}
+
+.page__card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
