@@ -1,0 +1,41 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* KPI grid */
+
+.dashboard__kpis {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(220px, 1fr)
+  );
+  gap: 1.5rem;
+}
+
+/* KPI card */
+
+.kpi-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  span {
+    font-size: 0.85rem;
+    color: #6b7280;
+  }
+
+  h3 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #111827;
+  }
+}
