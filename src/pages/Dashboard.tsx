@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ContentsByPlatformChart from "../components/ContentByPlatformChart.tsx";
 import ContentGrowthTimelineChart from "../components/ContentGrowthTimelineChart.tsx";
 import ContentGrowthCumulativeChart from "../components/ContentGrowthCumulativeChart.tsx";
+import ActivityHeatmap from "../components/ActivityHeatmap.tsx";
 import "./Dashboard.scss";
 
 /* =========================
@@ -21,25 +22,29 @@ type PlatformData = {
   percentage: number;
 };
 
-/* Timeline mensual */
 type GrowthTimelineData = {
   month: string;
   total_contents: number;
 };
 
-/* Growth acumulado */
 type CumulativeGrowthData = {
   month: string;
   total_contents: number;
   cumulative_total: number;
 };
 
-/* Growth rate */
 type GrowthRateData = {
   month: string;
   total_contents: number;
   previous_total: number | null;
   growth_rate_percent: number | null;
+};
+
+/* Heatmap */
+
+type HeatmapData = {
+  activity_date: string;
+  total_contents: number;
 };
 
 /* =========================
@@ -66,6 +71,9 @@ export default function Dashboard() {
   const [growthRateData, setGrowthRateData] =
     useState<GrowthRateData[]>([]);
 
+  const [heatmapData, setHeatmapData] =
+    useState<HeatmapData[]>([]);
+
   const [loading, setLoading] =
     useState(true);
 
@@ -79,59 +87,35 @@ export default function Dashboard() {
       apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
     };
 
-    /* -------------------------
-       FETCH — KPI DASHBOARD
-    ------------------------- */
+    const fetchDashboard = fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-dashboard`,
+      { headers },
+    ).then((res) => res.json());
 
-    const fetchDashboard:
-      Promise<DashboardData> = fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-dashboard`,
-        { headers }
-      ).then((res) => res.json());
+    const fetchPlatforms = fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-by-platform`,
+      { headers },
+    ).then((res) => res.json());
 
-    /* -------------------------
-       FETCH — CONTENTS BY PLATFORM
-    ------------------------- */
+    const fetchGrowth = fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth`,
+      { headers },
+    ).then((res) => res.json());
 
-    const fetchPlatforms:
-      Promise<PlatformData[]> = fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-by-platform`,
-        { headers }
-      ).then((res) => res.json());
+    const fetchCumulative = fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth-cumulative`,
+      { headers },
+    ).then((res) => res.json());
 
-    /* -------------------------
-       FETCH — CONTENT GROWTH (MONTHLY)
-    ------------------------- */
+    const fetchGrowthRate = fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth-rate`,
+      { headers },
+    ).then((res) => res.json());
 
-    const fetchGrowth:
-      Promise<GrowthTimelineData[]> = fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth`,
-        { headers }
-      ).then((res) => res.json());
-
-    /* -------------------------
-       FETCH — CUMULATIVE GROWTH
-    ------------------------- */
-
-    const fetchCumulative:
-      Promise<CumulativeGrowthData[]> = fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth-cumulative`,
-        { headers }
-      ).then((res) => res.json());
-
-    /* -------------------------
-       FETCH — GROWTH RATE %
-    ------------------------- */
-
-    const fetchGrowthRate:
-      Promise<GrowthRateData[]> = fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth-rate`,
-        { headers }
-      ).then((res) => res.json());
-
-    /* -------------------------
-       EXECUTE ALL FETCHES
-    ------------------------- */
+    const fetchHeatmap = fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-activity-heatmap`,
+      { headers },
+    ).then((res) => res.json());
 
     Promise.all([
       fetchDashboard,
@@ -139,6 +123,7 @@ export default function Dashboard() {
       fetchGrowth,
       fetchCumulative,
       fetchGrowthRate,
+      fetchHeatmap,
     ])
       .then(
         ([
@@ -147,56 +132,91 @@ export default function Dashboard() {
           growthRes,
           cumulativeRes,
           growthRateRes,
+          heatmapRes,
         ]) => {
-          console.log("Dashboard:", dashboardRes);
-          console.log("Platforms:", platformRes);
-          console.log("Growth:", growthRes);
-          console.log("Cumulative:", cumulativeRes);
-          console.log("Growth Rate:", growthRateRes);
-
           setData(dashboardRes);
           setPlatformData(platformRes);
           setTimelineData(growthRes);
           setCumulativeData(cumulativeRes);
           setGrowthRateData(growthRateRes);
+          setHeatmapData(heatmapRes);
 
           setLoading(false);
-        }
+        },
       )
       .catch((err) => {
         console.error(
           "Dashboard fetch error:",
-          err
+          err,
         );
         setLoading(false);
       });
   }, []);
 
   /* =========================
-     LOADING STATE
+     STATES
   ========================= */
 
   if (loading) {
     return <p>Loading dashboard...</p>;
   }
 
-  /* =========================
-     EMPTY STATE
-  ========================= */
-
   if (!data) {
     return <p>No data available</p>;
   }
 
   /* =========================
-     LAST GROWTH RATE
+     GROWTH RATE LOGIC
   ========================= */
 
   const latestGrowthRate =
-    growthRateData.length > 1
+    growthRateData.length > 0
       ? growthRateData.at(-1)
           ?.growth_rate_percent
       : null;
+
+  const roundedRate =
+    latestGrowthRate !== null &&
+    latestGrowthRate !== undefined
+      ? Math.round(latestGrowthRate)
+      : null;
+
+  const getGrowthRateVisual = (
+    rate: number | null,
+  ) => {
+    if (rate === null) {
+      return {
+        label: "—",
+        className: "neutral",
+        arrow: "",
+      };
+    }
+
+    if (rate > 0) {
+      return {
+        label: `+${rate}%`,
+        className: "positive",
+        arrow: "↑",
+      };
+    }
+
+    if (rate < 0) {
+      return {
+        label: `${rate}%`,
+        className: "negative",
+        arrow: "↓",
+      };
+    }
+
+    return {
+      label: "0%",
+      className: "neutral",
+      arrow: "→",
+    };
+  };
+
+  const growthVisual =
+    getGrowthRateVisual(roundedRate);
 
   /* =========================
      RENDER
@@ -208,9 +228,7 @@ export default function Dashboard() {
         Dashboard
       </h2>
 
-      {/* =====================
-          KPI CARDS
-      ===================== */}
+      {/* KPI CARDS */}
 
       <section className="dashboard__kpis">
         <div className="kpi-card">
@@ -230,12 +248,19 @@ export default function Dashboard() {
           </h3>
         </div>
 
+        {/* Growth KPI */}
+
         <div className="kpi-card">
           <span>Growth Rate</span>
-          <h3>
-            {latestGrowthRate !== null
-              ? `${latestGrowthRate}%`
-              : "—"}
+
+          <h3
+            className={`growth-rate ${growthVisual.className}`}
+          >
+            <span className="growth-rate__arrow">
+              {growthVisual.arrow}
+            </span>
+
+            {growthVisual.label}
           </h3>
         </div>
 
@@ -244,16 +269,14 @@ export default function Dashboard() {
           <h3>
             {data.last_activity
               ? new Date(
-                  data.last_activity
+                  data.last_activity,
                 ).toLocaleDateString()
               : "—"}
           </h3>
         </div>
       </section>
 
-      {/* =====================
-          PLATFORM CHART
-      ===================== */}
+      {/* PLATFORM */}
 
       <section className="dashboard__section">
         <h3>
@@ -267,9 +290,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* =====================
-          CONTENT GROWTH TIMELINE
-      ===================== */}
+      {/* TIMELINE */}
 
       <section className="dashboard__section">
         <h3>
@@ -283,9 +304,7 @@ export default function Dashboard() {
         </div>
       </section>
 
-      {/* =====================
-          CUMULATIVE GROWTH
-      ===================== */}
+      {/* CUMULATIVE */}
 
       <section className="dashboard__section">
         <h3>
@@ -295,6 +314,18 @@ export default function Dashboard() {
         <div className="dashboard__card">
           <ContentGrowthCumulativeChart
             data={cumulativeData}
+          />
+        </div>
+      </section>
+
+      {/* HEATMAP */}
+
+      <section className="dashboard__section">
+        <h3>Activity Heatmap</h3>
+
+        <div className="dashboard__card heatmap-card">
+          <ActivityHeatmap
+            data={heatmapData}
           />
         </div>
       </section>

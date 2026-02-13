@@ -1,10 +1,16 @@
+/* =========================
+   DASHBOARD LAYOUT
+========================= */
+
 .dashboard {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-/* KPI grid */
+/* =========================
+   KPI GRID
+========================= */
 
 .dashboard__kpis {
   display: grid;
@@ -15,30 +21,66 @@
   gap: 1.5rem;
 }
 
-/* KPI card */
+/* =========================
+   KPI CARD
+========================= */
 
 .kpi-card {
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
 
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  box-shadow: 0 4px 12px
+    rgba(0, 0, 0, 0.05);
 
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-
-  span {
-    font-size: 0.85rem;
-    color: #6b7280;
-  }
-
-  h3 {
-    font-size: 1.8rem;
-    font-weight: 600;
-    color: #111827;
-  }
 }
+
+.kpi-card > span {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.kpi-card > h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* =========================
+   GROWTH KPI
+========================= */
+
+.kpi-card > h3.growth-rate {
+  font-size: 1.8rem;
+  font-weight: 700;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.growth-rate__arrow {
+  font-size: 1.4rem;
+}
+
+.growth-rate.positive {
+  color: #16a34a !important;
+}
+
+.growth-rate.negative {
+  color: #dc2626 !important;
+}
+
+.growth-rate.neutral {
+  color: #6b7280 !important;
+}
+
+/* =========================
+   SECTIONS
+========================= */
 
 .dashboard__section {
   display: flex;
@@ -47,9 +89,25 @@
   margin-top: 2rem;
 }
 
+/* =========================
+   CARDS
+========================= */
+
 .dashboard__card {
   background: white;
   padding: 1.5rem;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+  height: 350px;
+  min-height: 350px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+/* Heatmap necesita más altura */
+
+.heatmap-card {
+  height: auto;
+  min-height: 180px;
 }

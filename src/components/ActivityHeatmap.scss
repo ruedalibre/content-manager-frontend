@@ -1,0 +1,32 @@
+.heatmap {
+  display: grid;
+  grid-template-columns: repeat(
+    30,
+    12px
+  );
+  gap: 4px;
+}
+
+.heatmap__cell {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+/* Intensidad */
+
+.heatmap__cell--0 {
+  background: #e5e7eb;
+}
+
+.heatmap__cell--1 {
+  background: #86efac;
+}
+
+.heatmap__cell--2 {
+  background: #4ade80;
+}
+
+.heatmap__cell--3 {
+  background: #16a34a;
+}
