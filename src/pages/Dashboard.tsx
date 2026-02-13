@@ -23,7 +23,7 @@ type PlatformData = {
 
 /* Timeline mensual */
 type GrowthTimelineData = {
-  month: string; // "2026-01"
+  month: string;
   total_contents: number;
 };
 
@@ -32,6 +32,14 @@ type CumulativeGrowthData = {
   month: string;
   total_contents: number;
   cumulative_total: number;
+};
+
+/* Growth rate */
+type GrowthRateData = {
+  month: string;
+  total_contents: number;
+  previous_total: number | null;
+  growth_rate_percent: number | null;
 };
 
 /* =========================
@@ -54,6 +62,9 @@ export default function Dashboard() {
 
   const [cumulativeData, setCumulativeData] =
     useState<CumulativeGrowthData[]>([]);
+
+  const [growthRateData, setGrowthRateData] =
+    useState<GrowthRateData[]>([]);
 
   const [loading, setLoading] =
     useState(true);
@@ -109,6 +120,16 @@ export default function Dashboard() {
       ).then((res) => res.json());
 
     /* -------------------------
+       FETCH — GROWTH RATE %
+    ------------------------- */
+
+    const fetchGrowthRate:
+      Promise<GrowthRateData[]> = fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth-rate`,
+        { headers }
+      ).then((res) => res.json());
+
+    /* -------------------------
        EXECUTE ALL FETCHES
     ------------------------- */
 
@@ -117,6 +138,7 @@ export default function Dashboard() {
       fetchPlatforms,
       fetchGrowth,
       fetchCumulative,
+      fetchGrowthRate,
     ])
       .then(
         ([
@@ -124,16 +146,19 @@ export default function Dashboard() {
           platformRes,
           growthRes,
           cumulativeRes,
+          growthRateRes,
         ]) => {
           console.log("Dashboard:", dashboardRes);
           console.log("Platforms:", platformRes);
           console.log("Growth:", growthRes);
           console.log("Cumulative:", cumulativeRes);
+          console.log("Growth Rate:", growthRateRes);
 
           setData(dashboardRes);
           setPlatformData(platformRes);
           setTimelineData(growthRes);
           setCumulativeData(cumulativeRes);
+          setGrowthRateData(growthRateRes);
 
           setLoading(false);
         }
@@ -164,6 +189,16 @@ export default function Dashboard() {
   }
 
   /* =========================
+     LAST GROWTH RATE
+  ========================= */
+
+  const latestGrowthRate =
+    growthRateData.length > 1
+      ? growthRateData.at(-1)
+          ?.growth_rate_percent
+      : null;
+
+  /* =========================
      RENDER
   ========================= */
 
@@ -192,6 +227,15 @@ export default function Dashboard() {
           <span>Reusable</span>
           <h3>
             {data.reusable_contents ?? 0}
+          </h3>
+        </div>
+
+        <div className="kpi-card">
+          <span>Growth Rate</span>
+          <h3>
+            {latestGrowthRate !== null
+              ? `${latestGrowthRate}%`
+              : "—"}
           </h3>
         </div>
 
