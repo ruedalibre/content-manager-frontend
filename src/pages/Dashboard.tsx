@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ContentsByPlatformChart from "../components/ContentByPlatformChart.tsx";
+import ContentGrowthTimelineChart from "../components/ContentGrowthTimelineChart.tsx";
 import "./Dashboard.scss";
 
 /* =========================
@@ -19,84 +20,125 @@ type PlatformData = {
   percentage: number;
 };
 
+type GrowthTimelineData = {
+  date: string;
+  total_contents: number;
+};
+
 /* =========================
    COMPONENT
 ========================= */
 
 export default function Dashboard() {
+  /* =========================
+     STATES
+  ========================= */
+
   const [data, setData] =
     useState<DashboardData | null>(null);
 
   const [platformData, setPlatformData] =
     useState<PlatformData[]>([]);
 
+  const [timelineData, setTimelineData] =
+    useState<GrowthTimelineData[]>([]);
+
   const [loading, setLoading] =
     useState(true);
+
+  /* =========================
+     DATA FETCHING
+  ========================= */
 
   useEffect(() => {
     const headers = {
       Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
-      apikey:
-        import.meta.env.VITE_SUPABASE_ANON_KEY,
+      apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
     };
 
-    /* =========================
-       FETCH KPI DASHBOARD
-    ========================= */
+    /* -------------------------
+       FETCH — KPI DASHBOARD
+    ------------------------- */
 
-    const fetchDashboard = fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-dashboard`,
-      { headers }
-    ).then((res) => res.json());
+    const fetchDashboard:
+      Promise<DashboardData> = fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-dashboard`,
+        { headers }
+      ).then((res) => res.json());
 
-    /* =========================
-       FETCH PLATFORM DATA
-    ========================= */
+    /* -------------------------
+       FETCH — CONTENTS BY PLATFORM
+    ------------------------- */
 
-    const fetchPlatforms = fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-by-platform`,
-      { headers }
-    ).then((res) => res.json());
+    const fetchPlatforms:
+      Promise<PlatformData[]> = fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-by-platform`,
+        { headers }
+      ).then((res) => res.json());
 
-    /* =========================
-       EXECUTE BOTH
-    ========================= */
+    /* -------------------------
+       FETCH — CONTENT GROWTH
+    ------------------------- */
+
+    const fetchGrowth:
+      Promise<GrowthTimelineData[]> = fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth`,
+        { headers }
+      ).then((res) => res.json());
+
+    /* -------------------------
+       EXECUTE ALL FETCHES
+    ------------------------- */
 
     Promise.all([
       fetchDashboard,
       fetchPlatforms,
+      fetchGrowth,
     ])
-      .then(([dashboardRes, platformRes]) => {
-        console.log(
-          "Dashboard:",
-          dashboardRes
-        );
-        console.log(
-          "Platforms:",
-          platformRes
-        );
+      .then(
+        ([
+          dashboardRes,
+          platformRes,
+          growthRes,
+        ]) => {
+          console.log("Dashboard:", dashboardRes);
+          console.log("Platforms:", platformRes);
+          console.log("Growth:", growthRes);
 
-        setData(dashboardRes);
-        setPlatformData(platformRes);
-        setLoading(false);
-      })
+          setData(dashboardRes);
+          setPlatformData(platformRes);
+          setTimelineData(growthRes);
+
+          setLoading(false);
+        }
+      )
       .catch((err) => {
-        console.error(err);
+        console.error(
+          "Dashboard fetch error:",
+          err
+        );
         setLoading(false);
       });
   }, []);
 
   /* =========================
-     STATES
+     LOADING STATE
   ========================= */
 
   if (loading) {
     return <p>Loading dashboard...</p>;
   }
 
+  /* =========================
+     EMPTY STATE
+  ========================= */
+
   if (!data) {
     return <p>No data available</p>;
   }
+
+  console.log("Timeline data:", timelineData);
+
 
   /* =========================
      RENDER
@@ -108,10 +150,11 @@ export default function Dashboard() {
         Dashboard
       </h2>
 
-      {/* KPI CARDS */}
+      {/* =====================
+          KPI CARDS
+      ===================== */}
 
       <section className="dashboard__kpis">
-
         <div className="kpi-card">
           <span>Total Contents</span>
           <h3>{data.total_contents}</h3>
@@ -139,25 +182,39 @@ export default function Dashboard() {
               : "—"}
           </h3>
         </div>
-
       </section>
 
-      {/* PLATFORM CHART */}
+      {/* =====================
+          PLATFORM CHART
+      ===================== */}
 
       <section className="dashboard__section">
-
-        <h3>Contents by Platform</h3>
+        <h3>
+          Contents by Platform
+        </h3>
 
         <div className="dashboard__card">
-
           <ContentsByPlatformChart
             data={platformData}
           />
-
         </div>
-
       </section>
 
+      {/* =====================
+          CONTENT GROWTH TIMELINE
+      ===================== */}
+
+      <section className="dashboard__section">
+        <h3>
+          Content Growth Timeline
+        </h3>
+
+        <div className="dashboard__card">
+          <ContentGrowthTimelineChart
+            data={timelineData}
+          />
+        </div>
+      </section>
     </div>
   );
 }
