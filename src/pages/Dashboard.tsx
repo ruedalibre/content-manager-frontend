@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ContentsByPlatformChart from "../components/ContentByPlatformChart.tsx";
 import ContentGrowthTimelineChart from "../components/ContentGrowthTimelineChart.tsx";
+import ContentGrowthCumulativeChart from "../components/ContentGrowthCumulativeChart.tsx";
 import "./Dashboard.scss";
 
 /* =========================
@@ -20,9 +21,17 @@ type PlatformData = {
   percentage: number;
 };
 
+/* Timeline mensual */
 type GrowthTimelineData = {
-  date: string;
+  month: string; // "2026-01"
   total_contents: number;
+};
+
+/* Growth acumulado */
+type CumulativeGrowthData = {
+  month: string;
+  total_contents: number;
+  cumulative_total: number;
 };
 
 /* =========================
@@ -42,6 +51,9 @@ export default function Dashboard() {
 
   const [timelineData, setTimelineData] =
     useState<GrowthTimelineData[]>([]);
+
+  const [cumulativeData, setCumulativeData] =
+    useState<CumulativeGrowthData[]>([]);
 
   const [loading, setLoading] =
     useState(true);
@@ -77,12 +89,22 @@ export default function Dashboard() {
       ).then((res) => res.json());
 
     /* -------------------------
-       FETCH — CONTENT GROWTH
+       FETCH — CONTENT GROWTH (MONTHLY)
     ------------------------- */
 
     const fetchGrowth:
       Promise<GrowthTimelineData[]> = fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth`,
+        { headers }
+      ).then((res) => res.json());
+
+    /* -------------------------
+       FETCH — CUMULATIVE GROWTH
+    ------------------------- */
+
+    const fetchCumulative:
+      Promise<CumulativeGrowthData[]> = fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth-cumulative`,
         { headers }
       ).then((res) => res.json());
 
@@ -94,20 +116,24 @@ export default function Dashboard() {
       fetchDashboard,
       fetchPlatforms,
       fetchGrowth,
+      fetchCumulative,
     ])
       .then(
         ([
           dashboardRes,
           platformRes,
           growthRes,
+          cumulativeRes,
         ]) => {
           console.log("Dashboard:", dashboardRes);
           console.log("Platforms:", platformRes);
           console.log("Growth:", growthRes);
+          console.log("Cumulative:", cumulativeRes);
 
           setData(dashboardRes);
           setPlatformData(platformRes);
           setTimelineData(growthRes);
+          setCumulativeData(cumulativeRes);
 
           setLoading(false);
         }
@@ -136,9 +162,6 @@ export default function Dashboard() {
   if (!data) {
     return <p>No data available</p>;
   }
-
-  console.log("Timeline data:", timelineData);
-
 
   /* =========================
      RENDER
@@ -212,6 +235,22 @@ export default function Dashboard() {
         <div className="dashboard__card">
           <ContentGrowthTimelineChart
             data={timelineData}
+          />
+        </div>
+      </section>
+
+      {/* =====================
+          CUMULATIVE GROWTH
+      ===================== */}
+
+      <section className="dashboard__section">
+        <h3>
+          Cumulative Content Growth
+        </h3>
+
+        <div className="dashboard__card">
+          <ContentGrowthCumulativeChart
+            data={cumulativeData}
           />
         </div>
       </section>
