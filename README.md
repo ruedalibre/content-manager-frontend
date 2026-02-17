@@ -1,73 +1,253 @@
-# React + TypeScript + Vite
+# 🚀 Content Manager App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Analytics & Content Intelligence SaaS for Digital Creators**
 
-Currently, two official plugins are available:
+Content Manager is a full-stack SaaS platform designed to help creators, marketers and digital teams manage, analyze and optimize their content production across multiple platforms.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+It combines content inventory, analytics and reusable intelligence in a single dashboard.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🧠 Core Value Proposition
 
-## Expanding the ESLint configuration
+“Know what you create, where you publish, and what to reuse next.”
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+The platform transforms raw content logs into:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+• Platform distribution analytics  
+• Growth timelines  
+• Reusable content detection  
+• Activity heatmaps  
+• AI-like insights  
+• Performance indicators  
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+---
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🏗️ Tech Stack
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Frontend
+React + Vite  
+TypeScript  
+SCSS  
+Recharts (analytics visualization)  
+Responsive SaaS layout  
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Backend
+Supabase (PostgreSQL)  
+Edge Functions (Deno)  
+Row Level Security (RLS)  
+SQL Views for analytics  
+JWT Authentication  
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### Infra & Tooling
+GitHub versioning  
+Environment secrets  
+SaaS version endpoint  
+Health monitoring endpoint  
+
+---
+
+## 📊 Analytics Engine
+
+### KPI Dashboard
+• Total contents  
+• Platforms used  
+• Reusable contents  
+• Growth rate %  
+• Last activity  
+
+### Charts Implemented
+• Contents by platform  
+• Monthly growth timeline  
+• Cumulative growth  
+• Growth rate analysis  
+• Activity heatmap  
+
+### Insights Layer
+Automatic insights such as:
+
+• Most used platform  
+• Growth trends  
+• Reusable opportunities  
+• Content gaps  
+
+---
+
+## 🧱 Backend Architecture
+
+Edge Functions currently implemented:
+• me-dashboard
+• me-contents
+• me-contents-history
+• me-contents-by-platform
+• me-contents-reusable
+
+• admin-users-summary
+• admin-platform-usage
+• admin-content-growth
+• admin-content-growth-cumulative
+• admin-content-growth-rate
+
+• me-insights
+• me-activity-heatmap
+
+• version
+• health
+
+---
+
+## 🗄️ Database Model (Simplified)
+
+### contents
+id  
+user_id  
+platform_id  
+title  
+description  
+format  
+status  
+location  
+is_reusable  
+created_at  
+updated_at  
+published_at  
+
+### platforms
+Platform catalog for analytics distribution.
+
+### users
+Authenticated creators.
+
+### tags *(future layer)*
+Content classification & semantic reuse.
+
+---
+
+## 📈 Product Roadmap
+
+### Phase 1 — MVP (Current)
+Content registry  
+Analytics dashboard  
+Growth engine  
+Heatmap  
+Insights endpoint  
+
+### Phase 2 — Intelligence
+AI recommendations  
+Content scoring  
+Cross-platform optimization  
+
+### Phase 3 — SaaS Scale
+Teams & roles  
+Billing  
+API integrations  
+Export reports  
+
+---
+
+## 🖥️ Local Development
+
+### Clone repository
+git clone https://github.com/ruedalibre/content-manager-frontend.git
+git clone https://github.com/ruedalibre/content-manager-backend.git
+
+
+### Install dependencies
+
+### Environment variables
+
+Create a .env file:
+
+VITE_SUPABASE_URL=your_project_url
+VITE_SUPABASE_ANON_KEY=your_public_anon_key
+
+# Only for local testing
+VITE_ACCESS_TOKEN=your_dev_session_token
+
+Note: Access tokens are only used for local development testing.
+In production they are generated via Supabase Auth login flow.
+
+
+### Run development server
+
+---
+
+## 🔐 Authentication Model
+
+JWT via Supabase Auth  
+Row Level Security enforced  
+User-scoped analytics  
+Protected admin endpoints  
+
+---
+
+## 📦 Versioning
+
+Semantic versioning structure:
+0.5.0 → Current MVP analytics build
+
+Version is exposed via the version endpoint and displayed in the SaaS footer.
+
+---
+
+## 🧪 Health Monitoring
+
+Infrastructure and backend status available via health endpoint.
+
+Used for uptime monitoring and diagnostics.
+
+---
+
+## 💡 Use Cases
+
+Content creators  
+Agencies  
+Social media managers  
+Creator economy professionals  
+Personal brands  
+Marketing teams  
+
+---
+
+## 🧑‍💻 Author
+
+Andrés Pérez Díaz  
+
+Full-stack developer focused on:
+
+SaaS platforms  
+Analytics systems  
+Creator economy tools  
+Supabase architectures  
+
+GitHub  
+[https://github.com/ruedalibre](https://github.com/ruedalibre)
+
+LinkedIn  
+[https://linkedin/in/andres-perez-develop](https://www.linkedin.com/in/andres-perez-develop/)
+
+---
+
+## 📜 License
+
+MIT — Free to use, modify and scale.
+
+---
+
+## ⭐ Future Vision
+
+Content Manager aims to become:
+
+The operating system for creator content analytics.
+
+From simple tracking → to predictive intelligence.
+
+---
+
+
+
+
+
+
+
+
