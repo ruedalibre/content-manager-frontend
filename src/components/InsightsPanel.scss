@@ -1,0 +1,55 @@
+/* =========================
+   INSIGHTS GRID
+========================= */
+
+.insights {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(240px, 1fr)
+  );
+  gap: 1rem;
+}
+
+/* =========================
+   CARD
+========================= */
+
+.insight-card {
+  background: white;
+  padding: 1.2rem;
+  border-radius: 12px;
+
+  box-shadow: 0 4px 10px
+    rgba(0, 0, 0, 0.05);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  transition: transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.insight-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 18px
+    rgba(0, 0, 0, 0.08);
+}
+
+/* Title */
+
+.insight-card h4 {
+  font-size: 0.95rem;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+/* Message */
+
+.insight-card p {
+  font-size: 0.95rem;
+  color: #111827;
+  line-height: 1.4;
+}
