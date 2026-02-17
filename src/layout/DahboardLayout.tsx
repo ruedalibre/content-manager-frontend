@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom"
 import Sidebar from "./Sidebar"
 import Topbar from "./Topbar"
 import "./DashboardLayout.scss"
+import Footer from "../components/Footer.tsx"
 
 export default function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] =
@@ -29,6 +30,8 @@ export default function DashboardLayout() {
         <main className="dashboard-layout__main">
           <Outlet />
         </main>
+
+        <Footer/>
 
       </div>
     </div>
