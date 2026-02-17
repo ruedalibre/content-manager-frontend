@@ -228,9 +228,14 @@ LinkedIn
 
 ---
 
-## 📜 License
+##License
 
-MIT — Free to use, modify and scale.
+This repository is shared for portfolio and investor review purposes only.
+
+All rights reserved © 2026 Andrés Pérez Díaz.
+
+No part of this codebase may be copied, reproduced, distributed, or used to build competing products without explicit written permission.
+
 
 ---
 
