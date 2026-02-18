@@ -1,5 +1,5 @@
 /* =========================
-   PAGE
+   PAGE LAYOUT
 ========================= */
 
 .contents-page {
@@ -30,6 +30,12 @@
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
+
+  transition: background 0.2s;
+
+  &:hover {
+    background: #1d4ed8;
+  }
 }
 
 .btn-link {
@@ -37,6 +43,11 @@
   border: none;
   color: #2563eb;
   cursor: pointer;
+  font-weight: 500;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 /* =========================
@@ -65,7 +76,7 @@
 }
 
 /* =========================
-   TABLE
+   TABLE WRAPPER
 ========================= */
 
 .contents-table-wrapper {
@@ -75,6 +86,10 @@
 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
+
+/* =========================
+   TABLE
+========================= */
 
 .contents-table {
   width: 100%;
@@ -95,15 +110,33 @@
 }
 
 /* =========================
+   TITLE + DESCRIPTION
+========================= */
+
+.content-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  span {
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+}
+
+/* =========================
    STATUS BADGES
 ========================= */
 
 .status {
-  padding: 0.2rem 0.5rem;
+  padding: 4px 8px;
   border-radius: 6px;
   font-size: 0.75rem;
   font-weight: 600;
+  text-transform: capitalize;
 }
+
+/* Status states */
 
 .status.published {
   background: #dcfce7;
@@ -113,6 +146,11 @@
 .status.draft {
   background: #fef3c7;
   color: #92400e;
+}
+
+.status.archived {
+  background: #e5e7eb;
+  color: #374151;
 }
 
 /* =========================
@@ -132,4 +170,10 @@
   padding: 0.3rem 0.7rem;
   border-radius: 6px;
   cursor: pointer;
+
+  transition: background 0.2s;
+
+  &:hover {
+    background: #f9fafb;
+  }
 }
