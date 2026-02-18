@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./CreateContentModal.scss";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  onCreated: () => void; // refresh table
+  onCreated: () => void;
+};
+
+type Platform = {
+  id: string;
+  name: string;
 };
 
 export default function CreateContentModal({
@@ -12,155 +17,223 @@ export default function CreateContentModal({
   onClose,
   onCreated,
 }: Props) {
+  /* =========================
+     FORM STATE
+  ========================= */
+
   const [form, setForm] = useState({
-    platform_id: "",
     title: "",
     description: "",
+    platform_id: "",
     format: "post",
     status: "draft",
     location: "",
     is_reusable: false,
-    published_at: "",
   });
+
+  const [loading, setLoading] = useState(false);
+
+  const [platforms, setPlatforms] = useState<Platform[]>([]);
+
+  useEffect(() => {
+    const headers = {
+      Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
+      apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+    };
+
+    fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/platforms`, {
+      headers,
+    })
+      .then((res) => res.json())
+      .then(setPlatforms)
+      .catch(console.error);
+  }, []);
+
+  /* =========================
+     HANDLE CHANGE
+  ========================= */
 
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
 
     setForm((prev) => ({
       ...prev,
       [name]:
-        type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : value,
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
-  const handleSubmit = async () => {
+  useEffect(() => {
     const headers = {
       Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
       apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-      "Content-Type": "application/json",
     };
 
-    await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-content`,
-      {
-        method: "POST",
-        headers,
-        body: JSON.stringify(form),
-      },
-    );
-
-    onCreated();
-    onClose();
-  };
+    fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/platforms`, {
+      headers,
+    })
+      .then((res) => res.json())
+      .then(setPlatforms)
+      .catch(console.error);
+  }, []);
 
   if (!isOpen) return null;
+
+  /* =========================
+     SUBMIT
+  ========================= */
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-content`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
+            apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+          },
+          body: JSON.stringify(form),
+        },
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.error(data);
+        alert("Error creating content");
+        setLoading(false);
+        return;
+      }
+
+      /* SUCCESS */
+
+      onCreated(); // refresh table
+      onClose(); // close modal
+
+      setForm({
+        title: "",
+        description: "",
+        platform_id: "",
+        format: "post",
+        status: "draft",
+        location: "",
+        is_reusable: false,
+      });
+    } catch (err) {
+      console.error(err);
+      alert("Unexpected error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =========================
+     RENDER
+  ========================= */
 
   return (
     <div className="modal-overlay">
       <div className="modal">
+        <h3>Create Content</h3>
 
-        <h2>Create Content</h2>
+        <form onSubmit={handleSubmit}>
+          {/* TITLE */}
 
-        {/* Platform */}
-        <select
-          name="platform_id"
-          onChange={handleChange}
-        >
-          <option value="">
-            Select platform
-          </option>
-          <option value="1">Instagram</option>
-          <option value="2">TikTok</option>
-          <option value="3">YouTube</option>
-          <option value="4">X</option>
-        </select>
-
-        {/* Title */}
-        <input
-          name="title"
-          placeholder="Title"
-          onChange={handleChange}
-        />
-
-        {/* Description */}
-        <textarea
-          name="description"
-          placeholder="Description"
-          onChange={handleChange}
-        />
-
-        {/* Format */}
-        <select
-          name="format"
-          onChange={handleChange}
-        >
-          <option value="post">Post</option>
-          <option value="reel">Reel</option>
-          <option value="story">Story</option>
-          <option value="video">Video</option>
-          <option value="carousel">Carousel</option>
-        </select>
-
-        {/* Status */}
-        <select
-          name="status"
-          onChange={handleChange}
-        >
-          <option value="draft">Draft</option>
-          <option value="published">
-            Published
-          </option>
-          <option value="archived">
-            Archived
-          </option>
-        </select>
-
-        {/* Location */}
-        <input
-          name="location"
-          placeholder="Location"
-          onChange={handleChange}
-        />
-
-        {/* Reusable */}
-        <label>
           <input
-            type="checkbox"
-            name="is_reusable"
+            name="title"
+            placeholder="Title"
+            value={form.title}
+            onChange={handleChange}
+            required
+          />
+
+          {/* DESCRIPTION */}
+
+          <textarea
+            name="description"
+            placeholder="Description"
+            value={form.description}
             onChange={handleChange}
           />
-          Reusable
-        </label>
 
-        {/* Published date */}
-        {form.status === "published" && (
-          <input
-            type="date"
-            name="published_at"
+          {/* PLATFORM ID (MVP TEXT) */}
+
+          <select
+            name="platform_id"
+            value={form.platform_id}
             onChange={handleChange}
-          />
-        )}
-
-        {/* Actions */}
-        <div className="modal-actions">
-          <button onClick={onClose}>
-            Cancel
-          </button>
-
-          <button
-            className="btn-primary"
-            onClick={handleSubmit}
+            required
           >
-            Create
-          </button>
-        </div>
+            <option value="">Select platform</option>
 
+            {platforms.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+
+          {/* FORMAT */}
+
+          <select name="format" value={form.format} onChange={handleChange}>
+            <option value="post">Post</option>
+            <option value="reel">Reel</option>
+            <option value="story">Story</option>
+            <option value="video">Video</option>
+            <option value="carousel">Carousel</option>
+          </select>
+
+          {/* STATUS */}
+
+          <select name="status" value={form.status} onChange={handleChange}>
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+            <option value="archived">Archived</option>
+          </select>
+
+          {/* LOCATION */}
+
+          <input
+            name="location"
+            placeholder="Location"
+            value={form.location}
+            onChange={handleChange}
+          />
+
+          {/* REUSABLE */}
+
+          <label className="checkbox">
+            <input
+              type="checkbox"
+              name="is_reusable"
+              checked={form.is_reusable}
+              onChange={handleChange}
+            />
+            Reusable
+          </label>
+
+          {/* ACTIONS */}
+
+          <div className="modal-actions">
+            <button type="button" onClick={onClose} className="btn-secondary">
+              Cancel
+            </button>
+
+            <button type="submit" className="btn-primary" disabled={loading}>
+              {loading ? "Creating..." : "Create"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
