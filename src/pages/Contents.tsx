@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import CreateContentModal from "../components/Contents/CreateContentModal";
 import "./Contents.scss";
 
 /* =========================
@@ -34,43 +35,52 @@ export default function Contents() {
      STATES
   ========================= */
 
-  const [contents, setContents] =
-    useState<ContentItem[]>([]);
+  const [contents, setContents] = useState<ContentItem[]>([]);
 
-  const [loading, setLoading] =
-    useState(true);
+  const [loading, setLoading] = useState(true);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [page] = useState(1); // preparado para paginación futura
 
   /* =========================
-     FETCH DATA
+     FETCH FUNCTION (REUSABLE)
+  ========================= */
+
+  const fetchContents = async () => {
+    try {
+      setLoading(true);
+
+      const headers = {
+        Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
+        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+      };
+
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-history?page=${page}&limit=10`,
+        { headers },
+      );
+
+      const data: ApiResponse = await res.json();
+
+      setContents(data.results || []);
+    } catch (err) {
+      console.error("Contents fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* =========================
+     INITIAL FETCH
   ========================= */
 
   useEffect(() => {
-    const headers = {
-      Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
-      apikey:
-        import.meta.env.VITE_SUPABASE_ANON_KEY,
-    };
-
-    fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-history`,
-      { headers },
-    )
-      .then((res) => res.json())
-      .then((data: ApiResponse) => {
-        setContents(data.results || []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error(
-          "Contents fetch error:",
-          err,
-        );
-        setLoading(false);
-      });
+    fetchContents();
   }, []);
 
   /* =========================
-     STATES
+     LOADING STATE
   ========================= */
 
   if (loading) {
@@ -82,149 +92,132 @@ export default function Contents() {
   ========================= */
 
   return (
-    <div className="contents-page">
+    <>
+      <div className="contents-page">
+        {/* =====================
+            HEADER
+        ===================== */}
 
-      {/* HEADER */}
+        <div className="contents-page__header">
+          <h2 className="page__title">Contents</h2>
 
-      <div className="contents-page__header">
-        <h2 className="page__title">
-          Contents
-        </h2>
+          <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
+            + New Content
+          </button>
+        </div>
 
-        <button className="btn-primary">
-          + New Content
-        </button>
-      </div>
+        {/* =====================
+            FILTERS (MVP STATIC)
+        ===================== */}
 
-      {/* FILTERS (MVP STATIC) */}
+        <div className="contents-filters">
+          <input
+            type="text"
+            placeholder="Search content..."
+            className="contents-filters__search"
+          />
 
-      <div className="contents-filters">
+          <select className="contents-filters__select">
+            <option>All Platforms</option>
+          </select>
 
-        <input
-          type="text"
-          placeholder="Search content..."
-          className="contents-filters__search"
-        />
+          <select className="contents-filters__select">
+            <option>All Status</option>
+          </select>
+        </div>
 
-        <select className="contents-filters__select">
-          <option>All Platforms</option>
-        </select>
+        {/* =====================
+            TABLE
+        ===================== */}
 
-        <select className="contents-filters__select">
-          <option>All Status</option>
-        </select>
-
-      </div>
-
-      {/* TABLE */}
-
-      <div className="contents-table-wrapper">
-
-        <table className="contents-table">
-
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Platform</th>
-              <th>Format</th>
-              <th>Status</th>
-              <th>Reusable</th>
-              <th>Created</th>
-              <th></th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            {contents.length === 0 && (
+        <div className="contents-table-wrapper">
+          <table className="contents-table">
+            <thead>
               <tr>
-                <td colSpan={7}>
-                  No contents found
-                </td>
+                <th>Title</th>
+                <th>Platform</th>
+                <th>Format</th>
+                <th>Status</th>
+                <th>Reusable</th>
+                <th>Created</th>
+                <th></th>
               </tr>
-            )}
+            </thead>
 
-            {contents.map((item) => (
-              <tr key={item.id}>
+            <tbody>
+              {contents.length === 0 && (
+                <tr>
+                  <td colSpan={7}>No contents found</td>
+                </tr>
+              )}
 
-                {/* TITLE */}
+              {contents.map((item) => (
+                <tr key={item.id}>
+                  {/* TITLE */}
 
-                <td>
-                  <div className="content-title">
-                    <strong>
-                      {item.title}
-                    </strong>
+                  <td>
+                    <div className="content-title">
+                      <strong>{item.title}</strong>
 
-                    {item.description && (
-                      <span>
-                        {item.description}
-                      </span>
-                    )}
-                  </div>
-                </td>
+                      {item.description && <span>{item.description}</span>}
+                    </div>
+                  </td>
 
-                {/* PLATFORM */}
+                  {/* PLATFORM */}
 
-                <td>
-                  {item.platform_name}
-                </td>
+                  <td>{item.platform_name}</td>
 
-                {/* FORMAT */}
+                  {/* FORMAT */}
 
-                <td>
-                  {item.format}
-                </td>
+                  <td>{item.format}</td>
 
-                {/* STATUS */}
+                  {/* STATUS */}
 
-                <td>
-                  <span
-                    className={`status ${item.status}`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
+                  <td>
+                    <span className={`status ${item.status}`}>
+                      {item.status}
+                    </span>
+                  </td>
 
-                {/* REUSABLE */}
+                  {/* REUSABLE */}
 
-                <td>
-                  {item.is_reusable
-                    ? "Yes"
-                    : "No"}
-                </td>
+                  <td>{item.is_reusable ? "Yes" : "No"}</td>
 
-                {/* CREATED */}
+                  {/* CREATED */}
 
-                <td>
-                  {new Date(
-                    item.created_at,
-                  ).toLocaleDateString()}
-                </td>
+                  <td>{new Date(item.created_at).toLocaleDateString()}</td>
 
-                {/* ACTIONS */}
+                  {/* ACTIONS */}
 
-                <td>
-                  <button className="btn-link">
-                    Edit
-                  </button>
-                </td>
+                  <td>
+                    <button className="btn-link">Edit</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-              </tr>
-            ))}
+        {/* =====================
+            PAGINATION (MVP)
+        ===================== */}
 
-          </tbody>
-        </table>
+        <div className="contents-pagination">
+          <button>{"<"}</button>
+          <span>Page 1</span>
+          <button>{">"}</button>
+        </div>
 
+        {/* =====================
+            MODAL
+        ===================== */}
+
+        <CreateContentModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onCreated={fetchContents}
+        />
       </div>
-
-      {/* PAGINATION (MVP) */}
-
-      <div className="contents-pagination">
-        <button>{"<"}</button>
-        <span>Page 1</span>
-        <button>{">"}</button>
-      </div>
-
-    </div>
+    </>
   );
 }
