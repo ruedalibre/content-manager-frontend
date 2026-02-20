@@ -12,6 +12,7 @@ type ContentItem = {
   title: string;
   description: string | null;
   platform_name: string;
+  platform_id: string; // ← necesario para editar
   format: string;
   status: string;
   location: string | null;
@@ -35,16 +36,22 @@ export default function Contents() {
      STATES
   ========================= */
 
-  const [contents, setContents] = useState<ContentItem[]>([]);
+  const [contents, setContents] =
+    useState<ContentItem[]>([]);
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] =
+    useState(false);
 
-  const [page] = useState(1); // preparado para paginación futura
+  const [contentToEdit, setContentToEdit] =
+    useState<ContentItem | null>(null);
+
+  const [page] = useState(1);
 
   /* =========================
-     FETCH FUNCTION (REUSABLE)
+     FETCH FUNCTION
   ========================= */
 
   const fetchContents = async () => {
@@ -61,11 +68,15 @@ export default function Contents() {
         { headers },
       );
 
-      const data: ApiResponse = await res.json();
+      const data: ApiResponse =
+        await res.json();
 
       setContents(data.results || []);
     } catch (err) {
-      console.error("Contents fetch error:", err);
+      console.error(
+        "Contents fetch error:",
+        err,
+      );
     } finally {
       setLoading(false);
     }
@@ -78,6 +89,26 @@ export default function Contents() {
   useEffect(() => {
     fetchContents();
   }, []);
+
+  /* =========================
+     EDIT HANDLER
+  ========================= */
+
+  const handleEdit = (
+    content: ContentItem,
+  ) => {
+    setContentToEdit(content);
+    setIsModalOpen(true);
+  };
+
+  /* =========================
+     CREATE HANDLER
+  ========================= */
+
+  const handleCreate = () => {
+    setContentToEdit(null);
+    setIsModalOpen(true);
+  };
 
   /* =========================
      LOADING STATE
@@ -99,15 +130,20 @@ export default function Contents() {
         ===================== */}
 
         <div className="contents-page__header">
-          <h2 className="page__title">Contents</h2>
+          <h2 className="page__title">
+            Contents
+          </h2>
 
-          <button className="btn-primary" onClick={() => setIsModalOpen(true)}>
+          <button
+            className="btn-primary"
+            onClick={handleCreate}
+          >
             + New Content
           </button>
         </div>
 
         {/* =====================
-            FILTERS (MVP STATIC)
+            FILTERS (MVP)
         ===================== */}
 
         <div className="contents-filters">
@@ -147,7 +183,9 @@ export default function Contents() {
             <tbody>
               {contents.length === 0 && (
                 <tr>
-                  <td colSpan={7}>No contents found</td>
+                  <td colSpan={7}>
+                    No contents found
+                  </td>
                 </tr>
               )}
 
@@ -157,15 +195,23 @@ export default function Contents() {
 
                   <td>
                     <div className="content-title">
-                      <strong>{item.title}</strong>
+                      <strong>
+                        {item.title}
+                      </strong>
 
-                      {item.description && <span>{item.description}</span>}
+                      {item.description && (
+                        <span>
+                          {item.description}
+                        </span>
+                      )}
                     </div>
                   </td>
 
                   {/* PLATFORM */}
 
-                  <td>{item.platform_name}</td>
+                  <td>
+                    {item.platform_name}
+                  </td>
 
                   {/* FORMAT */}
 
@@ -174,23 +220,40 @@ export default function Contents() {
                   {/* STATUS */}
 
                   <td>
-                    <span className={`status ${item.status}`}>
+                    <span
+                      className={`status ${item.status}`}
+                    >
                       {item.status}
                     </span>
                   </td>
 
                   {/* REUSABLE */}
 
-                  <td>{item.is_reusable ? "Yes" : "No"}</td>
+                  <td>
+                    {item.is_reusable
+                      ? "Yes"
+                      : "No"}
+                  </td>
 
                   {/* CREATED */}
 
-                  <td>{new Date(item.created_at).toLocaleDateString()}</td>
+                  <td>
+                    {new Date(
+                      item.created_at,
+                    ).toLocaleDateString()}
+                  </td>
 
                   {/* ACTIONS */}
 
                   <td>
-                    <button className="btn-link">Edit</button>
+                    <button
+                      className="btn-link"
+                      onClick={() =>
+                        handleEdit(item)
+                      }
+                    >
+                      Edit
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -199,7 +262,7 @@ export default function Contents() {
         </div>
 
         {/* =====================
-            PAGINATION (MVP)
+            PAGINATION
         ===================== */}
 
         <div className="contents-pagination">
@@ -214,8 +277,13 @@ export default function Contents() {
 
         <CreateContentModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() =>
+            setIsModalOpen(false)
+          }
           onCreated={fetchContents}
+          contentToEdit={
+            contentToEdit
+          }
         />
       </div>
     </>
