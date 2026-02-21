@@ -79,3 +79,24 @@
 .heatmap__cell--3 {
   background: #30a14e;
 }
+
+/* =========================
+   MONTH LABELS
+========================= */
+
+.heatmap__months {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-columns: repeat(
+    53,
+    12px
+  );
+  gap: 3px;
+
+  margin-left: 28px; // espacio para weekdays
+
+  span {
+    font-size: 0.7rem;
+    color: #6b7280;
+  }
+}

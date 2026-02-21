@@ -6,7 +6,7 @@ import "./ActivityHeatmap.scss";
 ========================= */
 
 type HeatmapData = {
-  activity_date: string; // YYYY-MM-DD
+  activity_date: string;
   total_contents: number;
 };
 
@@ -22,7 +22,7 @@ export default function ActivityHeatmap({
   data,
 }: Props) {
   /* =========================
-     AVAILABLE YEARS
+     YEARS
   ========================= */
 
   const years = useMemo(() => {
@@ -43,7 +43,7 @@ export default function ActivityHeatmap({
     );
 
   /* =========================
-     FILTER BY YEAR
+     FILTER YEAR
   ========================= */
 
   const yearData = useMemo(() => {
@@ -73,10 +73,10 @@ export default function ActivityHeatmap({
   }, [yearData]);
 
   /* =========================
-     BUILD CALENDAR GRID
+     BUILD CALENDAR
   ========================= */
 
-  const buildCalendar = () => {
+  const days = useMemo(() => {
     const start = new Date(
       `${selectedYear}-01-01`,
     );
@@ -85,20 +85,47 @@ export default function ActivityHeatmap({
       `${selectedYear}-12-31`,
     );
 
-    const days: Date[] = [];
+    const arr: Date[] = [];
 
     for (
       let d = new Date(start);
       d <= end;
       d.setDate(d.getDate() + 1)
     ) {
-      days.push(new Date(d));
+      arr.push(new Date(d));
     }
 
-    return days;
-  };
+    return arr;
+  }, [selectedYear]);
 
-  const days = buildCalendar();
+  /* =========================
+     MONTH LABELS
+  ========================= */
+
+  const monthLabels = useMemo(() => {
+    const labels: {
+      month: string;
+      column: number;
+    }[] = [];
+
+    days.forEach((date, index) => {
+      if (date.getDate() === 1) {
+        const weekIndex = Math.floor(
+          index / 7,
+        );
+
+        labels.push({
+          month: date.toLocaleString(
+            "default",
+            { month: "short" },
+          ),
+          column: weekIndex,
+        });
+      }
+    });
+
+    return labels;
+  }, [days]);
 
   /* =========================
      INTENSITY
@@ -114,16 +141,6 @@ export default function ActivityHeatmap({
       return "heatmap__cell--2";
     return "heatmap__cell--3";
   };
-
-  /* =========================
-     WEEKDAY LABELS
-  ========================= */
-
-  const weekdays = [
-    "Mon",
-    "Wed",
-    "Fri",
-  ];
 
   /* =========================
      RENDER
@@ -151,13 +168,28 @@ export default function ActivityHeatmap({
         ))}
       </div>
 
+      {/* MONTH LABELS */}
+
+      <div className="heatmap__months">
+        {monthLabels.map((m, i) => (
+          <span
+            key={i}
+            style={{
+              gridColumn: m.column + 1,
+            }}
+          >
+            {m.month}
+          </span>
+        ))}
+      </div>
+
       <div className="heatmap">
         {/* WEEKDAY LABELS */}
 
         <div className="heatmap__weekdays">
-          {weekdays.map((d) => (
-            <span key={d}>{d}</span>
-          ))}
+          <span>Mon</span>
+          <span>Wed</span>
+          <span>Fri</span>
         </div>
 
         {/* GRID */}
