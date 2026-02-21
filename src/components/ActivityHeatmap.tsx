@@ -1,7 +1,12 @@
+import { useMemo, useState } from "react";
 import "./ActivityHeatmap.scss";
 
+/* =========================
+   TYPES
+========================= */
+
 type HeatmapData = {
-  activity_date: string;
+  activity_date: string; // YYYY-MM-DD
   total_contents: number;
 };
 
@@ -9,14 +14,100 @@ type Props = {
   data: HeatmapData[];
 };
 
+/* =========================
+   COMPONENT
+========================= */
+
 export default function ActivityHeatmap({
   data,
 }: Props) {
+  /* =========================
+     AVAILABLE YEARS
+  ========================= */
+
+  const years = useMemo(() => {
+    const set = new Set(
+      data.map((d) =>
+        new Date(d.activity_date).getFullYear(),
+      ),
+    );
+
+    return Array.from(set).sort(
+      (a, b) => b - a,
+    );
+  }, [data]);
+
+  const [selectedYear, setSelectedYear] =
+    useState<number>(
+      years[0] ?? new Date().getFullYear(),
+    );
+
+  /* =========================
+     FILTER BY YEAR
+  ========================= */
+
+  const yearData = useMemo(() => {
+    return data.filter(
+      (d) =>
+        new Date(
+          d.activity_date,
+        ).getFullYear() === selectedYear,
+    );
+  }, [data, selectedYear]);
+
+  /* =========================
+     MAP DATE → VALUE
+  ========================= */
+
+  const activityMap = useMemo(() => {
+    const map = new Map<string, number>();
+
+    yearData.forEach((d) => {
+      map.set(
+        d.activity_date,
+        d.total_contents,
+      );
+    });
+
+    return map;
+  }, [yearData]);
+
+  /* =========================
+     BUILD CALENDAR GRID
+  ========================= */
+
+  const buildCalendar = () => {
+    const start = new Date(
+      `${selectedYear}-01-01`,
+    );
+
+    const end = new Date(
+      `${selectedYear}-12-31`,
+    );
+
+    const days: Date[] = [];
+
+    for (
+      let d = new Date(start);
+      d <= end;
+      d.setDate(d.getDate() + 1)
+    ) {
+      days.push(new Date(d));
+    }
+
+    return days;
+  };
+
+  const days = buildCalendar();
+
+  /* =========================
+     INTENSITY
+  ========================= */
+
   const getIntensity = (
     value: number,
   ) => {
-    if (value === 0)
-      return "heatmap__cell--0";
+    if (!value) return "heatmap__cell--0";
     if (value === 1)
       return "heatmap__cell--1";
     if (value <= 3)
@@ -24,17 +115,74 @@ export default function ActivityHeatmap({
     return "heatmap__cell--3";
   };
 
+  /* =========================
+     WEEKDAY LABELS
+  ========================= */
+
+  const weekdays = [
+    "Mon",
+    "Wed",
+    "Fri",
+  ];
+
+  /* =========================
+     RENDER
+  ========================= */
+
   return (
-    <div className="heatmap">
-      {data.map((item) => (
-        <div
-          key={item.activity_date}
-          className={`heatmap__cell ${getIntensity(
-            item.total_contents,
-          )}`}
-          title={`${item.activity_date}: ${item.total_contents}`}
-        />
-      ))}
+    <div className="heatmap-wrapper">
+      {/* YEAR SELECTOR */}
+
+      <div className="heatmap__years">
+        {years.map((year) => (
+          <button
+            key={year}
+            className={
+              year === selectedYear
+                ? "active"
+                : ""
+            }
+            onClick={() =>
+              setSelectedYear(year)
+            }
+          >
+            {year}
+          </button>
+        ))}
+      </div>
+
+      <div className="heatmap">
+        {/* WEEKDAY LABELS */}
+
+        <div className="heatmap__weekdays">
+          {weekdays.map((d) => (
+            <span key={d}>{d}</span>
+          ))}
+        </div>
+
+        {/* GRID */}
+
+        <div className="heatmap__grid">
+          {days.map((date) => {
+            const key = date
+              .toISOString()
+              .slice(0, 10);
+
+            const value =
+              activityMap.get(key) ?? 0;
+
+            return (
+              <div
+                key={key}
+                className={`heatmap__cell ${getIntensity(
+                  value,
+                )}`}
+                title={`${key}: ${value}`}
+              />
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
