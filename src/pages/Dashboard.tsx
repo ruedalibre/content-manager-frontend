@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import ContentsByPlatformChart from "../components/ContentByPlatformChart.tsx";
-import ContentGrowthTimelineChart from "../components/ContentGrowthTimelineChart.tsx";
-import ContentGrowthCumulativeChart from "../components/ContentGrowthCumulativeChart.tsx";
-import ActivityHeatmap from "../components/ActivityHeatmap.tsx";
-import InsightsPanel from "../components/InsightsPanel.tsx";
+import ContentsByPlatformChart from "../components/Charts/ContentByPlatformChart.tsx";
+import ContentGrowthTimelineChart from "../components/Charts/ContentGrowthTimelineChart.tsx";
+import ContentGrowthCumulativeChart from "../components/Charts/ContentGrowthCumulativeChart.tsx";
+import ActivityHeatmap from "../components/Charts/ActivityHeatmap.tsx";
+import InsightsPanel from "../components/Charts/InsightsPanel.tsx";
 import "./Dashboard.scss";
 
 /* =========================

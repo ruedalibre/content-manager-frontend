@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Outlet } from "react-router-dom"
-import Sidebar from "./Sidebar"
-import Topbar from "./Topbar"
+import Sidebar from "./Sidebar.tsx"
+import Topbar from "./Topbar.tsx"
 import "./DashboardLayout.scss"
 import Footer from "../components/Footer.tsx"
 
