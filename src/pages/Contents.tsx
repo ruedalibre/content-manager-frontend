@@ -12,7 +12,7 @@ type ContentItem = {
   title: string;
   description: string | null;
   platform_name: string;
-  platform_id: string; // ← necesario para editar
+  platform_id: string;
   format: string;
   status: string;
   location: string | null;
@@ -21,45 +21,32 @@ type ContentItem = {
   published_at: string | null;
 };
 
-type ApiResponse = {
-  page: number;
-  limit: number;
-  results: ContentItem[];
-};
-
 /* =========================
    COMPONENT
 ========================= */
 
 export default function Contents() {
-  /* =========================
-     STATES
-  ========================= */
-
   const [contents, setContents] = useState<ContentItem[]>([]);
-
   const [loading, setLoading] = useState(true);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [contentToEdit, setContentToEdit] = useState<ContentItem | null>(null);
 
-  const [page] = useState(1);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const limit = 10;
+
+  const totalPages = Math.ceil(total / limit);
 
   const [contentToDelete, setContentToDelete] = useState<ContentItem | null>(
     null,
   );
-
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [lastDeleted, setLastDeleted] = useState<ContentItem | null>(null);
-
   const [showToast, setShowToast] = useState(false);
-
   const [undoTimeout, setUndoTimeout] = useState<number | null>(null);
-
   const [isRestoring, setIsRestoring] = useState(false);
 
   /* =========================
@@ -80,9 +67,9 @@ export default function Contents() {
         { headers },
       );
 
-      const data: ApiResponse = await res.json();
-
+      const data = await res.json();
       setContents(data.results || []);
+      setTotal(data.total || 0);
     } catch (err) {
       console.error("Contents fetch error:", err);
     } finally {
@@ -90,16 +77,12 @@ export default function Contents() {
     }
   };
 
-  /* =========================
-     INITIAL FETCH
-  ========================= */
-
   useEffect(() => {
     fetchContents();
-  }, []);
+  }, [page]);
 
   /* =========================
-     EDIT HANDLER
+     CREATE / EDIT
   ========================= */
 
   const handleEdit = (content: ContentItem) => {
@@ -107,27 +90,19 @@ export default function Contents() {
     setIsModalOpen(true);
   };
 
-  /* =========================
-     CREATE HANDLER
-  ========================= */
-
   const handleCreate = () => {
     setContentToEdit(null);
     setIsModalOpen(true);
   };
 
   /* =========================
-     DELETE HANDLER
+     DELETE FLOW
   ========================= */
 
   const handleDeleteClick = (content: ContentItem) => {
     setContentToDelete(content);
     setIsDeleteModalOpen(true);
   };
-
-  /* =========================
-     CONFIRM DELETE HANDLER
-  ========================= */
 
   const handleConfirmDelete = async () => {
     if (!contentToDelete) return;
@@ -142,10 +117,7 @@ export default function Contents() {
 
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-content/${contentToDelete.id}`,
-        {
-          method: "DELETE",
-          headers,
-        },
+        { method: "DELETE", headers },
       );
 
       if (!res.ok) {
@@ -154,17 +126,14 @@ export default function Contents() {
         return;
       }
 
-      // 🔥 Mutación optimista
+      // Optimistic removal
       setContents((prev) =>
         prev.filter((item) => item.id !== contentToDelete.id),
       );
 
-      // Guardamos para posible undo
       setLastDeleted(contentToDelete);
-      // Mostrar toast
       setShowToast(true);
 
-      // Auto cerrar después de 6s
       const timeout = window.setTimeout(() => {
         setShowToast(false);
         setLastDeleted(null);
@@ -172,7 +141,6 @@ export default function Contents() {
 
       setUndoTimeout(timeout);
 
-      // Cerrar modal
       setIsDeleteModalOpen(false);
       setContentToDelete(null);
     } catch (err) {
@@ -183,7 +151,7 @@ export default function Contents() {
   };
 
   /* =========================
-     UNDO HANDLER
+     RESTORE
   ========================= */
 
   const handleUndo = async () => {
@@ -192,9 +160,7 @@ export default function Contents() {
     try {
       setIsRestoring(true);
 
-      if (undoTimeout) {
-        clearTimeout(undoTimeout);
-      }
+      if (undoTimeout) clearTimeout(undoTimeout);
 
       const headers = {
         Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
@@ -203,10 +169,7 @@ export default function Contents() {
 
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/restore-content/${lastDeleted.id}`,
-        {
-          method: "POST",
-          headers,
-        },
+        { method: "POST", headers },
       );
 
       if (!res.ok) {
@@ -215,8 +178,8 @@ export default function Contents() {
         return;
       }
 
-      // Restauración optimista
-      setContents((prev) => [lastDeleted, ...prev]);
+      // Re-sync with backend
+      await fetchContents();
 
       setShowToast(false);
       setLastDeleted(null);
@@ -228,7 +191,7 @@ export default function Contents() {
   };
 
   /* =========================
-     LOADING STATE
+     LOADING
   ========================= */
 
   if (loading) {
@@ -242,42 +205,29 @@ export default function Contents() {
   return (
     <>
       <div className="contents-page">
-        {/* =====================
-            HEADER
-        ===================== */}
-
         <div className="contents-page__header">
           <h2 className="page__title">Contents</h2>
-
           <button className="btn-primary" onClick={handleCreate}>
             + New Content
           </button>
         </div>
 
-        {/* =====================
-            FILTERS (MVP)
-        ===================== */}
-
+        {/* Filters */}
         <div className="contents-filters">
           <input
             type="text"
             placeholder="Search content..."
             className="contents-filters__search"
           />
-
           <select className="contents-filters__select">
             <option>All Platforms</option>
           </select>
-
           <select className="contents-filters__select">
             <option>All Status</option>
           </select>
         </div>
 
-        {/* =====================
-            TABLE
-        ===================== */}
-
+        {/* Table */}
         <div className="contents-table-wrapper">
           <table className="contents-table">
             <thead>
@@ -301,25 +251,15 @@ export default function Contents() {
 
               {contents.map((item) => (
                 <tr key={item.id}>
-                  {/* TITLE */}
-
                   <td>
                     <div className="content-title">
                       <strong>{item.title}</strong>
-
                       {item.description && <span>{item.description}</span>}
                     </div>
                   </td>
 
-                  {/* PLATFORM */}
-
                   <td>{item.platform_name}</td>
-
-                  {/* FORMAT */}
-
                   <td>{item.format}</td>
-
-                  {/* STATUS */}
 
                   <td>
                     <span className={`status ${item.status}`}>
@@ -327,15 +267,9 @@ export default function Contents() {
                     </span>
                   </td>
 
-                  {/* REUSABLE */}
-
                   <td>{item.is_reusable ? "Yes" : "No"}</td>
 
-                  {/* CREATED */}
-
                   <td>{new Date(item.created_at).toLocaleDateString()}</td>
-
-                  {/* ACTIONS */}
 
                   <td className="actions-cell">
                     <button
@@ -358,20 +292,28 @@ export default function Contents() {
           </table>
         </div>
 
-        {/* =====================
-            PAGINATION
-        ===================== */}
-
+        {/* Pagination */}
         <div className="contents-pagination">
-          <button>{"<"}</button>
-          <span>Page 1</span>
-          <button>{">"}</button>
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((prev) => prev - 1)}
+          >
+            {"<"}
+          </button>
+
+          <span>
+            Page {page} of {totalPages || 1}
+          </span>
+
+          <button
+            disabled={page >= totalPages}
+            onClick={() => setPage((prev) => prev + 1)}
+          >
+            {">"}
+          </button>
         </div>
 
-        {/* =====================
-            MODAL
-        ===================== */}
-
+        {/* Create/Edit Modal */}
         <CreateContentModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -379,15 +321,14 @@ export default function Contents() {
           contentToEdit={contentToEdit}
         />
 
+        {/* Delete Modal */}
         {isDeleteModalOpen && contentToDelete && (
           <div className="delete-modal-overlay">
             <div className="delete-modal">
               <h3>Delete content</h3>
-
               <p>
-                This will permanently remove
-                <strong> {contentToDelete.title} </strong>
-                from your library.
+                This will permanently remove{" "}
+                <strong>{contentToDelete.title}</strong>
               </p>
 
               <div className="delete-modal__actions">
@@ -413,10 +354,10 @@ export default function Contents() {
           </div>
         )}
 
+        {/* Toast */}
         {showToast && lastDeleted && (
           <div className="toast">
             <span>Content deleted.</span>
-
             <button
               className="toast__undo"
               onClick={handleUndo}
