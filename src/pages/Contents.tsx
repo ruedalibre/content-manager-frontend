@@ -206,7 +206,6 @@ export default function Contents() {
     <>
       <div className="contents-page">
         <div className="contents-page__header">
-          <h2 className="page__title">Contents</h2>
           <button className="btn-primary" onClick={handleCreate}>
             + New Content
           </button>

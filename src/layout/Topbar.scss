@@ -1,14 +1,17 @@
 .topbar {
-  height: 60px;
-  background: white;
-  border-bottom: 1px solid #e5e7eb;
-
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0 1rem;
+
+  padding: 1.2rem 1.5rem;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
 }
 
+.topbar__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
 .topbar__menu-btn {
   background: none;
   border: none;

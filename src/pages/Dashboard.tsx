@@ -225,10 +225,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-      <h2 className="page__title">Dashboard</h2>
-
       {/* KPI CARDS */}
-
       <section className="dashboard__kpis">
         <div className="kpi-card">
           <span>Total Contents</span>
