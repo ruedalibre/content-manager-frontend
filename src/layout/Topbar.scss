@@ -18,6 +18,16 @@
   cursor: pointer;
 }
 
+.topbar__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar__context {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
 /* Desktop hide hamburger */
 
 @media (min-width: 768px) {

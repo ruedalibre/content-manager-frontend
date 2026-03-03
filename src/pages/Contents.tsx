@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useOutletContext } from "react-router-dom";
 import CreateContentModal from "../components/Contents/CreateContentModal";
 import "./Contents.scss";
 
@@ -21,6 +22,10 @@ type ContentItem = {
   published_at: string | null;
 };
 
+type OutletContext = {
+  setTopbarContext: (value: string | null) => void;
+};
+
 /* =========================
    COMPONENT
 ========================= */
@@ -28,6 +33,7 @@ type ContentItem = {
 export default function Contents() {
   const [contents, setContents] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const { setTopbarContext } = useOutletContext<OutletContext>();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contentToEdit, setContentToEdit] = useState<ContentItem | null>(null);
@@ -38,15 +44,16 @@ export default function Contents() {
 
   const totalPages = Math.ceil(total / limit);
 
-  const [contentToDelete, setContentToDelete] = useState<ContentItem | null>(
-    null,
-  );
+  const [contentToDelete, setContentToDelete] =
+    useState<ContentItem | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const [lastDeleted, setLastDeleted] = useState<ContentItem | null>(null);
+  const [lastDeleted, setLastDeleted] =
+    useState<ContentItem | null>(null);
   const [showToast, setShowToast] = useState(false);
-  const [undoTimeout, setUndoTimeout] = useState<number | null>(null);
+  const [undoTimeout, setUndoTimeout] =
+    useState<number | null>(null);
   const [isRestoring, setIsRestoring] = useState(false);
 
   /* =========================
@@ -56,6 +63,7 @@ export default function Contents() {
   const fetchContents = async () => {
     try {
       setLoading(true);
+      setTopbarContext("Loading...");
 
       const headers = {
         Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
@@ -63,7 +71,7 @@ export default function Contents() {
       };
 
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-history?page=${page}&limit=10`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-history?page=${page}&limit=${limit}`,
         { headers },
       );
 
@@ -80,6 +88,24 @@ export default function Contents() {
   useEffect(() => {
     fetchContents();
   }, [page]);
+
+  /* =========================
+     MICRO CONTEXT UPDATE
+  ========================= */
+
+  useEffect(() => {
+    if (!loading) {
+      setTopbarContext(
+        total === 0
+          ? "No contents yet"
+          : `${total} total contents`
+      );
+    }
+
+    return () => {
+      setTopbarContext(null);
+    };
+  }, [loading, total, setTopbarContext]);
 
   /* =========================
      CREATE / EDIT
@@ -126,7 +152,6 @@ export default function Contents() {
         return;
       }
 
-      // Optimistic removal
       setContents((prev) =>
         prev.filter((item) => item.id !== contentToDelete.id),
       );
@@ -143,6 +168,9 @@ export default function Contents() {
 
       setIsDeleteModalOpen(false);
       setContentToDelete(null);
+
+      // 🔥 actualizar total local
+      setTotal((prev) => Math.max(prev - 1, 0));
     } catch (err) {
       console.error("Delete failed:", err);
     } finally {
@@ -178,7 +206,6 @@ export default function Contents() {
         return;
       }
 
-      // Re-sync with backend
       await fetchContents();
 
       setShowToast(false);
@@ -253,7 +280,9 @@ export default function Contents() {
                   <td>
                     <div className="content-title">
                       <strong>{item.title}</strong>
-                      {item.description && <span>{item.description}</span>}
+                      {item.description && (
+                        <span>{item.description}</span>
+                      )}
                     </div>
                   </td>
 
@@ -268,7 +297,9 @@ export default function Contents() {
 
                   <td>{item.is_reusable ? "Yes" : "No"}</td>
 
-                  <td>{new Date(item.created_at).toLocaleDateString()}</td>
+                  <td>
+                    {new Date(item.created_at).toLocaleDateString()}
+                  </td>
 
                   <td className="actions-cell">
                     <button

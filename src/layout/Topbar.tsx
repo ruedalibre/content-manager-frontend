@@ -2,27 +2,25 @@ import { Menu } from "lucide-react"
 import { useLocation } from "react-router-dom"
 import "./Topbar.scss"
 
+type Props = {
+  onMenuClick: () => void
+  context?: string | null
+}
+
 export default function Topbar({
   onMenuClick,
-}: {
-  onMenuClick: () => void
-}) {
+  context,
+}: Props) {
   const location = useLocation()
 
-  const getTitle = () => {
-    switch (location.pathname) {
-      case "/dashboard":
-        return "Dashboard"
-      case "/contents":
-        return "Contents"
-      case "/reusable":
-        return "Reusable"
-      case "/admin":
-        return "Admin"
-      default:
-        return "Dashboard"
-    }
+  const titles: Record<string, string> = {
+    "/dashboard": "Dashboard",
+    "/contents": "Contents",
+    "/reusable": "Reusable",
+    "/admin": "Admin",
   }
+
+  const title = titles[location.pathname] ?? "Dashboard"
 
   return (
     <header className="topbar">
@@ -33,9 +31,15 @@ export default function Topbar({
         <Menu size={22} />
       </button>
 
-      <h1 className="topbar__title">
-        {getTitle()}
-      </h1>
+      <div className="topbar__text">
+        <h1 className="topbar__title">{title}</h1>
+
+        {context && (
+          <span className="topbar__context">
+            {context}
+          </span>
+        )}
+      </div>
     </header>
   )
 }
