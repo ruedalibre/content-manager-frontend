@@ -1,22 +1,34 @@
-import { Routes, Route } from "react-router-dom"
-import DashboardLayout from "./layout/DashboardLayout.tsx"
-
-import Dashboard from "./pages/Dashboard"
-import Contents from "./pages/Contents"
-import Reusable from "./pages/Reusable"
-import Admin from "./pages/Admin"
+import DashboardLayout from "./layout/DashboardLayout.tsx";
+import { Routes, Route } from "react-router-dom";
+import Dashboard from "./pages/Dashboard";
+import Contents from "./pages/Contents";
+import Reusable from "./pages/Reusable";
+import Admin from "./pages/Admin";
+import Login from "./pages/Login";
+import AuthGuard from "./auth/AuthGuard";
 
 export default function App() {
   return (
     <Routes>
-      <Route element={<DashboardLayout />}>
+      {/* Ruta pública */}
+      <Route path="/login" element={<Login />} />
 
-        <Route path="/" element={<Dashboard />} />
+      {/* Rutas privadas */}
+      <Route
+        element={
+          <AuthGuard>
+            <DashboardLayout />
+          </AuthGuard>
+        }
+      >
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/contents" element={<Contents />} />
         <Route path="/reusable" element={<Reusable />} />
         <Route path="/admin" element={<Admin />} />
-
       </Route>
+
+      {/* Fallback */}
+      <Route path="*" element={<Login />} />
     </Routes>
-  )
+  );
 }

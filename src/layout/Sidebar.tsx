@@ -1,56 +1,30 @@
-import {
-  LayoutDashboard,
-  FileText,
-  Repeat,
-  Shield,
-  X
-} from "lucide-react"
-import { NavLink } from "react-router-dom"
-import "./Sidebar.scss"
+import { LayoutDashboard, FileText, Repeat, Shield, X } from "lucide-react";
+import { NavLink } from "react-router-dom";
+import "./Sidebar.scss";
 
 type Props = {
-  isOpen: boolean
-  onClose: () => void
-}
+  isOpen: boolean;
+  onClose: () => void;
+  onLogout: () => void;
+};
 
-export default function Sidebar({
-  isOpen,
-  onClose,
-}: Props) {
+export default function Sidebar({ isOpen, onClose, onLogout }: Props) {
   return (
     <>
-      {/* Overlay mobile */}
-      {isOpen && (
-        <div
-          className="sidebar-overlay"
-          onClick={onClose}
-        />
-      )}
+      {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
 
-      {/* Sidebar panel */}
-      <aside
-        className={`sidebar ${
-          isOpen ? "sidebar--open" : ""
-        }`}
-      >
-        {/* Header mobile */}
+      <aside className={`sidebar ${isOpen ? "sidebar--open" : ""}`}>
         <div className="sidebar__header sidebar__header--mobile">
           <h2>Content Manager</h2>
-
           <button onClick={onClose}>
             <X size={20} />
           </button>
         </div>
 
-        {/* Header desktop */}
-        <h2 className="sidebar__title">
-          Content Manager
-        </h2>
+        <h2 className="sidebar__title">Content Manager</h2>
 
-        {/* Navigation */}
         <nav className="sidebar__nav">
-
-          <NavLink to="/" onClick={onClose}>
+          <NavLink to="/dashboard" onClick={onClose}>
             <LayoutDashboard size={18} />
             Dashboard
           </NavLink>
@@ -69,9 +43,12 @@ export default function Sidebar({
             <Shield size={18} />
             Admin
           </NavLink>
-
         </nav>
+
+        <button className="sidebar__logout" onClick={onLogout}>
+          Logout
+        </button>
       </aside>
     </>
-  )
+  );
 }

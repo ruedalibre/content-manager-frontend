@@ -7,38 +7,38 @@ type Props = {
 };
 
 export default function AuthGuard({ children }: Props) {
-  const [loading, setLoading] = useState(true);
-  const [sessionExists, setSessionExists] = useState(false);
+  const [sessionExists, setSessionExists] = useState<boolean | null>(null);
 
   useEffect(() => {
-    const checkSession = async () => {
+    const getInitialSession = async () => {
       const {
         data: { session },
       } = await supabase.auth.getSession();
 
       setSessionExists(!!session);
-      setLoading(false);
     };
 
-    checkSession();
+    getInitialSession();
 
-    const { data: listener } =
-      supabase.auth.onAuthStateChange((_event, session) => {
-        setSessionExists(!!session);
-      });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSessionExists(!!session);
+    });
 
-    return () => {
-      listener.subscription.unsubscribe();
-    };
+    return () => subscription.unsubscribe();
   }, []);
 
-  if (loading) {
+  // Mientras no sabemos el estado
+  if (sessionExists === null) {
     return <div>Loading...</div>;
   }
 
+  // No autenticado
   if (!sessionExists) {
     return <Navigate to="/login" replace />;
   }
 
+  // Autenticado
   return <>{children}</>;
 }

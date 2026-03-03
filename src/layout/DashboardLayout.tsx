@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { Outlet } from "react-router-dom"
+import { supabase } from "../supabaseClient"
 import Sidebar from "./Sidebar.tsx"
 import Topbar from "./Topbar.tsx"
 import "./DashboardLayout.scss"
@@ -9,6 +10,10 @@ export default function DashboardLayout() {
   const [isSidebarOpen, setIsSidebarOpen] =
     useState(false)
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+  }
+
   return (
     <div className="dashboard-layout">
 
@@ -17,6 +22,7 @@ export default function DashboardLayout() {
         onClose={() =>
           setIsSidebarOpen(false)
         }
+        onLogout={handleLogout}
       />
 
       <div className="dashboard-layout__content">

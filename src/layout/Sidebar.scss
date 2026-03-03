@@ -11,6 +11,8 @@
 /* Sidebar base */
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
   position: fixed;
   top: 0;
   left: 0;
@@ -106,6 +108,30 @@
   .sidebar__header--mobile {
     display: none;
   }
+}
+
+/* Logout button */
+
+.sidebar__logout {
+  margin-top: 2rem;
+  padding: 1em;
+  border-top: 1px solid #374151;
+
+  background: #1f2937;
+  border: 1px solid #374151;
+  border-radius: 8px;
+
+  color: #f3f4f6;
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: background 0.2s, border 0.2s;
+}
+
+.sidebar__logout:hover {
+  background: #dc2626;
+  border-color: #dc2626;
 }
 
 /* Mobile behavior */
