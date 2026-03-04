@@ -25,30 +25,23 @@ type Props = {
    COMPONENT
 ========================= */
 
-export default function ContentGrowthTimelineChart({
-  data,
-}: Props) {
+export default function ContentGrowthTimelineChart({ data }: Props) {
   /* -------------------------
      FORMAT DATA FOR CHART
      Convert YYYY-MM → Date
   ------------------------- */
 
   const formattedData = data.map((item) => {
-    const parsedDate = new Date(
-      item.month + "-01"
-    );
+    const parsedDate = new Date(item.month + "-01");
 
     return {
       ...item,
 
       // Label para eje X
-      label: parsedDate.toLocaleDateString(
-        "en-US",
-        {
-          month: "short",
-          year: "numeric",
-        }
-      ),
+      label: parsedDate.toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      }),
 
       // Fecha real por si se usa en tooltip
       fullDate: parsedDate,
@@ -66,11 +59,9 @@ export default function ContentGrowthTimelineChart({
         height: 300,
       }}
     >
-      <ResponsiveContainer>
+      <ResponsiveContainer width="100%" height={350}>
         <LineChart data={formattedData}>
-          <CartesianGrid
-            strokeDasharray="3 3"
-          />
+          <CartesianGrid strokeDasharray="3 3" />
 
           {/* X AXIS */}
           <XAxis dataKey="label" />
@@ -79,11 +70,7 @@ export default function ContentGrowthTimelineChart({
           <YAxis allowDecimals={false} />
 
           {/* TOOLTIP */}
-          <Tooltip
-            labelFormatter={(
-              value
-            ) => `Month: ${value}`}
-          />
+          <Tooltip labelFormatter={(value) => `Month: ${value}`} />
 
           {/* LINE */}
           <Line

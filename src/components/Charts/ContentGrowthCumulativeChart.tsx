@@ -17,27 +17,18 @@ type Props = {
   data: Data[];
 };
 
-export default function ContentGrowthCumulativeChart({
-  data,
-}: Props) {
-  const formattedData = data.map(
-    (item) => {
-      const parsedDate =
-        new Date(item.month + "-01");
+export default function ContentGrowthCumulativeChart({ data }: Props) {
+  const formattedData = data.map((item) => {
+    const parsedDate = new Date(item.month + "-01");
 
-      return {
-        ...item,
-        label:
-          parsedDate.toLocaleDateString(
-            "en-US",
-            {
-              month: "short",
-              year: "numeric",
-            }
-          ),
-      };
-    }
-  );
+    return {
+      ...item,
+      label: parsedDate.toLocaleDateString("en-US", {
+        month: "short",
+        year: "numeric",
+      }),
+    };
+  });
 
   return (
     <div
@@ -46,13 +37,9 @@ export default function ContentGrowthCumulativeChart({
         height: 300,
       }}
     >
-      <ResponsiveContainer>
-        <LineChart
-          data={formattedData}
-        >
-          <CartesianGrid
-            strokeDasharray="3 3"
-          />
+      <ResponsiveContainer width="100%" height={350}>
+        <LineChart data={formattedData}>
+          <CartesianGrid strokeDasharray="3 3" />
 
           <XAxis dataKey="label" />
 

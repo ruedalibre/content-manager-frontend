@@ -18,27 +18,13 @@ export default function ContentsByPlatformChart({
   data: DataItem[];
 }) {
   return (
-    <div style={{ width: "100%", height: 300 }}>
-
-      <ResponsiveContainer>
-
-        <BarChart data={data}>
-
-          <XAxis dataKey="platform_name" />
-
-          <YAxis />
-
-          <Tooltip />
-
-          <Bar
-            dataKey="total_contents"
-            radius={[6, 6, 0, 0]}
-          />
-
-        </BarChart>
-
-      </ResponsiveContainer>
-
-    </div>
+    <ResponsiveContainer width="100%" height={350}>
+      <BarChart data={data}>
+        <XAxis dataKey="platform_name" />
+        <YAxis />
+        <Tooltip />
+        <Bar dataKey="total_contents" radius={[6, 6, 0, 0]} />
+      </BarChart>
+    </ResponsiveContainer>
   );
 }

@@ -18,29 +18,22 @@ type Props = {
    COMPONENT
 ========================= */
 
-export default function ActivityHeatmap({
-  data,
-}: Props) {
+export default function ActivityHeatmap({ data }: Props) {
   /* =========================
      YEARS
   ========================= */
 
   const years = useMemo(() => {
     const set = new Set(
-      data.map((d) =>
-        new Date(d.activity_date).getFullYear(),
-      ),
+      data.map((d) => new Date(d.activity_date).getFullYear()),
     );
 
-    return Array.from(set).sort(
-      (a, b) => b - a,
-    );
+    return Array.from(set).sort((a, b) => b - a);
   }, [data]);
 
-  const [selectedYear, setSelectedYear] =
-    useState<number>(
-      years[0] ?? new Date().getFullYear(),
-    );
+  const [selectedYear, setSelectedYear] = useState<number>(
+    years[0] ?? new Date().getFullYear(),
+  );
 
   /* =========================
      FILTER YEAR
@@ -48,10 +41,7 @@ export default function ActivityHeatmap({
 
   const yearData = useMemo(() => {
     return data.filter(
-      (d) =>
-        new Date(
-          d.activity_date,
-        ).getFullYear() === selectedYear,
+      (d) => new Date(d.activity_date).getFullYear() === selectedYear,
     );
   }, [data, selectedYear]);
 
@@ -63,10 +53,7 @@ export default function ActivityHeatmap({
     const map = new Map<string, number>();
 
     yearData.forEach((d) => {
-      map.set(
-        d.activity_date,
-        d.total_contents,
-      );
+      map.set(d.activity_date, d.total_contents);
     });
 
     return map;
@@ -77,21 +64,23 @@ export default function ActivityHeatmap({
   ========================= */
 
   const days = useMemo(() => {
-    const start = new Date(
-      `${selectedYear}-01-01`,
-    );
+    const startOfYear = new Date(`${selectedYear}-01-01`);
+    const endOfYear = new Date(`${selectedYear}-12-31`);
 
-    const end = new Date(
-      `${selectedYear}-12-31`,
-    );
+    const start = new Date(startOfYear);
+    const end = new Date(endOfYear);
+
+    // 🔥 Mover inicio al lunes anterior
+    const startDay = start.getDay() || 7;
+    start.setDate(start.getDate() - (startDay - 1));
+
+    // 🔥 Mover final al domingo siguiente
+    const endDay = end.getDay() || 7;
+    end.setDate(end.getDate() + (7 - endDay));
 
     const arr: Date[] = [];
 
-    for (
-      let d = new Date(start);
-      d <= end;
-      d.setDate(d.getDate() + 1)
-    ) {
+    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
       arr.push(new Date(d));
     }
 
@@ -109,36 +98,32 @@ export default function ActivityHeatmap({
     }[] = [];
 
     days.forEach((date, index) => {
-      if (date.getDate() === 1) {
-        const weekIndex = Math.floor(
-          index / 7,
-        );
+      const isFirstDayOfMonth = date.getDate() === 1;
+      const isSameYear = date.getFullYear() === selectedYear;
+
+      if (isFirstDayOfMonth && isSameYear) {
+        const weekIndex = Math.floor(index / 7);
 
         labels.push({
-          month: date.toLocaleString(
-            "default",
-            { month: "short" },
-          ),
+          month: date.toLocaleString("default", {
+            month: "short",
+          }),
           column: weekIndex,
         });
       }
     });
 
     return labels;
-  }, [days]);
+  }, [days, selectedYear]);
 
   /* =========================
      INTENSITY
   ========================= */
 
-  const getIntensity = (
-    value: number,
-  ) => {
+  const getIntensity = (value: number) => {
     if (!value) return "heatmap__cell--0";
-    if (value === 1)
-      return "heatmap__cell--1";
-    if (value <= 3)
-      return "heatmap__cell--2";
+    if (value === 1) return "heatmap__cell--1";
+    if (value <= 3) return "heatmap__cell--2";
     return "heatmap__cell--3";
   };
 
@@ -154,14 +139,8 @@ export default function ActivityHeatmap({
         {years.map((year) => (
           <button
             key={year}
-            className={
-              year === selectedYear
-                ? "active"
-                : ""
-            }
-            onClick={() =>
-              setSelectedYear(year)
-            }
+            className={year === selectedYear ? "active" : ""}
+            onClick={() => setSelectedYear(year)}
           >
             {year}
           </button>
@@ -196,19 +175,14 @@ export default function ActivityHeatmap({
 
         <div className="heatmap__grid">
           {days.map((date) => {
-            const key = date
-              .toISOString()
-              .slice(0, 10);
+            const key = date.toISOString().slice(0, 10);
 
-            const value =
-              activityMap.get(key) ?? 0;
+            const value = activityMap.get(key) ?? 0;
 
             return (
               <div
                 key={key}
-                className={`heatmap__cell ${getIntensity(
-                  value,
-                )}`}
+                className={`heatmap__cell ${getIntensity(value)}`}
                 title={`${key}: ${value}`}
               />
             );
