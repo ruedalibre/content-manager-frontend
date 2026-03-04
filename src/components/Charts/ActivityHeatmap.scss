@@ -72,10 +72,9 @@
 /* Cells */
 
 .heatmap__cell {
-  width: 16px;
-  height: 16px;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   border-radius: 2px;
-  background: #ebedf0;
 }
 
 /* Outside year (fade) */

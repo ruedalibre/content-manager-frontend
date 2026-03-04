@@ -38,8 +38,7 @@ type CumulativeGrowthData = {
 type GrowthRateData = {
   month: string;
   total_contents: number;
-  previous_total: number | null;
-  growth_rate_percent: number | null;
+  growth_rate: number | null;
 };
 
 type HeatmapData = {
@@ -64,18 +63,16 @@ export default function Dashboard() {
   const [data, setData] = useState<DashboardData | null>(null);
   const [platformData, setPlatformData] = useState<PlatformData[]>([]);
   const [timelineData, setTimelineData] = useState<GrowthTimelineData[]>([]);
-  const [cumulativeData, setCumulativeData] =
-    useState<CumulativeGrowthData[]>([]);
-  const [growthRateData, setGrowthRateData] =
-    useState<GrowthRateData[]>([]);
+  const [cumulativeData, setCumulativeData] = useState<CumulativeGrowthData[]>(
+    [],
+  );
+  const [growthRateData, setGrowthRateData] = useState<GrowthRateData[]>([]);
   const [heatmapData, setHeatmapData] = useState<HeatmapData[]>([]);
   const [loading, setLoading] = useState(true);
   const [insights, setInsights] = useState<Insight[]>([]);
-  const { setTopbarContext } =
-    useOutletContext<OutletContext>();
+  const { setTopbarContext } = useOutletContext<OutletContext>();
 
-  const [period, setPeriod] =
-    useState<"7d" | "30d" | "90d">("30d");
+  const [period, setPeriod] = useState<"7d" | "30d" | "90d">("30d");
 
   /* =========================
      DATA FETCHING
@@ -91,8 +88,7 @@ export default function Dashboard() {
           apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
         };
 
-        const baseUrl =
-          import.meta.env.VITE_SUPABASE_URL;
+        const baseUrl = import.meta.env.VITE_SUPABASE_URL;
 
         const fetchDashboard = fetch(
           `${baseUrl}/functions/v1/me-dashboard?period=${period}`,
@@ -191,6 +187,11 @@ export default function Dashboard() {
     };
   }, [loading, data, period, setTopbarContext]);
 
+  useEffect(() => {
+    console.log("PERIOD:", period);
+    console.log("GROWTH RATE DATA:", growthRateData);
+  }, [growthRateData, period]);
+
   /* =========================
      LOADING STATES
   ========================= */
@@ -209,18 +210,15 @@ export default function Dashboard() {
 
   const latestGrowthRate =
     growthRateData.length > 0
-      ? growthRateData.at(-1)?.growth_rate_percent
+      ? (growthRateData.at(-1)?.growth_rate ?? null)
       : null;
 
   const roundedRate =
-    latestGrowthRate !== null &&
-    latestGrowthRate !== undefined
+    latestGrowthRate !== null && latestGrowthRate !== undefined
       ? Math.round(latestGrowthRate)
       : null;
 
-  const getGrowthRateVisual = (
-    rate: number | null,
-  ) => {
+  const getGrowthRateVisual = (rate: number | null) => {
     if (rate === null) {
       return {
         label: "—",
@@ -252,8 +250,7 @@ export default function Dashboard() {
     };
   };
 
-  const growthVisual =
-    getGrowthRateVisual(roundedRate);
+  const growthVisual = getGrowthRateVisual(roundedRate);
 
   /* =========================
      RENDER
@@ -261,16 +258,11 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-
       {/* Period Selector */}
       <div className="dashboard__controls">
         <select
           value={period}
-          onChange={(e) =>
-            setPeriod(
-              e.target.value as "7d" | "30d" | "90d",
-            )
-          }
+          onChange={(e) => setPeriod(e.target.value as "7d" | "30d" | "90d")}
         >
           <option value="7d">Last 7 days</option>
           <option value="30d">Last 30 days</option>
@@ -297,12 +289,8 @@ export default function Dashboard() {
 
         <div className="kpi-card">
           <span>Growth Rate</span>
-          <h3
-            className={`growth-rate ${growthVisual.className}`}
-          >
-            <span className="growth-rate__arrow">
-              {growthVisual.arrow}
-            </span>
+          <h3 className={`growth-rate ${growthVisual.className}`}>
+            <span className="growth-rate__arrow">{growthVisual.arrow}</span>
             {growthVisual.label}
           </h3>
         </div>
@@ -311,9 +299,7 @@ export default function Dashboard() {
           <span>Last Activity</span>
           <h3>
             {data.last_activity
-              ? new Date(
-                  data.last_activity,
-                ).toLocaleDateString()
+              ? new Date(data.last_activity).toLocaleDateString()
               : "—"}
           </h3>
         </div>
