@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import "./ActivityHeatmap.scss";
 
+import { parseLocalDate } from "../../utils/chartDate";
+
 /* =========================
    TYPES
 ========================= */
@@ -32,7 +34,7 @@ export default function ActivityHeatmap({ data }: Props) {
 
   const years = useMemo(() => {
     const set = new Set(
-      data.map((d) => new Date(d.activity_date).getFullYear()),
+      data.map((d) => parseLocalDate(d.activity_date).getFullYear()),
     );
 
     return Array.from(set).sort((a, b) => b - a);
@@ -48,7 +50,8 @@ export default function ActivityHeatmap({ data }: Props) {
 
   const yearData = useMemo(() => {
     return data.filter(
-      (d) => new Date(d.activity_date).getFullYear() === selectedYear,
+      (d) =>
+        parseLocalDate(d.activity_date).getFullYear() === selectedYear,
     );
   }, [data, selectedYear]);
 
@@ -72,7 +75,6 @@ export default function ActivityHeatmap({ data }: Props) {
 
   const days = useMemo(() => {
     const startOfYear = new Date(selectedYear, 0, 1);
-
     const endOfYear = new Date(selectedYear, 11, 31);
 
     const start = new Date(startOfYear);
@@ -108,7 +110,8 @@ export default function ActivityHeatmap({ data }: Props) {
       const firstDay = new Date(selectedYear, m, 1);
 
       const diff =
-        (firstDay.getTime() - gridStart.getTime()) / (1000 * 60 * 60 * 24);
+        (firstDay.getTime() - gridStart.getTime()) /
+        (1000 * 60 * 60 * 24);
 
       const weekIndex = Math.round(diff / 7);
 
@@ -223,7 +226,7 @@ export default function ActivityHeatmap({ data }: Props) {
           })}
         </div>
       </div>
-      
+
       {tooltip && (
         <div
           className="heatmap__tooltip"
@@ -234,7 +237,7 @@ export default function ActivityHeatmap({ data }: Props) {
         >
           <strong>{tooltip.value}</strong> publication
           {tooltip.value !== 1 ? "s" : ""} on{" "}
-          {new Date(tooltip.date).toLocaleDateString()}
+          {parseLocalDate(tooltip.date).toLocaleDateString()}
         </div>
       )}
     </div>

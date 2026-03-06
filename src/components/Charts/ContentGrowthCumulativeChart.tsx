@@ -8,7 +8,11 @@ import {
   CartesianGrid,
 } from "recharts";
 
-import { parseLocalMonth } from "../../utils/date.ts";
+import {
+  sortChartData,
+  formatChartLabel,
+  formatChartTooltip,
+} from "../../utils/chartDate";
 
 type Data = {
   month: string;
@@ -20,18 +24,22 @@ type Props = {
 };
 
 export default function ContentGrowthCumulativeChart({ data }: Props) {
+  if (!data || data.length === 0) return null;
 
-  const formattedData = data.map((item) => {
-    const parsedDate = parseLocalMonth(item.month);
+  /* -------------------------
+     SORT DATA USING HELPER
+  ------------------------- */
 
-    return {
-      ...item,
-      label: parsedDate.toLocaleDateString("en-US", {
-        month: "short",
-        year: "numeric",
-      }),
-    };
-  });
+  const sortedData = sortChartData(data);
+
+  /* -------------------------
+     FORMAT DATA
+  ------------------------- */
+
+  const formattedData = sortedData.map((item) => ({
+    ...item,
+    rawLabel: item.month,
+  }));
 
   return (
     <div
@@ -44,11 +52,30 @@ export default function ContentGrowthCumulativeChart({ data }: Props) {
         <LineChart data={formattedData}>
           <CartesianGrid strokeDasharray="3 3" />
 
-          <XAxis dataKey="label" />
+          {/* X AXIS */}
+
+          <XAxis
+            dataKey="rawLabel"
+            tickFormatter={(value) => formatChartLabel(value)}
+          />
+
+          {/* Y AXIS */}
 
           <YAxis allowDecimals={false} />
 
-          <Tooltip />
+          {/* TOOLTIP */}
+
+          <Tooltip
+            labelFormatter={(value, payload) => {
+              if (!payload || !payload[0]) return value;
+
+              const raw = payload[0].payload.rawLabel;
+
+              return formatChartTooltip(raw);
+            }}
+          />
+
+          {/* LINE */}
 
           <Line
             type="monotone"

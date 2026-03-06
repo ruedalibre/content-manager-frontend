@@ -7,7 +7,12 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import { parseLocalDate } from "../../utils/date.ts";
+
+import {
+  sortChartData,
+  formatChartLabel,
+  formatChartTooltip,
+} from "../../utils/chartDate";
 
 /* =========================
    TYPES
@@ -23,95 +28,17 @@ type Props = {
 };
 
 /* =========================
-   HELPERS
-========================= */
-
-function detectGranularity(value: string) {
-  if (value.includes("W")) return "weekly";
-  if (value.length === 10) return "daily";
-  return "monthly";
-}
-
-function parseWeek(value: string) {
-  const [year, week] = value.split("-W").map(Number);
-  return year * 100 + week;
-}
-
-function formatLabel(value: string, granularity: string) {
-  if (granularity === "monthly") {
-    const parsedDate = parseLocalDate(value);
-
-    return parsedDate.toLocaleDateString("en-US", {
-      month: "short",
-      year: "numeric",
-    });
-  }
-
-  if (granularity === "daily") {
-    const parsedDate = parseLocalDate(value);
-
-    return parsedDate.toLocaleDateString("en-US", {
-      weekday: "short",
-    });
-  }
-
-  if (granularity === "weekly") {
-    return value.replace("W", "Week ");
-  }
-
-  return value;
-}
-
-function formatTooltip(value: string, granularity: string) {
-  if (granularity === "monthly") {
-    const parsedDate = parseLocalDate(value);
-
-    return parsedDate.toLocaleDateString("en-US", {
-      month: "long",
-      year: "numeric",
-    });
-  }
-
-  if (granularity === "daily") {
-    const parsedDate = parseLocalDate(value);
-
-    return parsedDate.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "short",
-      day: "numeric",
-    });
-  }
-
-  if (granularity === "weekly") {
-    return value.replace("W", "Week ");
-  }
-
-  return value;
-}
-
-/* =========================
    COMPONENT
 ========================= */
 
 export default function ContentGrowthTimelineChart({ data }: Props) {
   if (!data || data.length === 0) return null;
 
-  const granularity = detectGranularity(data[0].month);
-
   /* -------------------------
-     SORT DATA CORRECTLY
+     SORT DATA USING HELPER
   ------------------------- */
 
-  const sortedData = [...data].sort((a, b) => {
-    if (granularity === "weekly") {
-      return parseWeek(a.month) - parseWeek(b.month);
-    }
-
-    const dateA = new Date(a.month + "T00:00:00").getTime();
-    const dateB = new Date(b.month + "T00:00:00").getTime();
-
-    return dateA - dateB;
-  });
+  const sortedData = sortChartData(data);
 
   /* -------------------------
      FORMAT DATA
@@ -137,14 +64,20 @@ export default function ContentGrowthTimelineChart({ data }: Props) {
         <LineChart data={formattedData}>
           <CartesianGrid strokeDasharray="3 3" />
 
+          {/* X AXIS */}
+
           <XAxis
             dataKey="rawLabel"
             tickFormatter={(value) =>
-              formatLabel(value, granularity)
+              formatChartLabel(value)
             }
           />
 
+          {/* Y AXIS */}
+
           <YAxis allowDecimals={false} />
+
+          {/* TOOLTIP */}
 
           <Tooltip
             labelFormatter={(value, payload) => {
@@ -152,9 +85,11 @@ export default function ContentGrowthTimelineChart({ data }: Props) {
 
               const raw = payload[0].payload.rawLabel;
 
-              return formatTooltip(raw, granularity);
+              return formatChartTooltip(raw);
             }}
           />
+
+          {/* LINE */}
 
           <Line
             type="monotone"
