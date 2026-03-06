@@ -13,7 +13,7 @@ import {
 ========================= */
 
 export type GrowthTimelineData = {
-  month: string; // "2026-01"
+  month: string;
   total_contents: number;
 };
 
@@ -22,31 +22,104 @@ type Props = {
 };
 
 /* =========================
+   HELPERS
+========================= */
+
+function detectGranularity(value: string) {
+  if (value.includes("W")) return "weekly";
+  if (value.length === 10) return "daily";
+  return "monthly";
+}
+
+function parseWeek(value: string) {
+  const [year, week] = value.split("-W").map(Number);
+  return year * 100 + week;
+}
+
+function formatLabel(value: string, granularity: string) {
+  if (granularity === "monthly") {
+    const parsedDate = new Date(value + "-01T00:00:00");
+
+    return parsedDate.toLocaleDateString("en-US", {
+      month: "short",
+      year: "numeric",
+    });
+  }
+
+  if (granularity === "daily") {
+    const parsedDate = new Date(value + "T00:00:00");
+
+    return parsedDate.toLocaleDateString("en-US", {
+      weekday: "short",
+    });
+  }
+
+  if (granularity === "weekly") {
+    return value.replace("W", "Week ");
+  }
+
+  return value;
+}
+
+function formatTooltip(value: string, granularity: string) {
+  if (granularity === "monthly") {
+    const parsedDate = new Date(value + "-01T00:00:00");
+
+    return parsedDate.toLocaleDateString("en-US", {
+      month: "long",
+      year: "numeric",
+    });
+  }
+
+  if (granularity === "daily") {
+    const parsedDate = new Date(value + "T00:00:00");
+
+    return parsedDate.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  if (granularity === "weekly") {
+    return value.replace("W", "Week ");
+  }
+
+  return value;
+}
+
+/* =========================
    COMPONENT
 ========================= */
 
 export default function ContentGrowthTimelineChart({ data }: Props) {
+  if (!data || data.length === 0) return null;
+
+  const granularity = detectGranularity(data[0].month);
+
   /* -------------------------
-     FORMAT DATA FOR CHART
-     Convert YYYY-MM → Date
+     SORT DATA CORRECTLY
   ------------------------- */
 
-  const formattedData = data.map((item) => {
-    const parsedDate = new Date(item.month + "-01");
+  const sortedData = [...data].sort((a, b) => {
+    if (granularity === "weekly") {
+      return parseWeek(a.month) - parseWeek(b.month);
+    }
 
-    return {
-      ...item,
+    const dateA = new Date(a.month + "T00:00:00").getTime();
+    const dateB = new Date(b.month + "T00:00:00").getTime();
 
-      // Label para eje X
-      label: parsedDate.toLocaleDateString("en-US", {
-        month: "short",
-        year: "numeric",
-      }),
-
-      // Fecha real por si se usa en tooltip
-      fullDate: parsedDate,
-    };
+    return dateA - dateB;
   });
+
+  /* -------------------------
+     FORMAT DATA
+  ------------------------- */
+
+  const formattedData = sortedData.map((item) => ({
+    ...item,
+    rawLabel: item.month,
+  }));
 
   /* =========================
      RENDER
@@ -63,21 +136,31 @@ export default function ContentGrowthTimelineChart({ data }: Props) {
         <LineChart data={formattedData}>
           <CartesianGrid strokeDasharray="3 3" />
 
-          {/* X AXIS */}
-          <XAxis dataKey="label" />
+          <XAxis
+            dataKey="rawLabel"
+            tickFormatter={(value) =>
+              formatLabel(value, granularity)
+            }
+          />
 
-          {/* Y AXIS */}
           <YAxis allowDecimals={false} />
 
-          {/* TOOLTIP */}
-          <Tooltip labelFormatter={(value) => `Month: ${value}`} />
+          <Tooltip
+            labelFormatter={(value, payload) => {
+              if (!payload || !payload[0]) return value;
 
-          {/* LINE */}
+              const raw = payload[0].payload.rawLabel;
+
+              return formatTooltip(raw, granularity);
+            }}
+          />
+
           <Line
             type="monotone"
             dataKey="total_contents"
             stroke="#2563eb"
             strokeWidth={2}
+            dot={{ r: 3 }}
           />
         </LineChart>
       </ResponsiveContainer>
