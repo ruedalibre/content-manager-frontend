@@ -198,7 +198,7 @@ export default function ActivityHeatmap({ data }: Props) {
           }}
         >
           {days.map((date) => {
-            const key = date.toISOString().slice(0, 10);
+            const key = date.toLocaleDateString("sv-SE");
 
             const value = activityMap.get(key) ?? 0;
 
