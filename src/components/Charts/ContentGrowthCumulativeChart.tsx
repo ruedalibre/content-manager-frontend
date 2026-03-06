@@ -8,6 +8,8 @@ import {
   CartesianGrid,
 } from "recharts";
 
+import { parseLocalMonth } from "../../utils/date.ts";
+
 type Data = {
   month: string;
   cumulative_total: number;
@@ -18,8 +20,9 @@ type Props = {
 };
 
 export default function ContentGrowthCumulativeChart({ data }: Props) {
+
   const formattedData = data.map((item) => {
-    const parsedDate = new Date(item.month + "-01");
+    const parsedDate = parseLocalMonth(item.month);
 
     return {
       ...item,

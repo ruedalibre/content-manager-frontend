@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { parseLocalDate } from "../../utils/date.ts";
 
 /* =========================
    TYPES
@@ -38,7 +39,7 @@ function parseWeek(value: string) {
 
 function formatLabel(value: string, granularity: string) {
   if (granularity === "monthly") {
-    const parsedDate = new Date(value + "-01T00:00:00");
+    const parsedDate = parseLocalDate(value);
 
     return parsedDate.toLocaleDateString("en-US", {
       month: "short",
@@ -47,7 +48,7 @@ function formatLabel(value: string, granularity: string) {
   }
 
   if (granularity === "daily") {
-    const parsedDate = new Date(value + "T00:00:00");
+    const parsedDate = parseLocalDate(value);
 
     return parsedDate.toLocaleDateString("en-US", {
       weekday: "short",
@@ -63,7 +64,7 @@ function formatLabel(value: string, granularity: string) {
 
 function formatTooltip(value: string, granularity: string) {
   if (granularity === "monthly") {
-    const parsedDate = new Date(value + "-01T00:00:00");
+    const parsedDate = parseLocalDate(value);
 
     return parsedDate.toLocaleDateString("en-US", {
       month: "long",
@@ -72,7 +73,7 @@ function formatTooltip(value: string, granularity: string) {
   }
 
   if (granularity === "daily") {
-    const parsedDate = new Date(value + "T00:00:00");
+    const parsedDate = parseLocalDate(value);
 
     return parsedDate.toLocaleDateString("en-US", {
       weekday: "long",
