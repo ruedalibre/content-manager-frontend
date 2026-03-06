@@ -4,8 +4,9 @@ import ContentGrowthTimelineChart from "../components/Charts/ContentGrowthTimeli
 import ContentGrowthCumulativeChart from "../components/Charts/ContentGrowthCumulativeChart.tsx";
 import ActivityHeatmap from "../components/Charts/ActivityHeatmap.tsx";
 import InsightsPanel from "../components/Charts/InsightsPanel.tsx";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import "./Dashboard.scss";
+import { supabase } from "../supabaseClient.ts";
 
 /* =========================
    TYPES
@@ -72,6 +73,8 @@ export default function Dashboard() {
 
   const [period, setPeriod] = useState<"7d" | "30d" | "90d">("30d");
 
+  const navigate = useNavigate();
+
   /* =========================
      DATA FETCHING
   ========================= */
@@ -81,15 +84,49 @@ export default function Dashboard() {
       setLoading(true);
 
       try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         const headers = {
-          Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${session?.access_token}`,
           apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
         };
 
         const baseUrl = import.meta.env.VITE_SUPABASE_URL;
 
+        /* =========================
+           1️⃣ FETCH DASHBOARD FIRST
+        ========================= */
+
+        const dashboardRes = await fetch(
+          `${baseUrl}/functions/v1/me-dashboard?period=${period}`,
+          { headers }
+        ).then((r) => r.json());
+
+        setData(dashboardRes);
+
+        /* =========================
+           2️⃣ EMPTY ACCOUNT → STOP
+        ========================= */
+
+        if (dashboardRes.total_contents === 0) {
+          setPlatformData([]);
+          setTimelineData([]);
+          setCumulativeData([]);
+          setGrowthRateData([]);
+          setHeatmapData([]);
+          setInsights([]);
+
+          setLoading(false);
+          return;
+        }
+
+        /* =========================
+           3️⃣ LOAD ANALYTICS
+        ========================= */
+
         const [
-          dashboardRes,
           platformRes,
           growthRes,
           cumulativeRes,
@@ -97,16 +134,35 @@ export default function Dashboard() {
           heatmapRes,
           insightsRes,
         ] = await Promise.all([
-          fetch(`${baseUrl}/functions/v1/me-dashboard?period=${period}`, { headers }).then(r => r.json()),
-          fetch(`${baseUrl}/functions/v1/me-contents-by-platform?period=${period}`, { headers }).then(r => r.json()),
-          fetch(`${baseUrl}/functions/v1/admin-content-growth?period=${period}`, { headers }).then(r => r.json()),
-          fetch(`${baseUrl}/functions/v1/admin-content-growth-cumulative?period=${period}`, { headers }).then(r => r.json()),
-          fetch(`${baseUrl}/functions/v1/admin-content-growth-rate?period=${period}`, { headers }).then(r => r.json()),
-          fetch(`${baseUrl}/functions/v1/me-activity-heatmap`, { headers }).then(r => r.json()), // 🔵 annual, NO period
-          fetch(`${baseUrl}/functions/v1/me-insights?period=${period}`, { headers }).then(r => r.json()),
+          fetch(
+            `${baseUrl}/functions/v1/me-contents-by-platform?period=${period}`,
+            { headers }
+          ).then((r) => r.json()),
+
+          fetch(
+            `${baseUrl}/functions/v1/admin-content-growth?period=${period}`,
+            { headers }
+          ).then((r) => r.json()),
+
+          fetch(
+            `${baseUrl}/functions/v1/admin-content-growth-cumulative?period=${period}`,
+            { headers }
+          ).then((r) => r.json()),
+
+          fetch(
+            `${baseUrl}/functions/v1/admin-content-growth-rate?period=${period}`,
+            { headers }
+          ).then((r) => r.json()),
+
+          fetch(`${baseUrl}/functions/v1/me-activity-heatmap`, {
+            headers,
+          }).then((r) => r.json()),
+
+          fetch(`${baseUrl}/functions/v1/me-insights?period=${period}`, {
+            headers,
+          }).then((r) => r.json()),
         ]);
 
-        setData(dashboardRes);
         setPlatformData(platformRes);
         setTimelineData(growthRes);
         setCumulativeData(cumulativeRes);
@@ -167,12 +223,49 @@ export default function Dashboard() {
 
   const getGrowthRateVisual = (rate: number | null) => {
     if (rate === null) return { label: "—", className: "neutral", arrow: "" };
-    if (rate > 0) return { label: `+${rate}%`, className: "positive", arrow: "↑" };
-    if (rate < 0) return { label: `${rate}%`, className: "negative", arrow: "↓" };
+    if (rate > 0)
+      return { label: `+${rate}%`, className: "positive", arrow: "↑" };
+    if (rate < 0)
+      return { label: `${rate}%`, className: "negative", arrow: "↓" };
     return { label: "0%", className: "neutral", arrow: "→" };
   };
 
   const growthVisual = getGrowthRateVisual(roundedRate);
+
+  /* =========================
+     EMPTY STATE
+  ========================= */
+
+  if (data.total_contents === 0) {
+    return (
+      <div className="dashboard-empty">
+        <span className="dashboard-empty__badge">No data yet</span>
+
+        <div className="dashboard-empty__icon">📊</div>
+
+        <h2>Your analytics will appear here</h2>
+
+        <p>
+          Start by registering your first content to begin tracking your
+          production and unlock insights about your platforms and formats.
+        </p>
+
+        <ul className="dashboard-empty__benefits">
+          <li>Track your content production</li>
+          <li>Identify your top platforms</li>
+          <li>Discover reusable opportunities</li>
+          <li>Understand your growth</li>
+        </ul>
+
+        <button
+          className="btn-primary"
+          onClick={() => navigate("/contents?create=true")}
+        >
+          + Create your first content
+        </button>
+      </div>
+    );
+  }
 
   /* =========================
      RENDER
@@ -180,13 +273,7 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-
-      {/* =========================
-          PERFORMANCE SECTION
-      ========================= */}
-
       <div className="dashboard__performance">
-
         <div className="dashboard__performance-header">
           <div>
             <h2>Performance</h2>
@@ -206,8 +293,6 @@ export default function Dashboard() {
             </select>
           </div>
         </div>
-
-        {/* KPI CARDS */}
 
         <section className="dashboard__kpis">
           <div className="kpi-card">
@@ -260,10 +345,6 @@ export default function Dashboard() {
           <InsightsPanel data={insights} />
         </section>
       </div>
-
-      {/* =========================
-          CONSISTENCY SECTION
-      ========================= */}
 
       <div className="dashboard__consistency">
         <div className="dashboard__consistency-header">

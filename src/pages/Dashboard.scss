@@ -138,3 +138,82 @@
 .heatmap-card {
   min-height: auto;
 }
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.dashboard-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 4rem 2rem;
+  margin-top: 2rem;
+
+  background: white;
+  border-radius: 12px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Icon */
+
+.dashboard-empty__icon {
+  font-size: 42px;
+  margin-bottom: 1rem;
+}
+
+/* Title */
+
+.dashboard-empty h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #111827;
+
+  margin-bottom: 0.5rem;
+}
+
+/* Description */
+
+.dashboard-empty p {
+  font-size: 0.95rem;
+  color: #6b7280;
+
+  max-width: 420px;
+  margin-bottom: 1.5rem;
+}
+
+/* Benefits */
+
+.dashboard-empty__benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+/* CTA */
+
+.dashboard-empty .btn-primary {
+  font-size: 0.9rem;
+  padding: 0.55rem 1.1rem;
+}
+
+.dashboard-empty__badge {
+  font-size: 0.75rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  margin-bottom: 0.8rem;
+}

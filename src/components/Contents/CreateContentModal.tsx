@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./CreateContentModal.scss";
+import { supabase } from "../../supabaseClient.ts";
 
 /* =========================
    TYPES
@@ -66,17 +67,31 @@ export default function CreateContentModal({
   useEffect(() => {
     if (!isOpen) return;
 
-    const headers = {
-      Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
-      apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+    const loadPlatforms = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        const headers = {
+          Authorization: `Bearer ${session?.access_token}`,
+          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+        };
+
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/platforms`,
+          { headers },
+        );
+
+        const data = await res.json();
+
+        setPlatforms(data);
+      } catch (err) {
+        console.error("Platform fetch error:", err);
+      }
     };
 
-    fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/platforms`, {
-      headers,
-    })
-      .then((res) => res.json())
-      .then(setPlatforms)
-      .catch(console.error);
+    loadPlatforms();
   }, [isOpen]);
 
   /* =========================
@@ -129,9 +144,7 @@ export default function CreateContentModal({
     setForm((prev) => ({
       ...prev,
       [name]:
-        type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : value,
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -140,49 +153,53 @@ export default function CreateContentModal({
   ========================= */
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  e.preventDefault();
+  setLoading(true);
+
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
 
     const headers = {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
+      Authorization: `Bearer ${session?.access_token}`,
       apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
     };
 
-    try {
-      const url = isEditMode
-        ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-content/${contentToEdit?.id}`
-        : `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-content`;
+    const url = isEditMode
+      ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-content/${contentToEdit?.id}`
+      : `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-content`;
 
-      const method = isEditMode ? "PUT" : "POST";
+    const method = isEditMode ? "PUT" : "POST";
 
-      const res = await fetch(url, {
-        method,
-        headers,
-        body: JSON.stringify(form),
-      });
+    const res = await fetch(url, {
+      method,
+      headers,
+      body: JSON.stringify(form),
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        console.error(data);
-        alert("Error saving content");
-        setLoading(false);
-        return;
-      }
-
-      /* SUCCESS */
-
-      onCreated();
-      onClose();
-      resetForm();
-    } catch (err) {
-      console.error(err);
-      alert("Unexpected error");
-    } finally {
+    if (!res.ok) {
+      console.error(data);
+      alert("Error saving content");
       setLoading(false);
+      return;
     }
-  };
+
+    /* SUCCESS */
+
+    onCreated();
+    onClose();
+    resetForm();
+  } catch (err) {
+    console.error(err);
+    alert("Unexpected error");
+  } finally {
+    setLoading(false);
+  }
+};
 
   /* =========================
      GUARD
@@ -197,9 +214,7 @@ export default function CreateContentModal({
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h3>
-          {isEditMode ? "Edit Content" : "Create Content"}
-        </h3>
+        <h3>{isEditMode ? "Edit Content" : "Create Content"}</h3>
 
         <form onSubmit={handleSubmit}>
           {/* TITLE */}
@@ -240,11 +255,7 @@ export default function CreateContentModal({
 
           {/* FORMAT */}
 
-          <select
-            name="format"
-            value={form.format}
-            onChange={handleChange}
-          >
+          <select name="format" value={form.format} onChange={handleChange}>
             <option value="post">Post</option>
             <option value="reel">Reel</option>
             <option value="story">Story</option>
@@ -254,11 +265,7 @@ export default function CreateContentModal({
 
           {/* STATUS */}
 
-          <select
-            name="status"
-            value={form.status}
-            onChange={handleChange}
-          >
+          <select name="status" value={form.status} onChange={handleChange}>
             <option value="draft">Draft</option>
             <option value="published">Published</option>
             <option value="archived">Archived</option>
@@ -299,11 +306,7 @@ export default function CreateContentModal({
               Cancel
             </button>
 
-            <button
-              type="submit"
-              className="btn-primary"
-              disabled={loading}
-            >
+            <button type="submit" className="btn-primary" disabled={loading}>
               {loading
                 ? isEditMode
                   ? "Updating..."

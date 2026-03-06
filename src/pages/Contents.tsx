@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import CreateContentModal from "../components/Contents/CreateContentModal";
+import { supabase } from "../supabaseClient.ts";
 import "./Contents.scss";
 
 /* =========================
@@ -44,16 +45,15 @@ export default function Contents() {
 
   const totalPages = Math.ceil(total / limit);
 
-  const [contentToDelete, setContentToDelete] =
-    useState<ContentItem | null>(null);
+  const [contentToDelete, setContentToDelete] = useState<ContentItem | null>(
+    null,
+  );
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const [lastDeleted, setLastDeleted] =
-    useState<ContentItem | null>(null);
+  const [lastDeleted, setLastDeleted] = useState<ContentItem | null>(null);
   const [showToast, setShowToast] = useState(false);
-  const [undoTimeout, setUndoTimeout] =
-    useState<number | null>(null);
+  const [undoTimeout, setUndoTimeout] = useState<number | null>(null);
   const [isRestoring, setIsRestoring] = useState(false);
 
   /* =========================
@@ -65,8 +65,12 @@ export default function Contents() {
       setLoading(true);
       setTopbarContext("Loading...");
 
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       const headers = {
-        Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${session?.access_token}`,
         apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       };
 
@@ -96,9 +100,7 @@ export default function Contents() {
   useEffect(() => {
     if (!loading) {
       setTopbarContext(
-        total === 0
-          ? "No contents yet"
-          : `${total} total contents`
+        total === 0 ? "No contents yet" : `${total} total contents`,
       );
     }
 
@@ -136,8 +138,11 @@ export default function Contents() {
     try {
       setIsDeleting(true);
 
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const headers = {
-        Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${session?.access_token}`,
         apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       };
 
@@ -188,10 +193,14 @@ export default function Contents() {
     try {
       setIsRestoring(true);
 
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
       if (undoTimeout) clearTimeout(undoTimeout);
 
       const headers = {
-        Authorization: `Bearer ${import.meta.env.VITE_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${session?.access_token}`,
         apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       };
 
@@ -280,9 +289,7 @@ export default function Contents() {
                   <td>
                     <div className="content-title">
                       <strong>{item.title}</strong>
-                      {item.description && (
-                        <span>{item.description}</span>
-                      )}
+                      {item.description && <span>{item.description}</span>}
                     </div>
                   </td>
 
@@ -297,9 +304,7 @@ export default function Contents() {
 
                   <td>{item.is_reusable ? "Yes" : "No"}</td>
 
-                  <td>
-                    {new Date(item.created_at).toLocaleDateString()}
-                  </td>
+                  <td>{new Date(item.created_at).toLocaleDateString()}</td>
 
                   <td className="actions-cell">
                     <button
