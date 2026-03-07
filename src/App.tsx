@@ -6,8 +6,69 @@ import Reusable from "./pages/Reusable";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import AuthGuard from "./auth/AuthGuard";
+import { useEffect } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+/* =========================
+   SUPABASE CLIENT
+========================= */
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
+
+/* =========================
+   WARM EDGE FUNCTIONS
+========================= */
+
+async function warmDashboardEndpoints() {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) return;
+
+    const headers = {
+      Authorization: `Bearer ${session.access_token}`,
+    };
+
+    const base =
+      import.meta.env.VITE_SUPABASE_URL + "/functions/v1/";
+
+    const endpoints = [
+      "me-dashboard?period=30d",
+      "me-insights?period=30d",
+      "admin-content-growth?period=30d",
+      "admin-content-growth-cumulative?period=30d",
+      "admin-content-growth-rate?period=30d",
+      "user-activity-heatmap",
+    ];
+
+    endpoints.forEach((endpoint) => {
+      fetch(base + endpoint, { headers }).catch(() => {});
+    });
+  } catch (err) {
+    console.warn("Warmup failed:", err);
+  }
+}
+
+/* =========================
+   APP COMPONENT
+========================= */
 
 export default function App() {
+
+  useEffect(() => {
+    // esperar un poco para no competir con login/render inicial
+    const timer = setTimeout(() => {
+      warmDashboardEndpoints();
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Routes>
       {/* Ruta pública */}
