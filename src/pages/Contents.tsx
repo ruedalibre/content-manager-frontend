@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
 import CreateContentModal from "../components/Contents/CreateContentModal";
 import { supabase } from "../supabaseClient.ts";
@@ -23,6 +23,11 @@ type ContentItem = {
   published_at: string | null;
 };
 
+type Platform = {
+  id: string;
+  name: string;
+};
+
 type OutletContext = {
   setTopbarContext: (value: string | null) => void;
 };
@@ -35,6 +40,12 @@ export default function Contents() {
   const [contents, setContents] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const { setTopbarContext } = useOutletContext<OutletContext>();
+
+  const [platformOptions, setPlatformOptions] = useState<string[]>([]);
+
+  const [search, setSearch] = useState("");
+  const [platformFilter, setPlatformFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contentToEdit, setContentToEdit] = useState<ContentItem | null>(null);
@@ -57,7 +68,7 @@ export default function Contents() {
   const [isRestoring, setIsRestoring] = useState(false);
 
   /* =========================
-     FETCH FUNCTION
+     FETCH CONTENTS
   ========================= */
 
   const fetchContents = async () => {
@@ -80,6 +91,7 @@ export default function Contents() {
       );
 
       const data = await res.json();
+
       setContents(data.results || []);
       setTotal(data.total || 0);
     } catch (err) {
@@ -94,7 +106,81 @@ export default function Contents() {
   }, [page]);
 
   /* =========================
-     MICRO CONTEXT UPDATE
+     FETCH PLATFORMS
+  ========================= */
+
+  useEffect(() => {
+    const loadPlatforms = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        const headers = {
+          Authorization: `Bearer ${session?.access_token}`,
+          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+        };
+
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/platforms`,
+          { headers },
+        );
+
+        const data: Platform[] = await res.json();
+
+        setPlatformOptions(data.map((p) => p.name));
+      } catch (err) {
+        console.error("Platform fetch error:", err);
+      }
+    };
+
+    loadPlatforms();
+  }, []);
+
+  /* =========================
+     STATUS OPTIONS
+  ========================= */
+
+  const statusOptions = useMemo(() => {
+    const set = new Set(contents.map((c) => c.status));
+    return Array.from(set);
+  }, [contents]);
+
+  /* =========================
+     FILTERED DATA
+  ========================= */
+
+  const filteredContents = useMemo(() => {
+    return contents.filter((item) => {
+      const matchesSearch =
+        item.title.toLowerCase().includes(search.toLowerCase()) ||
+        (item.description || "")
+          .toLowerCase()
+          .includes(search.toLowerCase());
+
+      const matchesPlatform =
+        !platformFilter || item.platform_name === platformFilter;
+
+      const matchesStatus =
+        !statusFilter || item.status === statusFilter;
+
+      return matchesSearch && matchesPlatform && matchesStatus;
+    });
+  }, [contents, search, platformFilter, statusFilter]);
+
+  /* =========================
+     CLEAR FILTERS
+  ========================= */
+
+  const clearFilters = () => {
+    setSearch("");
+    setPlatformFilter("");
+    setStatusFilter("");
+    setPage(1);
+  };
+
+  /* =========================
+     MICRO CONTEXT
   ========================= */
 
   useEffect(() => {
@@ -124,7 +210,7 @@ export default function Contents() {
   };
 
   /* =========================
-     DELETE FLOW
+     DELETE
   ========================= */
 
   const handleDeleteClick = (content: ContentItem) => {
@@ -141,6 +227,7 @@ export default function Contents() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
+
       const headers = {
         Authorization: `Bearer ${session?.access_token}`,
         apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
@@ -174,7 +261,6 @@ export default function Contents() {
       setIsDeleteModalOpen(false);
       setContentToDelete(null);
 
-      // 🔥 actualizar total local
       setTotal((prev) => Math.max(prev - 1, 0));
     } catch (err) {
       console.error("Delete failed:", err);
@@ -241,28 +327,79 @@ export default function Contents() {
   return (
     <>
       <div className="contents-page">
+
         <div className="contents-page__header">
           <button className="btn-primary" onClick={handleCreate}>
             + New Content
           </button>
         </div>
 
-        {/* Filters */}
+        {/* FILTERS */}
+
         <div className="contents-filters">
+
           <input
             type="text"
             placeholder="Search content..."
             className="contents-filters__search"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
-          <select className="contents-filters__select">
-            <option>All Platforms</option>
+
+          <select
+            className="contents-filters__select"
+            value={platformFilter}
+            onChange={(e) => {
+              setPlatformFilter(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">All Platforms</option>
+
+            {platformOptions.map((p) => (
+              <option key={p} value={p}>
+                {p}
+              </option>
+            ))}
           </select>
-          <select className="contents-filters__select">
-            <option>All Status</option>
+
+          <select
+            className="contents-filters__select"
+            value={statusFilter}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">All Status</option>
+
+            {statusOptions.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
           </select>
+
+          <button
+            className="btn-secondary"
+            onClick={clearFilters}
+          >
+            Clear
+          </button>
+
         </div>
 
-        {/* Table */}
+        {/* RESULTS COUNT */}
+
+        <div className="contents-results">
+          Showing {filteredContents.length} of {contents.length} contents
+        </div>
+
+        {/* TABLE */}
+
         <div className="contents-table-wrapper">
           <table className="contents-table">
             <thead>
@@ -278,13 +415,13 @@ export default function Contents() {
             </thead>
 
             <tbody>
-              {contents.length === 0 && (
+              {filteredContents.length === 0 && (
                 <tr>
                   <td colSpan={7}>No contents found</td>
                 </tr>
               )}
 
-              {contents.map((item) => (
+              {filteredContents.map((item) => (
                 <tr key={item.id}>
                   <td>
                     <div className="content-title">
@@ -327,8 +464,10 @@ export default function Contents() {
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* PAGINATION */}
+
         <div className="contents-pagination">
+
           <button
             disabled={page === 1}
             onClick={() => setPage((prev) => prev - 1)}
@@ -346,9 +485,11 @@ export default function Contents() {
           >
             {">"}
           </button>
+
         </div>
 
-        {/* Create/Edit Modal */}
+        {/* MODAL */}
+
         <CreateContentModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
@@ -356,17 +497,21 @@ export default function Contents() {
           contentToEdit={contentToEdit}
         />
 
-        {/* Delete Modal */}
+        {/* DELETE MODAL */}
+
         {isDeleteModalOpen && contentToDelete && (
           <div className="delete-modal-overlay">
             <div className="delete-modal">
+
               <h3>Delete content</h3>
+
               <p>
                 This will permanently remove{" "}
                 <strong>{contentToDelete.title}</strong>
               </p>
 
               <div className="delete-modal__actions">
+
                 <button
                   className="btn-link"
                   onClick={() => {
@@ -384,15 +529,20 @@ export default function Contents() {
                 >
                   {isDeleting ? "Deleting..." : "Delete"}
                 </button>
+
               </div>
+
             </div>
           </div>
         )}
 
-        {/* Toast */}
+        {/* TOAST */}
+
         {showToast && lastDeleted && (
           <div className="toast">
+
             <span>Content deleted.</span>
+
             <button
               className="toast__undo"
               onClick={handleUndo}
@@ -400,6 +550,7 @@ export default function Contents() {
             >
               {isRestoring ? "Restoring..." : "Undo"}
             </button>
+
           </div>
         )}
       </div>

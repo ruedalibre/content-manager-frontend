@@ -43,7 +43,7 @@ async function warmDashboardEndpoints() {
       "admin-content-growth?period=30d",
       "admin-content-growth-cumulative?period=30d",
       "admin-content-growth-rate?period=30d",
-      "user-activity-heatmap",
+      "me-activity-heatmap",
     ];
 
     endpoints.forEach((endpoint) => {
