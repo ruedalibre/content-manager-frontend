@@ -1,0 +1,195 @@
+/* =========================
+   PAGE
+========================= */
+
+.admin-page {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.admin-header {
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: #6b7280;
+  }
+}
+
+/* =========================
+   SECTIONS
+========================= */
+
+.admin-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.admin-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+
+  padding: 1rem;
+
+  transition: all 0.15s ease;
+}
+
+.admin-card:hover {
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+}
+
+/* =========================
+   STATS
+========================= */
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+}
+
+.stat-card {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* =========================
+   ACTIVITY
+========================= */
+
+.activity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  li {
+    font-size: 0.85rem;
+    color: #374151;
+  }
+}
+
+/* =========================
+   CONFIG GRID
+========================= */
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+}
+
+.config-card {
+  h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 0.8rem;
+    color: #6b7280;
+  }
+}
+
+/* =========================
+   INTELLIGENCE SIGNALS
+========================= */
+
+.signal-row {
+  display: grid;
+  grid-template-columns: 140px 1fr 40px;
+  align-items: center;
+
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.signal-label {
+  font-size: 0.8rem;
+}
+
+.signal-bar {
+  background: #f3f4f6;
+  border-radius: 6px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.signal-bar-fill {
+  background: #6366f1;
+  height: 100%;
+}
+
+.signal-value {
+  font-size: 0.75rem;
+  color: #6b7280;
+}
+
+/* =========================
+   HEADER LAYOUT
+========================= */
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* =========================
+   SYSTEM STATUS
+========================= */
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 0.8rem;
+  color: #374151;
+}
+
+/* STATUS DOT */
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+
+  background: #22c55e;
+  border-radius: 50%;
+
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+}
