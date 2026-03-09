@@ -34,9 +34,9 @@ export default function Sidebar({ isOpen, onClose, onLogout }: Props) {
             Contents
           </NavLink>
 
-          <NavLink to="/reusable" onClick={onClose}>
+          <NavLink to="/ideas" onClick={onClose}>
             <Repeat size={18} />
-            Reusable
+            Ideas
           </NavLink>
 
           <NavLink to="/admin" onClick={onClose}>

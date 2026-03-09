@@ -16,7 +16,7 @@ export default function Topbar({
   const titles: Record<string, string> = {
     "/dashboard": "Dashboard",
     "/contents": "Contents",
-    "/reusable": "Reusable",
+    "/ideas": "Ideas",
     "/admin": "Admin",
   }
 

@@ -2,13 +2,12 @@ import DashboardLayout from "./layout/DashboardLayout.tsx";
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import Contents from "./pages/Contents";
-import Reusable from "./pages/Reusable";
+import Ideas from "./pages/Ideas.tsx";
 import Admin from "./pages/Admin";
 import Login from "./pages/Login";
 import AuthGuard from "./auth/AuthGuard";
 import { useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
-
 /* =========================
    SUPABASE CLIENT
 ========================= */
@@ -84,7 +83,7 @@ export default function App() {
       >
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/contents" element={<Contents />} />
-        <Route path="/reusable" element={<Reusable />} />
+        <Route path="/ideas" element={<Ideas />} />
         <Route path="/admin" element={<Admin />} />
       </Route>
 

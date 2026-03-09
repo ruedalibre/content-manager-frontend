@@ -1,0 +1,125 @@
+.ideas-page {
+  padding: 2rem;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.ideas-header {
+  margin-bottom: 2rem;
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+  }
+
+  p {
+    color: #6b7280;
+    margin-top: 4px;
+  }
+}
+
+/* =========================
+   CONTENT DNA
+========================= */
+
+.ideas-dna {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dna-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1rem;
+
+  h4 {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.dna-values {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+
+  span {
+    background: #f3f4f6;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+  }
+}
+
+/* =========================
+   LIBRARY
+========================= */
+
+.ideas-library {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 1rem;
+}
+
+.ideas-library__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  input {
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    font-size: 0.85rem;
+  }
+}
+
+/* =========================
+   IDEA LIST
+========================= */
+
+.ideas-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.idea-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: #ffffff;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: #f9fafb;
+  }
+}
+
+.idea-card__note {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.idea-card__meta {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.ideas-empty {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
