@@ -96,6 +96,14 @@
   border-collapse: collapse;
 }
 
+.contents-table tbody tr {
+  transition: background 0.15s ease;
+}
+
+.contents-table tbody tr:hover {
+  background: #f9fafb;
+}
+
 .contents-table th,
 .contents-table td {
   padding: 0.9rem 1rem;

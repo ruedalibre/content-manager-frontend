@@ -2,10 +2,17 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  min-height: 7rem;
+  min-height: 6rem;
   padding: 1.2rem 1.5rem;
-  background: white;
+
+  background: rgba(255, 255, 255, 0.85);
   border-bottom: 1px solid #e5e7eb;
+
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  backdrop-filter: blur(6px);
 }
 
 .topbar__title {
