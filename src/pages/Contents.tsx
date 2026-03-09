@@ -41,9 +41,11 @@ export default function Contents() {
   const [loading, setLoading] = useState(true);
   const { setTopbarContext } = useOutletContext<OutletContext>();
 
-  const [platformOptions, setPlatformOptions] = useState<string[]>([]);
+  const [platformOptions, setPlatformOptions] = useState<Platform[]>([]);
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
   const [platformFilter, setPlatformFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
 
@@ -68,6 +70,18 @@ export default function Contents() {
   const [isRestoring, setIsRestoring] = useState(false);
 
   /* =========================
+     SEARCH DEBOUNCE
+  ========================= */
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  /* =========================
      FETCH CONTENTS
   ========================= */
 
@@ -85,10 +99,16 @@ export default function Contents() {
         apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       };
 
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-history?page=${page}&limit=${limit}`,
-        { headers },
-      );
+      let url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-history?page=${page}&limit=${limit}`;
+
+      if (debouncedSearch)
+        url += `&search=${encodeURIComponent(debouncedSearch)}`;
+
+      if (platformFilter) url += `&platform_id=${platformFilter}`;
+
+      if (statusFilter) url += `&status=${statusFilter}`;
+
+      const res = await fetch(url, { headers });
 
       const data = await res.json();
 
@@ -103,7 +123,7 @@ export default function Contents() {
 
   useEffect(() => {
     fetchContents();
-  }, [page]);
+  }, [page, debouncedSearch, platformFilter, statusFilter]);
 
   /* =========================
      FETCH PLATFORMS
@@ -128,7 +148,7 @@ export default function Contents() {
 
         const data: Platform[] = await res.json();
 
-        setPlatformOptions(data.map((p) => p.name));
+        setPlatformOptions(data);
       } catch (err) {
         console.error("Platform fetch error:", err);
       }
@@ -145,28 +165,6 @@ export default function Contents() {
     const set = new Set(contents.map((c) => c.status));
     return Array.from(set);
   }, [contents]);
-
-  /* =========================
-     FILTERED DATA
-  ========================= */
-
-  const filteredContents = useMemo(() => {
-    return contents.filter((item) => {
-      const matchesSearch =
-        item.title.toLowerCase().includes(search.toLowerCase()) ||
-        (item.description || "")
-          .toLowerCase()
-          .includes(search.toLowerCase());
-
-      const matchesPlatform =
-        !platformFilter || item.platform_name === platformFilter;
-
-      const matchesStatus =
-        !statusFilter || item.status === statusFilter;
-
-      return matchesSearch && matchesPlatform && matchesStatus;
-    });
-  }, [contents, search, platformFilter, statusFilter]);
 
   /* =========================
      CLEAR FILTERS
@@ -313,16 +311,10 @@ export default function Contents() {
   };
 
   /* =========================
-     LOADING
+     SKELETON ROWS
   ========================= */
 
-  if (loading) {
-    return <p>Loading contents...</p>;
-  }
-
-  /* =========================
-     RENDER
-  ========================= */
+  const skeletonRows = Array.from({ length: 6 });
 
   return (
     <>
@@ -360,8 +352,8 @@ export default function Contents() {
             <option value="">All Platforms</option>
 
             {platformOptions.map((p) => (
-              <option key={p} value={p}>
-                {p}
+              <option key={p.id} value={p.id}>
+                {p.name}
               </option>
             ))}
           </select>
@@ -383,19 +375,14 @@ export default function Contents() {
             ))}
           </select>
 
-          <button
-            className="btn-secondary"
-            onClick={clearFilters}
-          >
+          <button className="btn-secondary" onClick={clearFilters}>
             Clear
           </button>
 
         </div>
 
-        {/* RESULTS COUNT */}
-
         <div className="contents-results">
-          Showing {filteredContents.length} of {contents.length} contents
+          Showing {contents.length} of {total} contents
         </div>
 
         {/* TABLE */}
@@ -415,51 +402,63 @@ export default function Contents() {
             </thead>
 
             <tbody>
-              {filteredContents.length === 0 && (
+
+              {loading &&
+                skeletonRows.map((_, i) => (
+                  <tr key={i} className="skeleton-row">
+                    <td colSpan={7}>
+                      <div className="skeleton-line"></div>
+                    </td>
+                  </tr>
+                ))}
+
+              {!loading && contents.length === 0 && (
                 <tr>
                   <td colSpan={7}>No contents found</td>
                 </tr>
               )}
 
-              {filteredContents.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <div className="content-title">
-                      <strong>{item.title}</strong>
-                      {item.description && <span>{item.description}</span>}
-                    </div>
-                  </td>
+              {!loading &&
+                contents.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <div className="content-title">
+                        <strong>{item.title}</strong>
+                        {item.description && <span>{item.description}</span>}
+                      </div>
+                    </td>
 
-                  <td>{item.platform_name}</td>
-                  <td>{item.format}</td>
+                    <td>{item.platform_name}</td>
+                    <td>{item.format}</td>
 
-                  <td>
-                    <span className={`status ${item.status}`}>
-                      {item.status}
-                    </span>
-                  </td>
+                    <td>
+                      <span className={`status ${item.status}`}>
+                        {item.status}
+                      </span>
+                    </td>
 
-                  <td>{item.is_reusable ? "Yes" : "No"}</td>
+                    <td>{item.is_reusable ? "Yes" : "No"}</td>
 
-                  <td>{new Date(item.created_at).toLocaleDateString()}</td>
+                    <td>{new Date(item.created_at).toLocaleDateString()}</td>
 
-                  <td className="actions-cell">
-                    <button
-                      className="btn-link"
-                      onClick={() => handleEdit(item)}
-                    >
-                      Edit
-                    </button>
+                    <td className="actions-cell">
+                      <button
+                        className="btn-link"
+                        onClick={() => handleEdit(item)}
+                      >
+                        Edit
+                      </button>
 
-                    <button
-                      className="btn-link btn-link--danger"
-                      onClick={() => handleDeleteClick(item)}
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                      <button
+                        className="btn-link btn-link--danger"
+                        onClick={() => handleDeleteClick(item)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+
             </tbody>
           </table>
         </div>
@@ -488,16 +487,12 @@ export default function Contents() {
 
         </div>
 
-        {/* MODAL */}
-
         <CreateContentModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onCreated={fetchContents}
           contentToEdit={contentToEdit}
         />
-
-        {/* DELETE MODAL */}
 
         {isDeleteModalOpen && contentToDelete && (
           <div className="delete-modal-overlay">
@@ -535,8 +530,6 @@ export default function Contents() {
             </div>
           </div>
         )}
-
-        {/* TOAST */}
 
         {showToast && lastDeleted && (
           <div className="toast">

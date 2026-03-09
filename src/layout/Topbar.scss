@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-
+  min-height: 7rem;
   padding: 1.2rem 1.5rem;
   background: white;
   border-bottom: 1px solid #e5e7eb;
@@ -26,6 +26,8 @@
 .topbar__context {
   font-size: 0.8rem;
   color: #6b7280;
+  min-height: 1rem;
+  transition: opacity 0.15s ease;
 }
 
 /* Desktop hide hamburger */
