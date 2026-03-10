@@ -15,13 +15,13 @@ export default function Sidebar({ isOpen, onClose, onLogout }: Props) {
 
       <aside className={`sidebar ${isOpen ? "sidebar--open" : ""}`}>
         <div className="sidebar__header sidebar__header--mobile">
-          <h2>Content Manager</h2>
+          <h2>Content Intelligence Platform</h2>
           <button onClick={onClose}>
             <X size={20} />
           </button>
         </div>
 
-        <h2 className="sidebar__title">Content Manager</h2>
+        <h2 className="sidebar__title">Content Intelligence Platform</h2>
 
         <nav className="sidebar__nav">
           <NavLink to="/dashboard" onClick={onClose}>

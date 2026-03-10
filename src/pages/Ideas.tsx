@@ -104,7 +104,7 @@ export default function Ideas() {
       ? "Most of your reusable ideas come from video content."
       : `You often generate reusable ideas from ${preferredFormat?.toLowerCase()} content.`;
 
-  const valueStatement = `Your content ideas mostly originate from ${preferredFormat?.toLowerCase()} content.`;
+  // const valueStatement = `Your content ideas mostly originate from ${preferredFormat?.toLowerCase()} content.`;
 
   /* =========================
      IDEA HIGHLIGHT
@@ -120,7 +120,7 @@ export default function Ideas() {
     <div className="ideas-page">
       {/* HEADER */}
 
-      <div className="ideas-value">{valueStatement}</div>
+      {/* <div className="ideas-value">{valueStatement}</div> */}
 
       <div className="ideas-header">
         <h2>Discover reusable ideas and creative patterns from your content history</h2>
