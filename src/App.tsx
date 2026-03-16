@@ -1,10 +1,10 @@
-import DashboardLayout from "./layout/DashboardLayout.tsx";
+import AppLayout from "./app/layout/AppLayout.tsx";
 import { Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import Contents from "./pages/Contents";
-import Ideas from "./pages/Ideas.tsx";
-import Admin from "./pages/Admin";
-import Login from "./pages/Login";
+import Dashboard from "./app/routes/Dashboard.tsx";
+import Contents from "./app/routes/Contents.tsx";
+import Ideas from "./app/routes/Ideas.tsx";
+import Admin from "./app/routes/Admin.tsx";
+import Login from "./app/routes/Login.tsx";
 import AuthGuard from "./auth/AuthGuard";
 import { useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
@@ -77,7 +77,7 @@ export default function App() {
       <Route
         element={
           <AuthGuard>
-            <DashboardLayout />
+            <AppLayout />
           </AuthGuard>
         }
       >

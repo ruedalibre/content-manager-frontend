@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import ContentsByPlatformChart from "../components/Charts/ContentByPlatformChart.tsx";
-import ContentGrowthTimelineChart from "../components/Charts/ContentGrowthTimelineChart.tsx";
-import ContentGrowthCumulativeChart from "../components/Charts/ContentGrowthCumulativeChart.tsx";
-import ActivityHeatmap from "../components/Charts/ActivityHeatmap.tsx";
-import InsightsPanel from "../components/Charts/InsightsPanel.tsx";
+import ContentsByPlatformChart from "../../features/dashboard/components/ContentByPlatformChart.tsx";
+import ContentGrowthTimelineChart from "../../features/dashboard/components/ContentGrowthTimelineChart.tsx";
+import ContentGrowthCumulativeChart from "../../features/dashboard/components/ContentGrowthCumulativeChart.tsx";
+import ActivityHeatmap from "../../features/dashboard/components/ActivityHeatmap.tsx";
+import InsightsPanel from "../../features/dashboard/components/InsightsPanel.tsx";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import "./Dashboard.scss";
-import { supabase } from "../supabaseClient.ts";
+import { supabase } from "../../supabaseClient.ts";
 
 /* =========================
    TYPES

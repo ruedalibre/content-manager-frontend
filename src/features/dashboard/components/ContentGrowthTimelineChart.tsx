@@ -12,7 +12,7 @@ import {
   sortChartData,
   formatChartLabel,
   formatChartTooltip,
-} from "../../utils/chartDate";
+} from "../../../utils/chartDate.ts";
 
 /* =========================
    TYPES

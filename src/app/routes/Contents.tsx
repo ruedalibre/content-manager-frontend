@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
-import CreateContentModal from "../components/Contents/CreateContentModal";
-import { supabase } from "../supabaseClient.ts";
+import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
+import { supabase } from "../../supabaseClient.ts";
 import "./Contents.scss";
 
 /* =========================
