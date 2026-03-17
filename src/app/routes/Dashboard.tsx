@@ -3,6 +3,7 @@ import { useDashboardData } from "../../features/dashboard/hooks/useDashboardDat
 import KPISection from "../../features/dashboard/components/KPISection.tsx";
 import DashboardChartsSection from "../../features/dashboard/components/DashboardChartsSection";
 import DashboardInsightsSection from "../../features/dashboard/components/DashboardInsightsSection";
+import { getGrowthVisual } from "../../utils/growthRate.ts";
 import ActivityHeatmap from "../../features/dashboard/components/ActivityHeatmap.tsx";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import "./Dashboard.scss";
@@ -27,11 +28,13 @@ export default function Dashboard() {
     platformData,
     timelineData,
     cumulativeData,
-    growthRateData,
+    growthRateData, // ✅ agregado
     heatmapData,
     insights,
     loading,
   } = useDashboardData(period);
+
+  const growthVisual = getGrowthVisual(growthRateData); 
 
   const { setTopbarContext } = useOutletContext<OutletContext>();
   const navigate = useNavigate();
@@ -54,7 +57,7 @@ export default function Dashboard() {
       };
 
       setTopbarContext(
-        `${data.total_contents} active contents · ${labels[period]}`,
+        `${data.total_contents} active contents · ${labels[period]}`
       );
     }
 
@@ -67,31 +70,6 @@ export default function Dashboard() {
 
   if (loading) return <p>Loading dashboard...</p>;
   if (!data) return <p>No data available</p>;
-
-  /* =========================
-     GROWTH RATE LOGIC
-  ========================= */
-
-  const latestGrowthRate =
-    growthRateData.length > 0
-      ? (growthRateData.at(-1)?.growth_rate ?? null)
-      : null;
-
-  const roundedRate =
-    latestGrowthRate !== null && latestGrowthRate !== undefined
-      ? Math.round(latestGrowthRate)
-      : null;
-
-  const getGrowthRateVisual = (rate: number | null) => {
-    if (rate === null) return { label: "—", className: "neutral", arrow: "" };
-    if (rate > 0)
-      return { label: `+${rate}%`, className: "positive", arrow: "↑" };
-    if (rate < 0)
-      return { label: `${rate}%`, className: "negative", arrow: "↓" };
-    return { label: "0%", className: "neutral", arrow: "→" };
-  };
-
-  const growthVisual = getGrowthRateVisual(roundedRate);
 
   /* =========================
      EMPTY STATE
