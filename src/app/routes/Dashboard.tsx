@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { useDashboardData } from "../../features/dashboard/hooks/useDashboardData.ts";
 import KPISection from "../../features/dashboard/components/KPISection.tsx";
-import ContentsByPlatformChart from "../../features/dashboard/components/ContentByPlatformChart.tsx";
-import ContentGrowthTimelineChart from "../../features/dashboard/components/ContentGrowthTimelineChart.tsx";
-import ContentGrowthCumulativeChart from "../../features/dashboard/components/ContentGrowthCumulativeChart.tsx";
+import DashboardChartsSection from "../../features/dashboard/components/DashboardChartsSection";
+import DashboardInsightsSection from "../../features/dashboard/components/DashboardInsightsSection";
 import ActivityHeatmap from "../../features/dashboard/components/ActivityHeatmap.tsx";
-import InsightsPanel from "../../features/dashboard/components/InsightsPanel.tsx";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import "./Dashboard.scss";
 
@@ -56,7 +54,7 @@ export default function Dashboard() {
       };
 
       setTopbarContext(
-        `${data.total_contents} active contents · ${labels[period]}`
+        `${data.total_contents} active contents · ${labels[period]}`,
       );
     }
 
@@ -76,7 +74,7 @@ export default function Dashboard() {
 
   const latestGrowthRate =
     growthRateData.length > 0
-      ? growthRateData.at(-1)?.growth_rate ?? null
+      ? (growthRateData.at(-1)?.growth_rate ?? null)
       : null;
 
   const roundedRate =
@@ -159,31 +157,13 @@ export default function Dashboard() {
 
         <KPISection data={data} growthVisual={growthVisual} />
 
-        <section className="dashboard__section">
-          <h3>Contents by Platform</h3>
-          <div className="dashboard__card">
-            <ContentsByPlatformChart data={platformData} />
-          </div>
-        </section>
+        <DashboardChartsSection
+          platformData={platformData}
+          timelineData={timelineData}
+          cumulativeData={cumulativeData}
+        />
 
-        <section className="dashboard__section">
-          <h3>Content Growth Timeline</h3>
-          <div className="dashboard__card">
-            <ContentGrowthTimelineChart data={timelineData} />
-          </div>
-        </section>
-
-        <section className="dashboard__section">
-          <h3>Cumulative Growth</h3>
-          <div className="dashboard__card">
-            <ContentGrowthCumulativeChart data={cumulativeData} />
-          </div>
-        </section>
-
-        <section className="dashboard__section">
-          <h3>Smart Insights</h3>
-          <InsightsPanel data={insights} />
-        </section>
+        <DashboardInsightsSection insights={insights} />
       </div>
 
       <div className="dashboard__consistency">
