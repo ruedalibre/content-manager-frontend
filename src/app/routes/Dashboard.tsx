@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useDashboardData } from "../../features/dashboard/hooks/useDashboardData.ts";
 import ContentsByPlatformChart from "../../features/dashboard/components/ContentByPlatformChart.tsx";
 import ContentGrowthTimelineChart from "../../features/dashboard/components/ContentGrowthTimelineChart.tsx";
 import ContentGrowthCumulativeChart from "../../features/dashboard/components/ContentGrowthCumulativeChart.tsx";
@@ -6,51 +7,10 @@ import ActivityHeatmap from "../../features/dashboard/components/ActivityHeatmap
 import InsightsPanel from "../../features/dashboard/components/InsightsPanel.tsx";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import "./Dashboard.scss";
-import { supabase } from "../../supabaseClient.ts";
 
 /* =========================
    TYPES
 ========================= */
-
-type DashboardData = {
-  total_contents: number;
-  platforms_used: number;
-  reusable_contents?: number;
-  last_activity: string | null;
-};
-
-type PlatformData = {
-  platform_name: string;
-  total_contents: number;
-  percentage: number;
-};
-
-type GrowthTimelineData = {
-  month: string;
-  total_contents: number;
-};
-
-type CumulativeGrowthData = {
-  month: string;
-  total_contents: number;
-  cumulative_total: number;
-};
-
-type GrowthRateData = {
-  month: string;
-  total_contents: number;
-  growth_rate: number | null;
-};
-
-type HeatmapData = {
-  activity_date: string;
-  total_contents: number;
-};
-
-type Insight = {
-  title: string;
-  message: string;
-};
 
 type OutletContext = {
   setTopbarContext: (value: string | null) => void;
@@ -61,123 +21,21 @@ type OutletContext = {
 ========================= */
 
 export default function Dashboard() {
-  const [data, setData] = useState<DashboardData | null>(null);
-  const [platformData, setPlatformData] = useState<PlatformData[]>([]);
-  const [timelineData, setTimelineData] = useState<GrowthTimelineData[]>([]);
-  const [cumulativeData, setCumulativeData] = useState<CumulativeGrowthData[]>([]);
-  const [growthRateData, setGrowthRateData] = useState<GrowthRateData[]>([]);
-  const [heatmapData, setHeatmapData] = useState<HeatmapData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [insights, setInsights] = useState<Insight[]>([]);
-  const { setTopbarContext } = useOutletContext<OutletContext>();
-
   const [period, setPeriod] = useState<"7d" | "30d" | "90d">("30d");
 
+  const {
+    data,
+    platformData,
+    timelineData,
+    cumulativeData,
+    growthRateData,
+    heatmapData,
+    insights,
+    loading,
+  } = useDashboardData(period);
+
+  const { setTopbarContext } = useOutletContext<OutletContext>();
   const navigate = useNavigate();
-
-  /* =========================
-     DATA FETCHING
-  ========================= */
-
-  useEffect(() => {
-    const loadDashboard = async () => {
-      setLoading(true);
-
-      try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        const headers = {
-          Authorization: `Bearer ${session?.access_token}`,
-          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-        };
-
-        const baseUrl = import.meta.env.VITE_SUPABASE_URL;
-
-        /* =========================
-           1️⃣ FETCH DASHBOARD FIRST
-        ========================= */
-
-        const dashboardRes = await fetch(
-          `${baseUrl}/functions/v1/me-dashboard?period=${period}`,
-          { headers }
-        ).then((r) => r.json());
-
-        setData(dashboardRes);
-
-        /* =========================
-           2️⃣ EMPTY ACCOUNT → STOP
-        ========================= */
-
-        if (dashboardRes.total_contents === 0) {
-          setPlatformData([]);
-          setTimelineData([]);
-          setCumulativeData([]);
-          setGrowthRateData([]);
-          setHeatmapData([]);
-          setInsights([]);
-
-          setLoading(false);
-          return;
-        }
-
-        /* =========================
-           3️⃣ LOAD ANALYTICS
-        ========================= */
-
-        const [
-          platformRes,
-          growthRes,
-          cumulativeRes,
-          growthRateRes,
-          heatmapRes,
-          insightsRes,
-        ] = await Promise.all([
-          fetch(
-            `${baseUrl}/functions/v1/me-contents-by-platform?period=${period}`,
-            { headers }
-          ).then((r) => r.json()),
-
-          fetch(
-            `${baseUrl}/functions/v1/admin-content-growth?period=${period}`,
-            { headers }
-          ).then((r) => r.json()),
-
-          fetch(
-            `${baseUrl}/functions/v1/admin-content-growth-cumulative?period=${period}`,
-            { headers }
-          ).then((r) => r.json()),
-
-          fetch(
-            `${baseUrl}/functions/v1/admin-content-growth-rate?period=${period}`,
-            { headers }
-          ).then((r) => r.json()),
-
-          fetch(`${baseUrl}/functions/v1/me-activity-heatmap`, {
-            headers,
-          }).then((r) => r.json()),
-
-          fetch(`${baseUrl}/functions/v1/me-insights?period=${period}`, {
-            headers,
-          }).then((r) => r.json()),
-        ]);
-
-        setPlatformData(platformRes);
-        setTimelineData(growthRes);
-        setCumulativeData(cumulativeRes);
-        setGrowthRateData(growthRateRes);
-        setHeatmapData(heatmapRes);
-        setInsights(insightsRes);
-      } catch (err) {
-        console.error("Dashboard fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadDashboard();
-  }, [period]);
 
   /* =========================
      MICRO CONTEXT
@@ -203,6 +61,10 @@ export default function Dashboard() {
 
     return () => setTopbarContext(null);
   }, [loading, data, period, setTopbarContext]);
+
+  /* =========================
+     LOADING / EMPTY
+  ========================= */
 
   if (loading) return <p>Loading dashboard...</p>;
   if (!data) return <p>No data available</p>;
