@@ -4,7 +4,7 @@ import KPISection from "../../features/dashboard/components/KPISection.tsx";
 import DashboardChartsSection from "../../features/dashboard/components/DashboardChartsSection";
 import DashboardInsightsSection from "../../features/dashboard/components/DashboardInsightsSection";
 import { getGrowthVisual } from "../../utils/growthRate.ts";
-import ActivityHeatmap from "../../features/dashboard/components/ActivityHeatmap.tsx";
+import DashboardConsistencySection from "../../features/dashboard/components/DashboardConsistencySection";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import "./Dashboard.scss";
 
@@ -34,7 +34,7 @@ export default function Dashboard() {
     loading,
   } = useDashboardData(period);
 
-  const growthVisual = getGrowthVisual(growthRateData); 
+  const growthVisual = getGrowthVisual(growthRateData);
 
   const { setTopbarContext } = useOutletContext<OutletContext>();
   const navigate = useNavigate();
@@ -57,7 +57,7 @@ export default function Dashboard() {
       };
 
       setTopbarContext(
-        `${data.total_contents} active contents · ${labels[period]}`
+        `${data.total_contents} active contents · ${labels[period]}`,
       );
     }
 
@@ -144,16 +144,7 @@ export default function Dashboard() {
         <DashboardInsightsSection insights={insights} />
       </div>
 
-      <div className="dashboard__consistency">
-        <div className="dashboard__consistency-header">
-          <h2>Consistency</h2>
-          <p>Your publishing activity across the year</p>
-        </div>
-
-        <div className="dashboard__card heatmap-card">
-          <ActivityHeatmap data={heatmapData} />
-        </div>
-      </div>
+      <DashboardConsistencySection heatmapData={heatmapData} />
     </div>
   );
 }
