@@ -45,6 +45,17 @@ type Insight = {
   message: string;
 };
 
+type ContentDNA = {
+  primary_topic: string | null;
+  primary_format: string | null;
+  primary_role: string | null;
+  top_ideas?: string[];
+  topic_distribution?: {
+    topic: string;
+    percentage: number;
+  }[];
+};
+
 /* =========================
    HOOK
 ========================= */
@@ -53,11 +64,14 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
   const [data, setData] = useState<DashboardData | null>(null);
   const [platformData, setPlatformData] = useState<PlatformData[]>([]);
   const [timelineData, setTimelineData] = useState<GrowthTimelineData[]>([]);
-  const [cumulativeData, setCumulativeData] = useState<CumulativeGrowthData[]>([]);
+  const [cumulativeData, setCumulativeData] = useState<CumulativeGrowthData[]>(
+    [],
+  );
   const [growthRateData, setGrowthRateData] = useState<GrowthRateData[]>([]);
   const [heatmapData, setHeatmapData] = useState<HeatmapData[]>([]);
   const [insights, setInsights] = useState<Insight[]>([]);
   const [loading, setLoading] = useState(true);
+  const [contentDNA, setContentDNA] = useState<ContentDNA | null>(null);
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -81,7 +95,7 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
 
         const dashboardRes = await fetch(
           `${baseUrl}/functions/v1/me-dashboard?period=${period}`,
-          { headers }
+          { headers },
         ).then((r) => r.json());
 
         setData(dashboardRes);
@@ -97,6 +111,7 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
           setGrowthRateData([]);
           setHeatmapData([]);
           setInsights([]);
+          setContentDNA(null);
 
           setLoading(false);
           return;
@@ -113,25 +128,26 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
           growthRateRes,
           heatmapRes,
           insightsRes,
+          dnaRes,
         ] = await Promise.all([
           fetch(
             `${baseUrl}/functions/v1/me-contents-by-platform?period=${period}`,
-            { headers }
+            { headers },
           ).then((r) => r.json()),
 
           fetch(
             `${baseUrl}/functions/v1/admin-content-growth?period=${period}`,
-            { headers }
+            { headers },
           ).then((r) => r.json()),
 
           fetch(
             `${baseUrl}/functions/v1/admin-content-growth-cumulative?period=${period}`,
-            { headers }
+            { headers },
           ).then((r) => r.json()),
 
           fetch(
             `${baseUrl}/functions/v1/admin-content-growth-rate?period=${period}`,
-            { headers }
+            { headers },
           ).then((r) => r.json()),
 
           fetch(`${baseUrl}/functions/v1/me-activity-heatmap`, {
@@ -139,6 +155,11 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
           }).then((r) => r.json()),
 
           fetch(`${baseUrl}/functions/v1/me-insights?period=${period}`, {
+            headers,
+          }).then((r) => r.json()),
+
+          // ✅ NUEVO
+          fetch(`${baseUrl}/functions/v1/content-dna`, {
             headers,
           }).then((r) => r.json()),
         ]);
@@ -149,6 +170,7 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
         setGrowthRateData(growthRateRes);
         setHeatmapData(heatmapRes);
         setInsights(insightsRes);
+        setContentDNA(dnaRes);
       } catch (err) {
         console.error("Dashboard fetch error:", err);
       } finally {
@@ -171,6 +193,7 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
     growthRateData,
     heatmapData,
     insights,
+    contentDNA,
     loading,
   };
 }

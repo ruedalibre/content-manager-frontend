@@ -17,17 +17,6 @@ type OutletContext = {
   setTopbarContext: (value: string | null) => void;
 };
 
-type ContentDNA = {
-  primary_topic: string | null;
-  primary_format: string | null;
-  primary_role: string | null;
-  top_ideas?: string[];
-  topic_distribution?: {
-    topic: string;
-    percentage: number;
-  }[];
-} | null;
-
 /* =========================
    COMPONENT
 ========================= */
@@ -43,6 +32,7 @@ export default function Dashboard() {
     growthRateData,
     heatmapData,
     insights,
+    contentDNA,
     loading,
   } = useDashboardData(period);
 
@@ -50,12 +40,6 @@ export default function Dashboard() {
 
   const { setTopbarContext } = useOutletContext<OutletContext>();
   const navigate = useNavigate();
-
-  /* =========================
-     CONTENT DNA (placeholder)
-  ========================= */
-
-  const [contentDNA] = useState<ContentDNA>(null);
 
   /* =========================
      MICRO CONTEXT
