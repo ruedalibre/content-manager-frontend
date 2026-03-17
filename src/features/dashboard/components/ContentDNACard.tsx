@@ -109,6 +109,7 @@ export default function ContentDNACard({ dna }: Props) {
         title: idea,
         description: "Generated from Content DNA",
         tenant_id: userRecord.tenant_id,
+        source: "content_dna",
       });
 
       if (error) {

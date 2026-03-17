@@ -1,162 +1,94 @@
 import { useState } from "react";
-import { Youtube, Instagram, Video } from "lucide-react";
+import { useIdeas } from "../../features/ideas/hooks/useIdeas";
 import "./Ideas.scss";
-
-/* =========================
-   TYPES
-========================= */
-
-type IdeaItem = {
-  id: string;
-  note: string;
-  platform: string;
-  format: string;
-  created_at: string;
-};
-
-/* =========================
-   MOCK DATA
-========================= */
-
-const mockIdeas: IdeaItem[] = [
-  {
-    id: "1",
-    note: "Hook about productivity burnout",
-    platform: "YouTube",
-    format: "Video",
-    created_at: "2026-03-02",
-  },
-  {
-    id: "2",
-    note: "Story about first freelance client",
-    platform: "Instagram",
-    format: "Post",
-    created_at: "2026-03-04",
-  },
-  {
-    id: "3",
-    note: "Insight about batching content",
-    platform: "TikTok",
-    format: "Video",
-    created_at: "2026-03-06",
-  },
-];
-
-/* =========================
-   HELPERS
-========================= */
-
-const getMostFrequent = (arr: string[]) => {
-  if (arr.length === 0) return null;
-
-  const counts: Record<string, number> = {};
-
-  arr.forEach((item) => {
-    counts[item] = (counts[item] || 0) + 1;
-  });
-
-  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
-};
-
-const getPlatformIcon = (platform: string) => {
-  switch (platform.toLowerCase()) {
-    case "youtube":
-      return <Youtube size={14} />;
-    case "instagram":
-      return <Instagram size={14} />;
-    case "tiktok":
-      return <Video size={14} />;
-    default:
-      return null;
-  }
-};
 
 /* =========================
    COMPONENT
 ========================= */
 
 export default function Ideas() {
-  const [ideas] = useState<IdeaItem[]>(mockIdeas);
   const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<"all" | "manual" | "generated">("all");
+
+  const { ideas, loading } = useIdeas(filter);
 
   /* =========================
-     FILTER
+     FILTER (search)
   ========================= */
 
   const filteredIdeas = ideas.filter((idea) =>
-    idea.note.toLowerCase().includes(search.toLowerCase()),
+    idea.title.toLowerCase().includes(search.toLowerCase()),
   );
 
   /* =========================
-     CONTENT DNA
+     IDEA HIGHLIGHT (simple v1)
   ========================= */
 
-  const formats = ideas.map((i) => i.format);
-  const platforms = ideas.map((i) => i.platform);
-
-  const preferredFormat = getMostFrequent(formats);
-  const preferredPlatform = getMostFrequent(platforms);
-
-  const dnaInsight = `You frequently create ${preferredFormat?.toLowerCase()} content on ${preferredPlatform}.`;
-
-  const insight =
-    preferredFormat === "Video"
-      ? "Most of your reusable ideas come from video content."
-      : `You often generate reusable ideas from ${preferredFormat?.toLowerCase()} content.`;
-
-  // const valueStatement = `Your content ideas mostly originate from ${preferredFormat?.toLowerCase()} content.`;
+  const highlightIdea = filteredIdeas.length > 0 ? filteredIdeas[0] : null;
 
   /* =========================
-     IDEA HIGHLIGHT
+     LOADING / EMPTY
   ========================= */
 
-  const highlightIdea = ideas[0];
-
-  /* =========================
-     RENDER
-  ========================= */
+  if (loading) return <p>Loading ideas...</p>;
 
   return (
     <div className="ideas-page">
       {/* HEADER */}
 
-      {/* <div className="ideas-value">{valueStatement}</div> */}
-
       <div className="ideas-header">
-        <h2>Discover reusable ideas and creative patterns from your content history</h2>
+        <h2>
+          Discover reusable ideas and creative patterns from your content
+          history
+        </h2>
       </div>
 
-      {/* CONTENT DNA */}
+      {/* FILTERS */}
 
-      <div className="ideas-dna-banner">
-        <strong>Your Content DNA</strong>
-        <p>{dnaInsight}</p>
-      </div>
+      <div className="ideas-filters">
+        <button
+          className={filter === "all" ? "active" : ""}
+          onClick={() => setFilter("all")}
+        >
+          All
+        </button>
 
-      <div className="ideas-insight">
-        <div className="ideas-insight__title">
-          <span className="insight-dot"></span>
-          Insight
-        </div>
-        <p>{insight}</p>
+        <button
+          className={filter === "manual" ? "active" : ""}
+          onClick={() => setFilter("manual")}
+        >
+          Manual
+        </button>
+
+        <button
+          className={filter === "generated" ? "active" : ""}
+          onClick={() => setFilter("generated")}
+        >
+          Generated
+        </button>
       </div>
 
       {/* IDEA HIGHLIGHT */}
 
       {highlightIdea && (
         <div className="idea-highlight">
-          <div className="idea-highlight__label">Idea Highlight</div>
+          <div className="idea-highlight__label">Top Idea</div>
 
-          <div className="idea-highlight__note">{highlightIdea.note}</div>
+          <div className="idea-highlight__note">
+            {highlightIdea.title}
+          </div>
 
           <div className="idea-highlight__meta">
-            {highlightIdea.platform} • {highlightIdea.format} •{" "}
+            {highlightIdea.source === "manual"
+              ? "Manual"
+              : "Generated"}{" "}
+            •{" "}
             {new Date(highlightIdea.created_at).toLocaleDateString()}
           </div>
 
           <p className="idea-highlight__explain">
-            This idea appears across your content patterns and could be reused
-            in future pieces.
+            This idea is part of your creative system and can be reused across
+            multiple pieces of content.
           </p>
         </div>
       )}
@@ -165,7 +97,7 @@ export default function Ideas() {
 
       <div className="ideas-library">
         <div className="ideas-library__header">
-          <h3>Reusable Ideas</h3>
+          <h3>Ideas Library</h3>
 
           <input
             type="text"
@@ -183,24 +115,23 @@ export default function Ideas() {
           )}
 
           {filteredIdeas.map((idea) => {
-            const relatedIdeas = ideas
-              .filter((i) => i.id !== idea.id)
-              .slice(0, 2);
+            const isGenerated = idea.source === "dna_generated";
 
             return (
               <div key={idea.id} className="idea-card">
-                <div className="idea-card__note">{idea.note}</div>
+                <div className="idea-card__note">{idea.title}</div>
 
                 <div className="idea-card__meta">
                   <div className="idea-badges">
                     <span
-                      className={`badge badge--platform ${idea.platform.toLowerCase()}`}
+                      className={`badge ${
+                        isGenerated
+                          ? "badge--generated"
+                          : "badge--manual"
+                      }`}
                     >
-                      {getPlatformIcon(idea.platform)}
-                      {idea.platform}
+                      {isGenerated ? "Generated" : "Manual"}
                     </span>
-
-                    <span className="badge badge--format">{idea.format}</span>
                   </div>
 
                   <span className="idea-date">
@@ -208,19 +139,13 @@ export default function Ideas() {
                   </span>
                 </div>
 
-                {/* RELATED IDEAS */}
+                {/* FUTURO: acciones */}
 
-                {relatedIdeas.length > 0 && (
-                  <div className="idea-card__related">
-                    <span className="related-label">Related ideas</span>
-
-                    <ul>
-                      {relatedIdeas.map((r) => (
-                        <li key={r.id}>{r.note}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                <div className="idea-card__actions">
+                  <button className="btn-secondary">
+                    Use idea
+                  </button>
+                </div>
               </div>
             );
           })}
