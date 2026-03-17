@@ -1,6 +1,7 @@
 import "./ContentDNACard.scss";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { generateIdeasFromDNA } from "../../../utils/generateIdeasFromDNA.ts";
+import { supabase } from "../../../supabaseClient.ts";
 
 /* =========================
    TYPES
@@ -30,20 +31,110 @@ type Props = {
 export default function ContentDNACard({ dna }: Props) {
   const [generatedIdeas, setGeneratedIdeas] = useState<string[]>([]);
   const [showIdeas, setShowIdeas] = useState(false);
+  const [savedIdeas, setSavedIdeas] = useState<string[]>([]);
+  const [existingIdeas, setExistingIdeas] = useState<string[]>([]);
+
+  /* =========================
+     LOAD EXISTING IDEAS
+  ========================= */
+
+  useEffect(() => {
+    const loadIdeas = async () => {
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        if (!user) return;
+
+        const { data: userRecord, error: userError } = await supabase
+          .from("users")
+          .select("tenant_id")
+          .eq("id", user.id)
+          .single();
+
+        if (userError) throw userError;
+        if (!userRecord) return;
+
+        const { data: ideas } = await supabase
+          .from("creative_units")
+          .select("title")
+          .eq("tenant_id", userRecord.tenant_id);
+
+        if (ideas) {
+          setExistingIdeas(ideas.map((i: { title: string }) => i.title));
+        }
+      } catch (err) {
+        console.error("Error loading ideas:", err);
+      }
+    };
+
+    loadIdeas();
+  }, []);
+
+  /* =========================
+     GENERATE IDEAS
+  ========================= */
 
   const handleGenerateIdeas = () => {
     if (!dna) return;
 
     const ideas = generateIdeasFromDNA(dna);
-
     setGeneratedIdeas(ideas);
     setShowIdeas(true);
   };
+
+  /* =========================
+     SAVE IDEA
+  ========================= */
+
+  const handleSaveIdea = async (idea: string) => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      const { data: userRecord, error: userError } = await supabase
+        .from("users")
+        .select("tenant_id")
+        .eq("id", user.id)
+        .single();
+
+      if (userError) throw userError;
+      if (!userRecord) return;
+
+      const { error } = await supabase.from("creative_units").insert({
+        title: idea,
+        description: "Generated from Content DNA",
+        tenant_id: userRecord.tenant_id,
+      });
+
+      if (error) {
+        // evitar duplicados silenciosamente
+        if (error.code === "23505") {
+          setSavedIdeas((prev) => [...prev, idea]);
+          return;
+        }
+        throw error;
+      }
+
+      // actualizar estados
+      setSavedIdeas((prev) => [...prev, idea]);
+      setExistingIdeas((prev) => [...prev, idea]);
+    } catch (err) {
+      console.error("Error saving idea:", err);
+    }
+  };
+
   if (!dna) return null;
 
-  const getStrategyMessage = () => {
-    if (!dna) return null;
+  /* =========================
+     STRATEGY MESSAGE
+  ========================= */
 
+  const getStrategyMessage = () => {
     const { primary_topic, primary_format, primary_role } = dna;
 
     if (primary_topic && primary_format && primary_role) {
@@ -61,6 +152,10 @@ export default function ContentDNACard({ dna }: Props) {
     return "Start creating more content to unlock your Content DNA.";
   };
 
+  /* =========================
+     RENDER
+  ========================= */
+
   return (
     <div className="content-dna-card">
       <div className="content-dna-card__header">
@@ -68,26 +163,24 @@ export default function ContentDNACard({ dna }: Props) {
         <p>Your creative identity based on your content</p>
       </div>
 
-      {dna && (
-        <div className="content-dna-card__insight">
-          <p>{getStrategyMessage()}</p>
+      <div className="content-dna-card__insight">
+        <p>{getStrategyMessage()}</p>
 
-          <div className="content-dna-card__actions">
-            <button
-              className="btn-primary"
-              onClick={() => {
-                if (showIdeas) {
-                  setShowIdeas(false);
-                } else {
-                  handleGenerateIdeas();
-                }
-              }}
-            >
-              {showIdeas ? "Hide ideas" : "Generate ideas"}
-            </button>
-          </div>
+        <div className="content-dna-card__actions">
+          <button
+            className="btn-primary"
+            onClick={() => {
+              if (showIdeas) {
+                setShowIdeas(false);
+              } else {
+                handleGenerateIdeas();
+              }
+            }}
+          >
+            {showIdeas ? "Hide ideas" : "Generate ideas"}
+          </button>
         </div>
-      )}
+      </div>
 
       {showIdeas && generatedIdeas.length > 0 && (
         <div className="content-dna-card__ideas">
@@ -96,9 +189,24 @@ export default function ContentDNACard({ dna }: Props) {
           </div>
 
           <ul>
-            {generatedIdeas.map((idea, index) => (
-              <li key={index}>{idea}</li>
-            ))}
+            {generatedIdeas.map((idea, index) => {
+              const isSaved =
+                savedIdeas.includes(idea) || existingIdeas.includes(idea);
+
+              return (
+                <li key={index} className="idea-item">
+                  <span>{idea}</span>
+
+                  <button
+                    className="btn-save"
+                    onClick={() => handleSaveIdea(idea)}
+                    disabled={isSaved}
+                  >
+                    {isSaved ? "Saved ✓" : "Save"}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </div>
       )}
@@ -120,8 +228,6 @@ export default function ContentDNACard({ dna }: Props) {
         </div>
       </div>
 
-      {/* TOP IDEAS */}
-
       {dna.top_ideas && dna.top_ideas.length > 0 && (
         <div className="content-dna-card__section">
           <span className="dna-label">Top Ideas</span>
@@ -136,24 +242,21 @@ export default function ContentDNACard({ dna }: Props) {
         </div>
       )}
 
-      {/* TOPIC DISTRIBUTION */}
-
       {dna.topic_distribution && dna.topic_distribution.length > 0 && (
         <div className="content-dna-card__section">
           <span className="dna-label">Topic Distribution</span>
 
           <div className="dna-bars">
             {dna.topic_distribution.map((t, index) => {
+              const total =
+                dna.topic_distribution?.reduce(
+                  (acc, item) => acc + (item.count || item.total || 0),
+                  0
+                ) || 1;
+
               const percentage =
                 t.percentage ??
-                Math.round(
-                  ((t.count || t.total || 0) /
-                    (dna.topic_distribution?.reduce(
-                      (acc, item) => acc + (item.count || item.total || 0),
-                      0,
-                    ) || 1)) *
-                    100,
-                );
+                Math.round(((t.count || t.total || 0) / total) * 100);
 
               return (
                 <div key={index} className="dna-bar">

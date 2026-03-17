@@ -2,7 +2,6 @@
   background: #ffffff;
   border-radius: 16px;
   padding: 20px;
-  margin-bottom: 20px;
   border: 1px solid #e5e7eb;
 }
 
@@ -135,4 +134,25 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+.idea-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.btn-save {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-save:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
 }
