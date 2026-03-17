@@ -29,14 +29,16 @@ type Props = {
 
 export default function ContentDNACard({ dna }: Props) {
   const [generatedIdeas, setGeneratedIdeas] = useState<string[]>([]);
+  const [showIdeas, setShowIdeas] = useState(false);
 
   const handleGenerateIdeas = () => {
     if (!dna) return;
 
     const ideas = generateIdeasFromDNA(dna);
-    setGeneratedIdeas(ideas);
-  };
 
+    setGeneratedIdeas(ideas);
+    setShowIdeas(true);
+  };
   if (!dna) return null;
 
   const getStrategyMessage = () => {
@@ -71,16 +73,27 @@ export default function ContentDNACard({ dna }: Props) {
           <p>{getStrategyMessage()}</p>
 
           <div className="content-dna-card__actions">
-            <button className="btn-primary" onClick={handleGenerateIdeas}>
-              Generate idea based on this
+            <button
+              className="btn-primary"
+              onClick={() => {
+                if (showIdeas) {
+                  setShowIdeas(false);
+                } else {
+                  handleGenerateIdeas();
+                }
+              }}
+            >
+              {showIdeas ? "Hide ideas" : "Generate ideas"}
             </button>
           </div>
         </div>
       )}
 
-      {generatedIdeas.length > 0 && (
+      {showIdeas && generatedIdeas.length > 0 && (
         <div className="content-dna-card__ideas">
-          <span className="dna-label">Generated Ideas</span>
+          <div className="ideas-header">
+            <span className="dna-label">Generated Ideas</span>
+          </div>
 
           <ul>
             {generatedIdeas.map((idea, index) => (

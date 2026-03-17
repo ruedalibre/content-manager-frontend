@@ -120,3 +120,19 @@
 .content-dna-card__ideas li {
   margin-bottom: 6px;
 }
+
+.content-dna-card__ideas {
+  margin: 16px 0 25px 0;
+  animation: fadeIn 0.2s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
