@@ -3,8 +3,9 @@ import { useDashboardData } from "../../features/dashboard/hooks/useDashboardDat
 import KPISection from "../../features/dashboard/components/KPISection.tsx";
 import DashboardChartsSection from "../../features/dashboard/components/DashboardChartsSection";
 import DashboardInsightsSection from "../../features/dashboard/components/DashboardInsightsSection";
-import { getGrowthVisual } from "../../utils/growthRate.ts";
 import DashboardConsistencySection from "../../features/dashboard/components/DashboardConsistencySection";
+import ContentDNACard from "../../features/dashboard/components/ContentDNACard";
+import { getGrowthVisual } from "../../utils/growthRate.ts";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import "./Dashboard.scss";
 
@@ -15,6 +16,17 @@ import "./Dashboard.scss";
 type OutletContext = {
   setTopbarContext: (value: string | null) => void;
 };
+
+type ContentDNA = {
+  primary_topic: string | null;
+  primary_format: string | null;
+  primary_role: string | null;
+  top_ideas?: string[];
+  topic_distribution?: {
+    topic: string;
+    percentage: number;
+  }[];
+} | null;
 
 /* =========================
    COMPONENT
@@ -28,7 +40,7 @@ export default function Dashboard() {
     platformData,
     timelineData,
     cumulativeData,
-    growthRateData, // ✅ agregado
+    growthRateData,
     heatmapData,
     insights,
     loading,
@@ -38,6 +50,12 @@ export default function Dashboard() {
 
   const { setTopbarContext } = useOutletContext<OutletContext>();
   const navigate = useNavigate();
+
+  /* =========================
+     CONTENT DNA (placeholder)
+  ========================= */
+
+  const [contentDNA] = useState<ContentDNA>(null);
 
   /* =========================
      MICRO CONTEXT
@@ -57,7 +75,7 @@ export default function Dashboard() {
       };
 
       setTopbarContext(
-        `${data.total_contents} active contents · ${labels[period]}`,
+        `${data.total_contents} active contents · ${labels[period]}`
       );
     }
 
@@ -112,6 +130,9 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
+      {/* CONTENT DNA */}
+      {contentDNA && <ContentDNACard dna={contentDNA} />}
+
       <div className="dashboard__performance">
         <div className="dashboard__performance-header">
           <div>
