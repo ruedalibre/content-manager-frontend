@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDashboardData } from "../../features/dashboard/hooks/useDashboardData.ts";
+import KPISection from "../../features/dashboard/components/KPISection.tsx";
 import ContentsByPlatformChart from "../../features/dashboard/components/ContentByPlatformChart.tsx";
 import ContentGrowthTimelineChart from "../../features/dashboard/components/ContentGrowthTimelineChart.tsx";
 import ContentGrowthCumulativeChart from "../../features/dashboard/components/ContentGrowthCumulativeChart.tsx";
@@ -156,30 +157,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <section className="dashboard__kpis">
-          <div className="kpi-card">
-            <span>Total Contents</span>
-            <h3>{data.total_contents}</h3>
-          </div>
-
-          <div className="kpi-card">
-            <span>Platforms Used</span>
-            <h3>{data.platforms_used}</h3>
-          </div>
-
-          <div className="kpi-card">
-            <span>Reusable</span>
-            <h3>{data.reusable_contents ?? 0}</h3>
-          </div>
-
-          <div className="kpi-card">
-            <span>Growth Rate</span>
-            <h3 className={`growth-rate ${growthVisual.className}`}>
-              <span className="growth-rate__arrow">{growthVisual.arrow}</span>
-              {growthVisual.label}
-            </h3>
-          </div>
-        </section>
+        <KPISection data={data} growthVisual={growthVisual} />
 
         <section className="dashboard__section">
           <h3>Contents by Platform</h3>
