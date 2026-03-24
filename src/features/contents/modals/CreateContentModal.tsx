@@ -22,11 +22,17 @@ type Platform = {
   name: string;
   slug: string;
   icon: string;
-  is_active: boolean;     // add this property for filtering
+  is_active: boolean;
   platform_types: {
     id: string;
     name: string;
   };
+};
+
+type Idea = {
+  id: string;
+  title: string;
+  description?: string | null;
 };
 
 type Props = {
@@ -34,6 +40,7 @@ type Props = {
   onClose: () => void;
   onCreated: () => void;
   contentToEdit?: ContentItem | null;
+  idea?: Idea | null;
 };
 
 /* =========================
@@ -45,8 +52,8 @@ export default function CreateContentModal({
   onClose,
   onCreated,
   contentToEdit,
+  idea,
 }: Props) {
-
   /* =========================
      FORM STATE
   ========================= */
@@ -60,6 +67,8 @@ export default function CreateContentModal({
     location: "",
     is_reusable: false,
   });
+
+  const [creativeUnitId, setCreativeUnitId] = useState<string | null>(null);
 
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [formats, setFormats] = useState<string[]>([]);
@@ -76,7 +85,6 @@ export default function CreateContentModal({
 
     const loadPlatforms = async () => {
       try {
-
         const {
           data: { session },
         } = await supabase.auth.getSession();
@@ -94,14 +102,12 @@ export default function CreateContentModal({
         const data: Platform[] = await res.json();
 
         setPlatforms(data);
-
       } catch (err) {
         console.error("Platform fetch error:", err);
       }
     };
 
     loadPlatforms();
-
   }, [isOpen]);
 
   /* =========================
@@ -110,7 +116,6 @@ export default function CreateContentModal({
 
   const fetchFormats = async (platformId: string) => {
     try {
-
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -128,7 +133,6 @@ export default function CreateContentModal({
       const data: string[] = await res.json();
 
       setFormats(data);
-
     } catch (err) {
       console.error("Format fetch error:", err);
     }
@@ -139,9 +143,7 @@ export default function CreateContentModal({
 ========================= */
 
   useEffect(() => {
-
     if (contentToEdit) {
-
       setForm({
         title: contentToEdit.title,
         description: contentToEdit.description ?? "",
@@ -152,22 +154,35 @@ export default function CreateContentModal({
         is_reusable: contentToEdit.is_reusable,
       });
 
+      setCreativeUnitId(null); // edit no depende de idea
+
       fetchFormats(contentToEdit.platform_id);
-
     } else {
-
       resetForm();
-
     }
-
   }, [contentToEdit]);
+
+  /* =========================
+     PREFILL FROM IDEA 🔥
+========================= */
+
+  useEffect(() => {
+    if (!idea || isEditMode) return;
+
+    setForm((prev) => ({
+      ...prev,
+      title: idea.title,
+      description: idea.description ?? "",
+    }));
+
+    setCreativeUnitId(idea.id);
+  }, [idea, isEditMode]);
 
   /* =========================
      RESET FORM
 ========================= */
 
   const resetForm = () => {
-
     setForm({
       title: "",
       description: "",
@@ -179,7 +194,7 @@ export default function CreateContentModal({
     });
 
     setFormats([]);
-
+    setCreativeUnitId(null);
   };
 
   /* =========================
@@ -191,7 +206,6 @@ export default function CreateContentModal({
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-
     const { name, value, type } = e.target;
 
     setForm((prev) => ({
@@ -201,7 +215,6 @@ export default function CreateContentModal({
           ? (e.target as HTMLInputElement).checked
           : value,
     }));
-
   };
 
   /* =========================
@@ -209,7 +222,6 @@ export default function CreateContentModal({
 ========================= */
 
   const handlePlatformChange = async (platformId: string) => {
-
     setForm((prev) => ({
       ...prev,
       platform_id: platformId,
@@ -219,7 +231,6 @@ export default function CreateContentModal({
     if (platformId) {
       await fetchFormats(platformId);
     }
-
   };
 
   /* =========================
@@ -227,12 +238,10 @@ export default function CreateContentModal({
 ========================= */
 
   const handleSubmit = async (e: React.FormEvent) => {
-
     e.preventDefault();
     setLoading(true);
 
     try {
-
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -252,7 +261,10 @@ export default function CreateContentModal({
       const res = await fetch(url, {
         method,
         headers,
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          creative_unit_id: creativeUnitId, // 🔥 clave
+        }),
       });
 
       const data = await res.json();
@@ -267,18 +279,12 @@ export default function CreateContentModal({
       onCreated();
       onClose();
       resetForm();
-
     } catch (err) {
-
       console.error(err);
       alert("Unexpected error");
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   /* =========================
@@ -294,13 +300,24 @@ export default function CreateContentModal({
   return (
     <div className="modal-overlay">
       <div className="modal">
-
         <h3>
-          {isEditMode ? "Edit Content" : "Create Content"}
+          {isEditMode
+            ? "Edit Content"
+            : idea
+            ? "Create from Idea"
+            : "Create Content"}
         </h3>
 
-        <form onSubmit={handleSubmit}>
+        {/* 🔥 CONTEXT */}
 
+        {idea && !isEditMode && (
+          <div className="idea-context">
+            <span>Creating from idea</span>
+            <strong>{idea.title}</strong>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit}>
           {/* TITLE */}
 
           <input
@@ -328,17 +345,13 @@ export default function CreateContentModal({
             onChange={(e) => handlePlatformChange(e.target.value)}
             required
           >
-
-            <option value="">
-              Select platform
-            </option>
+            <option value="">Select platform</option>
 
             {platforms.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name}
               </option>
             ))}
-
           </select>
 
           {/* FORMAT */}
@@ -350,17 +363,13 @@ export default function CreateContentModal({
             disabled={!form.platform_id}
             required
           >
-
-            <option value="">
-              Select format
-            </option>
+            <option value="">Select format</option>
 
             {formats.map((f) => (
               <option key={f} value={f}>
                 {f}
               </option>
             ))}
-
           </select>
 
           {/* STATUS */}
@@ -387,22 +396,18 @@ export default function CreateContentModal({
           {/* REUSABLE */}
 
           <label className="checkbox">
-
             <input
               type="checkbox"
               name="is_reusable"
               checked={form.is_reusable}
               onChange={handleChange}
             />
-
             Reusable
-
           </label>
 
           {/* ACTIONS */}
 
           <div className="modal-actions">
-
             <button
               type="button"
               onClick={() => {
@@ -424,14 +429,13 @@ export default function CreateContentModal({
                   ? "Updating..."
                   : "Creating..."
                 : isEditMode
-                  ? "Update"
-                  : "Create"}
+                ? "Update"
+                : idea
+                ? "Create from Idea"
+                : "Create"}
             </button>
-
           </div>
-
         </form>
-
       </div>
     </div>
   );

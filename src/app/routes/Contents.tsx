@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useOutletContext } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
 import { supabase } from "../../supabaseClient.ts";
 import "./Contents.scss";
@@ -30,6 +31,15 @@ type Platform = {
 
 type OutletContext = {
   setTopbarContext: (value: string | null) => void;
+};
+
+type Idea = {
+  id: string;
+  title: string;
+  description: string | null;
+  tenant_id?: string;
+  created_at?: string;
+  source?: string;
 };
 
 /* =========================
@@ -68,6 +78,37 @@ export default function Contents() {
   const [showToast, setShowToast] = useState(false);
   const [undoTimeout, setUndoTimeout] = useState<number | null>(null);
   const [isRestoring, setIsRestoring] = useState(false);
+
+  const [searchParams] = useSearchParams();
+  const ideaId = searchParams.get("idea");
+
+  const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
+
+  /* =========================
+     LOAD IDEA FROM QUERY PARAM
+  ========================= */
+  useEffect(() => {
+    const loadIdea = async () => {
+      if (!ideaId) return;
+
+      const { data, error } = await supabase
+        .from("creative_units")
+        .select("*")
+        .eq("id", ideaId)
+        .single();
+
+      if (error) {
+        console.error("Error loading idea:", error);
+        return;
+      }
+
+      setSelectedIdea(data);
+      setContentToEdit(null); // importante
+      setIsModalOpen(true); // 🔥 abrir el mismo modal
+    };
+
+    loadIdea();
+  }, [ideaId]);
 
   /* =========================
      SEARCH DEBOUNCE
@@ -199,11 +240,13 @@ export default function Contents() {
 
   const handleEdit = (content: ContentItem) => {
     setContentToEdit(content);
+    setSelectedIdea(null); // 🔥 importante
     setIsModalOpen(true);
   };
 
   const handleCreate = () => {
     setContentToEdit(null);
+    setSelectedIdea(null);
     setIsModalOpen(true);
   };
 
@@ -319,7 +362,6 @@ export default function Contents() {
   return (
     <>
       <div className="contents-page">
-
         <div className="contents-page__header">
           <button className="btn-primary" onClick={handleCreate}>
             + New Content
@@ -329,7 +371,6 @@ export default function Contents() {
         {/* FILTERS */}
 
         <div className="contents-filters">
-
           <input
             type="text"
             placeholder="Search content..."
@@ -378,7 +419,6 @@ export default function Contents() {
           <button className="btn-secondary" onClick={clearFilters}>
             Clear
           </button>
-
         </div>
 
         <div className="contents-results">
@@ -402,7 +442,6 @@ export default function Contents() {
             </thead>
 
             <tbody>
-
               {loading &&
                 skeletonRows.map((_, i) => (
                   <tr key={i} className="skeleton-row">
@@ -458,7 +497,6 @@ export default function Contents() {
                     </td>
                   </tr>
                 ))}
-
             </tbody>
           </table>
         </div>
@@ -466,7 +504,6 @@ export default function Contents() {
         {/* PAGINATION */}
 
         <div className="contents-pagination">
-
           <button
             disabled={page === 1}
             onClick={() => setPage((prev) => prev - 1)}
@@ -484,20 +521,23 @@ export default function Contents() {
           >
             {">"}
           </button>
-
         </div>
 
         <CreateContentModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setContentToEdit(null);
+            setSelectedIdea(null);
+          }}
           onCreated={fetchContents}
           contentToEdit={contentToEdit}
+          idea={selectedIdea}
         />
 
         {isDeleteModalOpen && contentToDelete && (
           <div className="delete-modal-overlay">
             <div className="delete-modal">
-
               <h3>Delete content</h3>
 
               <p>
@@ -506,7 +546,6 @@ export default function Contents() {
               </p>
 
               <div className="delete-modal__actions">
-
                 <button
                   className="btn-link"
                   onClick={() => {
@@ -524,16 +563,13 @@ export default function Contents() {
                 >
                   {isDeleting ? "Deleting..." : "Delete"}
                 </button>
-
               </div>
-
             </div>
           </div>
         )}
 
         {showToast && lastDeleted && (
           <div className="toast">
-
             <span>Content deleted.</span>
 
             <button
@@ -543,7 +579,6 @@ export default function Contents() {
             >
               {isRestoring ? "Restoring..." : "Undo"}
             </button>
-
           </div>
         )}
       </div>
