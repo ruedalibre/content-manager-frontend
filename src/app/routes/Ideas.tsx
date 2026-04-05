@@ -16,7 +16,6 @@ type Idea = {
 ========================= */
 
 export default function Ideas() {
-
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "manual" | "generated">("all");
 
@@ -37,8 +36,7 @@ export default function Ideas() {
      IDEA HIGHLIGHT
   ========================= */
 
-  const highlightIdea =
-    filteredIdeas.length > 0 ? filteredIdeas[0] : null;
+  const highlightIdea = filteredIdeas.length > 0 ? filteredIdeas[0] : null;
 
   /* =========================
      LOADING
@@ -61,7 +59,6 @@ export default function Ideas() {
 
   return (
     <div className="ideas-page">
-
       {/* HEADER */}
 
       <div className="ideas-header">
@@ -74,7 +71,6 @@ export default function Ideas() {
       {/* FILTERS */}
 
       <div className="ideas-filters">
-
         <button
           className={filter === "all" ? "active" : ""}
           onClick={() => setFilter("all")}
@@ -95,46 +91,43 @@ export default function Ideas() {
         >
           Generated
         </button>
-
       </div>
 
       {/* IDEA HIGHLIGHT */}
 
       {highlightIdea && (
-
         <div className="idea-highlight">
+          <div className="idea-highlight__label">Top Idea</div>
 
-          <div className="idea-highlight__label">
-            Top Idea
-          </div>
-
-          <div className="idea-highlight__note">
-            {highlightIdea.title}
-          </div>
+          <div className="idea-highlight__note">{highlightIdea.title}</div>
 
           <div className="idea-highlight__meta">
-            {highlightIdea.source === "manual"
-              ? "Manual"
-              : "Generated"}{" "}
-            •{" "}
+            {highlightIdea.source === "manual" ? "Manual" : "Generated"} •{" "}
             {new Date(highlightIdea.created_at).toLocaleDateString()}
           </div>
 
           <p className="idea-highlight__explain">
-            This idea is part of your creative system and can be reused
-            across multiple pieces of content.
+            This idea is part of your creative system and can be reused across
+            multiple pieces of content.
           </p>
 
-        </div>
+          {/* NEW ACTION */}
 
+          <div className="idea-highlight__actions">
+            <button
+              className="btn-primary"
+              onClick={() => handleUseIdea(highlightIdea)}
+            >
+              Use idea
+            </button>
+          </div>
+        </div>
       )}
 
       {/* IDEAS LIBRARY */}
 
       <div className="ideas-library">
-
         <div className="ideas-library__header">
-
           <h3>Ideas Library</h3>
 
           <input
@@ -143,73 +136,50 @@ export default function Ideas() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-
         </div>
 
         {/* LIST */}
 
         <div className="ideas-list">
-
           {filteredIdeas.length === 0 && (
             <p className="ideas-empty">No ideas found</p>
           )}
 
           {filteredIdeas.map((idea) => {
-
-            const isGenerated =
-              idea.source === "dna_generated";
+            const isGenerated = idea.source === "dna_generated";
 
             return (
-
               <div key={idea.id} className="idea-card">
-
-                <div className="idea-card__note">
-                  {idea.title}
-                </div>
+                <div className="idea-card__note">{idea.title}</div>
 
                 <div className="idea-card__meta">
-
                   <div className="idea-badges">
-
                     <span
                       className={`badge ${
-                        isGenerated
-                          ? "badge--generated"
-                          : "badge--manual"
+                        isGenerated ? "badge--generated" : "badge--manual"
                       }`}
                     >
                       {isGenerated ? "Generated" : "Manual"}
                     </span>
-
                   </div>
 
                   <span className="idea-date">
-                    {new Date(
-                      idea.created_at,
-                    ).toLocaleDateString()}
+                    {new Date(idea.created_at).toLocaleDateString()}
                   </span>
-
                 </div>
 
                 <div className="idea-card__actions">
-
                   <button
                     className="btn-secondary"
                     onClick={() => handleUseIdea(idea)}
                   >
                     Use idea
                   </button>
-
                 </div>
-
               </div>
-
             );
-
           })}
-
         </div>
-
       </div>
 
       {/* CREATE CONTENT MODAL */}
@@ -223,7 +193,6 @@ export default function Ideas() {
         }}
         onCreated={() => {}}
       />
-
     </div>
   );
 }
