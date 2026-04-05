@@ -66,7 +66,16 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
         return;
       }
 
-      if (data) setIdeas(data);
+      if (data) {
+        const sortedIdeas = [...data].sort((a, b) => {
+          const aCount = a.contents?.[0]?.count ?? 0;
+          const bCount = b.contents?.[0]?.count ?? 0;
+
+          return bCount - aCount;
+        });
+
+        setIdeas(sortedIdeas);
+      }
     } catch (err) {
       console.error(err);
     } finally {
