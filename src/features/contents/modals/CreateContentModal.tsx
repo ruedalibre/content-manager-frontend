@@ -96,7 +96,7 @@ export default function CreateContentModal({
 
         const res = await fetch(
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/platforms`,
-          { headers }
+          { headers },
         );
 
         const data: Platform[] = await res.json();
@@ -127,7 +127,7 @@ export default function CreateContentModal({
 
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/platform-formats?platform_id=${platformId}`,
-        { headers }
+        { headers },
       );
 
       const data: string[] = await res.json();
@@ -154,13 +154,13 @@ export default function CreateContentModal({
         is_reusable: contentToEdit.is_reusable,
       });
 
-      setCreativeUnitId(null); // edit no depende de idea
+      setCreativeUnitId(null);
 
       fetchFormats(contentToEdit.platform_id);
     } else {
       resetForm();
     }
-  }, [contentToEdit]);
+  }, [contentToEdit, idea]);
 
   /* =========================
      PREFILL FROM IDEA 🔥
@@ -204,16 +204,14 @@ export default function CreateContentModal({
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
 
     setForm((prev) => ({
       ...prev,
       [name]:
-        type === "checkbox"
-          ? (e.target as HTMLInputElement).checked
-          : value,
+        type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
@@ -304,16 +302,19 @@ export default function CreateContentModal({
           {isEditMode
             ? "Edit Content"
             : idea
-            ? "Create from Idea"
-            : "Create Content"}
+              ? "Create from Idea"
+              : "Create Content"}
         </h3>
 
         {/* 🔥 CONTEXT */}
 
         {idea && !isEditMode && (
           <div className="idea-context">
-            <span>Creating from idea</span>
-            <strong>{idea.title}</strong>
+            <span className="idea-context__label">
+              Creating content from idea
+            </span>
+
+            <strong className="idea-context__title">{idea.title}</strong>
           </div>
         )}
 
@@ -374,11 +375,7 @@ export default function CreateContentModal({
 
           {/* STATUS */}
 
-          <select
-            name="status"
-            value={form.status}
-            onChange={handleChange}
-          >
+          <select name="status" value={form.status} onChange={handleChange}>
             <option value="draft">Draft</option>
             <option value="published">Published</option>
             <option value="archived">Archived</option>
@@ -419,20 +416,16 @@ export default function CreateContentModal({
               Cancel
             </button>
 
-            <button
-              type="submit"
-              className="btn-primary"
-              disabled={loading}
-            >
+            <button type="submit" className="btn-primary" disabled={loading}>
               {loading
                 ? isEditMode
                   ? "Updating..."
                   : "Creating..."
                 : isEditMode
-                ? "Update"
-                : idea
-                ? "Create from Idea"
-                : "Create"}
+                  ? "Update"
+                  : idea
+                    ? "Create from Idea"
+                    : "Create"}
             </button>
           </div>
         </form>
