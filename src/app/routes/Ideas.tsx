@@ -9,6 +9,7 @@ type Idea = {
   source: string;
   created_at: string;
   description?: string | null;
+  contents?: { count: number }[];
 };
 
 /* =========================
@@ -22,7 +23,7 @@ export default function Ideas() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
 
-  const { ideas, loading } = useIdeas(filter);
+  const { ideas, loading, refetch } = useIdeas(filter);
 
   /* =========================
      FILTER (search)
@@ -148,6 +149,8 @@ export default function Ideas() {
           {filteredIdeas.map((idea) => {
             const isGenerated = idea.source === "dna_generated";
 
+            const contentCount = idea.contents?.[0]?.count ?? 0;
+
             return (
               <div key={idea.id} className="idea-card">
                 <div className="idea-card__note">{idea.title}</div>
@@ -166,6 +169,14 @@ export default function Ideas() {
                   <span className="idea-date">
                     {new Date(idea.created_at).toLocaleDateString()}
                   </span>
+                </div>
+
+                {/* NEW CONTENT COUNT */}
+
+                <div className="idea-card__stats">
+                  {contentCount === 0
+                    ? "No contents yet"
+                    : `${contentCount} contents created`}
                 </div>
 
                 <div className="idea-card__actions">
@@ -191,7 +202,7 @@ export default function Ideas() {
           setShowCreateModal(false);
           setSelectedIdea(null);
         }}
-        onCreated={() => {}}
+        onCreated={refetch}
       />
     </div>
   );

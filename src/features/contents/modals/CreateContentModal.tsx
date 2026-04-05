@@ -76,6 +76,9 @@ export default function CreateContentModal({
 
   const isEditMode = !!contentToEdit;
 
+  console.log("IDEA PROP:", idea);
+  console.log("CREATIVE UNIT ID:", idea?.id);
+
   /* =========================
      FETCH PLATFORMS
   ========================= */
@@ -261,7 +264,7 @@ export default function CreateContentModal({
         headers,
         body: JSON.stringify({
           ...form,
-          creative_unit_id: creativeUnitId, // 🔥 clave
+          creative_unit_id: idea?.id ?? creativeUnitId,
         }),
       });
 
