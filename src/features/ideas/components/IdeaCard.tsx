@@ -2,16 +2,22 @@ type Props = {
   idea: {
     id: string;
     title: string;
-    source: string;
+    source: "manual" | "generated";
   };
 };
 
 export default function IdeaCard({ idea }: Props) {
+  const isGenerated = idea.source === "generated";
+
   return (
     <div className="idea-card">
       <div className="idea-card__header">
-        <span className={`badge ${idea.source}`}>
-          {idea.source === "manual" ? "Manual" : "Generated"}
+        <span
+          className={`badge ${
+            isGenerated ? "badge--generated" : "badge--manual"
+          }`}
+        >
+          {isGenerated ? "Generated" : "Manual"}
         </span>
       </div>
 

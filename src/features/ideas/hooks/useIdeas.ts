@@ -56,7 +56,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       }
 
       if (filter === "generated") {
-        query = query.eq("source", "dna_generated");
+        query = query.eq("source", "generated");
       }
 
       const { data, error } = await query;

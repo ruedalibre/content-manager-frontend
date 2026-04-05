@@ -9,6 +9,18 @@
   gap: 24px;
 }
 
+.btn-primary {
+  width: fit-content;
+  font-size: 14px;
+  padding: 8px 16px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
 /* =========================
    HEADER
 ========================= */
@@ -187,8 +199,9 @@
 }
 
 .badge--generated {
-  background: #2563eb;
-  color: white;
+  background: #ffffff;
+  color: #111;
+  border: 1px solid #111;
 }
 
 .badge--manual {

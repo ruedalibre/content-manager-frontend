@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useIdeas } from "../../features/ideas/hooks/useIdeas";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
+import CreateIdeaModal from "../../features/contents/modals/CreateIdeaModal.tsx";
 import "./Ideas.scss";
 
 type Idea = {
@@ -24,12 +25,28 @@ export default function Ideas() {
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
 
   const { ideas, loading, refetch } = useIdeas(filter);
+  const [showIdeaModal, setShowIdeaModal] = useState(false);
+
+  console.log(ideas);
 
   /* =========================
-     FILTER (search)
-  ========================= */
+   FILTER BY SOURCE
+========================= */
 
-  const filteredIdeas = ideas.filter((idea) =>
+  const ideasByFilter =
+    filter === "all"
+      ? ideas
+      : ideas.filter((idea) =>
+          filter === "manual"
+            ? idea.source?.toLowerCase() === "manual"
+            : idea.source?.toLowerCase() === "generated",
+        );
+
+  /* =========================
+   SEARCH WITHIN FILTER
+========================= */
+
+  const filteredIdeas = ideasByFilter.filter((idea) =>
     idea.title.toLowerCase().includes(search.toLowerCase()),
   );
 
@@ -61,6 +78,10 @@ export default function Ideas() {
   return (
     <div className="ideas-page">
       {/* HEADER */}
+
+      <button className="btn-primary" onClick={() => setShowIdeaModal(true)}>
+        + New Idea
+      </button>
 
       <div className="ideas-header">
         <h2>
@@ -147,7 +168,7 @@ export default function Ideas() {
           )}
 
           {filteredIdeas.map((idea) => {
-            const isGenerated = idea.source === "dna_generated";
+            const isGenerated = idea.source === "generated";
 
             const contentCount = idea.contents?.[0]?.count ?? 0;
 
@@ -202,6 +223,12 @@ export default function Ideas() {
           setShowCreateModal(false);
           setSelectedIdea(null);
         }}
+        onCreated={refetch}
+      />
+
+      <CreateIdeaModal
+        isOpen={showIdeaModal}
+        onClose={() => setShowIdeaModal(false)}
         onCreated={refetch}
       />
     </div>
