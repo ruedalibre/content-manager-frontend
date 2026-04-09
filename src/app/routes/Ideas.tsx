@@ -1,17 +1,8 @@
 import { useState } from "react";
-import { useIdeas } from "../../features/ideas/hooks/useIdeas";
+import { useIdeas, type Idea } from "../../features/ideas/hooks/useIdeas.ts";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
-import CreateIdeaModal from "../../features/contents/modals/CreateIdeaModal.tsx";
+import CreateIdeaModal from "../../features//ideas/modals/CreateIdeaModal.tsx";
 import "./Ideas.scss";
-
-type Idea = {
-  id: string;
-  title: string;
-  source: string;
-  created_at: string;
-  description?: string | null;
-  contents?: { count: number }[];
-};
 
 /* =========================
    COMPONENT
@@ -24,34 +15,22 @@ export default function Ideas() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
 
-  const { ideas, loading, refetch } = useIdeas(filter);
   const [showIdeaModal, setShowIdeaModal] = useState(false);
 
-  console.log(ideas);
+  const { ideas, loading, refetch } = useIdeas(filter);
 
   /* =========================
-   FILTER BY SOURCE
-========================= */
+     SEARCH + SORT
+  ========================= */
 
-  const ideasByFilter =
-    filter === "all"
-      ? ideas
-      : ideas.filter((idea) =>
-          filter === "manual"
-            ? idea.source?.toLowerCase() === "manual"
-            : idea.source?.toLowerCase() === "generated",
-        );
+  const filteredIdeas = ideas
+    .filter((idea) => idea.title.toLowerCase().includes(search.toLowerCase()))
+    .sort(
+      (a, b) => (b.contents?.[0]?.count ?? 0) - (a.contents?.[0]?.count ?? 0),
+    );
 
   /* =========================
-   SEARCH WITHIN FILTER
-========================= */
-
-  const filteredIdeas = ideasByFilter.filter((idea) =>
-    idea.title.toLowerCase().includes(search.toLowerCase()),
-  );
-
-  /* =========================
-     IDEA HIGHLIGHT
+     TOP IDEA
   ========================= */
 
   const highlightIdea = filteredIdeas.length > 0 ? filteredIdeas[0] : null;
@@ -79,7 +58,9 @@ export default function Ideas() {
     <div className="ideas-page">
       {/* HEADER */}
 
-      <button className="btn-primary" onClick={() => setShowIdeaModal(true)}>
+      {/* NEW IDEA BUTTON */}
+
+      <button className="btn-primary" onClick={() => setShowIdeaModal(true)} type="button">
         + New Idea
       </button>
 
@@ -95,27 +76,27 @@ export default function Ideas() {
       <div className="ideas-filters">
         <button
           className={filter === "all" ? "active" : ""}
-          onClick={() => setFilter("all")}
+          onClick={() => setFilter("all")} type="button"
         >
           All
         </button>
 
         <button
           className={filter === "manual" ? "active" : ""}
-          onClick={() => setFilter("manual")}
+          onClick={() => setFilter("manual")} type="button"
         >
           Manual
         </button>
 
         <button
           className={filter === "generated" ? "active" : ""}
-          onClick={() => setFilter("generated")}
+          onClick={() => setFilter("generated")} type="button"
         >
           Generated
         </button>
       </div>
 
-      {/* IDEA HIGHLIGHT */}
+      {/* TOP IDEA */}
 
       {highlightIdea && (
         <div className="idea-highlight">
@@ -124,7 +105,7 @@ export default function Ideas() {
           <div className="idea-highlight__note">{highlightIdea.title}</div>
 
           <div className="idea-highlight__meta">
-            {highlightIdea.source === "manual" ? "Manual" : "Generated"} •{" "}
+            {highlightIdea.source === "generated" ? "Generated" : "Manual"} •{" "}
             {new Date(highlightIdea.created_at).toLocaleDateString()}
           </div>
 
@@ -132,17 +113,6 @@ export default function Ideas() {
             This idea is part of your creative system and can be reused across
             multiple pieces of content.
           </p>
-
-          {/* NEW ACTION */}
-
-          <div className="idea-highlight__actions">
-            <button
-              className="btn-primary"
-              onClick={() => handleUseIdea(highlightIdea)}
-            >
-              Use idea
-            </button>
-          </div>
         </div>
       )}
 
@@ -160,7 +130,7 @@ export default function Ideas() {
           />
         </div>
 
-        {/* LIST */}
+        {/* IDEAS LIST */}
 
         <div className="ideas-list">
           {filteredIdeas.length === 0 && (
@@ -168,31 +138,28 @@ export default function Ideas() {
           )}
 
           {filteredIdeas.map((idea) => {
-            const isGenerated = idea.source === "generated";
-
             const contentCount = idea.contents?.[0]?.count ?? 0;
+            const isGenerated = idea.source === "generated";
 
             return (
               <div key={idea.id} className="idea-card">
                 <div className="idea-card__note">{idea.title}</div>
 
                 <div className="idea-card__meta">
-                  <div className="idea-badges">
-                    <span
-                      className={`badge ${
-                        isGenerated ? "badge--generated" : "badge--manual"
-                      }`}
-                    >
-                      {isGenerated ? "Generated" : "Manual"}
-                    </span>
-                  </div>
+                  <span
+                    className={`badge ${
+                      isGenerated ? "badge--generated" : "badge--manual"
+                    }`}
+                  >
+                    {isGenerated ? "Generated" : "Manual"}
+                  </span>
 
                   <span className="idea-date">
                     {new Date(idea.created_at).toLocaleDateString()}
                   </span>
                 </div>
 
-                {/* NEW CONTENT COUNT */}
+                {/* CONTENT COUNT */}
 
                 <div className="idea-card__stats">
                   {contentCount === 0
@@ -200,10 +167,12 @@ export default function Ideas() {
                     : `${contentCount} contents created`}
                 </div>
 
+                {/* ACTION */}
+
                 <div className="idea-card__actions">
                   <button
                     className="btn-secondary"
-                    onClick={() => handleUseIdea(idea)}
+                    onClick={() => handleUseIdea(idea)} type="button"
                   >
                     Use idea
                   </button>
@@ -216,21 +185,30 @@ export default function Ideas() {
 
       {/* CREATE CONTENT MODAL */}
 
-      <CreateContentModal
-        isOpen={showCreateModal}
-        idea={selectedIdea}
-        onClose={() => {
-          setShowCreateModal(false);
-          setSelectedIdea(null);
-        }}
-        onCreated={refetch}
-      />
+      {showCreateModal && (
+        <CreateContentModal
+          isOpen={showCreateModal}
+          idea={selectedIdea}
+          onClose={() => setShowCreateModal(false)}
+          onCreated={() => {
+            refetch();
+            setShowCreateModal(false);
+          }}
+        />
+      )}
 
-      <CreateIdeaModal
-        isOpen={showIdeaModal}
-        onClose={() => setShowIdeaModal(false)}
-        onCreated={refetch}
-      />
+      {/* CREATE IDEA MODAL */}
+
+      {showIdeaModal && (
+        <CreateIdeaModal
+          isOpen={showIdeaModal}
+          onClose={() => setShowIdeaModal(false)}
+          onCreated={() => {
+            refetch();
+            setShowIdeaModal(false);
+          }}
+        />
+      )}
     </div>
   );
 }
