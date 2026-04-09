@@ -45,6 +45,13 @@ type Insight = {
   message: string;
 };
 
+export type StrategyInsight = {
+  type: string;
+  title: string;
+  message: string;
+  confidence?: number;
+};
+
 type ContentDNA = {
   primary_topic: string | null;
   primary_format: string | null;
@@ -61,6 +68,8 @@ type ContentDNA = {
 ========================= */
 
 export function useDashboardData(period: "7d" | "30d" | "90d") {
+  const [loading, setLoading] = useState(true);
+
   const [data, setData] = useState<DashboardData | null>(null);
   const [platformData, setPlatformData] = useState<PlatformData[]>([]);
   const [timelineData, setTimelineData] = useState<GrowthTimelineData[]>([]);
@@ -70,8 +79,14 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
   const [growthRateData, setGrowthRateData] = useState<GrowthRateData[]>([]);
   const [heatmapData, setHeatmapData] = useState<HeatmapData[]>([]);
   const [insights, setInsights] = useState<Insight[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [strategyInsights, setStrategyInsights] = useState<StrategyInsight[]>(
+    [],
+  );
   const [contentDNA, setContentDNA] = useState<ContentDNA | null>(null);
+
+  /* =========================
+     LOAD DASHBOARD
+  ========================= */
 
   useEffect(() => {
     const loadDashboard = async () => {
@@ -90,7 +105,7 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
         const baseUrl = import.meta.env.VITE_SUPABASE_URL;
 
         /* =========================
-           1️⃣ DASHBOARD SUMMARY
+           DASHBOARD SUMMARY
         ========================= */
 
         const dashboardRes = await fetch(
@@ -101,7 +116,7 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
         setData(dashboardRes);
 
         /* =========================
-           2️⃣ EMPTY ACCOUNT
+           EMPTY ACCOUNT
         ========================= */
 
         if (dashboardRes.total_contents === 0) {
@@ -111,6 +126,7 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
           setGrowthRateData([]);
           setHeatmapData([]);
           setInsights([]);
+          setStrategyInsights([]);
           setContentDNA(null);
 
           setLoading(false);
@@ -118,17 +134,17 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
         }
 
         /* =========================
-           3️⃣ ANALYTICS
+           PARALLEL FETCH
         ========================= */
 
         const [
           platformRes,
-          growthRes,
+          timelineRes,
           cumulativeRes,
           growthRateRes,
           heatmapRes,
           insightsRes,
-          dnaRes,
+          strategyRes,
         ] = await Promise.all([
           fetch(
             `${baseUrl}/functions/v1/me-contents-by-platform?period=${period}`,
@@ -158,19 +174,24 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
             headers,
           }).then((r) => r.json()),
 
-          // ✅ NUEVO
-          fetch(`${baseUrl}/functions/v1/content-dna`, {
-            headers,
-          }).then((r) => r.json()),
+          fetch(`${baseUrl}/functions/v1/strategy-insights`, { headers }).then(
+            (r) => r.json(),
+          ),
         ]);
 
+        /* =========================
+           SET STATE
+        ========================= */
+
         setPlatformData(platformRes);
-        setTimelineData(growthRes);
+        setTimelineData(timelineRes);
         setCumulativeData(cumulativeRes);
         setGrowthRateData(growthRateRes);
         setHeatmapData(heatmapRes);
         setInsights(insightsRes);
-        setContentDNA(dnaRes);
+
+        setStrategyInsights(strategyRes.insights || []);
+        setContentDNA(strategyRes.content_dna || null);
       } catch (err) {
         console.error("Dashboard fetch error:", err);
       } finally {
@@ -186,14 +207,18 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
   ========================= */
 
   return {
+    loading,
+
     data,
     platformData,
     timelineData,
     cumulativeData,
     growthRateData,
     heatmapData,
+
     insights,
+    strategyInsights,
+
     contentDNA,
-    loading,
   };
 }

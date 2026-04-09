@@ -3,6 +3,7 @@ import { useDashboardData } from "../../features/dashboard/hooks/useDashboardDat
 import KPISection from "../../features/dashboard/components/KPISection.tsx";
 import DashboardChartsSection from "../../features/dashboard/components/DashboardChartsSection";
 import DashboardInsightsSection from "../../features/dashboard/components/DashboardInsightsSection";
+import StrategyInsightsSection from "../../features/dashboard/components/StrategyInsightsSection.tsx";
 import DashboardConsistencySection from "../../features/dashboard/components/DashboardConsistencySection";
 import ContentDNACard from "../../features/dashboard/components/ContentDNACard";
 import { getGrowthVisual } from "../../utils/growthRate.ts";
@@ -32,6 +33,7 @@ export default function Dashboard() {
     growthRateData,
     heatmapData,
     insights,
+    strategyInsights,
     contentDNA,
     loading,
   } = useDashboardData(period);
@@ -117,6 +119,11 @@ export default function Dashboard() {
       {/* CONTENT DNA */}
       {contentDNA && <ContentDNACard dna={contentDNA} />}
 
+      {/* STRATEGY INSIGHTS (nuevo núcleo del producto) */}
+      {strategyInsights && strategyInsights.length > 0 && (
+        <StrategyInsightsSection insights={strategyInsights} />
+      )}
+
       <div className="dashboard__performance">
         <div className="dashboard__performance-header">
           <div>
@@ -146,6 +153,7 @@ export default function Dashboard() {
           cumulativeData={cumulativeData}
         />
 
+        {/* ANALYTICS INSIGHTS (existentes) */}
         <DashboardInsightsSection insights={insights} />
       </div>
 
