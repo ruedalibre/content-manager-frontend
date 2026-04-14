@@ -13,7 +13,7 @@ type ContentDNA = {
   top_ideas?: string[];
   topic_distribution?: {
     topic: string;
-    percentage: number;
+    percentage?: number;
     count?: number;
     total?: number;
   }[];
@@ -74,7 +74,7 @@ export default function ContentDNACard({ dna }: Props) {
   }, []);
 
   /* =========================
-     GENERATE IDEAS (NEW ENGINE)
+     GENERATE IDEAS
   ========================= */
 
   const handleGenerateIdeas = async () => {
@@ -120,6 +120,11 @@ export default function ContentDNACard({ dna }: Props) {
 
   const handleSaveIdea = async (idea: string) => {
     try {
+      if (existingIdeas.includes(idea)) {
+        setSavedIdeas((prev) => [...prev, idea]);
+        return;
+      }
+
       const {
         data: { user },
       } = await supabase.auth.getUser();
@@ -139,7 +144,7 @@ export default function ContentDNACard({ dna }: Props) {
         title: idea,
         description: "Generated from Content DNA",
         tenant_id: userRecord.tenant_id,
-        source: "content_dna",
+        source: "generated", // ✅ FIX
       });
 
       if (error) {
@@ -210,15 +215,13 @@ export default function ContentDNACard({ dna }: Props) {
             {loadingIdeas
               ? "Generating ideas..."
               : showIdeas
-                ? "Hide ideas"
-                : "Generate ideas"}
+              ? "Hide ideas"
+              : "Generate ideas"}
           </button>
         </div>
       </div>
 
-      {/* =========================
-         GENERATED IDEAS
-      ========================= */}
+      {/* GENERATED IDEAS */}
 
       {showIdeas && generatedIdeas.length > 0 && (
         <div className="content-dna-card__ideas">
@@ -249,9 +252,7 @@ export default function ContentDNACard({ dna }: Props) {
         </div>
       )}
 
-      {/* =========================
-         DNA GRID
-      ========================= */}
+      {/* DNA GRID */}
 
       <div className="content-dna-card__grid">
         <div className="dna-item">
@@ -270,9 +271,7 @@ export default function ContentDNACard({ dna }: Props) {
         </div>
       </div>
 
-      {/* =========================
-         TOP IDEAS
-      ========================= */}
+      {/* TOP IDEAS */}
 
       {dna.top_ideas && dna.top_ideas.length > 0 && (
         <div className="content-dna-card__section">
@@ -288,9 +287,7 @@ export default function ContentDNACard({ dna }: Props) {
         </div>
       )}
 
-      {/* =========================
-         TOPIC DISTRIBUTION
-      ========================= */}
+      {/* TOPIC DISTRIBUTION */}
 
       {dna.topic_distribution && dna.topic_distribution.length > 0 && (
         <div className="content-dna-card__section">

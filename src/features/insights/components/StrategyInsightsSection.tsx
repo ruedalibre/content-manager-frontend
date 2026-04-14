@@ -1,15 +1,12 @@
+import { Flame, Rocket, Lightbulb, Sparkles } from "lucide-react";
+
+import { type StrategyInsight } from "../types/insights.types";
+
 import "./StrategyInsightsSection.scss";
 
 /* =========================
    TYPES
 ========================= */
-
-type StrategyInsight = {
-  type: string;
-  title: string;
-  message: string;
-  confidence?: number;
-};
 
 type Props = {
   insights: StrategyInsight[];
@@ -22,16 +19,16 @@ type Props = {
 const getInsightIcon = (type: string) => {
   switch (type) {
     case "content_engine":
-      return "🔥";
+      return <Flame size={18} />;
 
     case "content_engines":
-      return "🚀";
+      return <Rocket size={18} />;
 
     case "unused_ideas":
-      return "💡";
+      return <Lightbulb size={18} />;
 
     default:
-      return "✨";
+      return <Sparkles size={18} />;
   }
 };
 
@@ -64,7 +61,10 @@ export default function StrategyInsightsSection({ insights }: Props) {
       <div className="strategy-insights__grid">
         {sortedInsights.map((insight, index) => (
           <div key={index} className="strategy-insight-card">
-            <div className="strategy-insight-card__icon">
+            <div
+              className="strategy-insight-card__icon"
+              data-type={insight.type}
+            >
               {getInsightIcon(insight.type)}
             </div>
 

@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useDashboardData } from "../../features/dashboard/hooks/useDashboardData.ts";
+
 import KPISection from "../../features/dashboard/components/KPISection.tsx";
-import DashboardChartsSection from "../../features/dashboard/components/DashboardChartsSection";
-import DashboardInsightsSection from "../../features/dashboard/components/DashboardInsightsSection";
-import StrategyInsightsSection from "../../features/dashboard/components/StrategyInsightsSection.tsx";
-import DashboardConsistencySection from "../../features/dashboard/components/DashboardConsistencySection";
-import ContentDNACard from "../../features/dashboard/components/ContentDNACard";
+import DashboardChartsSection from "../../features/dashboard/components/DashboardChartsSection.tsx";
+import DashboardConsistencySection from "../../features/dashboard/components/DashboardConsistencySection.tsx";
+
 import { getGrowthVisual } from "../../utils/growthRate.ts";
+
 import { useOutletContext, useNavigate } from "react-router-dom";
+
 import "./Dashboard.scss";
 
 /* =========================
@@ -32,9 +33,6 @@ export default function Dashboard() {
     cumulativeData,
     growthRateData,
     heatmapData,
-    insights,
-    strategyInsights,
-    contentDNA,
     loading,
   } = useDashboardData(period);
 
@@ -49,7 +47,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (loading) {
-      setTopbarContext("Loading...");
+      setTopbarContext("Loading activity...");
       return;
     }
 
@@ -60,20 +58,20 @@ export default function Dashboard() {
         "90d": "Last 90 days",
       };
 
-      setTopbarContext(
-        `${data.total_contents} active contents · ${labels[period]}`
-      );
+      setTopbarContext(`${data.total_contents} contents · ${labels[period]}`);
     }
 
     return () => setTopbarContext(null);
   }, [loading, data, period, setTopbarContext]);
 
   /* =========================
-     LOADING / EMPTY
+     LOADING
   ========================= */
 
-  if (loading) return <p>Loading dashboard...</p>;
+  if (loading) return <p>Loading activity...</p>;
   if (!data) return <p>No data available</p>;
+
+  console.log("Dashboard data:", data);
 
   /* =========================
      EMPTY STATE
@@ -86,17 +84,16 @@ export default function Dashboard() {
 
         <div className="dashboard-empty__icon">📊</div>
 
-        <h2>Your analytics will appear here</h2>
+        <h2>Your activity will appear here</h2>
 
         <p>
           Start by registering your first content to begin tracking your
-          production and unlock insights about your platforms and formats.
+          production and performance.
         </p>
 
         <ul className="dashboard-empty__benefits">
           <li>Track your content production</li>
           <li>Identify your top platforms</li>
-          <li>Discover reusable opportunities</li>
           <li>Understand your growth</li>
         </ul>
 
@@ -116,14 +113,6 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
-      {/* CONTENT DNA */}
-      {contentDNA && <ContentDNACard dna={contentDNA} />}
-
-      {/* STRATEGY INSIGHTS (nuevo núcleo del producto) */}
-      {strategyInsights && strategyInsights.length > 0 && (
-        <StrategyInsightsSection insights={strategyInsights} />
-      )}
-
       <div className="dashboard__performance">
         <div className="dashboard__performance-header">
           <div>
@@ -152,9 +141,6 @@ export default function Dashboard() {
           timelineData={timelineData}
           cumulativeData={cumulativeData}
         />
-
-        {/* ANALYTICS INSIGHTS (existentes) */}
-        <DashboardInsightsSection insights={insights} />
       </div>
 
       <DashboardConsistencySection heatmapData={heatmapData} />

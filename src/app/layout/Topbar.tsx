@@ -14,9 +14,10 @@ export default function Topbar({
   const location = useLocation()
 
   const titles: Record<string, string> = {
-    "/dashboard": "Dashboard",
+    "/insights": "Insights",
     "/contents": "Contents",
     "/ideas": "Ideas",
+    "/dashboard": "Dashboard",
     "/admin": "Admin",
   }
 

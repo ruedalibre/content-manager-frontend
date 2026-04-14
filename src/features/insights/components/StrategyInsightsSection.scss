@@ -39,9 +39,23 @@
   }
 }
 
+/* ICON */
+
 .strategy-insight-card__icon {
-  font-size: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  border-radius: 8px;
+
+  background: #f3f4f6;
+  color: #6366f1;
 }
+
+/* CONTENT */
 
 .strategy-insight-card__content {
   h4 {
@@ -54,4 +68,30 @@
     font-size: 0.85rem;
     color: #4b5563;
   }
+}
+
+/* =========================
+   CONTEXTUAL COLORS
+========================= */
+
+.strategy-insight-card[data-type="content_engine"]
+  .strategy-insight-card__icon {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.strategy-insight-card[data-type="content_engines"]
+  .strategy-insight-card__icon {
+  background: #eef2ff;
+  color: #6366f1;
+}
+
+.strategy-insight-card[data-type="unused_ideas"] .strategy-insight-card__icon {
+  background: #fffbeb;
+  color: #f59e0b;
+}
+
+.strategy-insight-card[data-type="default"] .strategy-insight-card__icon {
+  background: #f3f4f6;
+  color: #6b7280;
 }

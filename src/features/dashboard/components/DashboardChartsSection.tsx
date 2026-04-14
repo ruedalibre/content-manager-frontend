@@ -2,36 +2,17 @@ import ContentsByPlatformChart from "./ContentByPlatformChart";
 import ContentGrowthTimelineChart from "./ContentGrowthTimelineChart";
 import ContentGrowthCumulativeChart from "./ContentGrowthCumulativeChart";
 
-/* =========================
-   TYPES
-========================= */
-
-type PlatformData = {
-  platform_name: string;
-  total_contents: number;
-  percentage: number;
-};
-
-type GrowthTimelineData = {
-  month: string;
-  total_contents: number;
-};
-
-type CumulativeGrowthData = {
-  month: string;
-  total_contents: number;
-  cumulative_total: number;
-};
+import {
+  type PlatformData,
+  type TimelineData,
+  type CumulativeGrowthData,
+} from "../types/dashboard.types";
 
 type Props = {
   platformData: PlatformData[];
-  timelineData: GrowthTimelineData[];
+  timelineData: TimelineData[];
   cumulativeData: CumulativeGrowthData[];
 };
-
-/* =========================
-   COMPONENT
-========================= */
 
 export default function DashboardChartsSection({
   platformData,

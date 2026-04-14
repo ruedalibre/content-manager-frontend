@@ -8,6 +8,7 @@ import Login from "./app/routes/Login.tsx";
 import AuthGuard from "./auth/AuthGuard";
 import { useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
+import Insights from "./app/routes/Insights.tsx";
 /* =========================
    SUPABASE CLIENT
 ========================= */
@@ -81,10 +82,12 @@ export default function App() {
           </AuthGuard>
         }
       >
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/contents" element={<Contents />} />
         <Route path="/ideas" element={<Ideas />} />
+        <Route path="/contents" element={<Contents />} />
+        <Route path="/insights" element={<Insights />} />
+        <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin" element={<Admin />} />
+        
       </Route>
 
       {/* Fallback */}

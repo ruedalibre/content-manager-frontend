@@ -1,52 +1,33 @@
 import { useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 
-import { useDashboardData } from "../../features/dashboard/hooks/useDashboardData";
+import { useContentDNA } from "../../features/insights/hooks/useContentDNA.ts";
+import { useStrategyInsights } from "../../features/insights/hooks/useStrategyInsights.ts";
+import { useAnalyticsInsights } from "../../features/insights/hooks/useAnalyticsInsights.ts";
 
-import ContentDNACard from "../../features/dashboard/components/ContentDNACard";
-import StrategyInsightsSection from "../../features/dashboard/components/StrategyInsightsSection";
-import DashboardInsightsSection from "../../features/dashboard/components/DashboardInsightsSection";
+import ContentDNACard from "../../features/insights/components/ContentDNACard.tsx";
+import StrategyInsightsSection from "../../features/insights/components/StrategyInsightsSection.tsx";
+import SmartInsightsSection from "../../features/insights/components/SmartInsightsSection.tsx";
 
 import "./Insights.scss";
-
-/* =========================
-   TYPES
-========================= */
 
 type OutletContext = {
   setTopbarContext: (value: string | null) => void;
 };
 
-/* =========================
-   COMPONENT
-========================= */
-
 export default function Insights() {
-  const { contentDNA, insights, strategyInsights, loading } =
-    useDashboardData("30d");
-
   const { setTopbarContext } = useOutletContext<OutletContext>();
 
-  /* =========================
-     TOPBAR CONTEXT
-  ========================= */
+  const { dna, loading: dnaLoading } = useContentDNA();
+  const { insights: strategyInsights } = useStrategyInsights();
+  const { insights: analyticsInsights } = useAnalyticsInsights("30d");
 
   useEffect(() => {
-    if (loading) {
-      setTopbarContext("Loading insights...");
-      return;
-    }
-
     setTopbarContext("Content strategy insights");
-
     return () => setTopbarContext(null);
-  }, [loading, setTopbarContext]);
+  }, []);
 
-  /* =========================
-     LOADING
-  ========================= */
-
-  if (loading) {
+  if (dnaLoading) {
     return (
       <div className="insights-page">
         <p>Loading insights...</p>
@@ -54,46 +35,21 @@ export default function Insights() {
     );
   }
 
-  /* =========================
-     RENDER
-  ========================= */
-
   return (
     <div className="insights-page">
-      {/* PAGE HEADER */}
-
       <div className="insights-header">
         <h2>Your content strategy</h2>
-
         <p>
           Discover patterns, opportunities, and strategic signals emerging from
           your content.
         </p>
       </div>
 
-      {/* CONTENT DNA */}
+      <ContentDNACard dna={dna} />
 
-      {contentDNA && (
-        <section className="insights-section">
-          <ContentDNACard dna={contentDNA} />
-        </section>
-      )}
+      <StrategyInsightsSection insights={strategyInsights} />
 
-      {/* STRATEGY INSIGHTS */}
-
-      {strategyInsights.length > 0 && (
-        <section className="insights-section">
-          <StrategyInsightsSection insights={strategyInsights} />
-        </section>
-      )}
-
-      {/* SMART INSIGHTS */}
-
-      {insights.length > 0 && (
-        <section className="insights-section">
-          <DashboardInsightsSection insights={insights} />
-        </section>
-      )}
+      <SmartInsightsSection insights={analyticsInsights} />
     </div>
   );
 }
