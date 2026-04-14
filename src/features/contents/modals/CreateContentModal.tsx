@@ -76,9 +76,6 @@ export default function CreateContentModal({
 
   const isEditMode = !!contentToEdit;
 
-  console.log("IDEA PROP:", idea);
-  console.log("CREATIVE UNIT ID:", idea?.id);
-
   /* =========================
      FETCH PLATFORMS
   ========================= */
