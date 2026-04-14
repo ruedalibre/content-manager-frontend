@@ -7,16 +7,8 @@ import Admin from "./app/routes/Admin.tsx";
 import Login from "./app/routes/Login.tsx";
 import AuthGuard from "./auth/AuthGuard";
 import { useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "./supabaseClient";
 import Insights from "./app/routes/Insights.tsx";
-/* =========================
-   SUPABASE CLIENT
-========================= */
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
 
 /* =========================
    WARM EDGE FUNCTIONS
