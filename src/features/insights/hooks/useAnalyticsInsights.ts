@@ -5,11 +5,13 @@ import { type AnalyticsInsight } from "../types/insights.types.ts";
 export function useAnalyticsInsights(period: "7d" | "30d" | "90d") {
   const [insights, setInsights] = useState<AnalyticsInsight[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInsights = async () => {
       try {
         setLoading(true);
+        setError(null);
 
         const {
           data: { session },
@@ -20,16 +22,19 @@ export function useAnalyticsInsights(period: "7d" | "30d" | "90d") {
           {
             headers: {
               Authorization: `Bearer ${session?.access_token}`,
-              apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
             },
-          }
+          },
         );
 
-        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
 
+        const data = await res.json();
         setInsights(data ?? []);
       } catch (err) {
         console.error("Analytics insights error:", err);
+        setError("Failed to load insights");
       } finally {
         setLoading(false);
       }
@@ -38,5 +43,5 @@ export function useAnalyticsInsights(period: "7d" | "30d" | "90d") {
     fetchInsights();
   }, [period]);
 
-  return { insights, loading };
+  return { insights, loading, error };
 }

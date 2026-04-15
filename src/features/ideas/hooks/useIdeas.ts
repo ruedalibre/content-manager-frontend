@@ -13,6 +13,7 @@ export type Idea = {
 export function useIdeas(filter: "all" | "manual" | "generated") {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   /* =========================
      LOAD IDEAS
@@ -21,6 +22,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
   const loadIdeas = async () => {
     try {
       setLoading(true);
+      setError(null);
 
       const {
         data: { user },
@@ -78,6 +80,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       }
     } catch (err) {
       console.error(err);
+      setError("Failed to load ideas");
     } finally {
       setLoading(false);
     }
@@ -98,6 +101,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
   return {
     ideas,
     loading,
+    error,
     refetch: loadIdeas,
   };
 }
