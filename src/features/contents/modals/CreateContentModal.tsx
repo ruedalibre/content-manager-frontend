@@ -15,6 +15,7 @@ type ContentItem = {
   status: string;
   location: string | null;
   is_reusable: boolean;
+  published_at: string | null;
 };
 
 type Platform = {
@@ -66,6 +67,7 @@ export default function CreateContentModal({
     status: "draft",
     location: "",
     is_reusable: false,
+    published_at: "",
   });
 
   const [creativeUnitId, setCreativeUnitId] = useState<string | null>(null);
@@ -73,6 +75,7 @@ export default function CreateContentModal({
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [formats, setFormats] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const isEditMode = !!contentToEdit;
 
@@ -152,6 +155,7 @@ export default function CreateContentModal({
         status: contentToEdit.status,
         location: contentToEdit.location ?? "",
         is_reusable: contentToEdit.is_reusable,
+        published_at: contentToEdit.published_at ?? "",
       });
 
       setCreativeUnitId(null);
@@ -191,10 +195,12 @@ export default function CreateContentModal({
       status: "draft",
       location: "",
       is_reusable: false,
+      published_at: "",
     });
 
     setFormats([]);
     setCreativeUnitId(null);
+    setSubmitError(null);
   };
 
   /* =========================
@@ -261,6 +267,10 @@ export default function CreateContentModal({
         headers,
         body: JSON.stringify({
           ...form,
+          published_at:
+            form.status === "published"
+              ? form.published_at || new Date().toISOString()
+              : null,
           creative_unit_id: idea?.id ?? creativeUnitId,
         }),
       });
@@ -269,7 +279,7 @@ export default function CreateContentModal({
 
       if (!res.ok) {
         console.error(data);
-        alert("Error saving content");
+        setSubmitError(data.error || "Error saving content");
         setLoading(false);
         return;
       }
@@ -279,7 +289,7 @@ export default function CreateContentModal({
       resetForm();
     } catch (err) {
       console.error(err);
-      alert("Unexpected error");
+      setSubmitError("Unexpected error. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -381,6 +391,16 @@ export default function CreateContentModal({
             <option value="archived">Archived</option>
           </select>
 
+          {form.status === "published" && (
+            <input
+              type="datetime-local"
+              name="published_at"
+              value={form.published_at}
+              onChange={handleChange}
+              placeholder="Published date"
+            />
+          )}
+
           {/* LOCATION */}
 
           <input
@@ -404,6 +424,7 @@ export default function CreateContentModal({
 
           {/* ACTIONS */}
 
+          {submitError && <p className="modal__error">{submitError}</p>}
           <div className="modal-actions">
             <button
               type="button"
