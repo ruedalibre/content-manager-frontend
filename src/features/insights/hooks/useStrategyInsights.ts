@@ -5,11 +5,13 @@ import { type StrategyInsight } from "../types/insights.types";
 export function useStrategyInsights() {
   const [insights, setInsights] = useState<StrategyInsight[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStrategyInsights = async () => {
       try {
         setLoading(true);
+        setError(null);
 
         const {
           data: { session },
@@ -20,16 +22,19 @@ export function useStrategyInsights() {
           {
             headers: {
               Authorization: `Bearer ${session?.access_token}`,
-              apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
             },
           },
         );
 
-        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
 
+        const data = await res.json();
         setInsights(data.insights ?? []);
       } catch (err) {
         console.error("Strategy insights error:", err);
+        setError("Failed to load strategy insights");
       } finally {
         setLoading(false);
       }
@@ -38,5 +43,5 @@ export function useStrategyInsights() {
     fetchStrategyInsights();
   }, []);
 
-  return { insights, loading };
+  return { insights, loading, error };
 }
