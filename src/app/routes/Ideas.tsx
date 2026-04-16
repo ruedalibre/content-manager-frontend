@@ -17,7 +17,12 @@ export default function Ideas() {
 
   const [showIdeaModal, setShowIdeaModal] = useState(false);
 
-  const { ideas, loading, refetch } = useIdeas(filter);
+  const { ideas, loading, refetch, updateIdea, deleteIdea } = useIdeas(filter);
+  const [editingIdea, setEditingIdea] = useState<Idea | null>(null);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
 
   /* =========================
      SEARCH + SORT
@@ -51,6 +56,54 @@ export default function Ideas() {
   };
 
   /* =========================
+   EDIT IDEA
+========================= */
+
+  const handleEditOpen = (idea: Idea) => {
+    setEditingIdea(idea);
+    setEditTitle(idea.title);
+    setEditDescription(idea.description ?? "");
+    setEditError(null);
+  };
+
+  const handleEditSave = async () => {
+    if (!editingIdea || !editTitle.trim()) return;
+    setEditSaving(true);
+    setEditError(null);
+    try {
+      await updateIdea(editingIdea.id, {
+        title: editTitle.trim(),
+        description: editDescription.trim() || undefined,
+      });
+      setEditingIdea(null);
+    } catch {
+      setEditError("Failed to update idea. Please try again.");
+    } finally {
+      setEditSaving(false);
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditingIdea(null);
+    setEditTitle("");
+    setEditDescription("");
+    setEditError(null);
+  };
+
+  /* =========================
+   DELETE IDEA
+========================= */
+
+  const handleDeleteIdea = async (ideaId: string) => {
+    if (!confirm("Delete this idea? This cannot be undone.")) return;
+    try {
+      await deleteIdea(ideaId);
+    } catch {
+      alert("Failed to delete idea. Please try again.");
+    }
+  };
+
+  /* =========================
      RENDER
   ========================= */
 
@@ -60,7 +113,11 @@ export default function Ideas() {
 
       {/* NEW IDEA BUTTON */}
 
-      <button className="btn-primary" onClick={() => setShowIdeaModal(true)} type="button">
+      <button
+        className="btn-primary"
+        onClick={() => setShowIdeaModal(true)}
+        type="button"
+      >
         + New Idea
       </button>
 
@@ -76,21 +133,24 @@ export default function Ideas() {
       <div className="ideas-filters">
         <button
           className={filter === "all" ? "active" : ""}
-          onClick={() => setFilter("all")} type="button"
+          onClick={() => setFilter("all")}
+          type="button"
         >
           All
         </button>
 
         <button
           className={filter === "manual" ? "active" : ""}
-          onClick={() => setFilter("manual")} type="button"
+          onClick={() => setFilter("manual")}
+          type="button"
         >
           Manual
         </button>
 
         <button
           className={filter === "generated" ? "active" : ""}
-          onClick={() => setFilter("generated")} type="button"
+          onClick={() => setFilter("generated")}
+          type="button"
         >
           Generated
         </button>
@@ -143,23 +203,42 @@ export default function Ideas() {
 
             return (
               <div key={idea.id} className="idea-card">
-                <div className="idea-card__note">{idea.title}</div>
+                <div className="idea-card__header">
+                  <div className="idea-card__meta">
+                    <span
+                      className={`badge ${
+                        isGenerated ? "badge--generated" : "badge--manual"
+                      }`}
+                    >
+                      {isGenerated ? "Generated" : "Manual"}
+                    </span>
 
-                <div className="idea-card__meta">
-                  <span
-                    className={`badge ${
-                      isGenerated ? "badge--generated" : "badge--manual"
-                    }`}
-                  >
-                    {isGenerated ? "Generated" : "Manual"}
-                  </span>
+                    <span className="idea-date">
+                      {new Date(idea.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
 
-                  <span className="idea-date">
-                    {new Date(idea.created_at).toLocaleDateString()}
-                  </span>
+                  <div className="idea-card__controls">
+                    <button
+                      className="btn-icon"
+                      onClick={() => handleEditOpen(idea)}
+                      title="Edit idea"
+                      type="button"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      className="btn-icon btn-icon--danger"
+                      onClick={() => handleDeleteIdea(idea.id)}
+                      title="Delete idea"
+                      type="button"
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
 
-                {/* CONTENT COUNT */}
+                <div className="idea-card__note">{idea.title}</div>
 
                 <div className="idea-card__stats">
                   {contentCount === 0
@@ -167,12 +246,11 @@ export default function Ideas() {
                     : `${contentCount} contents created`}
                 </div>
 
-                {/* ACTION */}
-
                 <div className="idea-card__actions">
                   <button
                     className="btn-secondary"
-                    onClick={() => handleUseIdea(idea)} type="button"
+                    onClick={() => handleUseIdea(idea)}
+                    type="button"
                   >
                     Use idea
                   </button>
@@ -208,6 +286,52 @@ export default function Ideas() {
             setShowIdeaModal(false);
           }}
         />
+      )}
+
+      {/* EDIT IDEA MODAL */}
+
+      {editingIdea && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Edit Idea</h3>
+
+            <input
+              value={editTitle}
+              onChange={(e) => setEditTitle(e.target.value)}
+              placeholder="Idea title"
+              autoFocus
+            />
+
+            <textarea
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              placeholder="Description (optional)"
+              rows={3}
+            />
+
+            {editError && <p className="modal__error">{editError}</p>}
+
+            <div className="modal-actions">
+              <button
+                className="btn-secondary"
+                onClick={handleEditCancel}
+                disabled={editSaving}
+                type="button"
+              >
+                Cancel
+              </button>
+
+              <button
+                className="btn-primary"
+                onClick={handleEditSave}
+                disabled={editSaving || !editTitle.trim()}
+                type="button"
+              >
+                {editSaving ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
