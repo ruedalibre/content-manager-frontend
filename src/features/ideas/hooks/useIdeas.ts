@@ -47,7 +47,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
           description,
           source,
           created_at,
-          contents!creative_unit_id(count)
+          contents!creative_unit_id(id, is_deleted)
         `,
         )
         .eq("tenant_id", userRecord.tenant_id)
@@ -69,10 +69,23 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       }
 
       if (data) {
-        const sortedIdeas = [...data].sort((a, b) => {
+        type RawContent = { id: string; is_deleted: boolean };
+
+        const mapped = data.map((idea) => ({
+          ...idea,
+          contents: [
+            {
+              count:
+                (idea.contents as RawContent[])?.filter(
+                  (c) => c.is_deleted === false,
+                ).length ?? 0,
+            },
+          ],
+        }));
+
+        const sortedIdeas = [...mapped].sort((a, b) => {
           const aCount = a.contents?.[0]?.count ?? 0;
           const bCount = b.contents?.[0]?.count ?? 0;
-
           return bCount - aCount;
         });
 
@@ -83,6 +96,75 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       setError("Failed to load ideas");
     } finally {
       setLoading(false);
+    }
+  };
+
+  /* =========================
+   UPDATE IDEA
+========================= */
+
+  const updateIdea = async (
+    ideaId: string,
+    updates: { title: string; description?: string; status?: string },
+  ) => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-idea/${ideaId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify(updates),
+        },
+      );
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to update idea");
+      }
+
+      await loadIdeas();
+    } catch (err) {
+      console.error("Update idea error:", err);
+      throw err;
+    }
+  };
+
+  /* =========================
+   DELETE IDEA
+========================= */
+
+  const deleteIdea = async (ideaId: string) => {
+    try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-idea/${ideaId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        },
+      );
+
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Failed to delete idea");
+      }
+
+      await loadIdeas();
+    } catch (err) {
+      console.error("Delete idea error:", err);
+      throw err;
     }
   };
 
@@ -103,5 +185,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     loading,
     error,
     refetch: loadIdeas,
+    updateIdea,
+    deleteIdea,
   };
 }
