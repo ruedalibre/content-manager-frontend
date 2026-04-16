@@ -38,17 +38,17 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
       if (!userRecord) return;
 
+      // Paso 1 — cargar las ideas
       let query = supabase
         .from("creative_units")
         .select(
           `
-          id,
-          title,
-          description,
-          source,
-          created_at,
-          contents!creative_unit_id(id, is_deleted)
-        `,
+    id,
+    title,
+    description,
+    source,
+    created_at
+  `,
         )
         .eq("tenant_id", userRecord.tenant_id)
         .order("created_at", { ascending: false });
@@ -65,22 +65,35 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
       if (error) {
         console.error(error);
+        setError("Failed to load ideas");
         return;
       }
 
-      if (data) {
-        type RawContent = { id: string; is_deleted: boolean };
+      // Paso 2 — cargar conteos desde la tabla pivote via endpoint
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
+      const countsRes = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-ideas-counts`,
+        {
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+        },
+      );
+
+      const countsData: { creative_unit_id: string; count: number }[] =
+        countsRes.ok ? await countsRes.json() : [];
+
+      const countsMap = new Map(
+        countsData.map((c) => [c.creative_unit_id, c.count]),
+      );
+
+      if (data) {
         const mapped = data.map((idea) => ({
           ...idea,
-          contents: [
-            {
-              count:
-                (idea.contents as RawContent[])?.filter(
-                  (c) => c.is_deleted === false,
-                ).length ?? 0,
-            },
-          ],
+          contents: [{ count: countsMap.get(idea.id) ?? 0 }],
         }));
 
         const sortedIdeas = [...mapped].sort((a, b) => {
