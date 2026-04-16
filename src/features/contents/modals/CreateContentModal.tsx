@@ -16,6 +16,7 @@ type ContentItem = {
   location: string | null;
   is_reusable: boolean;
   published_at: string | null;
+  content_role?: string | null;
 };
 
 type Platform = {
@@ -68,6 +69,7 @@ export default function CreateContentModal({
     location: "",
     is_reusable: false,
     published_at: "",
+    content_role: "",
   });
 
   const [creativeUnitId, setCreativeUnitId] = useState<string | null>(null);
@@ -156,6 +158,7 @@ export default function CreateContentModal({
         location: contentToEdit.location ?? "",
         is_reusable: contentToEdit.is_reusable,
         published_at: contentToEdit.published_at ?? "",
+        content_role: contentToEdit.content_role ?? "",
       });
 
       setCreativeUnitId(null);
@@ -196,6 +199,7 @@ export default function CreateContentModal({
       location: "",
       is_reusable: false,
       published_at: "",
+      content_role: "",
     });
 
     setFormats([]);
@@ -400,6 +404,21 @@ export default function CreateContentModal({
               placeholder="Published date"
             />
           )}
+
+          {/* CONTENT ROLE */}
+
+          <select
+            name="content_role"
+            value={form.content_role}
+            onChange={handleChange}
+          >
+            <option value="">Select role (optional)</option>
+            <option value="educational">Educational</option>
+            <option value="inspirational">Inspirational</option>
+            <option value="personal">Personal</option>
+            <option value="promotional">Promotional</option>
+            <option value="curated">Curated</option>
+          </select>
 
           {/* LOCATION */}
 
