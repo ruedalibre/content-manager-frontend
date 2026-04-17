@@ -11,26 +11,28 @@ type GrowthVisual = {
 };
 
 export function getGrowthVisual(
-  growthRateData: GrowthRateData[]
+  growthRateData: GrowthRateData[],
 ): GrowthVisual {
+  const rawRate =
+    growthRateData.length > 0 ? growthRateData.at(-1)?.growth_rate : null;
+
   const latest =
-    growthRateData.length > 0
-      ? growthRateData.at(-1)?.growth_rate ?? null
-      : null;
+    rawRate !== null && rawRate !== undefined ? Number(rawRate) : null;
 
   const rounded =
-    latest !== null && latest !== undefined
-      ? Math.round(latest)
-      : null;
+    latest !== null && latest !== undefined ? Math.round(latest) : null;
 
-  if (rounded === null)
+  if (rounded === null) {
     return { label: "—", className: "neutral", arrow: "" };
+  }
 
-  if (rounded > 0)
+  if (rounded > 0) {
     return { label: `+${rounded}%`, className: "positive", arrow: "↑" };
+  }
 
-  if (rounded < 0)
+  if (rounded < 0) {
     return { label: `${rounded}%`, className: "negative", arrow: "↓" };
+  }
 
-  return { label: "0%", className: "neutral", arrow: "→" };
+  return { label: "—", className: "neutral", arrow: "" };
 }

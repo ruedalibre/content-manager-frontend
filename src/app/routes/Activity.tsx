@@ -71,8 +71,6 @@ export default function Dashboard() {
   if (loading) return <p>Loading activity...</p>;
   if (!data) return <p>No data available</p>;
 
-  console.log("Dashboard data:", data);
-
   /* =========================
      EMPTY STATE
   ========================= */

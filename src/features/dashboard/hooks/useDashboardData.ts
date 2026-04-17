@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../../supabaseClient";
+import { supabase } from "../../../supabaseClient.ts";
 
 import {
   type DashboardData,
@@ -8,9 +8,9 @@ import {
   type CumulativeGrowthData,
   type GrowthRateData,
   type HeatmapData,
-} from "../types/dashboard.types";
+} from "../types/dashboard.types.ts";
 
-import { type AnalyticsInsight } from "../../insights/types/insights.types";
+import { type AnalyticsInsight } from "../../insights/types/insights.types.ts";
 
 /* =========================
    HOOK
