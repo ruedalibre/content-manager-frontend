@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
@@ -154,6 +154,7 @@ export default function Contents() {
 
       setContents(data.results || []);
       setTotal(data.total || 0);
+      setAvailableStatuses(data.availableStatuses || []);
     } catch (err) {
       console.error("Contents fetch error:", err);
     } finally {
@@ -200,10 +201,7 @@ export default function Contents() {
      STATUS OPTIONS
   ========================= */
 
-  const statusOptions = useMemo(() => {
-    const set = new Set(contents.map((c) => c.status));
-    return Array.from(set);
-  }, [contents]);
+  const [availableStatuses, setAvailableStatuses] = useState<string[]>([]);
 
   /* =========================
      CLEAR FILTERS
@@ -408,7 +406,7 @@ export default function Contents() {
           >
             <option value="">All Status</option>
 
-            {statusOptions.map((s) => (
+            {availableStatuses.map((s) => (
               <option key={s} value={s}>
                 {s}
               </option>
