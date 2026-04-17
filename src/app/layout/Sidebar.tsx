@@ -46,7 +46,7 @@ export default function Sidebar({ isOpen, onClose, onLogout }: Props) {
             Insights
           </NavLink>
 
-          <NavLink to="/dashboard" onClick={onClose}>
+          <NavLink to="/activity" onClick={onClose}>
             <BarChart3 size={18} />
             Activity
           </NavLink>

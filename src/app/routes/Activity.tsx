@@ -9,7 +9,7 @@ import { getGrowthVisual } from "../../utils/growthRate.ts";
 
 import { useOutletContext, useNavigate } from "react-router-dom";
 
-import "./Dashboard.scss";
+import "./Activity.scss";
 
 /* =========================
    TYPES

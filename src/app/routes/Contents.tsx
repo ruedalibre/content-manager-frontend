@@ -137,7 +137,6 @@ export default function Contents() {
 
       const headers = {
         Authorization: `Bearer ${session?.access_token}`,
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       };
 
       let url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-history?page=${page}&limit=${limit}`;
@@ -179,7 +178,6 @@ export default function Contents() {
 
         const headers = {
           Authorization: `Bearer ${session?.access_token}`,
-          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
         };
 
         const res = await fetch(
@@ -271,7 +269,6 @@ export default function Contents() {
 
       const headers = {
         Authorization: `Bearer ${session?.access_token}`,
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       };
 
       const res = await fetch(
@@ -284,10 +281,6 @@ export default function Contents() {
         console.error("Delete error:", error);
         return;
       }
-
-      setContents((prev) =>
-        prev.filter((item) => item.id !== contentToDelete.id),
-      );
 
       setLastDeleted(contentToDelete);
       setShowToast(true);
@@ -302,7 +295,14 @@ export default function Contents() {
       setIsDeleteModalOpen(false);
       setContentToDelete(null);
 
-      setTotal((prev) => Math.max(prev - 1, 0));
+      // Recalcular página antes de refrescar
+      const newTotal = total - 1;
+      const newTotalPages = Math.ceil(newTotal / limit);
+      if (page > newTotalPages && newTotalPages > 0) {
+        setPage(newTotalPages);
+      } else {
+        await fetchContents();
+      }
     } catch (err) {
       console.error("Delete failed:", err);
     } finally {
@@ -328,7 +328,6 @@ export default function Contents() {
 
       const headers = {
         Authorization: `Bearer ${session?.access_token}`,
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       };
 
       const res = await fetch(

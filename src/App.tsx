@@ -1,6 +1,6 @@
 import AppLayout from "./app/layout/AppLayout.tsx";
 import { Routes, Route } from "react-router-dom";
-import Dashboard from "./app/routes/Dashboard.tsx";
+import Activity from "./app/routes/Activity.tsx";
 import Contents from "./app/routes/Contents.tsx";
 import Ideas from "./app/routes/Ideas.tsx";
 import Admin from "./app/routes/Admin.tsx";
@@ -77,7 +77,7 @@ export default function App() {
         <Route path="/ideas" element={<Ideas />} />
         <Route path="/contents" element={<Contents />} />
         <Route path="/insights" element={<Insights />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/activity" element={<Activity />} />
         <Route path="/admin" element={<Admin />} />
         
       </Route>
