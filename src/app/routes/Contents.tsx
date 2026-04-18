@@ -79,10 +79,23 @@ export default function Contents() {
   const [undoTimeout, setUndoTimeout] = useState<number | null>(null);
   const [isRestoring, setIsRestoring] = useState(false);
 
+  const [toastMessage, setToastMessage] = useState<string>("");
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
+
   const [searchParams] = useSearchParams();
   const ideaId = searchParams.get("idea");
 
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
+
+  /* =========================
+     TOAST
+  ========================= */
+
+  const showSuccess = (message: string) => {
+    setToastMessage(message);
+    setShowSuccessToast(true);
+    setTimeout(() => setShowSuccessToast(false), 3000);
+  };
 
   /* =========================
      LOAD IDEA FROM QUERY PARAM
@@ -527,7 +540,15 @@ export default function Contents() {
             setContentToEdit(null);
             setSelectedIdea(null);
           }}
-          onCreated={fetchContents}
+          onCreated={() => {
+            const isEditing = !!contentToEdit;
+            fetchContents();
+            showSuccess(
+              isEditing
+                ? "Content updated successfully"
+                : "Content created successfully",
+            );
+          }}
           contentToEdit={contentToEdit}
           idea={selectedIdea}
         />
@@ -562,6 +583,12 @@ export default function Contents() {
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {showSuccessToast && (
+          <div className="toast toast--success">
+            <span>✓ {toastMessage}</span>
           </div>
         )}
 
