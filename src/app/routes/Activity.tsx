@@ -72,6 +72,38 @@ export default function Dashboard() {
   if (!data) return <p>No data available</p>;
 
   /* =========================
+     EMPTY STATE - NO CONTENTS IN PERIOD
+  ========================= */
+
+  if (data.total_contents === 0 && data.total_all_time > 0) {
+    const periodLabels = {
+      "7d": "the last 7 days",
+      "30d": "the last 30 days",
+      "90d": "the last 90 days",
+    };
+
+    return (
+      <div className="dashboard-empty">
+        <span className="dashboard-empty__badge">No activity</span>
+        <div className="dashboard-empty__icon">📅</div>
+        <h2>No content in {periodLabels[period]}</h2>
+        <p>
+          You have published content before, but nothing in this period. Try
+          selecting a different time range or create new content.
+        </p>
+        <div className="dashboard-empty__actions">
+          <button className="btn-secondary" onClick={() => setPeriod("90d")}>
+            View last 90 days
+          </button>
+          <button className="btn-primary" onClick={() => navigate("/contents")}>
+            Go to Contents
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  /* =========================
      EMPTY STATE
   ========================= */
 
