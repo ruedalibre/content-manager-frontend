@@ -22,6 +22,7 @@ type ContentItem = {
   is_reusable: boolean;
   created_at: string;
   published_at: string | null;
+  content_role: string | null;
 };
 
 type Platform = {
@@ -58,6 +59,7 @@ export default function Contents() {
 
   const [platformFilter, setPlatformFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contentToEdit, setContentToEdit] = useState<ContentItem | null>(null);
@@ -159,6 +161,8 @@ export default function Contents() {
 
       if (platformFilter) url += `&platform_id=${platformFilter}`;
 
+      if (roleFilter) url += `&content_role=${roleFilter}`;
+
       if (statusFilter) url += `&status=${statusFilter}`;
 
       const res = await fetch(url, { headers });
@@ -177,7 +181,7 @@ export default function Contents() {
 
   useEffect(() => {
     fetchContents();
-  }, [page, debouncedSearch, platformFilter, statusFilter]);
+  }, [page, debouncedSearch, platformFilter, statusFilter, roleFilter]);
 
   /* =========================
      FETCH PLATFORMS
@@ -224,6 +228,7 @@ export default function Contents() {
     setSearch("");
     setPlatformFilter("");
     setStatusFilter("");
+    setRoleFilter("");
     setPage(1);
   };
 
@@ -426,6 +431,22 @@ export default function Contents() {
             ))}
           </select>
 
+          <select
+            className="contents-filters__select"
+            value={roleFilter}
+            onChange={(e) => {
+              setRoleFilter(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">All Roles</option>
+            <option value="educational">Educational</option>
+            <option value="inspirational">Inspirational</option>
+            <option value="personal">Personal</option>
+            <option value="promotional">Promotional</option>
+            <option value="curated">Curated</option>
+          </select>
+
           <button className="btn-secondary" onClick={clearFilters}>
             Clear
           </button>
@@ -444,6 +465,7 @@ export default function Contents() {
                 <th>Title</th>
                 <th>Platform</th>
                 <th>Format</th>
+                <th>Role</th>
                 <th>Status</th>
                 <th>Reusable</th>
                 <th>Created</th>
@@ -479,6 +501,15 @@ export default function Contents() {
 
                     <td>{item.platform_name}</td>
                     <td>{item.format}</td>
+                    <td>
+                      {item.content_role ? (
+                        <span className={`role role--${item.content_role}`}>
+                          {item.content_role}
+                        </span>
+                      ) : (
+                        <span className="role role--none">—</span>
+                      )}
+                    </td>
 
                     <td>
                       <span className={`status ${item.status}`}>
