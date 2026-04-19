@@ -447,74 +447,85 @@ export default function Contents() {
             <option value="curated">Curated</option>
           </select>
 
-          <button className="btn-secondary" onClick={clearFilters}>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={clearFilters}
+          >
             Clear
           </button>
         </div>
 
         <div className="contents-toolbar">
-          <span className="contents-results">
-            Showing {contents.length} of {total} contents
-          </span>
-
-          <div className="contents-pagination">
-            <button type="button"
-              disabled={page === 1}
-              onClick={() => setPage(1)}
-              title="First page"
-            >
-              «
-            </button>
-            <button type="button"
-              disabled={page <= 5}
-              onClick={() => setPage((prev) => Math.max(prev - 5, 1))}
-              title="Back 5 pages"
-            >
-              ‹‹
-            </button>
-            <button type="button"
-              disabled={page === 1}
-              onClick={() => setPage((prev) => prev - 1)}
-              title="Previous page"
-            >
-              ‹
-            </button>
-            <span className="pagination__indicator">
-              <input
-                type="number"
-                min={1}
-                max={totalPages || 1}
-                value={page}
-                onChange={(e) => {
-                  const val = Number(e.target.value);
-                  if (val >= 1 && val <= totalPages) setPage(val);
-                }}
-                className="pagination__input"
-              />
-              <span className="pagination__of">of {totalPages || 1}</span>
+          <div className="contents-results">
+            <span>
+              Showing {contents.length} of {total} contents
             </span>
-            <button type="button"
-              disabled={page >= totalPages}
-              onClick={() => setPage((prev) => prev + 1)}
-              title="Next page"
-            >
-              ›
-            </button>
-            <button type="button"
-              disabled={page > totalPages - 5}
-              onClick={() => setPage((prev) => Math.min(prev + 5, totalPages))}
-              title="Forward 5 pages"
-            >
-              ››
-            </button>
-            <button type="button"
-              disabled={page === totalPages}
-              onClick={() => setPage(totalPages)}
-              title="Last page"
-            >
-              »
-            </button>
           </div>
+        </div>
+        <div className="contents-pagination">
+          <button
+            type="button"
+            disabled={page === 1}
+            onClick={() => setPage(1)}
+            title="First page"
+          >
+            «
+          </button>
+          <button
+            type="button"
+            disabled={page <= 5}
+            onClick={() => setPage((prev) => Math.max(prev - 5, 1))}
+            title="Back 5 pages"
+          >
+            ‹‹
+          </button>
+          <button
+            type="button"
+            disabled={page === 1}
+            onClick={() => setPage((prev) => prev - 1)}
+            title="Previous page"
+          >
+            ‹
+          </button>
+          <span className="pagination__indicator">
+            <input
+              type="number"
+              min={1}
+              max={totalPages || 1}
+              value={page}
+              onChange={(e) => {
+                const val = Number(e.target.value);
+                if (val >= 1 && val <= totalPages) setPage(val);
+              }}
+              className="pagination__input"
+            />
+            <span className="pagination__of">of {totalPages || 1}</span>
+          </span>
+          <button
+            type="button"
+            disabled={page >= totalPages}
+            onClick={() => setPage((prev) => prev + 1)}
+            title="Next page"
+          >
+            ›
+          </button>
+          <button
+            type="button"
+            disabled={page > totalPages - 5}
+            onClick={() => setPage((prev) => Math.min(prev + 5, totalPages))}
+            title="Forward 5 pages"
+          >
+            ››
+          </button>
+          <button
+            type="button"
+            disabled={page === totalPages}
+            onClick={() => setPage(totalPages)}
+            title="Last page"
+          >
+            »
+          </button>
         </div>
 
         {/* TABLE */}

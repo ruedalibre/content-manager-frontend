@@ -5,7 +5,7 @@
 .contents-page {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 /* =========================
@@ -289,12 +289,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
 }
 
 .contents-results {
-  font-size: 14px;
-  color: var(--color-text-muted, #7f8c8d);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  span:first-child {
+    font-size: 14px;
+    color: var(--color-text-muted, #7f8c8d);
+  }
 }
 
 .contents-pagination {
