@@ -5,9 +5,9 @@ import Contents from "./app/routes/Contents.tsx";
 import Ideas from "./app/routes/Ideas.tsx";
 import Admin from "./app/routes/Admin.tsx";
 import Login from "./app/routes/Login.tsx";
-import AuthGuard from "./auth/AuthGuard";
+import AuthGuard from "./auth/AuthGuard.tsx";
 import { useEffect } from "react";
-import { supabase } from "./supabaseClient";
+import { supabase } from "./supabaseClient.ts";
 import Insights from "./app/routes/Insights.tsx";
 
 /* =========================

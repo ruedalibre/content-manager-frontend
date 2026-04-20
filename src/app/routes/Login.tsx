@@ -19,7 +19,7 @@ export default function Login() {
       } = await supabase.auth.getSession();
 
       if (session) {
-        navigate("/dashboard");
+        navigate("/activity");
       }
     };
 
@@ -44,7 +44,7 @@ export default function Login() {
       return;
     }
 
-    navigate("/dashboard");
+    navigate("/activity");
   };
 
   return (
