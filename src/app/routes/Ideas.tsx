@@ -45,6 +45,7 @@ export default function Ideas() {
   const [editTopicName, setEditTopicName] = useState("");
   const [savingTopic, setSavingTopic] = useState(false);
   const [topicSearch, setTopicSearch] = useState("");
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -132,7 +133,7 @@ export default function Ideas() {
         try {
           await deleteIdea(ideaId);
         } catch {
-          alert("Failed to delete idea.");
+          setActionError("Failed to delete idea.");
         }
       },
     );
@@ -158,7 +159,7 @@ export default function Ideas() {
       await updateIdeaTopics(editingIdeaTopics, selectedTopicIds);
       setEditingIdeaTopics(null);
     } catch {
-      alert("Failed to update topics.");
+      setActionError("Failed to update idea topics.");
     } finally {
       setSavingTopics(false);
     }
@@ -192,7 +193,7 @@ export default function Ideas() {
       await updateTopic(editingTopic.id, editTopicName.trim());
       setEditingTopic(null);
     } catch {
-      alert("Failed to update topic.");
+      setActionError("Failed to update topic.");
     } finally {
       setSavingTopic(false);
     }
@@ -207,7 +208,7 @@ export default function Ideas() {
         try {
           await archiveTopic(topicId);
         } catch {
-          alert("Failed to archive topic.");
+          setActionError("Failed to archive topic.");
         }
       },
     );
@@ -274,6 +275,15 @@ export default function Ideas() {
       </div>
 
       {topicError && <p className="error-text">{topicError}</p>}
+
+      {actionError && (
+        <div
+          className="toast toast--error"
+          onClick={() => setActionError(null)}
+        >
+          <span>⚠️ {actionError}</span>
+        </div>
+      )}
 
       {/* TABS */}
       <div className="ideas-tabs">
