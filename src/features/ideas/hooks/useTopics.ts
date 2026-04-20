@@ -1,23 +1,17 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../supabaseClient";
 
-export type IdeaTopic = {
+export type Topic = {
   id: string;
   name: string;
-};
-
-export type Idea = {
-  id: string;
-  title: string;
-  description: string | null;
-  source: string;
+  slug: string;
+  position: number;
+  is_archived: boolean;
   created_at: string;
-  contents?: { count: number }[];
-  topics?: IdeaTopic[];
 };
 
-export function useIdeas(filter: "all" | "manual" | "generated") {
-  const [ideas, setIdeas] = useState<Idea[]>([]);
+export function useTopics() {
+  const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,172 +22,93 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     return session;
   };
 
-  /* =========================
-     LOAD IDEAS
-  ========================= */
-
-  const loadIdeas = async () => {
+  const loadTopics = async () => {
     try {
       setLoading(true);
       setError(null);
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: userRecord } = await supabase
-        .from("users")
-        .select("tenant_id")
-        .eq("id", user.id)
-        .single();
-
-      if (!userRecord) return;
-
-      let query = supabase
-        .from("creative_units")
-        .select("id, title, description, source, created_at")
-        .eq("tenant_id", userRecord.tenant_id)
-        .order("created_at", { ascending: false });
-
-      if (filter === "manual") query = query.eq("source", "manual");
-      if (filter === "generated") query = query.eq("source", "generated");
-
-      const { data, error } = await query;
-
-      if (error) {
-        setError("Failed to load ideas");
-        return;
-      }
-
       const session = await getSession();
-      const headers = { Authorization: `Bearer ${session?.access_token}` };
-      const base = import.meta.env.VITE_SUPABASE_URL + "/functions/v1/";
-
-      // Cargar conteos e idea_topics en paralelo
-      const [countsRes, ...topicsResponses] = await Promise.all([
-        fetch(`${base}me-ideas-counts`, { headers }),
-        ...(data ?? []).map((idea) =>
-          fetch(`${base}me-idea-topics?idea_id=${idea.id}`, { headers }),
-        ),
-      ]);
-
-      const countsData: { creative_unit_id: string; count: number }[] =
-        countsRes.ok ? await countsRes.json() : [];
-
-      const countsMap = new Map(
-        countsData.map((c) => [c.creative_unit_id, c.count]),
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-topics`,
+        { headers: { Authorization: `Bearer ${session?.access_token}` } },
       );
-
-      const topicsData = await Promise.all(
-        topicsResponses.map((r) => (r.ok ? r.json() : [])),
-      );
-
-      if (data) {
-        const mapped = data.map((idea, i) => ({
-          ...idea,
-          contents: [{ count: countsMap.get(idea.id) ?? 0 }],
-          topics: topicsData[i] ?? [],
-        }));
-
-        const sortedIdeas = [...mapped].sort((a, b) => {
-          const aCount = a.contents?.[0]?.count ?? 0;
-          const bCount = b.contents?.[0]?.count ?? 0;
-          return bCount - aCount;
-        });
-
-        setIdeas(sortedIdeas);
-      }
+      if (!res.ok) throw new Error("Failed to load topics");
+      const data = await res.json();
+      setTopics(data ?? []);
     } catch (err) {
       console.error(err);
-      setError("Failed to load ideas");
+      setError("Failed to load topics");
     } finally {
       setLoading(false);
     }
   };
 
-  /* =========================
-     UPDATE IDEA
-  ========================= */
-
-  const updateIdea = async (
-    ideaId: string,
-    updates: { title: string; description?: string; status?: string },
-  ) => {
+  const createTopic = async (name: string) => {
     const session = await getSession();
     const res = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-idea/${ideaId}`,
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-topic`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ name }),
+      },
+    );
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Failed to create topic");
+    }
+    await loadTopics();
+  };
+
+  const updateTopic = async (topicId: string, name: string) => {
+    const session = await getSession();
+    const res = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-topic/${topicId}`,
       {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.access_token}`,
         },
-        body: JSON.stringify(updates),
+        body: JSON.stringify({ name }),
       },
     );
     if (!res.ok) {
       const data = await res.json();
-      throw new Error(data.error || "Failed to update idea");
+      throw new Error(data.error || "Failed to update topic");
     }
-    await loadIdeas();
+    await loadTopics();
   };
 
-  /* =========================
-     UPDATE IDEA TOPICS
-  ========================= */
-
-  const updateIdeaTopics = async (ideaId: string, topicIds: string[]) => {
+  const archiveTopic = async (topicId: string) => {
     const session = await getSession();
     const res = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-idea-topics/${ideaId}`,
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/archive-topic/${topicId}`,
       {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({ topic_ids: topicIds }),
-      },
-    );
-    if (!res.ok) {
-      const data = await res.json();
-      throw new Error(data.error || "Failed to update idea topics");
-    }
-    await loadIdeas();
-  };
-
-  /* =========================
-     DELETE IDEA
-  ========================= */
-
-  const deleteIdea = async (ideaId: string) => {
-    const session = await getSession();
-    const res = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-idea/${ideaId}`,
-      {
-        method: "DELETE",
+        method: "POST",
         headers: { Authorization: `Bearer ${session?.access_token}` },
       },
     );
     if (!res.ok) {
       const data = await res.json();
-      throw new Error(data.error || "Failed to delete idea");
+      throw new Error(data.error || "Failed to archive topic");
     }
-    await loadIdeas();
+    await loadTopics();
   };
 
   useEffect(() => {
-    loadIdeas();
-  }, [filter]);
+    loadTopics();
+  }, []);
 
   return {
-    ideas,
+    topics,
     loading,
     error,
-    refetch: loadIdeas,
-    updateIdea,
-    updateIdeaTopics,
-    deleteIdea,
+    refetch: loadTopics,
+    createTopic,
+    updateTopic,
+    archiveTopic,
   };
 }
