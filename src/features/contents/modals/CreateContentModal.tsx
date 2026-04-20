@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./CreateContentModal.scss";
 import { supabase } from "../../../supabaseClient.ts";
+import { useTopics } from "../../ideas/hooks/useTopics.ts";
 
 /* =========================
    TYPES
@@ -25,16 +26,14 @@ type Platform = {
   slug: string;
   icon: string;
   is_active: boolean;
-  platform_types: {
-    id: string;
-    name: string;
-  };
+  platform_types: { id: string; name: string };
 };
 
 type Idea = {
   id: string;
   title: string;
   description?: string | null;
+  topics?: { id: string; name: string }[];
 };
 
 type Props = {
@@ -44,6 +43,61 @@ type Props = {
   contentToEdit?: ContentItem | null;
   idea?: Idea | null;
 };
+
+/* =========================
+   TOPIC COMBOBOX
+========================= */
+
+type TopicComboboxProps = {
+  topics: { id: string; name: string }[];
+  selectedIds: string[];
+  onToggle: (id: string) => void;
+};
+
+function TopicCombobox({ topics, selectedIds, onToggle }: TopicComboboxProps) {
+  const [search, setSearch] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+
+  const filtered = topics.filter(
+    (t) =>
+      t.name.toLowerCase().includes(search.toLowerCase()) &&
+      !selectedIds.includes(t.id),
+  );
+
+  return (
+    <div className="topic-combobox">
+      <input
+        type="text"
+        placeholder="Search topics..."
+        value={search}
+        onChange={(e) => {
+          setSearch(e.target.value);
+          setIsOpen(true);
+        }}
+        onFocus={() => setIsOpen(true)}
+        onBlur={() => setTimeout(() => setIsOpen(false), 150)}
+        className="topic-combobox__input"
+      />
+      {isOpen && filtered.length > 0 && (
+        <div className="topic-combobox__dropdown">
+          {filtered.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              className="topic-combobox__option"
+              onMouseDown={() => {
+                onToggle(t.id);
+                setSearch("");
+              }}
+            >
+              {t.name}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 /* =========================
    COMPONENT
@@ -56,10 +110,6 @@ export default function CreateContentModal({
   contentToEdit,
   idea,
 }: Props) {
-  /* =========================
-     FORM STATE
-  ========================= */
-
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -72,8 +122,7 @@ export default function CreateContentModal({
     content_role: "",
   });
 
-  const [creativeUnitId, setCreativeUnitId] = useState<string | null>(null);
-
+  const [selectedTopicIds, setSelectedTopicIds] = useState<string[]>([]);
   const [platforms, setPlatforms] = useState<Platform[]>([]);
   const [formats, setFormats] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -81,62 +130,57 @@ export default function CreateContentModal({
 
   const isEditMode = !!contentToEdit;
 
+  const { topics } = useTopics();
+
+  /* =========================
+     HELPERS
+  ========================= */
+
+  const getSession = async () => {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    return session;
+  };
+
+  const getHeaders = (session: { access_token: string } | null) => ({
+    Authorization: `Bearer ${session?.access_token}`,
+  });
+
   /* =========================
      FETCH PLATFORMS
   ========================= */
 
   useEffect(() => {
     if (!isOpen) return;
-
     const loadPlatforms = async () => {
       try {
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        const headers = {
-          Authorization: `Bearer ${session?.access_token}`,
-          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-        };
-
+        const session = await getSession();
         const res = await fetch(
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/platforms`,
-          { headers },
+          { headers: getHeaders(session) },
         );
-
         const data: Platform[] = await res.json();
-
         setPlatforms(data);
       } catch (err) {
         console.error("Platform fetch error:", err);
       }
     };
-
     loadPlatforms();
   }, [isOpen]);
 
   /* =========================
      FETCH FORMATS
-========================= */
+  ========================= */
 
   const fetchFormats = async (platformId: string) => {
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      const headers = {
-        Authorization: `Bearer ${session?.access_token}`,
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
-      };
-
+      const session = await getSession();
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/platform-formats?platform_id=${platformId}`,
-        { headers },
+        { headers: getHeaders(session) },
       );
-
       const data: string[] = await res.json();
-
       setFormats(data);
     } catch (err) {
       console.error("Format fetch error:", err);
@@ -145,7 +189,7 @@ export default function CreateContentModal({
 
   /* =========================
      PREFILL EDIT MODE
-========================= */
+  ========================= */
 
   useEffect(() => {
     if (contentToEdit) {
@@ -160,34 +204,50 @@ export default function CreateContentModal({
         published_at: contentToEdit.published_at ?? "",
         content_role: contentToEdit.content_role ?? "",
       });
-
-      setCreativeUnitId(null);
-
       fetchFormats(contentToEdit.platform_id);
+
+      // Cargar topics e ideas actuales del contenido
+      const loadAssociations = async () => {
+        try {
+          const session = await getSession();
+          const res = await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-associations?content_id=${contentToEdit.id}`,
+            { headers: getHeaders(session) },
+          );
+          if (res.ok) {
+            const data = await res.json();
+            setSelectedTopicIds(
+              data.topics?.map((t: { id: string }) => t.id) ?? [],
+            );
+          }
+        } catch (err) {
+          console.error("Associations fetch error:", err);
+        }
+      };
+      loadAssociations();
     } else {
       resetForm();
     }
-  }, [contentToEdit, idea]);
+  }, [contentToEdit]);
 
   /* =========================
-     PREFILL FROM IDEA 🔥
-========================= */
+     PREFILL FROM IDEA
+  ========================= */
 
   useEffect(() => {
     if (!idea || isEditMode) return;
-
     setForm((prev) => ({
       ...prev,
       title: idea.title,
       description: idea.description ?? "",
     }));
-
-    setCreativeUnitId(idea.id);
+    // Pre-seleccionar topics de la idea
+    setSelectedTopicIds(idea.topics?.map((t) => t.id) ?? []);
   }, [idea, isEditMode]);
 
   /* =========================
      RESET FORM
-========================= */
+  ========================= */
 
   const resetForm = () => {
     setForm({
@@ -201,15 +261,14 @@ export default function CreateContentModal({
       published_at: "",
       content_role: "",
     });
-
     setFormats([]);
-    setCreativeUnitId(null);
+    setSelectedTopicIds([]);
     setSubmitError(null);
   };
 
   /* =========================
      HANDLE CHANGE
-========================= */
+  ========================= */
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -217,7 +276,6 @@ export default function CreateContentModal({
     >,
   ) => {
     const { name, value, type } = e.target;
-
     setForm((prev) => ({
       ...prev,
       [name]:
@@ -225,49 +283,40 @@ export default function CreateContentModal({
     }));
   };
 
-  /* =========================
-     PLATFORM CHANGE
-========================= */
-
   const handlePlatformChange = async (platformId: string) => {
-    setForm((prev) => ({
-      ...prev,
-      platform_id: platformId,
-      format: "",
-    }));
+    setForm((prev) => ({ ...prev, platform_id: platformId, format: "" }));
+    if (platformId) await fetchFormats(platformId);
+  };
 
-    if (platformId) {
-      await fetchFormats(platformId);
-    }
+  const handleToggleTopic = (topicId: string) => {
+    setSelectedTopicIds((prev) =>
+      prev.includes(topicId)
+        ? prev.filter((id) => id !== topicId)
+        : [...prev, topicId],
+    );
   };
 
   /* =========================
      SUBMIT
-========================= */
+  ========================= */
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
+      const session = await getSession();
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.access_token}`,
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       };
 
       const url = isEditMode
         ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-content/${contentToEdit?.id}`
         : `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-content`;
 
-      const method = isEditMode ? "PUT" : "POST";
-
       const res = await fetch(url, {
-        method,
+        method: isEditMode ? "PUT" : "POST",
         headers,
         body: JSON.stringify({
           ...form,
@@ -275,17 +324,42 @@ export default function CreateContentModal({
             form.status === "published"
               ? form.published_at || new Date().toISOString()
               : null,
-          creative_unit_id: idea?.id ?? creativeUnitId,
+          creative_unit_id: idea?.id ?? null,
         }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        console.error(data);
         setSubmitError(data.error || "Error saving content");
         setLoading(false);
         return;
+      }
+
+      const contentId = isEditMode ? contentToEdit?.id : data.data?.id;
+
+      // Guardar topics del contenido
+      if (contentId) {
+        await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-content-topics/${contentId}`,
+          {
+            method: "PUT",
+            headers,
+            body: JSON.stringify({ topic_ids: selectedTopicIds }),
+          },
+        );
+
+        // Si viene de una idea, vincularla también
+        if (idea?.id && !isEditMode) {
+          await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-content-ideas/${contentId}`,
+            {
+              method: "PUT",
+              headers,
+              body: JSON.stringify({ idea_ids: [idea.id] }),
+            },
+          );
+        }
       }
 
       onCreated();
@@ -299,15 +373,11 @@ export default function CreateContentModal({
     }
   };
 
-  /* =========================
-     GUARD
-========================= */
-
   if (!isOpen) return null;
 
   /* =========================
      RENDER
-========================= */
+  ========================= */
 
   return (
     <div className="modal-overlay">
@@ -316,25 +386,21 @@ export default function CreateContentModal({
           {isEditMode
             ? "Edit Content"
             : idea
-              ? "Create from Idea"
+              ? "Create from Combination"
               : "Create Content"}
         </h3>
-
-        {/* 🔥 CONTEXT */}
 
         {idea && !isEditMode && (
           <div className="idea-context">
             <span className="idea-context__label">
-              Creating content from idea
+              Using combination from idea
             </span>
-
             <strong className="idea-context__title">{idea.title}</strong>
           </div>
         )}
 
         <form onSubmit={handleSubmit}>
           {/* TITLE */}
-
           <input
             name="title"
             placeholder="Title"
@@ -344,7 +410,6 @@ export default function CreateContentModal({
           />
 
           {/* DESCRIPTION */}
-
           <textarea
             name="description"
             placeholder="Description"
@@ -353,7 +418,6 @@ export default function CreateContentModal({
           />
 
           {/* PLATFORM */}
-
           <select
             name="platform_id"
             value={form.platform_id}
@@ -361,7 +425,6 @@ export default function CreateContentModal({
             required
           >
             <option value="">Select platform</option>
-
             {platforms.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name}
@@ -370,7 +433,6 @@ export default function CreateContentModal({
           </select>
 
           {/* FORMAT */}
-
           <select
             name="format"
             value={form.format}
@@ -379,7 +441,6 @@ export default function CreateContentModal({
             required
           >
             <option value="">Select format</option>
-
             {formats.map((f) => (
               <option key={f} value={f}>
                 {f}
@@ -388,7 +449,6 @@ export default function CreateContentModal({
           </select>
 
           {/* STATUS */}
-
           <select name="status" value={form.status} onChange={handleChange}>
             <option value="draft">Draft</option>
             <option value="published">Published</option>
@@ -401,12 +461,10 @@ export default function CreateContentModal({
               name="published_at"
               value={form.published_at}
               onChange={handleChange}
-              placeholder="Published date"
             />
           )}
 
           {/* CONTENT ROLE */}
-
           <select
             name="content_role"
             value={form.content_role}
@@ -420,8 +478,44 @@ export default function CreateContentModal({
             <option value="curated">Curated</option>
           </select>
 
-          {/* LOCATION */}
+          {/* TOPICS */}
+          {/* TOPICS */}
+          {topics.length > 0 && (
+            <div className="modal__topics">
+              <p className="modal__label">Topics</p>
 
+              {/* SELECTED CHIPS */}
+              {selectedTopicIds.length > 0 && (
+                <div className="modal__topic-chips">
+                  {selectedTopicIds.map((id) => {
+                    const topic = topics.find((t) => t.id === id);
+                    if (!topic) return null;
+                    return (
+                      <span key={id} className="topic-chip topic-chip--active">
+                        {topic.name}
+                        <button
+                          type="button"
+                          className="topic-chip__remove"
+                          onClick={() => handleToggleTopic(id)}
+                        >
+                          ×
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* SEARCH INPUT */}
+              <TopicCombobox
+                topics={topics}
+                selectedIds={selectedTopicIds}
+                onToggle={handleToggleTopic}
+              />
+            </div>
+          )}
+
+          {/* LOCATION */}
           <input
             name="location"
             placeholder="Location"
@@ -430,7 +524,6 @@ export default function CreateContentModal({
           />
 
           {/* REUSABLE */}
-
           <label className="checkbox">
             <input
               type="checkbox"
@@ -441,9 +534,8 @@ export default function CreateContentModal({
             Reusable
           </label>
 
-          {/* ACTIONS */}
-
           {submitError && <p className="modal__error">{submitError}</p>}
+
           <div className="modal-actions">
             <button
               type="button"
@@ -455,7 +547,6 @@ export default function CreateContentModal({
             >
               Cancel
             </button>
-
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading
                 ? isEditMode
@@ -464,7 +555,7 @@ export default function CreateContentModal({
                 : isEditMode
                   ? "Update"
                   : idea
-                    ? "Create from Idea"
+                    ? "Create from Combination"
                     : "Create"}
             </button>
           </div>
