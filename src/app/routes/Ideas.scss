@@ -54,6 +54,24 @@
   }
 }
 
+.topic-create-inline__field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.topic-create-inline__counter {
+  font-size: 0.7rem;
+  color: #9ca3af;
+  text-align: right;
+  margin-top: 2px;
+
+  &--warning {
+    color: #f59e0b;
+    font-weight: 600;
+  }
+}
+
 /* =========================
    TABS
 ========================= */

@@ -7,6 +7,7 @@ import {
 import { useTopics, type Topic } from "../../features/ideas/hooks/useTopics.ts";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
 import CreateIdeaModal from "../../features/ideas/modals/CreateIdeaModal.tsx";
+import ConfirmModal from "../../components/ui/ConfirmModal.tsx";
 import "./Ideas.scss";
 
 type IdeaForContent = {
@@ -44,6 +45,13 @@ export default function Ideas() {
   const [editTopicName, setEditTopicName] = useState("");
   const [savingTopic, setSavingTopic] = useState(false);
   const [topicSearch, setTopicSearch] = useState("");
+
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  } | null>(null);
 
   const {
     ideas,
@@ -116,12 +124,18 @@ export default function Ideas() {
   };
 
   const handleDeleteIdea = async (ideaId: string) => {
-    if (!confirm("Delete this idea? This cannot be undone.")) return;
-    try {
-      await deleteIdea(ideaId);
-    } catch {
-      alert("Failed to delete idea.");
-    }
+    openConfirm(
+      "Delete idea",
+      "This idea will be permanently deleted. This cannot be undone.",
+      async () => {
+        closeConfirm();
+        try {
+          await deleteIdea(ideaId);
+        } catch {
+          alert("Failed to delete idea.");
+        }
+      },
+    );
   };
 
   const handleOpenTopicSelector = (idea: Idea) => {
@@ -185,18 +199,29 @@ export default function Ideas() {
   };
 
   const handleArchiveTopic = async (topicId: string) => {
-    if (
-      !confirm(
-        "Archive this topic? It won't appear in selectors but existing associations are preserved.",
-      )
-    )
-      return;
-    try {
-      await archiveTopic(topicId);
-    } catch {
-      alert("Failed to archive topic.");
-    }
+    openConfirm(
+      "Archive topic",
+      "This topic won't appear in selectors but existing associations are preserved.",
+      async () => {
+        closeConfirm();
+        try {
+          await archiveTopic(topicId);
+        } catch {
+          alert("Failed to archive topic.");
+        }
+      },
+    );
   };
+
+  const openConfirm = (
+    title: string,
+    message: string,
+    onConfirm: () => void,
+  ) => {
+    setConfirmModal({ isOpen: true, title, message, onConfirm });
+  };
+
+  const closeConfirm = () => setConfirmModal(null);
 
   return (
     <div className="ideas-page">
@@ -218,17 +243,24 @@ export default function Ideas() {
           </button>
         ) : (
           <div className="topic-create-inline">
-            <input
-              type="text"
-              placeholder="Topic name (max 50 chars)"
-              value={newTopicName}
-              onChange={(e) => setNewTopicName(e.target.value)}
-              maxLength={50}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleCreateTopic();
-              }}
-              className="topic-create-inline__input"
-            />
+            <div className="topic-create-inline__field">
+              <input
+                type="text"
+                placeholder="Topic name"
+                value={newTopicName}
+                onChange={(e) => setNewTopicName(e.target.value)}
+                maxLength={50}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleCreateTopic();
+                }}
+                className="topic-create-inline__input"
+              />
+              <span
+                className={`topic-create-inline__counter ${newTopicName.length >= 45 ? "topic-create-inline__counter--warning" : ""}`}
+              >
+                {newTopicName.length}/50
+              </span>
+            </div>
             <button
               className="btn-primary"
               onClick={handleCreateTopic}
@@ -657,6 +689,18 @@ export default function Ideas() {
             </div>
           </div>
         </div>
+      )}
+      {confirmModal && (
+        <ConfirmModal
+          isOpen={confirmModal.isOpen}
+          title={confirmModal.title}
+          message={confirmModal.message}
+          confirmLabel="Confirm"
+          cancelLabel="Cancel"
+          danger={true}
+          onConfirm={confirmModal.onConfirm}
+          onCancel={closeConfirm}
+        />
       )}
     </div>
   );
