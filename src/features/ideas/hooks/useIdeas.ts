@@ -6,6 +6,26 @@ export type IdeaTopic = {
   name: string;
 };
 
+export type CreativeSession = {
+  id: string;
+  idea_id: string;
+  topic_ids: string[];
+  platform_id: string;
+  format: string;
+  recipe: {
+    angle: string;
+    hook: string;
+    tone: string;
+    structure: string[];
+    reuse_suggestions: string[];
+    strategic_note: string;
+  };
+  feedback: Record<string, number> | null;
+  status: "generated" | "reviewed" | "executed" | "discarded";
+  content_id: string | null;
+  created_at: string;
+};
+
 export type Idea = {
   id: string;
   title: string;
@@ -14,6 +34,7 @@ export type Idea = {
   created_at: string;
   contents?: { count: number }[];
   topics?: IdeaTopic[];
+  sessions?: CreativeSession[];
 };
 
 export function useIdeas(filter: "all" | "manual" | "generated") {
@@ -27,6 +48,8 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     } = await supabase.auth.getSession();
     return session;
   };
+
+  const base = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
   /* =========================
      LOAD IDEAS
@@ -68,22 +91,33 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
       const session = await getSession();
       const headers = { Authorization: `Bearer ${session?.access_token}` };
-      const base = import.meta.env.VITE_SUPABASE_URL + "/functions/v1/";
 
-      // Cargar conteos e idea_topics en paralelo
-      const [countsRes, ...topicsResponses] = await Promise.all([
-        fetch(`${base}me-ideas-counts`, { headers }),
+      // Cargar conteos, topics y sesiones en paralelo
+      const [countsRes, sessionsRes, ...topicsResponses] = await Promise.all([
+        fetch(`${base}/me-ideas-counts`, { headers }),
+        fetch(`${base}/me-creative-sessions`, { headers }),
         ...(data ?? []).map((idea) =>
-          fetch(`${base}me-idea-topics?idea_id=${idea.id}`, { headers }),
+          fetch(`${base}/me-idea-topics?idea_id=${idea.id}`, { headers }),
         ),
       ]);
 
       const countsData: { creative_unit_id: string; count: number }[] =
         countsRes.ok ? await countsRes.json() : [];
 
+      const sessionsData: CreativeSession[] = sessionsRes.ok
+        ? await sessionsRes.json()
+        : [];
+
       const countsMap = new Map(
         countsData.map((c) => [c.creative_unit_id, c.count]),
       );
+
+      // Agrupar sesiones por idea_id
+      const sessionsMap = new Map<string, CreativeSession[]>();
+      sessionsData.forEach((s) => {
+        const existing = sessionsMap.get(s.idea_id) ?? [];
+        sessionsMap.set(s.idea_id, [...existing, s]);
+      });
 
       const topicsData = await Promise.all(
         topicsResponses.map((r) => (r.ok ? r.json() : [])),
@@ -94,6 +128,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
           ...idea,
           contents: [{ count: countsMap.get(idea.id) ?? 0 }],
           topics: topicsData[i] ?? [],
+          sessions: sessionsMap.get(idea.id) ?? [],
         }));
 
         const sortedIdeas = [...mapped].sort((a, b) => {
@@ -113,6 +148,90 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
   };
 
   /* =========================
+     GENERATE RECIPE
+  ========================= */
+
+  const generateRecipe = async (params: {
+    idea_id: string;
+    topic_ids: string[];
+    platform_id: string;
+    format: string;
+  }): Promise<{
+    session_id: string;
+    recipe: CreativeSession["recipe"];
+    duplicate: boolean;
+    message?: string;
+  }> => {
+    const session = await getSession();
+    const res = await fetch(`${base}/generate-recipe`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify(params),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to generate recipe");
+    }
+
+    await loadIdeas();
+    return data;
+  };
+
+  /* =========================
+     UPDATE RECIPE STATUS
+  ========================= */
+
+  const updateSessionStatus = async (
+    sessionId: string,
+    status: CreativeSession["status"],
+  ) => {
+    const session = await getSession();
+    const res = await fetch(`${base}/update-creative-session/${sessionId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Failed to update session");
+    }
+    await loadIdeas();
+  };
+
+  /* =========================
+     SAVE FEEDBACK
+  ========================= */
+
+  const saveFeedback = async (
+    sessionId: string,
+    feedback: Record<string, number>,
+    notes?: string,
+  ) => {
+    const session = await getSession();
+    const res = await fetch(`${base}/update-creative-session/${sessionId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({ feedback, feedback_notes: notes }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Failed to save feedback");
+    }
+    await loadIdeas();
+  };
+
+  /* =========================
      UPDATE IDEA
   ========================= */
 
@@ -121,17 +240,14 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     updates: { title: string; description?: string; status?: string },
   ) => {
     const session = await getSession();
-    const res = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-idea/${ideaId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify(updates),
+    const res = await fetch(`${base}/update-idea/${ideaId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
       },
-    );
+      body: JSON.stringify(updates),
+    });
     if (!res.ok) {
       const data = await res.json();
       throw new Error(data.error || "Failed to update idea");
@@ -145,17 +261,14 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
   const updateIdeaTopics = async (ideaId: string, topicIds: string[]) => {
     const session = await getSession();
-    const res = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-idea-topics/${ideaId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${session?.access_token}`,
-        },
-        body: JSON.stringify({ topic_ids: topicIds }),
+    const res = await fetch(`${base}/update-idea-topics/${ideaId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
       },
-    );
+      body: JSON.stringify({ topic_ids: topicIds }),
+    });
     if (!res.ok) {
       const data = await res.json();
       throw new Error(data.error || "Failed to update idea topics");
@@ -169,13 +282,10 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
   const deleteIdea = async (ideaId: string) => {
     const session = await getSession();
-    const res = await fetch(
-      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-idea/${ideaId}`,
-      {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${session?.access_token}` },
-      },
-    );
+    const res = await fetch(`${base}/delete-idea/${ideaId}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${session?.access_token}` },
+    });
     if (!res.ok) {
       const data = await res.json();
       throw new Error(data.error || "Failed to delete idea");
@@ -192,6 +302,9 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     loading,
     error,
     refetch: loadIdeas,
+    generateRecipe,
+    updateSessionStatus,
+    saveFeedback,
     updateIdea,
     updateIdeaTopics,
     deleteIdea,
