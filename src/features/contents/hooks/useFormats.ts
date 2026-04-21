@@ -2,14 +2,10 @@ import { useState } from "react";
 import { supabase } from "../../../supabaseClient";
 
 export function useFormats() {
-  const [formats, setFormats] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const loadFormats = async (platformId: string) => {
-    if (!platformId) {
-      setFormats([]);
-      return;
-    }
+  const loadFormats = async (platformId: string): Promise<string[]> => {
+    if (!platformId) return [];
     try {
       setLoading(true);
       const {
@@ -20,13 +16,14 @@ export function useFormats() {
         { headers: { Authorization: `Bearer ${session?.access_token}` } },
       );
       const data = await res.json();
-      setFormats(data ?? []);
+      return data ?? [];
     } catch (err) {
       console.error("Formats fetch error:", err);
+      return [];
     } finally {
       setLoading(false);
     }
   };
 
-  return { formats, loading, loadFormats };
+  return { loading, loadFormats };
 }
