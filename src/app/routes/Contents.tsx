@@ -23,6 +23,7 @@ type ContentItem = {
   created_at: string;
   published_at: string | null;
   content_role: string | null;
+  topics?: { id: string; name: string }[];
 };
 
 type Platform = {
@@ -538,6 +539,7 @@ export default function Contents() {
                 <th>Platform</th>
                 <th>Format</th>
                 <th>Role</th>
+                <th>Topics</th>
                 <th>Status</th>
                 <th>Reusable</th>
                 <th>Created</th>
@@ -580,6 +582,18 @@ export default function Contents() {
                         </span>
                       ) : (
                         <span className="role role--none">—</span>
+                      )}
+                    </td>
+
+                    <td>
+                      {item.topics && item.topics.length > 0 ? (
+                        <ul className="content-topics-list">
+                          {item.topics.map((t) => (
+                            <li key={t.id}>{t.name}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span className="no-topics">—</span>
                       )}
                     </td>
 
