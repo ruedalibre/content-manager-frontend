@@ -201,7 +201,9 @@ export default function CreateContentModal({
         status: contentToEdit.status,
         location: contentToEdit.location ?? "",
         is_reusable: contentToEdit.is_reusable,
-        published_at: contentToEdit.published_at ?? "",
+        published_at: contentToEdit.published_at
+          ? contentToEdit.published_at.slice(0, 16)
+          : "",
         content_role: contentToEdit.content_role ?? "",
       });
       fetchFormats(contentToEdit.platform_id);
