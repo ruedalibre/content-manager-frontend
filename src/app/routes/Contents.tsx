@@ -61,6 +61,10 @@ export default function Contents() {
   const [platformFilter, setPlatformFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+  const [topicFilter, setTopicFilter] = useState("");
+  const [topicOptions, setTopicOptions] = useState<
+    { id: string; name: string }[]
+  >([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contentToEdit, setContentToEdit] = useState<ContentItem | null>(null);
@@ -164,6 +168,8 @@ export default function Contents() {
 
       if (roleFilter) url += `&content_role=${roleFilter}`;
 
+      if (topicFilter) url += `&topic_id=${topicFilter}`;
+
       if (statusFilter) url += `&status=${statusFilter}`;
 
       const res = await fetch(url, { headers });
@@ -182,7 +188,14 @@ export default function Contents() {
 
   useEffect(() => {
     fetchContents();
-  }, [page, debouncedSearch, platformFilter, statusFilter, roleFilter]);
+  }, [
+    page,
+    debouncedSearch,
+    platformFilter,
+    statusFilter,
+    roleFilter,
+    topicFilter,
+  ]);
 
   /* =========================
      FETCH PLATFORMS
@@ -216,6 +229,28 @@ export default function Contents() {
   }, []);
 
   /* =========================
+     FETCH TOPICS
+  ========================= */
+  useEffect(() => {
+    const loadTopics = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-topics`,
+          { headers: { Authorization: `Bearer ${session?.access_token}` } },
+        );
+        const data = await res.json();
+        setTopicOptions(data ?? []);
+      } catch (err) {
+        console.error("Topics fetch error:", err);
+      }
+    };
+    loadTopics();
+  }, []);
+
+  /* =========================
      STATUS OPTIONS
   ========================= */
 
@@ -230,6 +265,7 @@ export default function Contents() {
     setPlatformFilter("");
     setStatusFilter("");
     setRoleFilter("");
+    setTopicFilter("");
     setPage(1);
   };
 
@@ -446,6 +482,22 @@ export default function Contents() {
             <option value="personal">Personal</option>
             <option value="promotional">Promotional</option>
             <option value="curated">Curated</option>
+          </select>
+
+          <select
+            className="contents-filters__select"
+            value={topicFilter}
+            onChange={(e) => {
+              setTopicFilter(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">All Topics</option>
+            {topicOptions.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
           </select>
 
           <button
