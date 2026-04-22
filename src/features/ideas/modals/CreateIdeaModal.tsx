@@ -75,7 +75,6 @@ export default function CreateIdeaModal({
       const headers = {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.access_token}`,
-        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       };
 
       const url = isEditMode
