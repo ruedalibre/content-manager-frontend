@@ -34,6 +34,9 @@ type Idea = {
   title: string;
   description?: string | null;
   topics?: { id: string; name: string }[];
+  platform_id?: string;
+  format?: string;
+  content_role?: string;
 };
 
 type Props = {
@@ -242,9 +245,14 @@ export default function CreateContentModal({
       ...prev,
       title: idea.title,
       description: idea.description ?? "",
+      platform_id: idea.platform_id ?? "",
+      format: idea.format ?? "",
+      content_role: idea.content_role ?? "",
     }));
-    // Pre-seleccionar topics de la idea
     setSelectedTopicIds(idea.topics?.map((t) => t.id) ?? []);
+    if (idea.platform_id) {
+      fetchFormats(idea.platform_id);
+    }
   }, [idea, isEditMode]);
 
   /* =========================

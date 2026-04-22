@@ -12,6 +12,7 @@ export type CreativeSession = {
   topic_ids: string[];
   platform_id: string;
   format: string;
+  content_role: string | null;
   recipe: {
     angle: string;
     hook: string;
@@ -156,6 +157,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     topic_ids: string[];
     platform_id: string;
     format: string;
+    content_role?: string;
   }): Promise<{
     session_id: string;
     recipe: CreativeSession["recipe"];

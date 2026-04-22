@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   useIdeas,
   type Idea,
@@ -18,12 +18,16 @@ type IdeaForContent = {
   title: string;
   description?: string | null;
   topics?: IdeaTopic[];
+  platform_id?: string;
+  format?: string;
+  content_role?: string;
 };
 
 type RecipeState = {
   [ideaId: string]: {
     platform_id: string;
     format: string;
+    content_role?: string;
     generating: boolean;
     error: string | null;
   };
@@ -127,6 +131,15 @@ function RecipePanel({
                 {session.format}
               </span>
             </div>
+
+            {session.content_role && (
+              <div className="recipe-panel__combo-item">
+                <span className="recipe-panel__combo-label">🎭 Role</span>
+                <span className="recipe-panel__combo-value">
+                  {session.content_role}
+                </span>
+              </div>
+            )}
           </div>
 
           {/* RIGHT — RECIPE */}
@@ -338,6 +351,43 @@ export default function Ideas() {
   const { platforms } = usePlatforms();
   const { loadFormats } = useFormats();
 
+  useEffect(() => {
+    if (!ideas.length) return;
+
+    setRecipeState((prev) => {
+      const updated = { ...prev };
+      ideas.forEach((idea) => {
+        if (!updated[idea.id] && idea.sessions && idea.sessions.length > 0) {
+          const latest = idea.sessions.sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
+          )[0];
+          updated[idea.id] = {
+            platform_id: latest.platform_id ?? "",
+            format: latest.format ?? "",
+            content_role: latest.content_role ?? "",
+            generating: false,
+            error: null,
+          };
+        }
+      });
+      return updated;
+    });
+  }, [ideas]);
+
+  useEffect(() => {
+    if (!ideas.length) return;
+
+    ideas.forEach(async (idea) => {
+      const state = recipeState[idea.id];
+      if (state?.platform_id && !ideaFormats[idea.id]) {
+        const fmts = await loadFormats(state.platform_id);
+        setIdeaFormats((prev) => ({ ...prev, [idea.id]: fmts ?? [] }));
+      }
+    });
+  }, [recipeState]);
+
   const filteredIdeas = ideas
     .filter((idea) => idea.title.toLowerCase().includes(search.toLowerCase()))
     .sort(
@@ -352,6 +402,7 @@ export default function Ideas() {
     recipeState[ideaId] ?? {
       platform_id: "",
       format: "",
+      content_role: "",
       generating: false,
       error: null,
     };
@@ -387,6 +438,7 @@ export default function Ideas() {
         topic_ids: idea.topics?.map((t) => t.id) ?? [],
         platform_id: state.platform_id,
         format: state.format,
+        content_role: state.content_role,
       });
       if (result.duplicate) {
         updateRecipeState(idea.id, {
@@ -865,6 +917,25 @@ export default function Ideas() {
                                   </option>
                                 ))}
                               </select>
+
+                              <select
+                                value={state.content_role ?? ""}
+                                onChange={(e) =>
+                                  updateRecipeState(idea.id, {
+                                    content_role: e.target.value,
+                                  })
+                                }
+                                className="idea-card__select"
+                              >
+                                <option value="">Role (optional)</option>
+                                <option value="educational">Educational</option>
+                                <option value="inspirational">
+                                  Inspirational
+                                </option>
+                                <option value="personal">Personal</option>
+                                <option value="promotional">Promotional</option>
+                                <option value="curated">Curated</option>
+                              </select>
                             </div>
 
                             {state.error && (
@@ -1025,6 +1096,9 @@ export default function Ideas() {
               title: expandedSession.idea.title,
               description: expandedSession.idea.description,
               topics: expandedSession.idea.topics ?? [],
+              platform_id: expandedSession.session.platform_id,
+              format: expandedSession.session.format,
+              content_role: expandedSession.session.content_role ?? undefined,
             });
             setExpandedSession(null);
             setShowCreateModal(true);
