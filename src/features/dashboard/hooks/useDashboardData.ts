@@ -42,7 +42,6 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
 
         const headers = {
           Authorization: `Bearer ${session?.access_token}`,
-          apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
         };
 
         /* =========================
