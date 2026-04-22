@@ -587,9 +587,10 @@ export default function Ideas() {
       {/* PAGE HEADER */}
       <div className="ideas-page__header">
         <div>
-          <h2 className="ideas-page__title">Ideas & Topics</h2>
+          <h2 className="ideas-page__title">Your creative engine</h2>
           <p className="ideas-page__subtitle">
-            Your creative system — ideas, themes, and content combinations
+            Ideas become briefs. Briefs become content. Your creative process,
+            systematized.
           </p>
         </div>
         {activeTab === "ideas" ? (
@@ -720,7 +721,7 @@ export default function Ideas() {
               {filteredIdeas.length > 0 && (
                 <div className="ideas-dual-headers">
                   <span>Idea</span>
-                  <span>Recipe</span>
+                  <span>Brief</span>
                 </div>
               )}
 

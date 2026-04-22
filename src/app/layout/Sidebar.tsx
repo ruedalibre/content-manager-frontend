@@ -33,7 +33,7 @@ export default function Sidebar({ isOpen, onClose, onLogout }: Props) {
         <nav className="sidebar__nav">
           <NavLink to="/ideas" onClick={onClose}>
             <Lightbulb size={18} />
-            Ideas
+            Ideas & Topics
           </NavLink>
 
           <NavLink to="/contents" onClick={onClose}>
