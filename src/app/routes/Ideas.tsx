@@ -11,6 +11,9 @@ import { useFormats } from "../../features/contents/hooks/useFormats.ts";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
 import CreateIdeaModal from "../../features/ideas/modals/CreateIdeaModal.tsx";
 import ConfirmModal from "../../components/ui/ConfirmModal.tsx";
+import RecipeCard from "../../features/ideas/components/RecipeCard.tsx";
+import RecipePanel from "../../features/ideas/components/RecipePanel.tsx";
+import EditIdeaModal from "../../features/ideas/components/EditIdeaModal.tsx";
 import "./Ideas.scss";
 
 type IdeaForContent = {
@@ -33,260 +36,6 @@ type RecipeState = {
   };
 };
 
-function StatusBadge({ status }: { status: CreativeSession["status"] }) {
-  const map = {
-    generated: { label: "Generated", cls: "recipe-status--generated" },
-    reviewed: { label: "Reviewed", cls: "recipe-status--reviewed" },
-    executed: { label: "Implemented", cls: "recipe-status--executed" },
-    discarded: { label: "Discarded", cls: "recipe-status--discarded" },
-  };
-  const s = map[status] ?? map.generated;
-  return <span className={`recipe-status ${s.cls}`}>{s.label}</span>;
-}
-
-type RecipePanelProps = {
-  session: CreativeSession;
-  idea: Idea;
-  onClose: () => void;
-  onApprove: () => void;
-  onDiscard: () => void;
-  onCreateContent: () => void;
-  saveFeedback: (
-    sessionId: string,
-    feedback: Record<string, number>,
-  ) => Promise<void>;
-};
-
-function RecipePanel({
-  session,
-  idea,
-  onClose,
-  onApprove,
-  onDiscard,
-  onCreateContent,
-  saveFeedback,
-}: RecipePanelProps) {
-  const [feedback, setFeedback] = useState<Record<string, number>>(
-    session.feedback ?? {},
-  );
-  const [saving, setSaving] = useState(false);
-
-  const handleRate = (key: string, value: number) => {
-    setFeedback((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleApprove = async () => {
-    setSaving(true);
-    try {
-      await saveFeedback(session.id, feedback);
-      onApprove();
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  return (
-    <div className="recipe-panel-overlay" onClick={onClose}>
-      <div className="recipe-panel" onClick={(e) => e.stopPropagation()}>
-        {/* HEADER */}
-        <div className="recipe-panel__header">
-          <div>
-            <h3 className="recipe-panel__title">{idea.title}</h3>
-            <div className="recipe-panel__meta">
-              <StatusBadge status={session.status} />
-              <span className="recipe-panel__date">
-                {new Date(session.created_at).toLocaleDateString()}
-              </span>
-            </div>
-          </div>
-          <button className="btn-icon" onClick={onClose} type="button">
-            ✕
-          </button>
-        </div>
-
-        {/* BODY */}
-        <div className="recipe-panel__body">
-          {/* LEFT — COMBINATION */}
-          <div className="recipe-panel__combination">
-            <h4 className="recipe-panel__section-title">Combination</h4>
-            <div className="recipe-panel__combo-item">
-              <span className="recipe-panel__combo-label">💡 Idea</span>
-              <span className="recipe-panel__combo-value">{idea.title}</span>
-            </div>
-            {idea.topics && idea.topics.length > 0 && (
-              <div className="recipe-panel__combo-item">
-                <span className="recipe-panel__combo-label">🏷️ Topics</span>
-                <div className="recipe-panel__combo-chips">
-                  {idea.topics.map((t) => (
-                    <span key={t.id} className="topic-chip topic-chip--small">
-                      {t.name}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-            <div className="recipe-panel__combo-item">
-              <span className="recipe-panel__combo-label">📱 Format</span>
-              <span className="recipe-panel__combo-value">
-                {session.format}
-              </span>
-            </div>
-
-            {session.content_role && (
-              <div className="recipe-panel__combo-item">
-                <span className="recipe-panel__combo-label">🎭 Role</span>
-                <span className="recipe-panel__combo-value">
-                  {session.content_role}
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* RIGHT — RECIPE */}
-          <div className="recipe-panel__recipe">
-            <h4 className="recipe-panel__section-title">Recipe</h4>
-
-            {[
-              { key: "angle", label: "Angle", text: session.recipe.angle },
-              { key: "hook", label: "Hook", text: session.recipe.hook },
-              { key: "tone", label: "Tone", text: session.recipe.tone },
-            ].map((aspect) => (
-              <div key={aspect.key} className="recipe-panel__aspect">
-                <div className="recipe-panel__aspect-header">
-                  <span className="recipe-panel__aspect-label">
-                    {aspect.label}
-                  </span>
-                  <div className="recipe-panel__rating">
-                    {[1, 2, 3, 4, 5].map((n) => (
-                      <button
-                        key={n}
-                        type="button"
-                        className={`rating-dot ${(feedback[aspect.key] ?? 0) >= n ? "rating-dot--active" : ""}`}
-                        onClick={() => handleRate(aspect.key, n)}
-                      />
-                    ))}
-                  </div>
-                </div>
-                <p className="recipe-panel__aspect-text">{aspect.text}</p>
-              </div>
-            ))}
-
-            <div className="recipe-panel__aspect">
-              <div className="recipe-panel__aspect-header">
-                <span className="recipe-panel__aspect-label">Structure</span>
-                <div className="recipe-panel__rating">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      className={`rating-dot ${(feedback.structure ?? 0) >= n ? "rating-dot--active" : ""}`}
-                      onClick={() => handleRate("structure", n)}
-                    />
-                  ))}
-                </div>
-              </div>
-              <ol className="recipe-panel__structure">
-                {session.recipe.structure.map((step, i) => (
-                  <li key={i}>{step}</li>
-                ))}
-              </ol>
-            </div>
-
-            {session.recipe.strategic_note && (
-              <div className="recipe-panel__strategic-note">
-                <span className="recipe-panel__aspect-label">
-                  Strategic note
-                </span>
-                <p>{session.recipe.strategic_note}</p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* ACTIONS */}
-        <div className="recipe-panel__actions">
-          <button className="btn-secondary" onClick={onDiscard} type="button">
-            Discard
-          </button>
-          <button
-            className="btn-primary"
-            onClick={onCreateContent}
-            type="button"
-          >
-            Create content →
-          </button>
-          <button
-            className="btn-primary"
-            onClick={handleApprove}
-            disabled={saving}
-            type="button"
-          >
-            {saving ? "Saving..." : "Approve ✓"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function RecipeCard({
-  session,
-  generating,
-  onClick,
-}: {
-  session: CreativeSession | null;
-  generating: boolean;
-  onClick: () => void;
-}) {
-  if (generating) {
-    return (
-      <div className="recipe-card recipe-card--generating">
-        <div className="recipe-card__generating">
-          <div className="recipe-generating-dots">
-            <span />
-            <span />
-            <span />
-          </div>
-          <p>Generating recipe...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!session) {
-    return (
-      <div className="recipe-card recipe-card--empty">
-        <div className="recipe-card__empty-content">
-          <span className="recipe-card__empty-icon">📄</span>
-          <p className="recipe-card__empty-text">No recipe yet</p>
-          <p className="recipe-card__empty-hint">
-            Select platform and format, then generate
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="recipe-card recipe-card--ready" onClick={onClick}>
-      <div className="recipe-card__header">
-        <StatusBadge status={session.status} />
-        <span className="recipe-card__date">
-          {new Date(session.created_at).toLocaleDateString()}
-        </span>
-      </div>
-      <div className="recipe-card__content">
-        <p className="recipe-card__angle">{session.recipe.angle}</p>
-        <p className="recipe-card__hook">{session.recipe.hook}</p>
-      </div>
-      <div className="recipe-card__footer">
-        <span className="recipe-card__format">{session.format}</span>
-        <span className="recipe-card__cta">Ver receta completa →</span>
-      </div>
-    </div>
-  );
-}
-
 export default function Ideas() {
   const [activeTab, setActiveTab] = useState<"ideas" | "topics">("ideas");
   const [search, setSearch] = useState("");
@@ -299,9 +48,7 @@ export default function Ideas() {
   const [editDescription, setEditDescription] = useState("");
   const [editSaving, setEditSaving] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
-  const [editingIdeaTopics, setEditingIdeaTopics] = useState<string | null>(
-    null,
-  );
+  const [editingIdeaTopics, setEditingIdeaTopics] = useState<string | null>(null);
   const [selectedTopicIds, setSelectedTopicIds] = useState<string[]>([]);
   const [savingTopics, setSavingTopics] = useState(false);
   const [newTopicName, setNewTopicName] = useState("");
@@ -326,6 +73,9 @@ export default function Ideas() {
     message: string;
     onConfirm: () => void;
   } | null>(null);
+  const [discardedIdeaIds, setDiscardedIdeaIds] = useState<Set<string>>(
+    new Set(),
+  );
 
   const {
     ideas,
@@ -338,6 +88,8 @@ export default function Ideas() {
     updateIdea,
     updateIdeaTopics,
     deleteIdea,
+    regenerateAspect,
+    updateRecipeAspect,
   } = useIdeas(filter);
 
   const {
@@ -973,6 +725,7 @@ export default function Ideas() {
                       <RecipeCard
                         session={latestSession}
                         generating={state.generating}
+                        showDiscardMessage={discardedIdeaIds.has(idea.id)}
                         onClick={() =>
                           latestSession &&
                           setExpandedSession({ session: latestSession, idea })
@@ -1089,6 +842,9 @@ export default function Ideas() {
           }}
           onDiscard={async () => {
             await updateSessionStatus(expandedSession.session.id, "discarded");
+            setDiscardedIdeaIds((prev) =>
+              new Set([...prev, expandedSession.idea.id]),
+            );
             setExpandedSession(null);
           }}
           onCreateContent={() => {
@@ -1105,6 +861,15 @@ export default function Ideas() {
             setShowCreateModal(true);
           }}
           saveFeedback={saveFeedback}
+          updateSessionStatus={updateSessionStatus}
+          regenerateAspect={regenerateAspect}
+          updateRecipeAspect={updateRecipeAspect}
+          ideaTopics={expandedSession.idea.topics ?? []}
+          platformName={
+            platforms.find(
+              (p) => p.id === expandedSession.session.platform_id,
+            )?.name ?? ""
+          }
         />
       )}
 
@@ -1135,42 +900,17 @@ export default function Ideas() {
 
       {/* EDIT IDEA MODAL */}
       {editingIdea && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Edit Idea</h3>
-            <input
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-              placeholder="Idea title"
-              autoFocus
-            />
-            <textarea
-              value={editDescription}
-              onChange={(e) => setEditDescription(e.target.value)}
-              placeholder="Description (optional)"
-              rows={3}
-            />
-            {editError && <p className="modal__error">{editError}</p>}
-            <div className="modal-actions">
-              <button
-                className="btn-secondary"
-                onClick={() => setEditingIdea(null)}
-                disabled={editSaving}
-                type="button"
-              >
-                Cancel
-              </button>
-              <button
-                className="btn-primary"
-                onClick={handleEditSave}
-                disabled={editSaving || !editTitle.trim()}
-                type="button"
-              >
-                {editSaving ? "Saving..." : "Save"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditIdeaModal
+          idea={editingIdea}
+          editTitle={editTitle}
+          editDescription={editDescription}
+          editError={editError}
+          editSaving={editSaving}
+          onTitleChange={setEditTitle}
+          onDescriptionChange={setEditDescription}
+          onSave={handleEditSave}
+          onCancel={() => setEditingIdea(null)}
+        />
       )}
 
       {/* CONFIRM MODAL */}

@@ -279,6 +279,60 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
   };
 
   /* =========================
+     REGENERATE ASPECT
+  ========================= */
+
+  const regenerateAspect = async (params: {
+    session_id: string;
+    aspect: "angle" | "hook" | "tone" | "structure";
+    rating: number;
+    current_value: string;
+    previous_alternatives: string[];
+    recipe_context: CreativeSession["recipe"];
+    idea_title: string;
+    topics: string[];
+    platform: string;
+    format: string;
+  }): Promise<{ alternative: string | string[] }> => {
+    const session = await getSession();
+    const res = await fetch(`${base}/regenerate-aspect`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify(params),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to regenerate");
+    return data;
+  };
+
+  /* =========================
+     UPDATE RECIPE ASPECT
+  ========================= */
+
+  const updateRecipeAspect = async (
+    sessionId: string,
+    recipe: CreativeSession["recipe"],
+  ) => {
+    const session = await getSession();
+    const res = await fetch(`${base}/update-creative-session/${sessionId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({ recipe }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Failed to update recipe");
+    }
+    await loadIdeas();
+  };
+
+  /* =========================
      DELETE IDEA
   ========================= */
 
@@ -310,5 +364,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     updateIdea,
     updateIdeaTopics,
     deleteIdea,
+    regenerateAspect,
+    updateRecipeAspect,
   };
 }

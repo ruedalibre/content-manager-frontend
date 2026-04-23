@@ -1,0 +1,63 @@
+import { type Idea } from "../hooks/useIdeas.ts";
+
+type EditIdeaModalProps = {
+  idea: Idea;
+  editTitle: string;
+  editDescription: string;
+  editError: string | null;
+  editSaving: boolean;
+  onTitleChange: (value: string) => void;
+  onDescriptionChange: (value: string) => void;
+  onSave: () => void;
+  onCancel: () => void;
+};
+
+export default function EditIdeaModal({
+  editTitle,
+  editDescription,
+  editError,
+  editSaving,
+  onTitleChange,
+  onDescriptionChange,
+  onSave,
+  onCancel,
+}: EditIdeaModalProps) {
+  return (
+    <div className="modal-overlay">
+      <div className="modal">
+        <h3>Edit Idea</h3>
+        <input
+          value={editTitle}
+          onChange={(e) => onTitleChange(e.target.value)}
+          placeholder="Idea title"
+          autoFocus
+        />
+        <textarea
+          value={editDescription}
+          onChange={(e) => onDescriptionChange(e.target.value)}
+          placeholder="Description (optional)"
+          rows={3}
+        />
+        {editError && <p className="modal__error">{editError}</p>}
+        <div className="modal-actions">
+          <button
+            className="btn-secondary"
+            onClick={onCancel}
+            disabled={editSaving}
+            type="button"
+          >
+            Cancel
+          </button>
+          <button
+            className="btn-primary"
+            onClick={onSave}
+            disabled={editSaving || !editTitle.trim()}
+            type="button"
+          >
+            {editSaving ? "Saving..." : "Save"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
