@@ -316,12 +316,16 @@ export default function Identity() {
         <section className="identity-section">
           <span className="section-label">Publishing activity</span>
           <div className="identity-card">
-            <InsightExpander
-              code="content_production"
-              insights={analyticsInsights}
-              expanded={expandedInsights}
-              onToggle={toggleInsight}
-            />
+            {(() => {
+              const insight = getInsight("content_production");
+              return (
+                <div className="identity-insight-body">
+                  <p className="identity-insight-body__insight">{insight!.insight}</p>
+                  <p className="identity-insight-body__strategy">{insight!.strategy}</p>
+                  <p className="identity-insight-body__action">{insight!.action}</p>
+                </div>
+              );
+            })()}
           </div>
         </section>
       )}
