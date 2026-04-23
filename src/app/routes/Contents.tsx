@@ -22,6 +22,7 @@ type ContentItem = {
   is_reusable: boolean;
   created_at: string;
   published_at: string | null;
+  archived_at: string | null;
   content_role: string | null;
   topics?: { id: string; name: string }[];
 };
@@ -595,6 +596,8 @@ export default function Contents() {
                 <th>Status</th>
                 <th>Reusable</th>
                 <th>Created</th>
+                <th>Published</th>
+                <th>Archived</th>
                 <th></th>
               </tr>
             </thead>
@@ -603,7 +606,7 @@ export default function Contents() {
               {loading &&
                 skeletonRows.map((_, i) => (
                   <tr key={i} className="skeleton-row">
-                    <td colSpan={7}>
+                    <td colSpan={9}>
                       <div className="skeleton-line"></div>
                     </td>
                   </tr>
@@ -611,7 +614,7 @@ export default function Contents() {
 
               {!loading && contents.length === 0 && (
                 <tr>
-                  <td colSpan={7}>No contents found</td>
+                  <td colSpan={9}>No contents found</td>
                 </tr>
               )}
 
@@ -658,6 +661,18 @@ export default function Contents() {
                     <td>{item.is_reusable ? "Yes" : "No"}</td>
 
                     <td>{new Date(item.created_at).toLocaleDateString()}</td>
+
+                    <td>
+                      {item.published_at
+                        ? new Date(item.published_at).toLocaleDateString()
+                        : <span className="no-topics">—</span>}
+                    </td>
+
+                    <td>
+                      {item.archived_at
+                        ? new Date(item.archived_at).toLocaleDateString()
+                        : <span className="no-topics">—</span>}
+                    </td>
 
                     <td className="actions-cell">
                       <button
