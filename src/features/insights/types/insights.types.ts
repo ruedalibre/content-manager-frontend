@@ -14,17 +14,33 @@ export type StrategyInsight = {
   confidence: number;
 };
 
+export type TopIdea = {
+  title: string;
+  content_count: number;
+};
+
+export type DistributionItem = {
+  label: string;
+  count: number;
+  percentage: number;
+};
+
+export type PublishingRhythm = {
+  avg_per_week: number;
+  total_contents: number;
+  weeks_active: number;
+};
+
 export type ContentDNA = {
   primary_topic: string | null;
   primary_format: string | null;
   primary_role: string | null;
-  top_ideas?: string[];
-  topic_distribution?: {
-    topic: string;
-    percentage: number;
-    count?: number;
-    total?: number;
-  }[];
+  top_ideas: TopIdea[];
+  topic_distribution: DistributionItem[];
+  format_distribution: DistributionItem[];
+  role_distribution: DistributionItem[];
+  platform_distribution: DistributionItem[];
+  publishing_rhythm: PublishingRhythm | null;
 };
 
 export type StrategyInsightsResponse = {
