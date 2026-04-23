@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { useOutletContext } from "react-router-dom";
 
 import { useContentDNA } from "../../features/insights/hooks/useContentDNA.ts";
-import { useStrategyInsights } from "../../features/insights/hooks/useStrategyInsights.ts";
-import { useAnalyticsInsights } from "../../features/insights/hooks/useAnalyticsInsights.ts";
 import { useIdentityAI } from "../../features/insights/hooks/useIdentityAI.ts";
 
 import "./Identity.scss";
@@ -24,10 +22,6 @@ export default function Identity() {
   const { setTopbarContext } = useOutletContext<OutletContext>();
 
   const { dna, loading: dnaLoading } = useContentDNA();
-
-  // Reserved — not rendered yet
-  const { insights: _strategyInsights } = useStrategyInsights();
-  const { insights: _analyticsInsights } = useAnalyticsInsights("30d");
 
   const { result: aiResult, loading: aiLoading } = useIdentityAI(dna);
 
@@ -134,8 +128,8 @@ export default function Identity() {
 
           <div className="identity-bars">
             {(dna?.topic_distribution ?? []).map((item) => (
-              <div key={item.label} className="identity-bars__row">
-                <span className="identity-bars__label">{item.label}</span>
+              <div key={item.topic} className="identity-bars__row">
+                <span className="identity-bars__label">{item.topic}</span>
                 <div className="identity-bars__track">
                   <div
                     className="identity-bars__fill"
@@ -155,8 +149,8 @@ export default function Identity() {
 
           <div className="identity-bars">
             {(dna?.format_distribution ?? []).map((item) => (
-              <div key={item.label} className="identity-bars__row">
-                <span className="identity-bars__label">{item.label}</span>
+              <div key={item.format} className="identity-bars__row">
+                <span className="identity-bars__label">{item.format}</span>
                 <div className="identity-bars__track">
                   <div
                     className="identity-bars__fill"
@@ -196,8 +190,8 @@ export default function Identity() {
 
           <div className="identity-bars">
             {(dna?.platform_distribution ?? []).map((item) => (
-              <div key={item.label} className="identity-bars__row">
-                <span className="identity-bars__label">{item.label}</span>
+              <div key={item.platform} className="identity-bars__row">
+                <span className="identity-bars__label">{item.platform}</span>
                 <div className="identity-bars__track">
                   <div
                     className="identity-bars__fill"
@@ -220,11 +214,11 @@ export default function Identity() {
 
         <div className="identity-role-grid">
           {(dna?.role_distribution ?? []).map((item) => (
-            <div key={item.label} className="identity-stat-card">
+            <div key={item.role} className="identity-stat-card">
               <span className="identity-stat-card__value">
                 {item.percentage}%
               </span>
-              <span className="identity-stat-card__label">{item.label}</span>
+              <span className="identity-stat-card__label">{item.role}</span>
             </div>
           ))}
         </div>
