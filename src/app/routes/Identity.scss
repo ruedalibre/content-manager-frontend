@@ -270,6 +270,71 @@
 }
 
 /* =========================
+   GENERIC CARD
+========================= */
+
+.identity-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem 1rem;
+}
+
+/* =========================
+   INSIGHT EXPANDER
+========================= */
+
+.identity-insight-expander {
+  margin-top: 12px;
+  border-top: 0.5px solid #f3f4f6;
+  padding-top: 10px;
+}
+
+.identity-insight-toggle {
+  font-size: 12px;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover {
+    color: #111827;
+  }
+}
+
+.identity-insight-body {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__insight {
+    font-size: 13px;
+    color: #111827;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  &__strategy {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  &__action {
+    font-size: 12px;
+    color: #7f77dd;
+    font-weight: 500;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+/* =========================
    SKELETON ANIMATION
 ========================= */
 

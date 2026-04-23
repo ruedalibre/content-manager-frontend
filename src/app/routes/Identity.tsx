@@ -1,8 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useOutletContext } from "react-router-dom";
 
 import { useContentDNA } from "../../features/insights/hooks/useContentDNA.ts";
+import { useAnalyticsInsights } from "../../features/insights/hooks/useAnalyticsInsights.ts";
 import { useIdentityAI } from "../../features/insights/hooks/useIdentityAI.ts";
+
+import { type AnalyticsInsight } from "../../features/insights/types/insights.types.ts";
 
 import "./Identity.scss";
 
@@ -14,6 +17,41 @@ type OutletContext = {
   setTopbarContext: (value: string | null) => void;
 };
 
+type InsightExpanderProps = {
+  code: string;
+  insights: AnalyticsInsight[];
+  expanded: Record<string, boolean>;
+  onToggle: (code: string) => void;
+};
+
+/* =========================
+   SUBCOMPONENT
+========================= */
+
+function InsightExpander({ code, insights, expanded, onToggle }: InsightExpanderProps) {
+  const insight = insights.find((i) => i.code === code) ?? null;
+  if (!insight) return null;
+
+  return (
+    <div className="identity-insight-expander">
+      <button
+        className="identity-insight-toggle"
+        onClick={() => onToggle(code)}
+      >
+        {expanded[code] ? "Hide insight" : "See insight"}
+      </button>
+
+      {expanded[code] && (
+        <div className="identity-insight-body">
+          <p className="identity-insight-body__insight">{insight.insight}</p>
+          <p className="identity-insight-body__strategy">{insight.strategy}</p>
+          <p className="identity-insight-body__action">{insight.action}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* =========================
    COMPONENT
 ========================= */
@@ -22,8 +60,14 @@ export default function Identity() {
   const { setTopbarContext } = useOutletContext<OutletContext>();
 
   const { dna, loading: dnaLoading } = useContentDNA();
-
+  const { insights: analyticsInsights } = useAnalyticsInsights("30d");
   const { result: aiResult, loading: aiLoading } = useIdentityAI(dna);
+
+  const [expandedInsights, setExpandedInsights] = useState<Record<string, boolean>>({});
+
+  const toggleInsight = (code: string) => {
+    setExpandedInsights((prev) => ({ ...prev, [code]: !prev[code] }));
+  };
 
   /* =========================
      TOPBAR CONTEXT
@@ -33,6 +77,13 @@ export default function Identity() {
     setTopbarContext("Your creative identity");
     return () => setTopbarContext(null);
   }, [setTopbarContext]);
+
+  /* =========================
+     HELPERS
+  ========================= */
+
+  const getInsight = (code: string) =>
+    analyticsInsights.find((i) => i.code === code) ?? null;
 
   /* =========================
      LOADING
@@ -142,6 +193,13 @@ export default function Identity() {
               </div>
             ))}
           </div>
+
+          <InsightExpander
+            code="dominant_topic"
+            insights={analyticsInsights}
+            expanded={expandedInsights}
+            onToggle={toggleInsight}
+          />
         </section>
 
         <section className="identity-section">
@@ -163,6 +221,13 @@ export default function Identity() {
               </div>
             ))}
           </div>
+
+          <InsightExpander
+            code="best_format"
+            insights={analyticsInsights}
+            expanded={expandedInsights}
+            onToggle={toggleInsight}
+          />
         </section>
       </div>
 
@@ -183,6 +248,13 @@ export default function Identity() {
               </li>
             ))}
           </ol>
+
+          <InsightExpander
+            code="idea_reuse"
+            insights={analyticsInsights}
+            expanded={expandedInsights}
+            onToggle={toggleInsight}
+          />
         </section>
 
         <section className="identity-section">
@@ -204,6 +276,13 @@ export default function Identity() {
               </div>
             ))}
           </div>
+
+          <InsightExpander
+            code="top_platform"
+            insights={analyticsInsights}
+            expanded={expandedInsights}
+            onToggle={toggleInsight}
+          />
         </section>
       </div>
 
@@ -222,7 +301,30 @@ export default function Identity() {
             </div>
           ))}
         </div>
+
+        <InsightExpander
+          code="content_role"
+          insights={analyticsInsights}
+          expanded={expandedInsights}
+          onToggle={toggleInsight}
+        />
       </section>
+
+      {/* ── 6b. PUBLISHING ACTIVITY ── */}
+
+      {getInsight("content_production") && (
+        <section className="identity-section">
+          <span className="section-label">Publishing activity</span>
+          <div className="identity-card">
+            <InsightExpander
+              code="content_production"
+              insights={analyticsInsights}
+              expanded={expandedInsights}
+              onToggle={toggleInsight}
+            />
+          </div>
+        </section>
+      )}
 
       {/* ── 7. CREATIVE STYLE ── */}
 
