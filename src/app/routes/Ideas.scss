@@ -1087,3 +1087,116 @@
     background: #fef2f2;
   }
 }
+
+/* =========================
+   APPROVE BUTTON — APPROVED STATE
+========================= */
+
+.btn-primary--approved {
+  background: #1d9e75;
+  cursor: default;
+
+  &:hover {
+    background: #1d9e75;
+  }
+}
+
+/* =========================
+   EMOJI RATING
+========================= */
+
+.rating-emoji {
+  font-size: 18px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  opacity: 0.4;
+  transition: opacity 0.15s, transform 0.15s;
+  padding: 2px 4px;
+
+  &:hover {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+
+  &--active {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* =========================
+   REGENERATE / ALTERNATIVES
+========================= */
+
+.recipe-panel__regenerate {
+  margin-top: 6px;
+}
+
+.btn-try-again {
+  font-size: 12px;
+  color: #6b7280;
+  background: none;
+  border: 0.5px solid #d1d5db;
+  border-radius: var(--border-radius-sm, 4px);
+  padding: 3px 10px;
+  cursor: pointer;
+
+  &:hover {
+    color: #111827;
+    border-color: #9ca3af;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.recipe-panel__no-more {
+  font-size: 12px;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.recipe-panel__alternative {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 6px;
+  border-left: 2px solid #7f77dd;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recipe-panel__alternative-text {
+  font-size: 13px;
+  color: #111827;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.btn-choose-alt {
+  font-size: 12px;
+  color: #7f77dd;
+  background: none;
+  border: 0.5px solid #afa9ec;
+  border-radius: var(--border-radius-sm, 4px);
+  padding: 3px 10px;
+  cursor: pointer;
+  align-self: flex-start;
+
+  &:hover {
+    background: #eeedfe;
+  }
+}
+
+/* =========================
+   DISCARDED RECIPE CARD
+========================= */
+
+.recipe-card--discarded {
+  border-color: #e5e7eb;
+  background: #f9fafb;
+}

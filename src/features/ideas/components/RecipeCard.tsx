@@ -1,0 +1,79 @@
+import { type CreativeSession } from "../hooks/useIdeas.ts";
+import StatusBadge from "./StatusBadge.tsx";
+
+type RecipeCardProps = {
+  session: CreativeSession | null;
+  generating: boolean;
+  onClick: () => void;
+  showDiscardMessage: boolean;
+};
+
+export default function RecipeCard({
+  session,
+  generating,
+  onClick,
+  showDiscardMessage,
+}: RecipeCardProps) {
+  if (generating) {
+    return (
+      <div className="recipe-card recipe-card--generating">
+        <div className="recipe-card__generating">
+          <div className="recipe-generating-dots">
+            <span />
+            <span />
+            <span />
+          </div>
+          <p>Generating recipe...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (showDiscardMessage) {
+    return (
+      <div className="recipe-card recipe-card--discarded">
+        <div className="recipe-card__empty-content">
+          <span className="recipe-card__empty-icon">🔄</span>
+          <p className="recipe-card__empty-text">Recipe discarded</p>
+          <p className="recipe-card__empty-hint">
+            Try varying your combination — change topics, platform or format to
+            get a different recipe.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return (
+      <div className="recipe-card recipe-card--empty">
+        <div className="recipe-card__empty-content">
+          <span className="recipe-card__empty-icon">📄</span>
+          <p className="recipe-card__empty-text">No recipe yet</p>
+          <p className="recipe-card__empty-hint">
+            Select platform and format, then generate
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="recipe-card recipe-card--ready" onClick={onClick}>
+      <div className="recipe-card__header">
+        <StatusBadge status={session.status} />
+        <span className="recipe-card__date">
+          {new Date(session.created_at).toLocaleDateString()}
+        </span>
+      </div>
+      <div className="recipe-card__content">
+        <p className="recipe-card__angle">{session.recipe.angle}</p>
+        <p className="recipe-card__hook">{session.recipe.hook}</p>
+      </div>
+      <div className="recipe-card__footer">
+        <span className="recipe-card__format">{session.format}</span>
+        <span className="recipe-card__cta">Ver receta completa →</span>
+      </div>
+    </div>
+  );
+}
