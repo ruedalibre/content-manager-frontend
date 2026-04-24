@@ -1,0 +1,349 @@
+/* =========================
+   IDENTITY PAGE
+========================= */
+
+.identity-page {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.identity-header {
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #111827;
+    margin: 0 0 0.25rem 0;
+  }
+
+  p {
+    font-size: 0.875rem;
+    color: #6b7280;
+    margin: 0;
+  }
+}
+
+/* =========================
+   SECTION
+========================= */
+
+.identity-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+}
+
+/* =========================
+   STAT GRID
+========================= */
+
+.identity-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 1rem;
+}
+
+.identity-stat-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  &__value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #111827;
+    line-height: 1;
+  }
+
+  &__label {
+    font-size: 0.78rem;
+    color: #6b7280;
+  }
+}
+
+/* =========================
+   STANDOUT HIGHLIGHT CARDS
+========================= */
+
+.identity-highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.identity-highlight-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-left: 3px solid #6366f1;
+  border-radius: 8px;
+  padding: 0.875rem 1rem;
+
+  p {
+    font-size: 0.875rem;
+    color: #374151;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  &--skeleton {
+    height: 52px;
+    border-left-color: #e5e7eb;
+    background: #f9fafb;
+    animation: identity-pulse 1.5s ease-in-out infinite;
+  }
+}
+
+/* =========================
+   TWO COLUMN LAYOUT
+========================= */
+
+.identity-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  @media (max-width: 640px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================
+   DISTRIBUTION BARS
+========================= */
+
+.identity-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 2fr auto;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  &__label {
+    font-size: 0.8rem;
+    color: #374151;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__track {
+    height: 6px;
+    background: #f3f4f6;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  &__fill {
+    height: 100%;
+    background: #6366f1;
+    border-radius: 999px;
+    transition: width 0.4s ease;
+    min-width: 2px;
+  }
+
+  &__percentage {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    text-align: right;
+    min-width: 32px;
+  }
+}
+
+/* =========================
+   IDEAS LIST
+========================= */
+
+.identity-ideas-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &__item {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr auto;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #f3f4f6;
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__rank {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #9ca3af;
+    text-align: center;
+  }
+
+  &__title {
+    font-size: 0.85rem;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__count {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #6366f1;
+    background: #ede9fe;
+    padding: 2px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+}
+
+/* =========================
+   ROLE GRID (3 cols)
+========================= */
+
+.identity-role-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* =========================
+   CREATIVE STYLE TAGS
+========================= */
+
+.identity-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.identity-tag {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: #f3f4f6;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+
+  &--active {
+    background: #ede9fe;
+    color: #6366f1;
+    border-color: #c4b5fd;
+  }
+
+  &--skeleton {
+    height: 30px;
+    background: #f3f4f6;
+    border: none;
+    animation: identity-pulse 1.5s ease-in-out infinite;
+    border-radius: 999px;
+  }
+}
+
+/* =========================
+   GENERIC CARD
+========================= */
+
+.identity-card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 1rem 1.25rem;
+}
+
+/* =========================
+   INSIGHT EXPANDER
+========================= */
+
+.identity-insight-expander {
+  margin-top: 12px;
+  border-top: 0.5px solid #f3f4f6;
+  padding-top: 10px;
+}
+
+.identity-insight-toggle {
+  font-size: 12px;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+
+  &:hover {
+    color: #111827;
+  }
+}
+
+.identity-insight-body {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &__insight {
+    font-size: 13px;
+    color: #111827;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  &__strategy {
+    font-size: 12px;
+    color: #6b7280;
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  &__action {
+    font-size: 12px;
+    color: #7f77dd;
+    font-weight: 500;
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+/* =========================
+   SKELETON ANIMATION
+========================= */
+
+@keyframes identity-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}

@@ -36,7 +36,6 @@ export default function Login() {
       email,
       password,
     });
-    console.log("LOGIN RESPONSE:", { data, error });
 
     if (error) {
       setError(error.message);

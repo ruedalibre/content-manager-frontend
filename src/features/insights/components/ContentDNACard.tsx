@@ -202,7 +202,7 @@ export default function ContentDNACard({ dna }: Props) {
         <p>{getStrategyMessage()}</p>
 
         <div className="content-dna-card__actions">
-          <button
+          <button type="button"
             className="btn-primary"
             onClick={() => {
               if (showIdeas) {
@@ -238,7 +238,7 @@ export default function ContentDNACard({ dna }: Props) {
                 <li key={index} className="idea-item">
                   <span>{idea}</span>
 
-                  <button
+                  <button type="button"
                     className="btn-save"
                     onClick={() => handleSaveIdea(idea)}
                     disabled={isSaved}

@@ -1,4 +1,4 @@
-import { Lightbulb, FileText, Brain, BarChart3, Shield, X } from "lucide-react";
+import { Lightbulb, FileText, Sparkles, BarChart3, Shield, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import "./Sidebar.scss";
 
@@ -33,7 +33,7 @@ export default function Sidebar({ isOpen, onClose, onLogout }: Props) {
         <nav className="sidebar__nav">
           <NavLink to="/ideas" onClick={onClose}>
             <Lightbulb size={18} />
-            Ideas
+            Ideas & Topics
           </NavLink>
 
           <NavLink to="/contents" onClick={onClose}>
@@ -41,9 +41,9 @@ export default function Sidebar({ isOpen, onClose, onLogout }: Props) {
             Contents
           </NavLink>
 
-          <NavLink to="/insights" onClick={onClose}>
-            <Brain size={18} />
-            Insights
+          <NavLink to="/identity" onClick={onClose}>
+            <Sparkles size={18} />
+            Identity & Insights
           </NavLink>
 
           <NavLink to="/activity" onClick={onClose}>

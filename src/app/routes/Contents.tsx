@@ -22,7 +22,9 @@ type ContentItem = {
   is_reusable: boolean;
   created_at: string;
   published_at: string | null;
+  archived_at: string | null;
   content_role: string | null;
+  topics?: { id: string; name: string }[];
 };
 
 type Platform = {
@@ -60,6 +62,10 @@ export default function Contents() {
   const [platformFilter, setPlatformFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+  const [topicFilter, setTopicFilter] = useState("");
+  const [topicOptions, setTopicOptions] = useState<
+    { id: string; name: string }[]
+  >([]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contentToEdit, setContentToEdit] = useState<ContentItem | null>(null);
@@ -163,6 +169,8 @@ export default function Contents() {
 
       if (roleFilter) url += `&content_role=${roleFilter}`;
 
+      if (topicFilter) url += `&topic_id=${topicFilter}`;
+
       if (statusFilter) url += `&status=${statusFilter}`;
 
       const res = await fetch(url, { headers });
@@ -181,7 +189,14 @@ export default function Contents() {
 
   useEffect(() => {
     fetchContents();
-  }, [page, debouncedSearch, platformFilter, statusFilter, roleFilter]);
+  }, [
+    page,
+    debouncedSearch,
+    platformFilter,
+    statusFilter,
+    roleFilter,
+    topicFilter,
+  ]);
 
   /* =========================
      FETCH PLATFORMS
@@ -215,6 +230,28 @@ export default function Contents() {
   }, []);
 
   /* =========================
+     FETCH TOPICS
+  ========================= */
+  useEffect(() => {
+    const loadTopics = async () => {
+      try {
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        const res = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-topics`,
+          { headers: { Authorization: `Bearer ${session?.access_token}` } },
+        );
+        const data = await res.json();
+        setTopicOptions(data ?? []);
+      } catch (err) {
+        console.error("Topics fetch error:", err);
+      }
+    };
+    loadTopics();
+  }, []);
+
+  /* =========================
      STATUS OPTIONS
   ========================= */
 
@@ -229,6 +266,7 @@ export default function Contents() {
     setPlatformFilter("");
     setStatusFilter("");
     setRoleFilter("");
+    setTopicFilter("");
     setPage(1);
   };
 
@@ -447,6 +485,22 @@ export default function Contents() {
             <option value="curated">Curated</option>
           </select>
 
+          <select
+            className="contents-filters__select"
+            value={topicFilter}
+            onChange={(e) => {
+              setTopicFilter(e.target.value);
+              setPage(1);
+            }}
+          >
+            <option value="">All Topics</option>
+            {topicOptions.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </select>
+
           <button
             type="button"
             className="btn-secondary"
@@ -538,9 +592,12 @@ export default function Contents() {
                 <th>Platform</th>
                 <th>Format</th>
                 <th>Role</th>
+                <th>Topics</th>
                 <th>Status</th>
                 <th>Reusable</th>
                 <th>Created</th>
+                <th>Published</th>
+                <th>Archived</th>
                 <th></th>
               </tr>
             </thead>
@@ -549,7 +606,7 @@ export default function Contents() {
               {loading &&
                 skeletonRows.map((_, i) => (
                   <tr key={i} className="skeleton-row">
-                    <td colSpan={7}>
+                    <td colSpan={9}>
                       <div className="skeleton-line"></div>
                     </td>
                   </tr>
@@ -557,7 +614,7 @@ export default function Contents() {
 
               {!loading && contents.length === 0 && (
                 <tr>
-                  <td colSpan={7}>No contents found</td>
+                  <td colSpan={9}>No contents found</td>
                 </tr>
               )}
 
@@ -584,6 +641,18 @@ export default function Contents() {
                     </td>
 
                     <td>
+                      {item.topics && item.topics.length > 0 ? (
+                        <ul className="content-topics-list">
+                          {item.topics.map((t) => (
+                            <li key={t.id}>{t.name}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span className="no-topics">—</span>
+                      )}
+                    </td>
+
+                    <td>
                       <span className={`status ${item.status}`}>
                         {item.status}
                       </span>
@@ -592,6 +661,18 @@ export default function Contents() {
                     <td>{item.is_reusable ? "Yes" : "No"}</td>
 
                     <td>{new Date(item.created_at).toLocaleDateString()}</td>
+
+                    <td>
+                      {item.published_at
+                        ? new Date(item.published_at).toLocaleDateString()
+                        : <span className="no-topics">—</span>}
+                    </td>
+
+                    <td>
+                      {item.archived_at
+                        ? new Date(item.archived_at).toLocaleDateString()
+                        : <span className="no-topics">—</span>}
+                    </td>
 
                     <td className="actions-cell">
                       <button

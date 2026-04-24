@@ -1,13 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   useIdeas,
   type Idea,
   type IdeaTopic,
+  type CreativeSession,
 } from "../../features/ideas/hooks/useIdeas.ts";
 import { useTopics, type Topic } from "../../features/ideas/hooks/useTopics.ts";
+import { usePlatforms } from "../../features/contents/hooks/usePlatforms.ts";
+import { useFormats } from "../../features/contents/hooks/useFormats.ts";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
 import CreateIdeaModal from "../../features/ideas/modals/CreateIdeaModal.tsx";
 import ConfirmModal from "../../components/ui/ConfirmModal.tsx";
+import RecipeCard from "../../features/ideas/components/RecipeCard.tsx";
+import RecipePanel from "../../features/ideas/components/RecipePanel.tsx";
+import EditIdeaModal from "../../features/ideas/components/EditIdeaModal.tsx";
 import "./Ideas.scss";
 
 type IdeaForContent = {
@@ -15,29 +21,36 @@ type IdeaForContent = {
   title: string;
   description?: string | null;
   topics?: IdeaTopic[];
+  platform_id?: string;
+  format?: string;
+  content_role?: string;
+};
+
+type RecipeState = {
+  [ideaId: string]: {
+    platform_id: string;
+    format: string;
+    content_role?: string;
+    generating: boolean;
+    error: string | null;
+  };
 };
 
 export default function Ideas() {
   const [activeTab, setActiveTab] = useState<"ideas" | "topics">("ideas");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "manual" | "generated">("all");
-
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedIdea, setSelectedIdea] = useState<IdeaForContent | null>(null);
   const [showIdeaModal, setShowIdeaModal] = useState(false);
-
   const [editingIdea, setEditingIdea] = useState<Idea | null>(null);
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editSaving, setEditSaving] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
-
-  const [editingIdeaTopics, setEditingIdeaTopics] = useState<string | null>(
-    null,
-  );
+  const [editingIdeaTopics, setEditingIdeaTopics] = useState<string | null>(null);
   const [selectedTopicIds, setSelectedTopicIds] = useState<string[]>([]);
   const [savingTopics, setSavingTopics] = useState(false);
-
   const [newTopicName, setNewTopicName] = useState("");
   const [creatingTopic, setCreatingTopic] = useState(false);
   const [topicError, setTopicError] = useState<string | null>(null);
@@ -46,23 +59,39 @@ export default function Ideas() {
   const [savingTopic, setSavingTopic] = useState(false);
   const [topicSearch, setTopicSearch] = useState("");
   const [actionError, setActionError] = useState<string | null>(null);
-
+  const [recipeState, setRecipeState] = useState<RecipeState>({});
+  const [expandedSession, setExpandedSession] = useState<{
+    session: CreativeSession;
+    idea: Idea;
+  } | null>(null);
+  const [ideaFormats, setIdeaFormats] = useState<{
+    [ideaId: string]: string[];
+  }>({});
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     title: string;
     message: string;
     onConfirm: () => void;
   } | null>(null);
+  const [discardedIdeaIds, setDiscardedIdeaIds] = useState<Set<string>>(
+    new Set(),
+  );
 
   const {
     ideas,
     loading,
     error,
     refetch,
+    generateRecipe,
+    updateSessionStatus,
+    saveFeedback,
     updateIdea,
     updateIdeaTopics,
     deleteIdea,
+    regenerateAspect,
+    updateRecipeAspect,
   } = useIdeas(filter);
+
   const {
     topics,
     loading: topicsLoading,
@@ -70,6 +99,46 @@ export default function Ideas() {
     updateTopic,
     archiveTopic,
   } = useTopics();
+
+  const { platforms } = usePlatforms();
+  const { loadFormats } = useFormats();
+
+  useEffect(() => {
+    if (!ideas.length) return;
+
+    setRecipeState((prev) => {
+      const updated = { ...prev };
+      ideas.forEach((idea) => {
+        if (!updated[idea.id] && idea.sessions && idea.sessions.length > 0) {
+          const latest = idea.sessions.sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
+          )[0];
+          updated[idea.id] = {
+            platform_id: latest.platform_id ?? "",
+            format: latest.format ?? "",
+            content_role: latest.content_role ?? "",
+            generating: false,
+            error: null,
+          };
+        }
+      });
+      return updated;
+    });
+  }, [ideas]);
+
+  useEffect(() => {
+    if (!ideas.length) return;
+
+    ideas.forEach(async (idea) => {
+      const state = recipeState[idea.id];
+      if (state?.platform_id && !ideaFormats[idea.id]) {
+        const fmts = await loadFormats(state.platform_id);
+        setIdeaFormats((prev) => ({ ...prev, [idea.id]: fmts ?? [] }));
+      }
+    });
+  }, [recipeState]);
 
   const filteredIdeas = ideas
     .filter((idea) => idea.title.toLowerCase().includes(search.toLowerCase()))
@@ -81,17 +150,80 @@ export default function Ideas() {
     t.name.toLowerCase().includes(topicSearch.toLowerCase()),
   );
 
-  const highlightIdea = filteredIdeas.length > 0 ? filteredIdeas[0] : null;
+  const getRecipeStateForIdea = (ideaId: string) =>
+    recipeState[ideaId] ?? {
+      platform_id: "",
+      format: "",
+      content_role: "",
+      generating: false,
+      error: null,
+    };
 
-  const handleUseCombination = (idea: Idea) => {
-    setSelectedIdea({
-      id: idea.id,
-      title: idea.title,
-      description: idea.description,
-      topics: idea.topics ?? [],
-    });
-    setShowCreateModal(true);
+  const updateRecipeState = (
+    ideaId: string,
+    updates: Partial<RecipeState[string]>,
+  ) => {
+    setRecipeState((prev) => ({
+      ...prev,
+      [ideaId]: { ...getRecipeStateForIdea(ideaId), ...updates },
+    }));
   };
+
+  const handlePlatformChange = async (ideaId: string, platformId: string) => {
+    updateRecipeState(ideaId, { platform_id: platformId, format: "" });
+    if (platformId) {
+      const fmts = await loadFormats(platformId);
+      setIdeaFormats((prev) => ({ ...prev, [ideaId]: fmts ?? [] }));
+    }
+  };
+
+  const handleGenerateRecipe = async (idea: Idea) => {
+    const state = getRecipeStateForIdea(idea.id);
+    if (!state.platform_id || !state.format) {
+      updateRecipeState(idea.id, { error: "Select platform and format first" });
+      return;
+    }
+    updateRecipeState(idea.id, { generating: true, error: null });
+    try {
+      const result = await generateRecipe({
+        idea_id: idea.id,
+        topic_ids: idea.topics?.map((t) => t.id) ?? [],
+        platform_id: state.platform_id,
+        format: state.format,
+        content_role: state.content_role,
+      });
+      if (result.duplicate) {
+        updateRecipeState(idea.id, {
+          generating: false,
+          error: "A recipe already exists for this exact combination.",
+        });
+        return;
+      }
+      updateRecipeState(idea.id, { generating: false });
+    } catch (err) {
+      updateRecipeState(idea.id, {
+        generating: false,
+        error: err instanceof Error ? err.message : "Failed to generate recipe",
+      });
+    }
+  };
+
+  const getLatestSession = (idea: Idea): CreativeSession | null => {
+    if (!idea.sessions || idea.sessions.length === 0) return null;
+    return idea.sessions.sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    )[0];
+  };
+
+  const openConfirm = (
+    title: string,
+    message: string,
+    onConfirm: () => void,
+  ) => {
+    setConfirmModal({ isOpen: true, title, message, onConfirm });
+  };
+  const closeConfirm = () => setConfirmModal(null);
 
   const handleEditOpen = (idea: Idea) => {
     setEditingIdea(idea);
@@ -117,14 +249,7 @@ export default function Ideas() {
     }
   };
 
-  const handleEditCancel = () => {
-    setEditingIdea(null);
-    setEditTitle("");
-    setEditDescription("");
-    setEditError(null);
-  };
-
-  const handleDeleteIdea = async (ideaId: string) => {
+  const handleDeleteIdea = (ideaId: string) => {
     openConfirm(
       "Delete idea",
       "This idea will be permanently deleted. This cannot be undone.",
@@ -181,11 +306,6 @@ export default function Ideas() {
     }
   };
 
-  const handleEditTopicOpen = (topic: Topic) => {
-    setEditingTopic(topic);
-    setEditTopicName(topic.name);
-  };
-
   const handleEditTopicSave = async () => {
     if (!editingTopic || !editTopicName.trim()) return;
     setSavingTopic(true);
@@ -199,7 +319,7 @@ export default function Ideas() {
     }
   };
 
-  const handleArchiveTopic = async (topicId: string) => {
+  const handleArchiveTopic = (topicId: string) => {
     openConfirm(
       "Archive topic",
       "This topic won't appear in selectors but existing associations are preserved.",
@@ -214,24 +334,15 @@ export default function Ideas() {
     );
   };
 
-  const openConfirm = (
-    title: string,
-    message: string,
-    onConfirm: () => void,
-  ) => {
-    setConfirmModal({ isOpen: true, title, message, onConfirm });
-  };
-
-  const closeConfirm = () => setConfirmModal(null);
-
   return (
     <div className="ideas-page">
       {/* PAGE HEADER */}
       <div className="ideas-page__header">
         <div>
-          <h2 className="ideas-page__title">Ideas & Topics</h2>
+          <h2 className="ideas-page__title">Your creative engine</h2>
           <p className="ideas-page__subtitle">
-            Your creative system — ideas, themes, and content combinations
+            Ideas become briefs. Briefs become content. Your creative process,
+            systematized.
           </p>
         </div>
         {activeTab === "ideas" ? (
@@ -275,7 +386,6 @@ export default function Ideas() {
       </div>
 
       {topicError && <p className="error-text">{topicError}</p>}
-
       {actionError && (
         <div
           className="toast toast--error"
@@ -308,7 +418,7 @@ export default function Ideas() {
       {/* ========================= IDEAS TAB ========================= */}
       {activeTab === "ideas" && (
         <div className="ideas-tab-content">
-          {/* FILTERS */}
+          {/* TOOLBAR */}
           <div className="ideas-toolbar">
             <input
               type="text"
@@ -329,223 +439,303 @@ export default function Ideas() {
                 </button>
               ))}
             </div>
+            <div className="ideas-stats">
+              <span>{ideas.length} ideas</span>
+              <span>·</span>
+              <span>
+                {ideas.filter((i) => (i.sessions?.length ?? 0) > 0).length} with
+                recipe
+              </span>
+              <span>·</span>
+              <span>
+                {
+                  ideas.filter((i) =>
+                    i.sessions?.some((s) => s.status === "executed"),
+                  ).length
+                }{" "}
+                implemented
+              </span>
+            </div>
           </div>
 
           {loading && <p className="ideas-loading">Loading ideas...</p>}
           {error && <p className="ideas-error">{error}</p>}
 
-          {/* TOP IDEA */}
-          {!loading && highlightIdea && (
-            <div className="idea-highlight">
-              <div className="idea-highlight__eyebrow">
-                <span className="idea-highlight__label">⭐ Top Idea</span>
-                <span className="idea-highlight__count">
-                  {highlightIdea.contents?.[0]?.count ?? 0} contents
-                </span>
-              </div>
-              <h3 className="idea-highlight__title">{highlightIdea.title}</h3>
-              {highlightIdea.description && (
-                <p className="idea-highlight__desc">
-                  {highlightIdea.description}
-                </p>
-              )}
-              <div className="idea-highlight__topics">
-                {highlightIdea.topics?.map((t) => (
-                  <span key={t.id} className="topic-chip">
-                    {t.name}
-                  </span>
-                ))}
-              </div>
-              <p className="idea-highlight__explain">
-                This idea is part of your creative system and can be reused
-                across multiple pieces of content.
-              </p>
-            </div>
-          )}
-
-          {/* IDEAS GRID */}
+          {/* DUAL GRID */}
           {!loading && (
-            <div className="ideas-grid">
+            <>
               {filteredIdeas.length === 0 && (
                 <div className="ideas-empty">
                   <span>No ideas found</span>
                 </div>
               )}
 
-              {filteredIdeas.map((idea) => {
-                const contentCount = idea.contents?.[0]?.count ?? 0;
-                const isGenerated = idea.source === "generated";
-                const isEditingThis = editingIdea?.id === idea.id;
-                const isEditingTopicsThis = editingIdeaTopics === idea.id;
+              {filteredIdeas.length > 0 && (
+                <div className="ideas-dual-headers">
+                  <span>Idea</span>
+                  <span>Brief</span>
+                </div>
+              )}
 
-                return (
-                  <div key={idea.id} className="idea-card">
-                    {/* CARD HEADER */}
-                    <div className="idea-card__header">
-                      <span
-                        className={`badge ${isGenerated ? "badge--generated" : "badge--manual"}`}
-                      >
-                        {isGenerated ? "Generated" : "Manual"}
-                      </span>
-                      {!isEditingThis && (
-                        <div className="idea-card__controls">
-                          <button
-                            className="btn-icon"
-                            onClick={() => handleEditOpen(idea)}
-                            title="Edit"
-                            type="button"
-                          >
-                            ✏️
-                          </button>
-                          <button
-                            className="btn-icon btn-icon--danger"
-                            onClick={() => handleDeleteIdea(idea.id)}
-                            title="Delete"
-                            type="button"
-                          >
-                            🗑️
-                          </button>
-                        </div>
-                      )}
-                    </div>
+              <div className="ideas-dual-grid">
+                {filteredIdeas.map((idea) => {
+                  const isGenerated = idea.source === "generated";
+                  const isEditingThis = editingIdea?.id === idea.id;
+                  const isEditingTopicsThis = editingIdeaTopics === idea.id;
+                  const state = getRecipeStateForIdea(idea.id);
+                  const latestSession = getLatestSession(idea);
+                  const contentCount = idea.contents?.[0]?.count ?? 0;
+                  const formats = ideaFormats[idea.id] ?? [];
 
-                    {/* EDIT MODE */}
-                    {isEditingThis ? (
-                      <div className="idea-card__edit">
-                        <input
-                          value={editTitle}
-                          onChange={(e) => setEditTitle(e.target.value)}
-                          placeholder="Idea title"
-                          autoFocus
-                        />
-                        <textarea
-                          value={editDescription}
-                          onChange={(e) => setEditDescription(e.target.value)}
-                          placeholder="Description (optional)"
-                          rows={2}
-                        />
-                        {editError && (
-                          <p className="idea-card__error">{editError}</p>
-                        )}
-                        <div className="idea-card__edit-actions">
-                          <button
-                            className="btn-secondary"
-                            onClick={handleEditCancel}
-                            disabled={editSaving}
-                            type="button"
+                  return (
+                    <div key={idea.id} className="ideas-dual-row">
+                      {/* IDEA CARD */}
+                      <div className="idea-card">
+                        <div className="idea-card__header">
+                          <span
+                            className={`badge ${isGenerated ? "badge--generated" : "badge--manual"}`}
                           >
-                            Cancel
-                          </button>
-                          <button
-                            className="btn-primary"
-                            onClick={handleEditSave}
-                            disabled={editSaving || !editTitle.trim()}
-                            type="button"
-                          >
-                            {editSaving ? "Saving..." : "Save"}
-                          </button>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <h4 className="idea-card__title">{idea.title}</h4>
-                        {idea.description && (
-                          <p className="idea-card__description">
-                            {idea.description}
-                          </p>
-                        )}
-
-                        {/* TOPICS ROW */}
-                        <div className="idea-card__topics">
-                          {idea.topics && idea.topics.length > 0 ? (
-                            idea.topics.map((t) => (
-                              <span
-                                key={t.id}
-                                className="topic-chip topic-chip--small"
+                            {isGenerated ? "Generated" : "Manual"}
+                          </span>
+                          {!isEditingThis && (
+                            <div className="idea-card__controls">
+                              <button
+                                className="btn-icon"
+                                onClick={() => handleEditOpen(idea)}
+                                title="Edit"
+                                type="button"
                               >
-                                {t.name}
-                              </span>
-                            ))
-                          ) : (
-                            <span className="idea-card__no-topics">
-                              No topics
-                            </span>
+                                ✏️
+                              </button>
+                              <button
+                                className="btn-icon btn-icon--danger"
+                                onClick={() => handleDeleteIdea(idea.id)}
+                                title="Delete"
+                                type="button"
+                              >
+                                🗑️
+                              </button>
+                            </div>
                           )}
-                          <button
-                            className="topic-chip topic-chip--add"
-                            onClick={() => handleOpenTopicSelector(idea)}
-                            type="button"
-                            title="Edit topics"
-                          >
-                            {isEditingTopicsThis ? "✕" : "＋"}
-                          </button>
                         </div>
 
-                        {/* TOPIC SELECTOR */}
-                        {isEditingTopicsThis && (
-                          <div className="idea-card__topic-selector">
-                            <p className="idea-card__topic-selector-label">
-                              Select topics for this idea:
-                            </p>
-                            <div className="idea-card__topic-options">
-                              {topics.length === 0 ? (
-                                <p className="idea-card__no-topics">
-                                  No topics yet. Create some in the Topics tab.
-                                </p>
-                              ) : (
-                                topics.map((t: Topic) => (
-                                  <button
-                                    key={t.id}
-                                    type="button"
-                                    className={`topic-chip topic-chip--selectable ${selectedTopicIds.includes(t.id) ? "topic-chip--active" : ""}`}
-                                    onClick={() => handleToggleTopic(t.id)}
-                                  >
-                                    {t.name}
-                                  </button>
-                                ))
-                              )}
-                            </div>
-                            <div className="idea-card__topic-actions">
+                        {/* EDIT MODE */}
+                        {isEditingThis ? (
+                          <div className="idea-card__edit">
+                            <input
+                              value={editTitle}
+                              onChange={(e) => setEditTitle(e.target.value)}
+                              placeholder="Idea title"
+                              autoFocus
+                            />
+                            <textarea
+                              value={editDescription}
+                              onChange={(e) =>
+                                setEditDescription(e.target.value)
+                              }
+                              placeholder="Description (optional)"
+                              rows={2}
+                            />
+                            {editError && (
+                              <p className="idea-card__error">{editError}</p>
+                            )}
+                            <div className="idea-card__edit-actions">
                               <button
                                 className="btn-secondary"
-                                onClick={() => setEditingIdeaTopics(null)}
+                                onClick={() => setEditingIdea(null)}
+                                disabled={editSaving}
                                 type="button"
                               >
                                 Cancel
                               </button>
                               <button
                                 className="btn-primary"
-                                onClick={handleSaveIdeaTopics}
-                                disabled={savingTopics}
+                                onClick={handleEditSave}
+                                disabled={editSaving || !editTitle.trim()}
                                 type="button"
                               >
-                                {savingTopics ? "Saving..." : "Save"}
+                                {editSaving ? "Saving..." : "Save"}
                               </button>
                             </div>
                           </div>
-                        )}
+                        ) : (
+                          <>
+                            <h4 className="idea-card__title">{idea.title}</h4>
+                            {idea.description && (
+                              <p className="idea-card__description">
+                                {idea.description}
+                              </p>
+                            )}
 
-                        {/* FOOTER */}
-                        <div className="idea-card__footer">
-                          <span className="idea-card__stats">
-                            {contentCount === 0
-                              ? "No contents yet"
-                              : `${contentCount} content${contentCount !== 1 ? "s" : ""}`}
-                          </span>
-                          <button
-                            className="btn-combination"
-                            onClick={() => handleUseCombination(idea)}
-                            type="button"
-                          >
-                            Use combination →
-                          </button>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                            {/* TOPICS */}
+                            <div className="idea-card__topics">
+                              {idea.topics && idea.topics.length > 0 ? (
+                                idea.topics.map((t) => (
+                                  <span
+                                    key={t.id}
+                                    className="topic-chip topic-chip--small"
+                                  >
+                                    {t.name}
+                                  </span>
+                                ))
+                              ) : (
+                                <span className="idea-card__no-topics">
+                                  No topics
+                                </span>
+                              )}
+                              <button
+                                className="topic-chip topic-chip--add"
+                                onClick={() => handleOpenTopicSelector(idea)}
+                                type="button"
+                                title="Edit topics"
+                              >
+                                {isEditingTopicsThis ? "✕" : "＋"}
+                              </button>
+                            </div>
+
+                            {/* TOPIC SELECTOR */}
+                            {isEditingTopicsThis && (
+                              <div className="idea-card__topic-selector">
+                                <p className="idea-card__topic-selector-label">
+                                  Select topics:
+                                </p>
+                                <div className="idea-card__topic-options">
+                                  {topics.length === 0 ? (
+                                    <p className="idea-card__no-topics">
+                                      No topics yet.
+                                    </p>
+                                  ) : (
+                                    topics.map((t: Topic) => (
+                                      <button
+                                        key={t.id}
+                                        type="button"
+                                        className={`topic-chip topic-chip--selectable ${selectedTopicIds.includes(t.id) ? "topic-chip--active" : ""}`}
+                                        onClick={() => handleToggleTopic(t.id)}
+                                      >
+                                        {t.name}
+                                      </button>
+                                    ))
+                                  )}
+                                </div>
+                                <div className="idea-card__topic-actions">
+                                  <button
+                                    className="btn-secondary"
+                                    onClick={() => setEditingIdeaTopics(null)}
+                                    type="button"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    className="btn-primary"
+                                    onClick={handleSaveIdeaTopics}
+                                    disabled={savingTopics}
+                                    type="button"
+                                  >
+                                    {savingTopics ? "Saving..." : "Save"}
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* PLATFORM + FORMAT */}
+                            <div className="idea-card__recipe-controls">
+                              <select
+                                value={state.platform_id}
+                                onChange={(e) =>
+                                  handlePlatformChange(idea.id, e.target.value)
+                                }
+                                className="idea-card__select"
+                              >
+                                <option value="">Platform</option>
+                                {platforms.map((p) => (
+                                  <option key={p.id} value={p.id}>
+                                    {p.name}
+                                  </option>
+                                ))}
+                              </select>
+                              <select
+                                value={state.format}
+                                onChange={(e) =>
+                                  updateRecipeState(idea.id, {
+                                    format: e.target.value,
+                                  })
+                                }
+                                disabled={!state.platform_id}
+                                className="idea-card__select"
+                              >
+                                <option value="">Format</option>
+                                {formats.map((f) => (
+                                  <option key={f} value={f}>
+                                    {f}
+                                  </option>
+                                ))}
+                              </select>
+
+                              <select
+                                value={state.content_role ?? ""}
+                                onChange={(e) =>
+                                  updateRecipeState(idea.id, {
+                                    content_role: e.target.value,
+                                  })
+                                }
+                                className="idea-card__select"
+                              >
+                                <option value="">Role (optional)</option>
+                                <option value="educational">Educational</option>
+                                <option value="inspirational">
+                                  Inspirational
+                                </option>
+                                <option value="personal">Personal</option>
+                                <option value="promotional">Promotional</option>
+                                <option value="curated">Curated</option>
+                              </select>
+                            </div>
+
+                            {state.error && (
+                              <p className="idea-card__error">{state.error}</p>
+                            )}
+
+                            {/* FOOTER */}
+                            <div className="idea-card__footer">
+                              <span className="idea-card__stats">
+                                {contentCount === 0
+                                  ? "No contents yet"
+                                  : `${contentCount} content${contentCount !== 1 ? "s" : ""}`}
+                              </span>
+                              <button
+                                className={`btn-generate ${state.generating ? "btn-generate--loading" : ""}`}
+                                onClick={() => handleGenerateRecipe(idea)}
+                                disabled={
+                                  state.generating ||
+                                  !state.platform_id ||
+                                  !state.format
+                                }
+                                type="button"
+                              >
+                                {state.generating
+                                  ? "Generating..."
+                                  : "✨ Generate"}
+                              </button>
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      {/* RECIPE CARD */}
+                      <RecipeCard
+                        session={latestSession}
+                        generating={state.generating}
+                        showDiscardMessage={discardedIdeaIds.has(idea.id)}
+                        onClick={() =>
+                          latestSession &&
+                          setExpandedSession({ session: latestSession, idea })
+                        }
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </>
           )}
         </div>
       )}
@@ -553,7 +743,6 @@ export default function Ideas() {
       {/* ========================= TOPICS TAB ========================= */}
       {activeTab === "topics" && (
         <div className="ideas-tab-content">
-          {/* SEARCH */}
           <div className="ideas-toolbar">
             <input
               type="text"
@@ -614,7 +803,10 @@ export default function Ideas() {
                       <div className="topic-card__controls">
                         <button
                           className="btn-icon"
-                          onClick={() => handleEditTopicOpen(topic)}
+                          onClick={() => {
+                            setEditingTopic(topic);
+                            setEditTopicName(topic.name);
+                          }}
                           type="button"
                           title="Edit"
                         >
@@ -638,7 +830,50 @@ export default function Ideas() {
         </div>
       )}
 
-      {/* MODALS */}
+      {/* EXPANDED RECIPE PANEL */}
+      {expandedSession && (
+        <RecipePanel
+          session={expandedSession.session}
+          idea={expandedSession.idea}
+          onClose={() => setExpandedSession(null)}
+          onApprove={async () => {
+            await updateSessionStatus(expandedSession.session.id, "reviewed");
+            setExpandedSession(null);
+          }}
+          onDiscard={async () => {
+            await updateSessionStatus(expandedSession.session.id, "discarded");
+            setDiscardedIdeaIds((prev) =>
+              new Set([...prev, expandedSession.idea.id]),
+            );
+            setExpandedSession(null);
+          }}
+          onCreateContent={() => {
+            setSelectedIdea({
+              id: expandedSession.idea.id,
+              title: expandedSession.idea.title,
+              description: expandedSession.idea.description,
+              topics: expandedSession.idea.topics ?? [],
+              platform_id: expandedSession.session.platform_id,
+              format: expandedSession.session.format,
+              content_role: expandedSession.session.content_role ?? undefined,
+            });
+            setExpandedSession(null);
+            setShowCreateModal(true);
+          }}
+          saveFeedback={saveFeedback}
+          updateSessionStatus={updateSessionStatus}
+          regenerateAspect={regenerateAspect}
+          updateRecipeAspect={updateRecipeAspect}
+          ideaTopics={expandedSession.idea.topics ?? []}
+          platformName={
+            platforms.find(
+              (p) => p.id === expandedSession.session.platform_id,
+            )?.name ?? ""
+          }
+        />
+      )}
+
+      {/* CREATE CONTENT MODAL */}
       {showCreateModal && (
         <CreateContentModal
           isOpen={showCreateModal}
@@ -651,6 +886,7 @@ export default function Ideas() {
         />
       )}
 
+      {/* CREATE IDEA MODAL */}
       {showIdeaModal && (
         <CreateIdeaModal
           isOpen={showIdeaModal}
@@ -662,44 +898,22 @@ export default function Ideas() {
         />
       )}
 
+      {/* EDIT IDEA MODAL */}
       {editingIdea && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h3>Edit Idea</h3>
-            <input
-              value={editTitle}
-              onChange={(e) => setEditTitle(e.target.value)}
-              placeholder="Idea title"
-              autoFocus
-            />
-            <textarea
-              value={editDescription}
-              onChange={(e) => setEditDescription(e.target.value)}
-              placeholder="Description (optional)"
-              rows={3}
-            />
-            {editError && <p className="modal__error">{editError}</p>}
-            <div className="modal-actions">
-              <button
-                className="btn-secondary"
-                onClick={handleEditCancel}
-                disabled={editSaving}
-                type="button"
-              >
-                Cancel
-              </button>
-              <button
-                className="btn-primary"
-                onClick={handleEditSave}
-                disabled={editSaving || !editTitle.trim()}
-                type="button"
-              >
-                {editSaving ? "Saving..." : "Save"}
-              </button>
-            </div>
-          </div>
-        </div>
+        <EditIdeaModal
+          idea={editingIdea}
+          editTitle={editTitle}
+          editDescription={editDescription}
+          editError={editError}
+          editSaving={editSaving}
+          onTitleChange={setEditTitle}
+          onDescriptionChange={setEditDescription}
+          onSave={handleEditSave}
+          onCancel={() => setEditingIdea(null)}
+        />
       )}
+
+      {/* CONFIRM MODAL */}
       {confirmModal && (
         <ConfirmModal
           isOpen={confirmModal.isOpen}
