@@ -25,6 +25,13 @@ export type PublishingRhythm = {
   weeks_active: number;
 };
 
+export type Completeness = {
+  contents_with_topics: number;
+  contents_with_ideas: number;
+  total_ideas: number;
+  total_contents: number;
+};
+
 export type ContentDNA = {
   primary_topic: string | null;
   primary_format: string | null;
@@ -36,6 +43,7 @@ export type ContentDNA = {
   role_distribution: { role: string; count: number; percentage: number }[];
   platform_distribution: { platform: string; count: number; percentage: number }[];
   publishing_rhythm: PublishingRhythm | null;
+  completeness: Completeness | null;
 };
 
 export type StrategyInsightsResponse = {
