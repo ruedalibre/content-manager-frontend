@@ -17,7 +17,7 @@ export default function Topbar({
     "/insights": "Insights",
     "/contents": "Contents",
     "/ideas": "Ideas & Topics",
-    "/dashboard": "Dashboard",
+    "/dashboard": "Identity & Insights",
     "/admin": "Admin",
   }
 
