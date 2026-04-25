@@ -184,7 +184,7 @@
     align-items: baseline;
     gap: 10px;
     padding: 6px 0;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
+    border-bottom: 0.5px solid #e5e7eb;
 
     &:last-child {
       border-bottom: none;
@@ -193,22 +193,22 @@
 
   &__rank {
     font-size: 11px;
-    color: var(--color-text-tertiary);
+    color: #9ca3af;
     width: 16px;
     flex-shrink: 0;
   }
 
   &__title {
     font-size: 14px;
-    color: var(--color-text-primary);
+    color: #111827;
     flex: 1;
     line-height: 1.4;
   }
 
   &__count {
     font-size: 12px;
-    color: var(--color-text-secondary);
-    background: var(--color-background-secondary);
+    color: #6b7280;
+    background: #f3f4f6;
     padding: 2px 8px;
     border-radius: 10px;
     flex-shrink: 0;
@@ -268,9 +268,9 @@
 ========================= */
 
 .identity-card {
-  background: var(--color-background-primary);
-  border: 0.5px solid var(--color-border-tertiary);
-  border-radius: var(--border-radius-lg);
+  background: white;
+  border: 0.5px solid #e5e7eb;
+  border-radius: 12px;
   padding: 1rem 1.25rem;
 }
 
@@ -281,7 +281,7 @@
 .identity-insight-expander {
   margin-top: auto;
   padding-top: 10px;
-  border-top: 0.5px solid var(--color-border-tertiary);
+  border-top: 0.5px solid #e5e7eb;
 }
 
 .identity-insight-toggle {
@@ -347,12 +347,12 @@
 
 .identity-completeness__label {
   font-size: 12px;
-  color: var(--color-text-secondary);
+  color: #6b7280;
 }
 
 .identity-completeness__track {
   height: 6px;
-  background: var(--color-background-secondary);
+  background: #f3f4f6;
   border-radius: 3px;
   overflow: hidden;
 }
@@ -378,13 +378,13 @@
 .identity-completeness__pct {
   font-size: 12px;
   font-weight: 500;
-  color: var(--color-text-primary);
+  color: #111827;
   text-align: right;
 }
 
 .identity-completeness__detail {
   font-size: 11px;
-  color: var(--color-text-tertiary);
+  color: #9ca3af;
 }
 
 /* =========================
@@ -414,7 +414,7 @@
   &__line {
     flex: 1;
     height: 0.5px;
-    background: var(--color-border-tertiary);
+    background: #e5e7eb;
   }
 
   &__label {
@@ -422,7 +422,7 @@
     font-weight: 500;
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--color-text-tertiary);
+    color: #9ca3af;
     white-space: nowrap;
   }
 }
@@ -432,11 +432,11 @@
 ========================= */
 
 .identity-collapsible {
-  border: 0.5px solid var(--color-border-secondary);
-  border-radius: var(--border-radius-lg);
+  border: 0.5px solid #d1d5db;
+  border-radius: 12px;
   margin-bottom: 10px;
   overflow: hidden;
-  background: var(--color-background-primary);
+  background: white;
 
   &__header {
     display: flex;
@@ -446,8 +446,8 @@
     cursor: pointer;
 
     &:hover {
-      background: var(--color-background-secondary);
-      border-radius: var(--border-radius-lg);
+      background: #f3f4f6;
+      border-radius: 12px;
     }
   }
 
@@ -470,12 +470,12 @@
 
   &__subtitle {
     font-size: 12px;
-    color: var(--color-text-secondary);
+    color: #6b7280;
   }
 
   &__chevron {
     font-size: 11px;
-    color: var(--color-text-tertiary);
+    color: #9ca3af;
     transition: transform 0.2s;
 
     &--open {
@@ -485,7 +485,7 @@
 
   &__body {
     padding: 16px;
-    border-top: 0.5px solid var(--color-border-tertiary);
+    border-top: 0.5px solid #e5e7eb;
   }
 }
 
@@ -523,9 +523,9 @@
 ========================= */
 
 .identity-pattern-card {
-  background: var(--color-background-primary);
-  border: 0.5px solid var(--color-border-tertiary);
-  border-radius: var(--border-radius-lg);
+  background: white;
+  border: 0.5px solid #e5e7eb;
+  border-radius: 12px;
   padding: 14px 16px;
   display: flex;
   flex-direction: column;
@@ -541,8 +541,8 @@
 ========================= */
 
 .identity-insight-card {
-  border: 0.5px solid var(--color-border-tertiary);
-  border-radius: var(--border-radius-md);
+  border: 0.5px solid #e5e7eb;
+  border-radius: 8px;
   padding: 12px 14px;
   margin-bottom: 8px;
 
@@ -558,14 +558,14 @@
 
   &__text {
     font-size: 13px;
-    color: var(--color-text-primary);
+    color: #111827;
     line-height: 1.5;
     margin: 0;
   }
 
   &--skeleton {
     height: 72px;
-    background: var(--color-background-secondary);
+    background: #f3f4f6;
     border-color: transparent;
     animation: identity-pulse 1.5s ease-in-out infinite;
   }
@@ -576,8 +576,8 @@
 ========================= */
 
 .identity-report-placeholder {
-  border: 0.5px dashed var(--color-border-secondary);
-  border-radius: var(--border-radius-md);
+  border: 0.5px dashed #d1d5db;
+  border-radius: 8px;
   padding: 24px;
   text-align: center;
 
@@ -590,7 +590,7 @@
 
   &__sub {
     font-size: 12px;
-    color: var(--color-text-secondary);
+    color: #6b7280;
     margin-bottom: 16px;
     line-height: 1.5;
     max-width: 360px;
