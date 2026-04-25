@@ -178,17 +178,13 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
 
   &__item {
-    display: grid;
-    grid-template-columns: 1.5rem 1fr auto;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
 
     &:last-child {
       border-bottom: none;
@@ -196,28 +192,26 @@
   }
 
   &__rank {
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: #9ca3af;
-    text-align: center;
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    width: 16px;
+    flex-shrink: 0;
   }
 
   &__title {
-    font-size: 0.85rem;
-    color: #111827;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 14px;
+    color: var(--color-text-primary);
+    flex: 1;
+    line-height: 1.4;
   }
 
   &__count {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #6366f1;
-    background: #ede9fe;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    background: var(--color-background-secondary);
     padding: 2px 8px;
-    border-radius: 20px;
-    white-space: nowrap;
+    border-radius: 10px;
+    flex-shrink: 0;
   }
 }
 
@@ -285,9 +279,9 @@
 ========================= */
 
 .identity-insight-expander {
-  margin-top: 12px;
-  border-top: 0.5px solid #f3f4f6;
+  margin-top: auto;
   padding-top: 10px;
+  border-top: 0.5px solid var(--color-border-tertiary);
 }
 
 .identity-insight-toggle {
@@ -499,23 +493,10 @@
    PATTERNS LAYOUT
 ========================= */
 
-.identity-patterns-top {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  margin-bottom: 20px;
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-  }
-}
-
 .identity-patterns-bottom {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  gap: 20px;
-  padding-top: 20px;
-  border-top: 0.5px solid var(--color-border-tertiary);
+  gap: 16px;
 
   @media (max-width: 600px) {
     grid-template-columns: 1fr;
@@ -526,16 +507,32 @@
   display: flex;
   flex-direction: row;
   gap: 8px;
-  flex-wrap: wrap;
   margin-top: 0.75rem;
 
   .identity-stat-card {
     flex: 1;
-    min-width: 80px;
   }
 
   @media (max-width: 600px) {
     flex-direction: column;
+  }
+}
+
+/* =========================
+   PATTERN CARD (bars with border)
+========================= */
+
+.identity-pattern-card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+
+  .identity-bars {
+    flex: 1;
+    margin-top: 0.75rem;
   }
 }
 
