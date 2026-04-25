@@ -163,6 +163,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     recipe: CreativeSession["recipe"];
     duplicate: boolean;
     message?: string;
+    session?: CreativeSession;
   }> => {
     const session = await getSession();
     const res = await fetch(`${base}/generate-recipe`, {
@@ -180,7 +181,18 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       throw new Error(data.error || "Failed to generate recipe");
     }
 
-    await loadIdeas();
+    // Actualizar solo la idea afectada en el array local
+    if (!data.duplicate && data.session) {
+      setIdeas(prev => prev.map(idea => {
+        if (idea.id !== params.idea_id) return idea;
+        const existingSessions = idea.sessions ?? [];
+        return {
+          ...idea,
+          sessions: [...existingSessions, data.session]
+        };
+      }));
+    }
+
     return data;
   };
 
