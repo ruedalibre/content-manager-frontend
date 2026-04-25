@@ -230,6 +230,14 @@
   }
 }
 
+.btn-link--accent {
+  color: #7F77DD;
+
+  &:hover {
+    color: #5952B3;
+  }
+}
+
 .delete-modal-overlay {
   position: fixed;
   inset: 0;

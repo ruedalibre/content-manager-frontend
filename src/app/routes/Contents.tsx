@@ -20,6 +20,7 @@ type ContentItem = {
   status: string;
   location: string | null;
   is_reusable: boolean;
+  has_ideas: boolean;
   created_at: string;
   published_at: string | null;
   archived_at: string | null;
@@ -69,6 +70,12 @@ export default function Contents() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contentToEdit, setContentToEdit] = useState<ContentItem | null>(null);
+
+  const [addIdeaContent, setAddIdeaContent] = useState<ContentItem | null>(null);
+  const [addIdeaTitle, setAddIdeaTitle] = useState("");
+  const [addIdeaDescription, setAddIdeaDescription] = useState("");
+  const [addIdeaSaving, setAddIdeaSaving] = useState(false);
+  const [addIdeaError, setAddIdeaError] = useState<string | null>(null);
 
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
@@ -407,6 +414,52 @@ export default function Contents() {
   };
 
   /* =========================
+     ADD TO IDEAS LIBRARY
+  ========================= */
+
+  const handleAddToIdeasLibrary = async () => {
+    if (!addIdeaContent || !addIdeaTitle.trim()) return;
+    setAddIdeaSaving(true);
+    setAddIdeaError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-idea-from-content`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${session?.access_token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            content_id: addIdeaContent.id,
+            title: addIdeaTitle.trim(),
+            description: addIdeaDescription.trim() || undefined,
+          }),
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to create idea");
+
+      // Actualizar el item en la lista local sin recargar
+      setContents(prev => prev.map(c =>
+        c.id === addIdeaContent.id ? { ...c, has_ideas: true } : c
+      ));
+
+      setAddIdeaContent(null);
+      setAddIdeaTitle("");
+      setAddIdeaDescription("");
+      showSuccess("Idea saved to your library");
+    } catch (err) {
+      setAddIdeaError(
+        err instanceof Error ? err.message : "Failed to create idea"
+      );
+    } finally {
+      setAddIdeaSaving(false);
+    }
+  };
+
+  /* =========================
      SKELETON ROWS
   ========================= */
 
@@ -675,6 +728,20 @@ export default function Contents() {
                     </td>
 
                     <td className="actions-cell">
+                      {!item.has_ideas && (
+                        <button
+                          className="btn-link btn-link--accent"
+                          onClick={() => {
+                            setAddIdeaContent(item);
+                            setAddIdeaTitle(item.title);
+                            setAddIdeaDescription(item.description ?? "");
+                            setAddIdeaError(null);
+                          }}
+                        >
+                          + Idea
+                        </button>
+                      )}
+
                       <button
                         className="btn-link"
                         onClick={() => handleEdit(item)}
@@ -843,6 +910,57 @@ export default function Contents() {
             >
               {isRestoring ? "Restoring..." : "Undo"}
             </button>
+          </div>
+        )}
+
+        {addIdeaContent && (
+          <div className="modal-overlay">
+            <div className="modal">
+              <h3>Add to ideas library</h3>
+              <p className="modal__subtitle">
+                Create an idea from this content. You can edit the title
+                to make it more conceptual.
+              </p>
+              <input
+                value={addIdeaTitle}
+                onChange={(e) => setAddIdeaTitle(e.target.value)}
+                placeholder="Idea title"
+                autoFocus
+                maxLength={100}
+              />
+              <textarea
+                value={addIdeaDescription}
+                onChange={(e) => setAddIdeaDescription(e.target.value)}
+                placeholder="Description (optional)"
+                rows={2}
+              />
+              {addIdeaError && (
+                <p className="modal__error">{addIdeaError}</p>
+              )}
+              <div className="modal-actions">
+                <button
+                  className="btn-secondary"
+                  onClick={() => {
+                    setAddIdeaContent(null);
+                    setAddIdeaTitle("");
+                    setAddIdeaDescription("");
+                    setAddIdeaError(null);
+                  }}
+                  disabled={addIdeaSaving}
+                  type="button"
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn-primary"
+                  onClick={handleAddToIdeasLibrary}
+                  disabled={addIdeaSaving || !addIdeaTitle.trim()}
+                  type="button"
+                >
+                  {addIdeaSaving ? "Saving..." : "Save idea"}
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
