@@ -108,7 +108,6 @@ export default function Identity() {
   const [expandedInsights, setExpandedInsights] = useState<Record<string, boolean>>({});
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     patterns: false,
-    completeness: false,
     reflecting: false,
     deep: false,
   });
@@ -199,211 +198,11 @@ export default function Identity() {
         </div>
       </section>
 
-      {/* ── CAPA 1: STANDOUT INSIGHTS (max 2) ── */}
-
-      {(aiLoading || (aiResult?.standout_insights?.length ?? 0) > 0) && (
-        <section className="identity-section">
-          <span className="section-label">Standout insights</span>
-
-          <div className="identity-highlights">
-            {aiLoading ? (
-              <>
-                <div className="identity-highlight-card identity-highlight-card--skeleton" />
-                <div className="identity-highlight-card identity-highlight-card--skeleton" />
-              </>
-            ) : (
-              aiResult?.standout_insights.slice(0, 2).map((insight, i) => (
-                <div key={i} className="identity-highlight-card">
-                  <p>{insight}</p>
-                </div>
-              ))
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* ── CAPA 1: CREATIVE STYLE TAGS ── */}
-
-      {(aiLoading || (aiResult?.creative_style_tags?.length ?? 0) > 0) && (
-        <section className="identity-section">
-          <span className="section-label">Creative style</span>
-
-          <div className="identity-tags">
-            {aiLoading ? (
-              <>
-                {[80, 110, 95, 130, 75].map((w, i) => (
-                  <span
-                    key={i}
-                    className="identity-tag identity-tag--skeleton"
-                    style={{ width: w }}
-                  />
-                ))}
-              </>
-            ) : (
-              aiResult?.creative_style_tags.map((tag, i) => (
-                <span
-                  key={i}
-                  className={`identity-tag ${i < 3 ? "identity-tag--active" : ""}`}
-                >
-                  {tag}
-                </span>
-              ))
-            )}
-          </div>
-        </section>
-      )}
-
-      {/* ── SEPARADOR ── */}
-
-      <div className="identity-divider">
-        <div className="identity-divider__line" />
-        <span className="identity-divider__label">Explore deeper</span>
-        <div className="identity-divider__line" />
-      </div>
-
-      {/* ── CAPA 2: YOUR PATTERNS ── */}
-
-      <Collapsible
-        icon="📊"
-        title="Your patterns"
-        subtitle="Topics, formats, platforms and roles"
-        isOpen={openSections.patterns}
-        onToggle={() => toggleSection("patterns")}
-      >
-        <div className="section-label">Top ideas</div>
-        <ol className="identity-ideas-list">
-          {(dna?.top_ideas ?? []).map((idea, i) => (
-            <li key={i} className="identity-ideas-list__item">
-              <span className="identity-ideas-list__rank">{i + 1}</span>
-              <span className="identity-ideas-list__title">{idea.title}</span>
-              <span className="identity-ideas-list__count">{idea.content_count}</span>
-            </li>
-          ))}
-        </ol>
-
-        <div className="identity-patterns-grid">
-
-          <section className="identity-section">
-            <span className="section-label">Top topics</span>
-            <div className="identity-bars">
-              {(dna?.topic_distribution ?? []).map((item) => (
-                <div key={item.topic} className="identity-bars__row">
-                  <span className="identity-bars__label">{item.topic}</span>
-                  <div className="identity-bars__track">
-                    <div
-                      className="identity-bars__fill"
-                      style={{ width: `${item.percentage}%` }}
-                    />
-                  </div>
-                  <span className="identity-bars__percentage">{item.percentage}%</span>
-                </div>
-              ))}
-            </div>
-            <InsightExpander
-              code="dominant_topic"
-              insights={analyticsInsights}
-              expanded={expandedInsights}
-              onToggle={toggleInsight}
-            />
-          </section>
-
-          <section className="identity-section">
-            <span className="section-label">Platforms</span>
-            <div className="identity-bars">
-              {(dna?.platform_distribution ?? []).map((item) => (
-                <div key={item.platform} className="identity-bars__row">
-                  <span className="identity-bars__label">{item.platform}</span>
-                  <div className="identity-bars__track">
-                    <div
-                      className="identity-bars__fill"
-                      style={{ width: `${item.percentage}%` }}
-                    />
-                  </div>
-                  <span className="identity-bars__percentage">{item.percentage}%</span>
-                </div>
-              ))}
-            </div>
-            <InsightExpander
-              code="top_platform"
-              insights={analyticsInsights}
-              expanded={expandedInsights}
-              onToggle={toggleInsight}
-            />
-          </section>
-
-          <section className="identity-section">
-            <span className="section-label">Formats</span>
-            <div className="identity-bars">
-              {(dna?.format_distribution ?? []).map((item) => (
-                <div key={item.format} className="identity-bars__row">
-                  <span className="identity-bars__label">{item.format}</span>
-                  <div className="identity-bars__track">
-                    <div
-                      className="identity-bars__fill"
-                      style={{ width: `${item.percentage}%` }}
-                    />
-                  </div>
-                  <span className="identity-bars__percentage">{item.percentage}%</span>
-                </div>
-              ))}
-            </div>
-            <InsightExpander
-              code="best_format"
-              insights={analyticsInsights}
-              expanded={expandedInsights}
-              onToggle={toggleInsight}
-            />
-          </section>
-
-          <section className="identity-section">
-            <span className="section-label">Content roles</span>
-            <div className="identity-role-grid">
-              {(dna?.role_distribution ?? []).map((item) => (
-                <div key={item.role} className="identity-stat-card">
-                  <span className="identity-stat-card__value">{item.percentage}%</span>
-                  <span className="identity-stat-card__label">{item.role}</span>
-                </div>
-              ))}
-            </div>
-            <InsightExpander
-              code="content_role"
-              insights={analyticsInsights}
-              expanded={expandedInsights}
-              onToggle={toggleInsight}
-            />
-          </section>
-
-        </div>
-
-        {getInsight("content_production") && (
-          <section className="identity-section" style={{ marginTop: 20 }}>
-            <span className="section-label">Publishing activity</span>
-            <div className="identity-card">
-              {(() => {
-                const insight = getInsight("content_production");
-                return (
-                  <div className="identity-insight-body">
-                    <p className="identity-insight-body__insight">{insight!.insight}</p>
-                    <p className="identity-insight-body__strategy">{insight!.strategy}</p>
-                    <p className="identity-insight-body__action">{insight!.action}</p>
-                  </div>
-                );
-              })()}
-            </div>
-          </section>
-        )}
-      </Collapsible>
-
-      {/* ── CAPA 2B: DNA COMPLETENESS ── */}
+      {/* ── CAPA 1: DNA COMPLETENESS (inline) ── */}
 
       {dna?.completeness && dna.completeness.total_contents > 0 && (
-        <Collapsible
-          icon="🧬"
-          title="DNA completeness"
-          subtitle="How well linked your contents are"
-          isOpen={openSections.completeness}
-          onToggle={() => toggleSection("completeness")}
-        >
+        <section className="identity-section">
+          <span className="section-label">DNA completeness</span>
           <div className="identity-completeness">
 
             <div className="identity-completeness__row">
@@ -487,8 +286,180 @@ export default function Identity() {
             </div>
 
           </div>
-        </Collapsible>
+        </section>
       )}
+
+      {/* ── CAPA 1: STANDOUT INSIGHTS (max 2 + publishing) ── */}
+
+      {(aiLoading || (aiResult?.standout_insights?.length ?? 0) > 0) && (
+        <section className="identity-section">
+          <span className="section-label">Standout insights</span>
+
+          <div className="identity-highlights">
+            {aiLoading ? (
+              <>
+                <div className="identity-highlight-card identity-highlight-card--skeleton" />
+                <div className="identity-highlight-card identity-highlight-card--skeleton" />
+              </>
+            ) : (
+              <>
+                {aiResult?.standout_insights.slice(0, 2).map((insight, i) => (
+                  <div key={i} className="identity-highlight-card">
+                    <p>{insight}</p>
+                  </div>
+                ))}
+                {(() => {
+                  const productionInsight = getInsight("content_production");
+                  return productionInsight ? (
+                    <div className="identity-highlight-card">
+                      <p>{productionInsight.insight} {productionInsight.strategy}</p>
+                    </div>
+                  ) : null;
+                })()}
+              </>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── CAPA 1: CREATIVE STYLE TAGS ── */}
+
+      {(aiLoading || (aiResult?.creative_style_tags?.length ?? 0) > 0) && (
+        <section className="identity-section">
+          <span className="section-label">Creative style</span>
+
+          <div className="identity-tags">
+            {aiLoading ? (
+              <>
+                {[80, 110, 95, 130, 75].map((w, i) => (
+                  <span
+                    key={i}
+                    className="identity-tag identity-tag--skeleton"
+                    style={{ width: w }}
+                  />
+                ))}
+              </>
+            ) : (
+              aiResult?.creative_style_tags.map((tag, i) => (
+                <span
+                  key={i}
+                  className={`identity-tag ${i < 3 ? "identity-tag--active" : ""}`}
+                >
+                  {tag}
+                </span>
+              ))
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* ── SEPARADOR ── */}
+
+      <div className="identity-divider">
+        <div className="identity-divider__line" />
+        <span className="identity-divider__label">Explore deeper</span>
+        <div className="identity-divider__line" />
+      </div>
+
+      {/* ── CAPA 2: YOUR PATTERNS ── */}
+
+      <Collapsible
+        icon="📊"
+        title="Your patterns"
+        subtitle="Topics, formats, platforms and roles"
+        isOpen={openSections.patterns}
+        onToggle={() => toggleSection("patterns")}
+      >
+        <div className="identity-patterns-top">
+
+          <div>
+            <span className="section-label">Top ideas</span>
+            <ol className="identity-ideas-list">
+              {(dna?.top_ideas ?? []).map((idea, i) => (
+                <li key={i} className="identity-ideas-list__item">
+                  <span className="identity-ideas-list__rank">{i + 1}</span>
+                  <span className="identity-ideas-list__title">{idea.title}</span>
+                  <span className="identity-ideas-list__count">{idea.content_count}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <div>
+            <span className="section-label">Content roles</span>
+            <div className="identity-roles-row">
+              {(dna?.role_distribution ?? []).map((item) => (
+                <div key={item.role} className="identity-stat-card">
+                  <span className="identity-stat-card__value">{item.percentage}%</span>
+                  <span className="identity-stat-card__label">{item.role}</span>
+                </div>
+              ))}
+            </div>
+            <InsightExpander
+              code="content_role"
+              insights={analyticsInsights}
+              expanded={expandedInsights}
+              onToggle={toggleInsight}
+            />
+          </div>
+
+        </div>
+
+        <div className="identity-patterns-bottom">
+
+          <div>
+            <span className="section-label">Topics</span>
+            <div className="identity-bars">
+              {(dna?.topic_distribution ?? []).map((item) => (
+                <div key={item.topic} className="identity-bars__row">
+                  <span className="identity-bars__label">{item.topic}</span>
+                  <div className="identity-bars__track">
+                    <div className="identity-bars__fill" style={{ width: `${item.percentage}%` }} />
+                  </div>
+                  <span className="identity-bars__percentage">{item.percentage}%</span>
+                </div>
+              ))}
+            </div>
+            <InsightExpander code="dominant_topic" insights={analyticsInsights}
+              expanded={expandedInsights} onToggle={toggleInsight} />
+          </div>
+
+          <div>
+            <span className="section-label">Platforms</span>
+            <div className="identity-bars">
+              {(dna?.platform_distribution ?? []).map((item) => (
+                <div key={item.platform} className="identity-bars__row">
+                  <span className="identity-bars__label">{item.platform}</span>
+                  <div className="identity-bars__track">
+                    <div className="identity-bars__fill" style={{ width: `${item.percentage}%` }} />
+                  </div>
+                  <span className="identity-bars__percentage">{item.percentage}%</span>
+                </div>
+              ))}
+            </div>
+            <InsightExpander code="top_platform" insights={analyticsInsights}
+              expanded={expandedInsights} onToggle={toggleInsight} />
+          </div>
+
+          <div>
+            <span className="section-label">Formats</span>
+            <div className="identity-bars">
+              {(dna?.format_distribution ?? []).map((item) => (
+                <div key={item.format} className="identity-bars__row">
+                  <span className="identity-bars__label">{item.format}</span>
+                  <div className="identity-bars__track">
+                    <div className="identity-bars__fill" style={{ width: `${item.percentage}%` }} />
+                  </div>
+                  <span className="identity-bars__percentage">{item.percentage}%</span>
+                </div>
+              ))}
+            </div>
+            <InsightExpander code="best_format" insights={analyticsInsights}
+              expanded={expandedInsights} onToggle={toggleInsight} />
+          </div>
+
+        </div>
+      </Collapsible>
 
       {/* ── CAPA 3: WORTH REFLECTING ON ── */}
 
