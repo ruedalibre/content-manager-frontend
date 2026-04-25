@@ -147,6 +147,102 @@ export default function Identity() {
         </div>
       </section>
 
+      {/* ── 2b. DNA COMPLETENESS ── */}
+
+      {dna?.completeness && dna.completeness.total_contents > 0 && (
+        <section className="identity-section">
+          <span className="section-label">DNA completeness</span>
+          <div className="identity-completeness">
+
+            <div className="identity-completeness__row">
+              <span className="identity-completeness__label">
+                Topics linked
+              </span>
+              <div className="identity-completeness__track">
+                <div
+                  className="identity-completeness__fill identity-completeness__fill--topics"
+                  style={{
+                    width: `${Math.round(
+                      (dna.completeness.contents_with_topics /
+                        dna.completeness.total_contents) * 100
+                    )}%`
+                  }}
+                />
+              </div>
+              <span className="identity-completeness__pct">
+                {Math.round(
+                  (dna.completeness.contents_with_topics /
+                    dna.completeness.total_contents) * 100
+                )}%
+              </span>
+              <span className="identity-completeness__detail">
+                {dna.completeness.contents_with_topics} of{" "}
+                {dna.completeness.total_contents} contents
+              </span>
+            </div>
+
+            <div className="identity-completeness__row">
+              <span className="identity-completeness__label">
+                Ideas linked
+              </span>
+              <div className="identity-completeness__track">
+                <div
+                  className="identity-completeness__fill identity-completeness__fill--ideas"
+                  style={{
+                    width: `${Math.round(
+                      (dna.completeness.contents_with_ideas /
+                        dna.completeness.total_contents) * 100
+                    )}%`
+                  }}
+                />
+              </div>
+              <span className="identity-completeness__pct">
+                {Math.round(
+                  (dna.completeness.contents_with_ideas /
+                    dna.completeness.total_contents) * 100
+                )}%
+              </span>
+              <span className="identity-completeness__detail">
+                {dna.completeness.contents_with_ideas} of{" "}
+                {dna.completeness.total_contents} contents
+              </span>
+            </div>
+
+            <div className="identity-completeness__row">
+              <span className="identity-completeness__label">
+                Ideas active
+              </span>
+              <div className="identity-completeness__track">
+                <div
+                  className="identity-completeness__fill identity-completeness__fill--active"
+                  style={{
+                    width: dna.completeness.total_ideas > 0
+                      ? `${Math.round(
+                          (dna.completeness.contents_with_ideas /
+                            dna.completeness.total_ideas) * 100
+                        )}%`
+                      : "0%"
+                  }}
+                />
+              </div>
+              <span className="identity-completeness__pct">
+                {dna.completeness.total_ideas > 0
+                  ? Math.round(
+                      (dna.completeness.contents_with_ideas /
+                        dna.completeness.total_ideas) * 100
+                    )
+                  : 0}%
+              </span>
+              <span className="identity-completeness__detail">
+                {dna.completeness.contents_with_ideas} of{" "}
+                {dna.completeness.total_ideas} ideas
+              </span>
+            </div>
+
+          </div>
+        </section>
+      )}
+
       {/* ── 3. STANDOUT INSIGHTS ── */}
 
       {(aiLoading || (aiResult?.standout_insights?.length ?? 0) > 0) && (
