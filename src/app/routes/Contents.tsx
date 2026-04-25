@@ -652,6 +652,7 @@ export default function Contents() {
                 <th>Published</th>
                 <th>Archived</th>
                 <th></th>
+                <th></th>
               </tr>
             </thead>
 
@@ -727,21 +728,25 @@ export default function Contents() {
                         : <span className="no-topics">—</span>}
                     </td>
 
-                    <td className="actions-cell">
+                    <td>
                       {!item.has_ideas && (
                         <button
-                          className="btn-link btn-link--accent"
+                          className="btn-add-idea"
                           onClick={() => {
                             setAddIdeaContent(item);
                             setAddIdeaTitle(item.title);
                             setAddIdeaDescription(item.description ?? "");
                             setAddIdeaError(null);
                           }}
+                          title="Add to ideas library"
+                          type="button"
                         >
-                          + Idea
+                          💡 Add idea
                         </button>
                       )}
+                    </td>
 
+                    <td className="actions-cell">
                       <button
                         className="btn-link"
                         onClick={() => handleEdit(item)}
