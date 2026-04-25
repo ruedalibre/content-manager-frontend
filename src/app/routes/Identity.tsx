@@ -370,44 +370,40 @@ export default function Identity() {
         isOpen={openSections.patterns}
         onToggle={() => toggleSection("patterns")}
       >
-        <div className="identity-patterns-top">
+        <div style={{ marginBottom: "20px" }}>
+          <span className="section-label">Top ideas</span>
+          <ol className="identity-ideas-list">
+            {(dna?.top_ideas ?? []).map((idea, i) => (
+              <li key={i} className="identity-ideas-list__item">
+                <span className="identity-ideas-list__rank">{i + 1}</span>
+                <span className="identity-ideas-list__title">{idea.title}</span>
+                <span className="identity-ideas-list__count">{idea.content_count}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
 
-          <div>
-            <span className="section-label">Top ideas</span>
-            <ol className="identity-ideas-list">
-              {(dna?.top_ideas ?? []).map((idea, i) => (
-                <li key={i} className="identity-ideas-list__item">
-                  <span className="identity-ideas-list__rank">{i + 1}</span>
-                  <span className="identity-ideas-list__title">{idea.title}</span>
-                  <span className="identity-ideas-list__count">{idea.content_count}</span>
-                </li>
-              ))}
-            </ol>
+        <div style={{ marginBottom: "20px" }}>
+          <span className="section-label">Content roles</span>
+          <div className="identity-roles-row">
+            {(dna?.role_distribution ?? []).map((item) => (
+              <div key={item.role} className="identity-stat-card">
+                <span className="identity-stat-card__value">{item.percentage}%</span>
+                <span className="identity-stat-card__label">{item.role}</span>
+              </div>
+            ))}
           </div>
-
-          <div>
-            <span className="section-label">Content roles</span>
-            <div className="identity-roles-row">
-              {(dna?.role_distribution ?? []).map((item) => (
-                <div key={item.role} className="identity-stat-card">
-                  <span className="identity-stat-card__value">{item.percentage}%</span>
-                  <span className="identity-stat-card__label">{item.role}</span>
-                </div>
-              ))}
-            </div>
-            <InsightExpander
-              code="content_role"
-              insights={analyticsInsights}
-              expanded={expandedInsights}
-              onToggle={toggleInsight}
-            />
-          </div>
-
+          <InsightExpander
+            code="content_role"
+            insights={analyticsInsights}
+            expanded={expandedInsights}
+            onToggle={toggleInsight}
+          />
         </div>
 
         <div className="identity-patterns-bottom">
 
-          <div>
+          <div className="identity-pattern-card">
             <span className="section-label">Topics</span>
             <div className="identity-bars">
               {(dna?.topic_distribution ?? []).map((item) => (
@@ -424,7 +420,7 @@ export default function Identity() {
               expanded={expandedInsights} onToggle={toggleInsight} />
           </div>
 
-          <div>
+          <div className="identity-pattern-card">
             <span className="section-label">Platforms</span>
             <div className="identity-bars">
               {(dna?.platform_distribution ?? []).map((item) => (
@@ -441,7 +437,7 @@ export default function Identity() {
               expanded={expandedInsights} onToggle={toggleInsight} />
           </div>
 
-          <div>
+          <div className="identity-pattern-card">
             <span className="section-label">Formats</span>
             <div className="identity-bars">
               {(dna?.format_distribution ?? []).map((item) => (
