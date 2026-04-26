@@ -33,8 +33,39 @@ export default function CreateIdeaModal({
   const [description, setDescription] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
   const isEditMode = !!ideaToEdit;
+
+  /* =========================
+     SUGGESTIONS (create mode)
+  ========================= */
+
+  useEffect(() => {
+    if (isOpen && !isEditMode) {
+      const loadSuggestions = async () => {
+        try {
+          setLoadingSuggestions(true);
+          const { data: { session } } = await supabase.auth.getSession();
+          const res = await fetch(
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-ideas`,
+            { headers: { Authorization: `Bearer ${session?.access_token}` } }
+          );
+          if (!res.ok) return;
+          const data = await res.json();
+          setSuggestions(Array.isArray(data) ? data : []);
+        } catch {
+          setSuggestions([]);
+        } finally {
+          setLoadingSuggestions(false);
+        }
+      };
+      loadSuggestions();
+    }
+
+    if (!isOpen) setSuggestions([]);
+  }, [isOpen, isEditMode]);
 
   /* =========================
      PREFILL EDIT MODE
@@ -129,6 +160,36 @@ export default function CreateIdeaModal({
         <h3>{isEditMode ? "Edit Idea" : "Create Idea"}</h3>
 
         <form onSubmit={handleSubmit}>
+          {/* SUGGESTIONS (create mode only) */}
+
+          {!isEditMode && (
+            <div className="create-idea-modal__suggestions">
+              {loadingSuggestions ? (
+                <div className="create-idea-modal__suggestions-loading">
+                  <span>Generating ideas for you...</span>
+                </div>
+              ) : suggestions.length > 0 ? (
+                <>
+                  <span className="create-idea-modal__suggestions-label">
+                    Suggestions based on your content
+                  </span>
+                  <div className="create-idea-modal__suggestions-chips">
+                    {suggestions.map((s, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        className={`create-idea-modal__chip${title === s ? " create-idea-modal__chip--selected" : ""}`}
+                        onClick={() => setTitle(title === s ? "" : s)}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : null}
+            </div>
+          )}
+
           {/* TITLE */}
 
           <input
