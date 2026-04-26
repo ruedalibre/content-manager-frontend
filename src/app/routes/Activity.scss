@@ -1,0 +1,225 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+/* =========================
+   PERFORMANCE SECTION
+========================= */
+
+.dashboard__performance {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.dashboard__performance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #6b7280;
+  }
+}
+
+/* Period selector */
+
+.dashboard__controls select {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+}
+
+/* KPI GRID */
+
+.dashboard__kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+/* KPI CARD */
+
+.kpi-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.kpi-card > span {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.kpi-card > h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Growth styles */
+
+.growth-rate {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.growth-rate.positive {
+  color: #16a34a;
+}
+
+.growth-rate.negative {
+  color: #dc2626;
+}
+
+.growth-rate.neutral {
+  color: #6b7280;
+}
+
+/* =========================
+   GENERIC SECTIONS
+========================= */
+
+.dashboard__section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dashboard__card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================
+   CONSISTENCY SECTION
+========================= */
+
+.dashboard__consistency {
+  border-top: 1px solid #f1f5f9;
+  padding-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.dashboard__consistency-header {
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #6b7280;
+  }
+}
+
+/* Heatmap card */
+
+.heatmap-card {
+  min-height: auto;
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.dashboard-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+
+  padding: 4rem 2rem;
+  margin-top: 2rem;
+
+  background: white;
+  border-radius: 12px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Icon */
+
+.dashboard-empty__icon {
+  font-size: 42px;
+  margin-bottom: 1rem;
+}
+
+/* Title */
+
+.dashboard-empty h2 {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #111827;
+
+  margin-bottom: 0.5rem;
+}
+
+/* Description */
+
+.dashboard-empty p {
+  font-size: 0.95rem;
+  color: #6b7280;
+
+  max-width: 420px;
+  margin-bottom: 1.5rem;
+}
+
+/* Benefits */
+
+.dashboard-empty__benefits {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.dashboard-empty__actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* CTA */
+
+.dashboard-empty .btn-primary {
+  font-size: 0.9rem;
+  padding: 0.55rem 1.1rem;
+}
+
+.dashboard-empty__badge {
+  font-size: 0.75rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  margin-bottom: 0.8rem;
+}
