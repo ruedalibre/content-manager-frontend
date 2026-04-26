@@ -135,11 +135,11 @@
   flex: 1;
   min-width: 200px;
   max-width: 280px;
-  height: 36px;
-  padding: 0 0.75rem;
+  height: 40px;
+  padding: 10px 14px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 14px;
   outline: none;
   transition: border-color 0.15s;
   &:focus {
@@ -1209,21 +1209,22 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .topics-alphabet {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 3px;
+  margin-top: 8px;
 }
 
 .topics-alphabet__btn {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--border-radius-md);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   border: 0.5px solid var(--color-border-secondary);
   background: none;
   color: var(--color-text-secondary);
@@ -1232,7 +1233,7 @@
   align-items: center;
   justify-content: center;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: var(--color-background-secondary);
   }
 
@@ -1240,6 +1241,13 @@
     background: #eeedfe;
     border-color: #afa9ec;
     color: #3c3489;
+    font-weight: 600;
+  }
+
+  &--disabled,
+  &:disabled {
+    opacity: 0.25;
+    cursor: default;
   }
 }
 
@@ -1260,19 +1268,19 @@
   gap: 4px;
 
   &__letter {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--color-text-tertiary);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    padding: 0 4px;
-    margin-bottom: 2px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    padding: 4px 0;
+    margin-bottom: 6px;
+    border-bottom: 1.5px solid var(--color-border-tertiary);
+    display: block;
   }
 
   &__items {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
   }
 }
 
@@ -1288,6 +1296,9 @@
   &__name {
     font-size: 13px;
     flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__controls {

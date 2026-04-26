@@ -154,6 +154,15 @@ export default function Ideas() {
     });
   }, [recipeState]);
 
+  const normalizeFirstLetter = (str: string): string => {
+    return (
+      str
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")[0]
+        ?.toUpperCase() ?? "#"
+    );
+  };
+
   const filteredIdeas = ideas
     .filter((idea) => idea.title.toLowerCase().includes(search.toLowerCase()))
     .sort(
@@ -164,9 +173,11 @@ export default function Ideas() {
     t.name.toLowerCase().includes(topicSearch.toLowerCase()),
   );
 
-  const availableLetters = [...new Set(
-    topics.map(t => t.name[0].toUpperCase())
-  )].sort();
+  const ALL_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+
+  const lettersWithTopics = new Set(
+    topics.map((t) => normalizeFirstLetter(t.name)),
+  );
 
   const filteredTopicGroups = (() => {
     let filtered = topics;
@@ -176,14 +187,14 @@ export default function Ideas() {
       );
     }
     if (selectedLetter) {
-      filtered = filtered.filter(t =>
-        t.name[0].toUpperCase() === selectedLetter
+      filtered = filtered.filter(
+        (t) => normalizeFirstLetter(t.name) === selectedLetter,
       );
     }
     filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
     const groups: Record<string, typeof filtered> = {};
-    filtered.forEach(t => {
-      const letter = t.name[0].toUpperCase();
+    filtered.forEach((t) => {
+      const letter = normalizeFirstLetter(t.name);
       if (!groups[letter]) groups[letter] = [];
       groups[letter].push(t);
     });
@@ -197,7 +208,7 @@ export default function Ideas() {
       return t.name.toLowerCase().includes(topicSearch.toLowerCase());
     }
     if (selectedLetter) {
-      return t.name[0].toUpperCase() === selectedLetter;
+      return normalizeFirstLetter(t.name) === selectedLetter;
     }
     return true;
   });
@@ -808,15 +819,17 @@ export default function Ideas() {
               className="ideas-search"
             />
             <div className="topics-alphabet">
-              {availableLetters.map(letter => (
+              {ALL_LETTERS.map((letter) => (
                 <button
                   key={letter}
-                  className={`topics-alphabet__btn ${selectedLetter === letter ? "topics-alphabet__btn--active" : ""}`}
+                  className={`topics-alphabet__btn${selectedLetter === letter ? " topics-alphabet__btn--active" : ""}${!lettersWithTopics.has(letter) ? " topics-alphabet__btn--disabled" : ""}`}
                   onClick={() => {
+                    if (!lettersWithTopics.has(letter)) return;
                     setSelectedLetter(selectedLetter === letter ? null : letter);
                     setTopicSearch("");
                   }}
                   type="button"
+                  disabled={!lettersWithTopics.has(letter)}
                 >
                   {letter}
                 </button>
