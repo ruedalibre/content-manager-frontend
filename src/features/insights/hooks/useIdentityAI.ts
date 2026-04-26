@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../supabaseClient.ts";
-import { type ContentDNA } from "../types/insights.types.ts";
+import { type ContentDNA, type StandoutInsight, type CreativeStyleTag } from "../types/insights.types.ts";
 
 type IdentityAIResult = {
-  standout_insights: string[];
-  creative_style_tags: string[];
+  standout_insights: StandoutInsight[];
+  creative_style_tags: CreativeStyleTag[];
 };
 
 export function useIdentityAI(dna: ContentDNA | null) {
