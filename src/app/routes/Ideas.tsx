@@ -341,8 +341,7 @@ export default function Ideas() {
         <div>
           <h2 className="ideas-page__title">Your creative engine</h2>
           <p className="ideas-page__subtitle">
-            Ideas become briefs. Briefs become content. Your creative process,
-            systematized.
+            Where your ideas become content.
           </p>
         </div>
         {activeTab === "ideas" ? (
