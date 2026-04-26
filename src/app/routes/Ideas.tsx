@@ -933,6 +933,20 @@ export default function Ideas() {
                   <p className="content-system__subtitle">
                     How your topics, ideas and contents connect
                   </p>
+                  <div className="content-system__legend">
+                    <span className="content-system__legend-item">
+                      <span className="content-system__legend-dot content-system__legend-dot--topic" />
+                      Topic
+                    </span>
+                    <span className="content-system__legend-item">
+                      <span className="content-system__legend-dot content-system__legend-dot--idea" />
+                      Idea
+                    </span>
+                    <span className="content-system__legend-item">
+                      <span className="content-system__legend-dot content-system__legend-dot--content" />
+                      Content
+                    </span>
+                  </div>
                 </div>
 
                 {contentSystemLoading ? (
