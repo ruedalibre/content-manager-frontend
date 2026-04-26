@@ -60,6 +60,7 @@ export default function Ideas() {
   const [savingTopic, setSavingTopic] = useState(false);
   const [topicSearch, setTopicSearch] = useState("");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  const [expandedLetters, setExpandedLetters] = useState<Record<string, boolean>>({});
   const [openSystemTopics, setOpenSystemTopics] = useState<Record<string, boolean>>({});
   const [openSystemIdeas, setOpenSystemIdeas] = useState<Record<string, boolean>>({});
   const [actionError, setActionError] = useState<string | null>(null);
@@ -115,6 +116,23 @@ export default function Ideas() {
 
   const toggleSystemIdea = (id: string) => {
     setOpenSystemIdeas(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleExpandLetter = (letter: string) => {
+    setExpandedLetters(prev => ({ ...prev, [letter]: !prev[letter] }));
+  };
+
+  const chunkIntoColumns = (
+    items: typeof topics,
+    maxPerCol: number,
+    maxCols: number,
+  ) => {
+    const columns: (typeof topics)[] = [];
+    for (let i = 0; i < items.length; i += maxPerCol) {
+      if (columns.length >= maxCols) break;
+      columns.push(items.slice(i, i + maxPerCol));
+    }
+    return columns;
   };
 
   useEffect(() => {
@@ -854,75 +872,104 @@ export default function Ideas() {
                 </div>
               ) : (
                 <div className="topics-alpha-list">
-                  {filteredTopicGroups.map(({ letter, items }) => (
-                    <div key={letter} className="topics-alpha-group">
-                      <span className="topics-alpha-group__letter">
-                        {letter}
-                      </span>
-                      <div className="topics-alpha-group__items">
-                        {items.map(topic => (
-                          <div key={topic.id} className="topic-list-item">
-                            {editingTopic?.id === topic.id ? (
-                              <div className="topic-list-item__edit">
-                                <input
-                                  value={editTopicName}
-                                  onChange={(e) =>
-                                    setEditTopicName(e.target.value)
-                                  }
-                                  maxLength={50}
-                                  autoFocus
-                                />
-                                <div className="topic-list-item__edit-actions">
-                                  <button
-                                    className="btn-secondary"
-                                    onClick={() => setEditingTopic(null)}
-                                    type="button"
-                                  >
-                                    Cancel
-                                  </button>
-                                  <button
-                                    className="btn-primary"
-                                    onClick={handleEditTopicSave}
-                                    disabled={savingTopic}
-                                    type="button"
-                                  >
-                                    {savingTopic ? "..." : "Save"}
-                                  </button>
+                  {filteredTopicGroups.map(({ letter, items }) => {
+                    const MAX_COLS = 4;
+                    const MAX_PER_COL = 5;
+                    const MAX_VISIBLE = MAX_COLS * MAX_PER_COL;
+                    const isExpanded = expandedLetters[letter];
+                    const hasMore = items.length > MAX_VISIBLE;
+                    const visibleItems = isExpanded ? items : items.slice(0, MAX_VISIBLE);
+                    const itemsPerCol = isExpanded
+                      ? Math.ceil(items.length / MAX_COLS)
+                      : MAX_PER_COL;
+                    const columns = chunkIntoColumns(visibleItems, itemsPerCol, MAX_COLS);
+
+                    return (
+                      <div key={letter} className="topics-alpha-group">
+                        <div className="topics-alpha-group__header">
+                          <span className="topics-alpha-group__letter">
+                            {letter}
+                          </span>
+                          {hasMore && (
+                            <button
+                              type="button"
+                              className="topics-alpha-group__more"
+                              onClick={() => toggleExpandLetter(letter)}
+                            >
+                              {isExpanded ? "See less ↑" : `+${items.length - MAX_VISIBLE} more`}
+                            </button>
+                          )}
+                        </div>
+
+                        <div className="topics-alpha-group__columns">
+                          {columns.map((col, colIndex) => (
+                            <div key={colIndex} className="topics-alpha-group__col">
+                              {col.map(topic => (
+                                <div key={topic.id} className="topic-list-item">
+                                  {editingTopic?.id === topic.id ? (
+                                    <div className="topic-list-item__edit">
+                                      <input
+                                        value={editTopicName}
+                                        onChange={(e) =>
+                                          setEditTopicName(e.target.value)
+                                        }
+                                        maxLength={50}
+                                        autoFocus
+                                      />
+                                      <div className="topic-list-item__edit-actions">
+                                        <button
+                                          className="btn-secondary"
+                                          onClick={() => setEditingTopic(null)}
+                                          type="button"
+                                        >
+                                          Cancel
+                                        </button>
+                                        <button
+                                          className="btn-primary"
+                                          onClick={handleEditTopicSave}
+                                          disabled={savingTopic}
+                                          type="button"
+                                        >
+                                          {savingTopic ? "..." : "Save"}
+                                        </button>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <span className="topic-list-item__name">
+                                        {topic.name}
+                                      </span>
+                                      <div className="topic-list-item__controls">
+                                        <button
+                                          className="btn-icon"
+                                          onClick={() => {
+                                            setEditingTopic(topic);
+                                            setEditTopicName(topic.name);
+                                          }}
+                                          type="button"
+                                          title="Edit"
+                                        >
+                                          ✏️
+                                        </button>
+                                        <button
+                                          className="btn-icon btn-icon--danger"
+                                          onClick={() => handleArchiveTopic(topic.id)}
+                                          type="button"
+                                          title="Archive"
+                                        >
+                                          🗄️
+                                        </button>
+                                      </div>
+                                    </>
+                                  )}
                                 </div>
-                              </div>
-                            ) : (
-                              <>
-                                <span className="topic-list-item__name">
-                                  {topic.name}
-                                </span>
-                                <div className="topic-list-item__controls">
-                                  <button
-                                    className="btn-icon"
-                                    onClick={() => {
-                                      setEditingTopic(topic);
-                                      setEditTopicName(topic.name);
-                                    }}
-                                    type="button"
-                                    title="Edit"
-                                  >
-                                    ✏️
-                                  </button>
-                                  <button
-                                    className="btn-icon btn-icon--danger"
-                                    onClick={() => handleArchiveTopic(topic.id)}
-                                    type="button"
-                                    title="Archive"
-                                  >
-                                    🗄️
-                                  </button>
-                                </div>
-                              </>
-                            )}
-                          </div>
-                        ))}
+                              ))}
+                            </div>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
 
