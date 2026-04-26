@@ -7,7 +7,7 @@ export default function StatusBadge({
 }) {
   const map = {
     generated: { label: "Generated", cls: "recipe-status--generated" },
-    reviewed: { label: "Reviewed", cls: "recipe-status--reviewed" },
+    reviewed: { label: "Approved", cls: "recipe-status--reviewed" },
     executed: { label: "Implemented", cls: "recipe-status--executed" },
     discarded: { label: "Discarded", cls: "recipe-status--discarded" },
   };

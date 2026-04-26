@@ -17,7 +17,8 @@ export default function Topbar({
     "/insights": "Insights",
     "/contents": "Contents",
     "/ideas": "Ideas & Topics",
-    "/dashboard": "Identity & Insights",
+    "/identity": "Identity & Insights",
+    "/activity": "Activity",
     "/admin": "Admin",
   }
 
@@ -25,7 +26,7 @@ export default function Topbar({
 
   return (
     <header className="topbar">
-      <button
+      <button type="button"
         className="topbar__menu-btn"
         onClick={onMenuClick}
       >

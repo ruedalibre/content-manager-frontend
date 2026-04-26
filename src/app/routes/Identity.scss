@@ -43,6 +43,7 @@
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #9ca3af;
+  margin-bottom: 1em;
 }
 
 /* =========================
@@ -281,17 +282,17 @@
 .identity-insight-expander {
   margin-top: auto;
   padding-top: 10px;
-  border-top: 0.5px solid #e5e7eb;
 }
 
 .identity-insight-toggle {
   font-size: 12px;
-  color: #6b7280;
+  font-weight: bold;
+  color: #6366f1;
   background: none;
   border: none;
   cursor: pointer;
   padding: 0;
-  text-decoration: underline;
+  text-decoration: none;
   text-underline-offset: 3px;
 
   &:hover {

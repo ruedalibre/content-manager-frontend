@@ -307,7 +307,7 @@ export default function RecipePanel({
 
           {/* RIGHT — RECIPE */}
           <div className="recipe-panel__recipe">
-            <h4 className="recipe-panel__section-title">Recipe</h4>
+            <h4 className="recipe-panel__section-title">Brief</h4>
 
             {renderAspect("angle", "Angle")}
             {renderAspect("hook", "Hook")}
