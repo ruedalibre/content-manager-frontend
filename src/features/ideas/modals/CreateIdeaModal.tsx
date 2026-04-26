@@ -35,6 +35,7 @@ export default function CreateIdeaModal({
   const [loading, setLoading] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(false);
 
   const isEditMode = !!ideaToEdit;
 
@@ -87,6 +88,7 @@ export default function CreateIdeaModal({
   const resetForm = () => {
     setTitle("");
     setDescription("");
+    setSelectedSuggestion(false);
   };
 
   /* =========================
@@ -120,7 +122,7 @@ export default function CreateIdeaModal({
         body: JSON.stringify({
           title,
           description,
-          source: "manual",
+          source: selectedSuggestion ? "generated" : "manual",
         }),
       });
 
@@ -179,7 +181,15 @@ export default function CreateIdeaModal({
                         key={i}
                         type="button"
                         className={`create-idea-modal__chip${title === s ? " create-idea-modal__chip--selected" : ""}`}
-                        onClick={() => setTitle(title === s ? "" : s)}
+                        onClick={() => {
+                          if (title === s) {
+                            setTitle("");
+                            setSelectedSuggestion(false);
+                          } else {
+                            setTitle(s);
+                            setSelectedSuggestion(true);
+                          }
+                        }}
                       >
                         {s}
                       </button>
@@ -195,7 +205,10 @@ export default function CreateIdeaModal({
           <input
             placeholder="Idea title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              if (selectedSuggestion) setSelectedSuggestion(false);
+            }}
             required
           />
 
