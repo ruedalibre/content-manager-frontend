@@ -124,7 +124,7 @@ export default function Identity() {
   ========================= */
 
   useEffect(() => {
-    setTopbarContext("Your creative identity");
+    setTopbarContext("");
     return () => setTopbarContext(null);
   }, [setTopbarContext]);
 
