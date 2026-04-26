@@ -6,6 +6,7 @@ import {
   type CreativeSession,
 } from "../../features/ideas/hooks/useIdeas.ts";
 import { useTopics, type Topic } from "../../features/ideas/hooks/useTopics.ts";
+import { useContentSystem } from "../../features/ideas/hooks/useContentSystem.ts";
 import { usePlatforms } from "../../features/contents/hooks/usePlatforms.ts";
 import { useFormats } from "../../features/contents/hooks/useFormats.ts";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
@@ -58,6 +59,9 @@ export default function Ideas() {
   const [editTopicName, setEditTopicName] = useState("");
   const [savingTopic, setSavingTopic] = useState(false);
   const [topicSearch, setTopicSearch] = useState("");
+  const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
+  const [openSystemTopics, setOpenSystemTopics] = useState<Record<string, boolean>>({});
+  const [openSystemIdeas, setOpenSystemIdeas] = useState<Record<string, boolean>>({});
   const [actionError, setActionError] = useState<string | null>(null);
   const [recipeState, setRecipeState] = useState<RecipeState>({});
   const [expandedSession, setExpandedSession] = useState<{
@@ -100,8 +104,18 @@ export default function Ideas() {
     archiveTopic,
   } = useTopics();
 
+  const { topics: systemTopics, loading: contentSystemLoading } = useContentSystem();
+
   const { platforms } = usePlatforms();
   const { loadFormats } = useFormats();
+
+  const toggleSystemTopic = (id: string) => {
+    setOpenSystemTopics(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const toggleSystemIdea = (id: string) => {
+    setOpenSystemIdeas(prev => ({ ...prev, [id]: !prev[id] }));
+  };
 
   useEffect(() => {
     if (!ideas.length) return;
@@ -149,6 +163,44 @@ export default function Ideas() {
   const filteredTopics = topics.filter((t) =>
     t.name.toLowerCase().includes(topicSearch.toLowerCase()),
   );
+
+  const availableLetters = [...new Set(
+    topics.map(t => t.name[0].toUpperCase())
+  )].sort();
+
+  const filteredTopicGroups = (() => {
+    let filtered = topics;
+    if (topicSearch) {
+      filtered = filtered.filter(t =>
+        t.name.toLowerCase().includes(topicSearch.toLowerCase())
+      );
+    }
+    if (selectedLetter) {
+      filtered = filtered.filter(t =>
+        t.name[0].toUpperCase() === selectedLetter
+      );
+    }
+    filtered = [...filtered].sort((a, b) => a.name.localeCompare(b.name));
+    const groups: Record<string, typeof filtered> = {};
+    filtered.forEach(t => {
+      const letter = t.name[0].toUpperCase();
+      if (!groups[letter]) groups[letter] = [];
+      groups[letter].push(t);
+    });
+    return Object.entries(groups)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([letter, items]) => ({ letter, items }));
+  })();
+
+  const filteredSystemTopics = systemTopics.filter(t => {
+    if (topicSearch) {
+      return t.name.toLowerCase().includes(topicSearch.toLowerCase());
+    }
+    if (selectedLetter) {
+      return t.name[0].toUpperCase() === selectedLetter;
+    }
+    return true;
+  });
 
   const getRecipeStateForIdea = (ideaId: string) =>
     recipeState[ideaId] ?? {
@@ -742,21 +794,44 @@ export default function Ideas() {
       {/* ========================= TOPICS TAB ========================= */}
       {activeTab === "topics" && (
         <div className="ideas-tab-content">
-          <div className="ideas-toolbar">
+
+          {/* TOOLBAR CON SEARCH Y FILTRO ALFABÉTICO */}
+          <div className="topics-toolbar">
             <input
               type="text"
               placeholder="Search topics..."
               value={topicSearch}
-              onChange={(e) => setTopicSearch(e.target.value)}
+              onChange={(e) => {
+                setTopicSearch(e.target.value);
+                setSelectedLetter(null);
+              }}
               className="ideas-search"
             />
+            <div className="topics-alphabet">
+              {availableLetters.map(letter => (
+                <button
+                  key={letter}
+                  className={`topics-alphabet__btn ${selectedLetter === letter ? "topics-alphabet__btn--active" : ""}`}
+                  onClick={() => {
+                    setSelectedLetter(selectedLetter === letter ? null : letter);
+                    setTopicSearch("");
+                  }}
+                  type="button"
+                >
+                  {letter}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {topicsLoading && <p className="ideas-loading">Loading topics...</p>}
+          {topicsLoading && (
+            <p className="ideas-loading">Loading topics...</p>
+          )}
 
           {!topicsLoading && (
-            <div className="topics-grid">
-              {filteredTopics.length === 0 && (
+            <>
+              {/* LISTA ALFABÉTICA */}
+              {filteredTopicGroups.length === 0 ? (
                 <div className="ideas-empty">
                   <span>
                     {topics.length === 0
@@ -764,67 +839,179 @@ export default function Ideas() {
                       : "No topics match your search."}
                   </span>
                 </div>
-              )}
-
-              {filteredTopics.map((topic) => (
-                <div key={topic.id} className="topic-card">
-                  {editingTopic?.id === topic.id ? (
-                    <div className="topic-card__edit">
-                      <input
-                        value={editTopicName}
-                        onChange={(e) => setEditTopicName(e.target.value)}
-                        maxLength={50}
-                        autoFocus
-                      />
-                      <div className="topic-card__edit-actions">
-                        <button
-                          className="btn-secondary"
-                          onClick={() => setEditingTopic(null)}
-                          type="button"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          className="btn-primary"
-                          onClick={handleEditTopicSave}
-                          disabled={savingTopic}
-                          type="button"
-                        >
-                          {savingTopic ? "..." : "Save"}
-                        </button>
+              ) : (
+                <div className="topics-alpha-list">
+                  {filteredTopicGroups.map(({ letter, items }) => (
+                    <div key={letter} className="topics-alpha-group">
+                      <span className="topics-alpha-group__letter">
+                        {letter}
+                      </span>
+                      <div className="topics-alpha-group__items">
+                        {items.map(topic => (
+                          <div key={topic.id} className="topic-list-item">
+                            {editingTopic?.id === topic.id ? (
+                              <div className="topic-list-item__edit">
+                                <input
+                                  value={editTopicName}
+                                  onChange={(e) =>
+                                    setEditTopicName(e.target.value)
+                                  }
+                                  maxLength={50}
+                                  autoFocus
+                                />
+                                <div className="topic-list-item__edit-actions">
+                                  <button
+                                    className="btn-secondary"
+                                    onClick={() => setEditingTopic(null)}
+                                    type="button"
+                                  >
+                                    Cancel
+                                  </button>
+                                  <button
+                                    className="btn-primary"
+                                    onClick={handleEditTopicSave}
+                                    disabled={savingTopic}
+                                    type="button"
+                                  >
+                                    {savingTopic ? "..." : "Save"}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <span className="topic-list-item__name">
+                                  {topic.name}
+                                </span>
+                                <div className="topic-list-item__controls">
+                                  <button
+                                    className="btn-icon"
+                                    onClick={() => {
+                                      setEditingTopic(topic);
+                                      setEditTopicName(topic.name);
+                                    }}
+                                    type="button"
+                                    title="Edit"
+                                  >
+                                    ✏️
+                                  </button>
+                                  <button
+                                    className="btn-icon btn-icon--danger"
+                                    onClick={() => handleArchiveTopic(topic.id)}
+                                    type="button"
+                                    title="Archive"
+                                  >
+                                    🗄️
+                                  </button>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        ))}
                       </div>
                     </div>
-                  ) : (
-                    <>
-                      <div className="topic-card__body">
-                        <span className="topic-card__name">{topic.name}</span>
-                      </div>
-                      <div className="topic-card__controls">
-                        <button
-                          className="btn-icon"
-                          onClick={() => {
-                            setEditingTopic(topic);
-                            setEditTopicName(topic.name);
-                          }}
-                          type="button"
-                          title="Edit"
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          className="btn-icon btn-icon--danger"
-                          onClick={() => handleArchiveTopic(topic.id)}
-                          type="button"
-                          title="Archive"
-                        >
-                          🗄️
-                        </button>
-                      </div>
-                    </>
-                  )}
+                  ))}
                 </div>
-              ))}
-            </div>
+              )}
+
+              {/* CONTENT SYSTEM VIEW */}
+              <div className="content-system">
+                <div className="content-system__header">
+                  <span className="section-label">Content system</span>
+                  <p className="content-system__subtitle">
+                    How your topics, ideas and contents connect
+                  </p>
+                </div>
+
+                {contentSystemLoading ? (
+                  <p className="ideas-loading">Loading...</p>
+                ) : filteredSystemTopics.length === 0 ? (
+                  <p className="ideas-empty">
+                    <span>
+                      Link ideas to topics to see your content system.
+                    </span>
+                  </p>
+                ) : (
+                  <div className="cs-tree">
+                    {filteredSystemTopics.map((topic) => (
+                      <div key={topic.id} className="cs-topic">
+                        <div
+                          className="cs-topic__header"
+                          onClick={() => toggleSystemTopic(topic.id)}
+                        >
+                          <span className={`cs-chevron ${openSystemTopics[topic.id] ? "cs-chevron--open" : ""}`}>
+                            ▶
+                          </span>
+                          <div className="cs-topic__dot" />
+                          <span className="cs-topic__name">{topic.name}</span>
+                          <span className="cs-topic__stats">
+                            {topic.ideas.length} idea
+                            {topic.ideas.length !== 1 ? "s" : ""} ·{" "}
+                            {topic.ideas.reduce(
+                              (s, i) => s + i.contents.length, 0
+                            )} contents
+                          </span>
+                        </div>
+
+                        {openSystemTopics[topic.id] && (
+                          <div className="cs-ideas">
+                            {topic.ideas.map((idea) => (
+                              <div key={idea.id} className="cs-idea">
+                                <div
+                                  className="cs-idea__header"
+                                  onClick={() => toggleSystemIdea(idea.id)}
+                                >
+                                  <span className={`cs-chevron ${openSystemIdeas[idea.id] ? "cs-chevron--open" : ""}`}>
+                                    ▶
+                                  </span>
+                                  <div className="cs-idea__dot" />
+                                  <span className="cs-idea__name">
+                                    {idea.title}
+                                  </span>
+                                  <span className="cs-idea__count">
+                                    {idea.contents.length} content
+                                    {idea.contents.length !== 1 ? "s" : ""}
+                                  </span>
+                                </div>
+
+                                {openSystemIdeas[idea.id] && (
+                                  <div className="cs-contents">
+                                    {idea.contents.length === 0 ? (
+                                      <div className="cs-content">
+                                        <span className="cs-content__empty">
+                                          No contents yet
+                                        </span>
+                                      </div>
+                                    ) : (
+                                      idea.contents.map((content) => (
+                                        <div
+                                          key={content.id}
+                                          className="cs-content"
+                                        >
+                                          <div className="cs-content__dot" />
+                                          <span className="cs-content__title">
+                                            {content.title}
+                                          </span>
+                                          <span className="cs-content__platform">
+                                            {content.platform}
+                                          </span>
+                                          <span className="cs-content__format">
+                                            {content.format}
+                                          </span>
+                                        </div>
+                                      ))
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
           )}
         </div>
       )}

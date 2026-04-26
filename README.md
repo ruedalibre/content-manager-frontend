@@ -10,7 +10,7 @@ It combines content inventory, analytics and reusable intelligence in a single d
 
 ## 🧠 Core Value Proposition
 
-“Know what you create, where you publish, and what to reuse next.”
+"Know what you create, where you publish, and what to reuse next."
 
 The platform transforms raw content logs into:
 
