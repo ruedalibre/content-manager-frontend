@@ -117,7 +117,7 @@
 .ideas-tab-content {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 /* =========================
@@ -1326,7 +1326,6 @@
 .topic-list-item {
   display: flex;
   align-items: center;
-  padding: 6px 10px;
   border-radius: var(--border-radius-md);
   border: 0.5px solid var(--color-border-tertiary);
   background: var(--color-background-primary);

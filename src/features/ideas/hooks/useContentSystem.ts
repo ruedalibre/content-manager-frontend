@@ -36,6 +36,7 @@ export function useContentSystem() {
         )
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const data = await res.json()
+        console.log("Content system response:", JSON.stringify(data, null, 2))
         setTopics(data.topics ?? [])
       } catch (err) {
         console.error("Content system error:", err)
