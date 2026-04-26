@@ -1,3 +1,13 @@
+export type StandoutInsight = {
+  title: string;
+  text: string;
+};
+
+export type CreativeStyleTag = {
+  tag: string;
+  active: boolean;
+};
+
 export type AnalyticsInsight = {
   code: string;
   title: string;

@@ -289,7 +289,8 @@ export default function Identity() {
               <>
                 {aiResult?.standout_insights.slice(0, 2).map((insight, i) => (
                   <div key={i} className="identity-highlight-card">
-                    <p>{insight}</p>
+                    <span className="identity-highlight-card__title">{insight.title}</span>
+                    <p>{insight.text}</p>
                   </div>
                 ))}
                 {getInsight("content_production") && (
@@ -323,12 +324,12 @@ export default function Identity() {
                 ))}
               </>
             ) : (
-              aiResult?.creative_style_tags.map((tag, i) => (
+              aiResult?.creative_style_tags.map((item, i) => (
                 <span
                   key={i}
-                  className={`identity-tag ${i < 3 ? "identity-tag--active" : ""}`}
+                  className={`identity-tag ${item.active ? "identity-tag--active" : ""}`}
                 >
-                  {tag}
+                  {item.tag}
                 </span>
               ))
             )}
