@@ -1,28 +1,57 @@
-/* =========================
-   PAGE
-========================= */
-
 .admin-page {
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.5rem;
 }
-
-/* =========================
-   HEADER
-========================= */
 
 .admin-header {
   h2 {
-    font-size: 1.4rem;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 500;
   }
 
   p {
-    font-size: 0.9rem;
-    color: #6b7280;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-top: 4px;
   }
+}
+
+/* =========================
+   TABS
+========================= */
+
+.admin-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--color-border-tertiary);
+  gap: 0;
+}
+
+.admin-tab {
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--color-text-secondary);
+  background: none;
+
+  &--active {
+    color: var(--color-text-primary);
+    border-bottom-color: #7f77dd;
+  }
+
+  &:hover:not(&--active) {
+    color: var(--color-text-primary);
+  }
+}
+
+.admin-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 /* =========================
@@ -32,32 +61,13 @@
 .admin-section {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 10px;
 
-  h3 {
-    font-size: 1rem;
-    font-weight: 600;
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
-}
-
-/* =========================
-   CARDS
-========================= */
-
-.admin-card {
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-
-  padding: 1rem;
-
-  transition: all 0.15s ease;
-}
-
-.admin-card:hover {
-  border-color: #d1d5db;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
 }
 
 /* =========================
@@ -67,129 +77,272 @@
 .admin-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0.8rem;
+  gap: 8px;
+}
+
+.admin-card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-lg);
+  padding: 14px 16px;
 }
 
 .stat-card {
-  text-align: center;
+  text-align: left;
 }
 
 .stat-value {
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 500;
+  margin-bottom: 4px;
 }
 
 .stat-label {
-  font-size: 0.8rem;
-  color: #6b7280;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+
+.stat-delta {
+  font-size: 11px;
+  color: #1d9e75;
+  margin-top: 4px;
+}
+
+.admin-highlight {
+  color: #7f77dd;
 }
 
 /* =========================
-   ACTIVITY
+   TABLE
 ========================= */
 
-.activity-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.admin-table-wrap {
+  overflow-x: auto;
+}
 
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+
+  th {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-tertiary);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    background: var(--color-background-secondary);
+  }
+
+  td {
+    font-size: 13px;
+    padding: 10px 14px;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  tr:hover td {
+    background: var(--color-background-secondary);
+  }
+}
+
+/* =========================
+   BADGES
+========================= */
+
+.admin-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 500;
+
+  &--active {
+    background: #eeedfe;
+    color: #3c3489;
+  }
+
+  &--inactive {
+    background: var(--color-background-secondary);
+    color: var(--color-text-tertiary);
+  }
+
+  &--pending {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  &--invited {
+    background: #d1fae5;
+    color: #065f46;
+  }
+}
+
+/* =========================
+   INVITE
+========================= */
+
+.admin-invite-btn {
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: var(--border-radius-md);
+  border: 0.5px solid #afa9ec;
+  background: #eeedfe;
+  color: #3c3489;
+  cursor: pointer;
+
+  &:hover {
+    background: #ddd9fc;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.admin-invited-date {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+}
+
+/* =========================
+   PAGINATION
+========================= */
+
+.admin-pagination {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-
-  li {
-    font-size: 0.85rem;
-    color: #374151;
-  }
-}
-
-/* =========================
-   CONFIG GRID
-========================= */
-
-.admin-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.8rem;
-}
-
-.config-card {
-  h4 {
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
-
-  p {
-    font-size: 0.8rem;
-    color: #6b7280;
-  }
-}
-
-/* =========================
-   INTELLIGENCE SIGNALS
-========================= */
-
-.signal-row {
-  display: grid;
-  grid-template-columns: 140px 1fr 40px;
   align-items: center;
+  gap: 10px;
+  justify-content: center;
+  padding-top: 8px;
 
-  gap: 0.5rem;
-  margin-bottom: 0.6rem;
+  button {
+    font-size: 16px;
+    padding: 4px 10px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    background: none;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+  }
+
+  span {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
 }
 
-.signal-label {
-  font-size: 0.8rem;
+/* =========================
+   FILTERS
+========================= */
+
+.admin-filters {
+  display: flex;
+  gap: 8px;
 }
 
-.signal-bar {
-  background: #f3f4f6;
-  border-radius: 6px;
-  height: 8px;
+.admin-filter {
+  font-size: 12px;
+  padding: 5px 10px;
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+}
+
+/* =========================
+   BAR CHART
+========================= */
+
+.admin-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.admin-bar-label {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  width: 100px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-bar-track {
+  flex: 1;
+  height: 5px;
+  background: var(--color-background-secondary);
+  border-radius: 3px;
   overflow: hidden;
 }
 
-.signal-bar-fill {
-  background: #6366f1;
+.admin-bar-fill {
   height: 100%;
+  border-radius: 3px;
+  background: #7f77dd;
 }
 
-.signal-value {
-  font-size: 0.75rem;
-  color: #6b7280;
+.admin-bar-pct {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  width: 30px;
+  text-align: right;
 }
 
 /* =========================
-   HEADER LAYOUT
+   ECOSYSTEM TWO-COL
 ========================= */
 
-.admin-header {
+.admin-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.admin-metrics {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-metric-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 8px 0;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
-/* =========================
-   SYSTEM STATUS
-========================= */
-
-.system-status {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  font-size: 0.8rem;
-  color: #374151;
+.admin-metric-label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
 }
 
-/* STATUS DOT */
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-
-  background: #22c55e;
-  border-radius: 50%;
-
-  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+.admin-metric-value {
+  font-size: 13px;
+  font-weight: 500;
 }
