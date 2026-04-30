@@ -147,27 +147,20 @@ export default function Admin() {
   useEffect(() => {
     const loadEarlyAccess = async () => {
       try {
-        let query = supabase
-          .from("early_access_requests")
-          .select(
-            "id, email, creator_focus, language, priority, status, created_at, invited_at, platforms(name)",
-            { count: "exact" }
-          )
-          .order("created_at", { ascending: false })
-          .range((earlyPage - 1) * EARLY_LIMIT, earlyPage * EARLY_LIMIT - 1);
+        const { data: { session } } = await supabase.auth.getSession();
 
-        if (earlyStatusFilter !== "all") query = query.eq("status", earlyStatusFilter);
-        if (earlyLangFilter !== "all") query = query.eq("language", earlyLangFilter);
+        let url = `${base}/admin-early-access?page=${earlyPage}&limit=${EARLY_LIMIT}`;
+        if (earlyStatusFilter !== "all") url += `&status=${earlyStatusFilter}`;
+        if (earlyLangFilter !== "all") url += `&language=${earlyLangFilter}`;
 
-        const { data, count } = await query;
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        });
 
-        const mapped = (data ?? []).map((r: any) => ({
-          ...r,
-          platform_name: r.platforms?.name ?? null,
-        }));
-
-        setEarlyAccess(mapped);
-        setEarlyTotal(count ?? 0);
+        if (!res.ok) return;
+        const json = await res.json();
+        setEarlyAccess(json.data ?? []);
+        setEarlyTotal(json.total ?? 0);
       } catch (err) {
         console.error("Early access load error:", err);
       }
