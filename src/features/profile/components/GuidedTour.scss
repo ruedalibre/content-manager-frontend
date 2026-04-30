@@ -3,38 +3,37 @@
   &__overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 900;
-    pointer-events: none;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
   }
 
   &__tooltip {
     position: fixed;
-    left: 200px;
+    left: 196px;
     background: var(--color-background-primary);
     border: 0.5px solid var(--color-border-secondary);
     border-radius: var(--border-radius-lg);
     padding: 20px;
-    width: 280px;
-    z-index: 1000;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+    width: 300px;
+    z-index: 1200;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.2s ease;
 
-    &--ideas    { top: 120px; }
-    &--contents { top: 160px; }
-    &--identity { top: 200px; }
-    &--activity { top: 240px; }
+    &--ideas    { top: 104px; }
+    &--contents { top: 144px; }
+    &--identity { top: 184px; }
+    &--activity { top: 224px; }
   }
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
   }
 
   &__icon {
-    font-size: 18px;
+    font-size: 20px;
   }
 
   &__step-count {
@@ -45,7 +44,7 @@
   &__title {
     font-size: 15px;
     font-weight: 500;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   &__desc {
@@ -76,7 +75,7 @@
 
   &__next {
     font-size: 13px;
-    padding: 7px 16px;
+    padding: 7px 18px;
   }
 
   &__dots {
@@ -90,6 +89,7 @@
     height: 6px;
     border-radius: 50%;
     background: var(--color-border-secondary);
+    transition: background 0.2s;
 
     &--active {
       background: #7F77DD;
@@ -98,20 +98,20 @@
 
   &__highlight {
     position: fixed;
-    left: 0;
-    width: 180px;
+    left: 8px;
+    width: 164px;
     height: 36px;
     border-radius: var(--border-radius-md);
     background: rgba(127, 119, 221, 0.15);
     border: 1.5px solid #7F77DD;
-    z-index: 950;
+    z-index: 1100;
     pointer-events: none;
     transition: top 0.3s ease;
 
-    &--ideas    { top: 112px; }
-    &--contents { top: 152px; }
-    &--identity { top: 192px; }
-    &--activity { top: 232px; }
+    &--ideas    { top: 104px; }
+    &--contents { top: 144px; }
+    &--identity { top: 184px; }
+    &--activity { top: 224px; }
   }
 }
 
