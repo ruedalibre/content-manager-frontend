@@ -1,6 +1,6 @@
 .tour-invitation {
   position: fixed;
-  bottom: 80px;
+  bottom: 120px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 1100;
@@ -11,13 +11,13 @@
     background: var(--color-background-primary);
     border: 0.5px solid var(--color-border-secondary);
     border-radius: var(--border-radius-lg);
-    padding: 20px 24px;
+    padding: 20px 28px;
     display: flex;
     align-items: center;
     gap: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
-    min-width: 520px;
-    max-width: 600px;
+    min-width: 580px;
+    max-width: 680px;
   }
 
   &__icon {
@@ -40,6 +40,9 @@
     font-size: 13px;
     color: var(--color-text-secondary);
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 260px;
   }
 
   &__actions {
@@ -47,6 +50,7 @@
     align-items: center;
     gap: 12px;
     flex-shrink: 0;
+    margin-left: auto;
   }
 
   &__btn {
