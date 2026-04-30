@@ -73,17 +73,15 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
           ),
 
           fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth?period=${period}`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-growth?period=${period}`,
             { headers },
           ),
-
           fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth-cumulative?period=${period}`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-growth-cumulative?period=${period}`,
             { headers },
           ),
-
           fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-content-growth-rate?period=${period}`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-growth-rate?period=${period}`,
             { headers },
           ),
 
