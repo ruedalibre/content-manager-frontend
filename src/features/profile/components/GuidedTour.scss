@@ -3,26 +3,26 @@
   &__overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    background: rgba(0, 0, 0, 0.55);
+    z-index: 1050;
   }
 
   &__tooltip {
     position: fixed;
-    left: 196px;
+    left: 210px;
     background: var(--color-background-primary);
     border: 0.5px solid var(--color-border-secondary);
     border-radius: var(--border-radius-lg);
     padding: 20px;
     width: 300px;
-    z-index: 1200;
+    z-index: 1300;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.2s ease;
 
-    &--ideas    { top: 104px; }
-    &--contents { top: 144px; }
-    &--identity { top: 184px; }
-    &--activity { top: 224px; }
+    &--ideas    { top: 88px; }
+    &--contents { top: 128px; }
+    &--identity { top: 168px; }
+    &--activity { top: 208px; }
   }
 
   &__header {
@@ -98,20 +98,20 @@
 
   &__highlight {
     position: fixed;
-    left: 8px;
-    width: 164px;
-    height: 36px;
+    left: 6px;
+    width: 170px;
+    height: 38px;
     border-radius: var(--border-radius-md);
-    background: rgba(127, 119, 221, 0.15);
+    background: rgba(127, 119, 221, 0.2);
     border: 1.5px solid #7F77DD;
     z-index: 1100;
     pointer-events: none;
-    transition: top 0.3s ease;
+    transition: top 0.25s ease;
 
-    &--ideas    { top: 104px; }
-    &--contents { top: 144px; }
-    &--identity { top: 184px; }
-    &--activity { top: 224px; }
+    &--ideas    { top: 86px; }
+    &--contents { top: 126px; }
+    &--identity { top: 166px; }
+    &--activity { top: 206px; }
   }
 }
 
