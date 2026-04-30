@@ -6,9 +6,10 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   onLogout: () => void;
+  isAdmin: boolean;
 };
 
-export default function Sidebar({ isOpen, onClose, onLogout }: Props) {
+export default function Sidebar({ isOpen, onClose, onLogout, isAdmin }: Props) {
   return (
     <>
       {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
@@ -51,12 +52,14 @@ export default function Sidebar({ isOpen, onClose, onLogout }: Props) {
             Activity
           </NavLink>
 
-           {/* ADMIN */}
+          {/* ADMIN */}
 
-          <NavLink to="/admin" onClick={onClose}>
-            <Shield size={18} />
-            Admin
-          </NavLink>
+          {isAdmin && (
+            <NavLink to="/admin" onClick={onClose}>
+              <Shield size={18} />
+              Admin
+            </NavLink>
+          )}
         </nav>
 
         {/* LOGOUT */}
