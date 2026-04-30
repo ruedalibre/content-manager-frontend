@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import "./GuidedTour.scss";
 
 const TOUR_STEPS = [
@@ -48,7 +49,7 @@ export default function GuidedTour({ onComplete }: Props) {
 
   const handleSkip = () => onComplete();
 
-  return (
+  return createPortal(
     <>
       {/* OVERLAY */}
       <div className="guided-tour__overlay" />
@@ -91,6 +92,7 @@ export default function GuidedTour({ onComplete }: Props) {
 
       {/* HIGHLIGHT on sidebar item */}
       <div className={`guided-tour__highlight guided-tour__highlight--${current.target}`} />
-    </>
+    </>,
+    document.body
   );
 }
