@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import "./TourInvitation.scss";
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
 };
 
 export default function TourInvitation({ onStart, onLater, onDismiss }: Props) {
-  return (
+  return createPortal(
     <div className="tour-invitation">
       <div className="tour-invitation__card">
         <span className="tour-invitation__icon">👋</span>
@@ -43,6 +44,7 @@ export default function TourInvitation({ onStart, onLater, onDismiss }: Props) {
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
