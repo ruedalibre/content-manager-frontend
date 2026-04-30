@@ -1,0 +1,127 @@
+.guided-tour {
+
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 900;
+    pointer-events: none;
+  }
+
+  &__tooltip {
+    position: fixed;
+    left: 200px;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-lg);
+    padding: 20px;
+    width: 280px;
+    z-index: 1000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+    animation: fadeIn 0.2s ease;
+
+    &--ideas    { top: 120px; }
+    &--contents { top: 160px; }
+    &--identity { top: 200px; }
+    &--activity { top: 240px; }
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  &__icon {
+    font-size: 18px;
+  }
+
+  &__step-count {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 6px;
+  }
+
+  &__desc {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  &__skip {
+    font-size: 12px;
+    color: var(--color-text-tertiary);
+    background: none;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--color-text-secondary);
+    }
+  }
+
+  &__next {
+    font-size: 13px;
+    padding: 7px 16px;
+  }
+
+  &__dots {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-border-secondary);
+
+    &--active {
+      background: #7F77DD;
+    }
+  }
+
+  &__highlight {
+    position: fixed;
+    left: 0;
+    width: 180px;
+    height: 36px;
+    border-radius: var(--border-radius-md);
+    background: rgba(127, 119, 221, 0.15);
+    border: 1.5px solid #7F77DD;
+    z-index: 950;
+    pointer-events: none;
+    transition: top 0.3s ease;
+
+    &--ideas    { top: 112px; }
+    &--contents { top: 152px; }
+    &--identity { top: 192px; }
+    &--activity { top: 232px; }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

@@ -17,6 +17,7 @@ export type UserProfile = {
   onboarding_completed: boolean;
   onboarding_skipped: boolean;
   onboarding_completed_at: string | null;
+  tour_status: 'pending' | 'completed' | 'dismissed' | null;
   created_at: string;
   updated_at: string;
 };
@@ -153,6 +154,14 @@ export function useUserProfile() {
      NEEDS ONBOARDING
   ========================= */
 
+  const updateTourStatus = async (status: 'completed' | 'dismissed') => {
+    try {
+      await updateProfile({ tour_status: status } as any);
+    } catch (err) {
+      console.error("Tour status update error:", err);
+    }
+  };
+
   const needsOnboarding =
     !loading &&
     profile !== null &&
@@ -160,6 +169,12 @@ export function useUserProfile() {
     !profile.onboarding_skipped;
 
   const isFirstSession = !loading && profile === null;
+
+  const showTourInvitation =
+    !loading &&
+    profile !== null &&
+    (profile.onboarding_completed || profile.onboarding_skipped) &&
+    (profile.tour_status === 'pending' || profile.tour_status === null);
 
   useEffect(() => {
     loadProfile();
@@ -171,10 +186,12 @@ export function useUserProfile() {
     error,
     needsOnboarding,
     isFirstSession,
+    showTourInvitation,
     loadProfile,
     createProfile,
     updateProfile,
     skipOnboarding,
     completeOnboarding,
+    updateTourStatus,
   };
 }
