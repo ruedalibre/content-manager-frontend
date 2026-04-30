@@ -6,12 +6,16 @@ import Topbar from "./Topbar.tsx";
 import "./AppLayout.scss";
 import Footer from "./Footer.tsx";
 import WelcomeScreen from "../../features/profile/components/WelcomeScreen.tsx";
+import TourInvitation from "../../features/profile/components/TourInvitation.tsx";
+import GuidedTour from "../../features/profile/components/GuidedTour.tsx";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile.ts";
 
 export default function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [topbarContext, setTopbarContext] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showTourInvite, setShowTourInvite] = useState(false);
+  const [showTour, setShowTour] = useState(false);
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -35,10 +39,39 @@ export default function AppLayout() {
     completeOnboarding,
     skipOnboarding,
     loading: profileLoading,
+    showTourInvitation,
+    updateTourStatus,
   } = useUserProfile();
+
+  useEffect(() => {
+    if (!showTourInvitation) return;
+    const timer = setTimeout(() => {
+      setShowTourInvite(true);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, [showTourInvitation]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+  };
+
+  const handleTourStart = () => {
+    setShowTourInvite(false);
+    setShowTour(true);
+  };
+
+  const handleTourLater = () => {
+    setShowTourInvite(false);
+  };
+
+  const handleTourDismiss = async () => {
+    setShowTourInvite(false);
+    await updateTourStatus('dismissed');
+  };
+
+  const handleTourComplete = async () => {
+    setShowTour(false);
+    await updateTourStatus('completed');
   };
 
   const showWelcome = !profileLoading && (isFirstSession || needsOnboarding);
@@ -70,6 +103,18 @@ export default function AppLayout() {
           onComplete={completeOnboarding}
           onSkip={skipOnboarding}
         />
+      )}
+
+      {showTourInvite && !showWelcome && (
+        <TourInvitation
+          onStart={handleTourStart}
+          onLater={handleTourLater}
+          onDismiss={handleTourDismiss}
+        />
+      )}
+
+      {showTour && (
+        <GuidedTour onComplete={handleTourComplete} />
       )}
     </div>
   );
