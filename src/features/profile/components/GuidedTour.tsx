@@ -29,6 +29,16 @@ const TOUR_STEPS = [
   },
 ];
 
+// Spotlight positions — must match sidebar nav item positions
+const SPOTLIGHT: Record<string, { top: number; left: number; width: number; height: number }> = {
+  ideas:    { top: 140, left: 8, width: 240, height: 34 },
+  contents: { top: 176, left: 8, width: 240, height: 34 },
+  identity: { top: 212, left: 8, width: 240, height: 34 },
+  activity: { top: 248, left: 8, width: 240, height: 34 },
+};
+
+const OVERLAY_COLOR = 'rgba(0, 0, 0, 0.6)';
+
 type Props = {
   onComplete: () => void;
 };
@@ -38,6 +48,7 @@ export default function GuidedTour({ onComplete }: Props) {
 
   const current = TOUR_STEPS[step];
   const isLast = step === TOUR_STEPS.length - 1;
+  const spot = SPOTLIGHT[current.target];
 
   const handleNext = () => {
     if (isLast) {
@@ -51,8 +62,18 @@ export default function GuidedTour({ onComplete }: Props) {
 
   return createPortal(
     <>
-      {/* OVERLAY */}
-      <div className="guided-tour__overlay" />
+      {/* SPOTLIGHT OVERLAY — 4 panels that leave the highlight area clear */}
+      <div className="guided-tour__mask guided-tour__mask--top"
+        style={{ top: 0, left: 0, right: 0, height: spot.top, background: OVERLAY_COLOR }} />
+      <div className="guided-tour__mask guided-tour__mask--bottom"
+        style={{ top: spot.top + spot.height, left: 0, right: 0, bottom: 0, background: OVERLAY_COLOR }} />
+      <div className="guided-tour__mask guided-tour__mask--left"
+        style={{ top: spot.top, left: 0, width: spot.left, height: spot.height, background: OVERLAY_COLOR }} />
+      <div className="guided-tour__mask guided-tour__mask--right"
+        style={{ top: spot.top, left: spot.left + spot.width, right: 0, height: spot.height, background: OVERLAY_COLOR }} />
+
+      {/* HIGHLIGHT */}
+      <div className={`guided-tour__highlight guided-tour__highlight--${current.target}`} />
 
       {/* TOOLTIP */}
       <div className={`guided-tour__tooltip guided-tour__tooltip--${current.target}`}>
@@ -89,9 +110,6 @@ export default function GuidedTour({ onComplete }: Props) {
           ))}
         </div>
       </div>
-
-      {/* HIGHLIGHT on sidebar item */}
-      <div className={`guided-tour__highlight guided-tour__highlight--${current.target}`} />
     </>,
     document.body
   );
