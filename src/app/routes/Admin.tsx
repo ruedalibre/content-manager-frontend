@@ -66,7 +66,7 @@ export default function Admin() {
 
   const [ecosystem, setEcosystem] = useState<EcosystemData | null>(null);
 
-  const [loadingOps, setLoadingOps] = useState(true);
+  const [, setLoadingOps] = useState(true);
   const [loadingEco, setLoadingEco] = useState(false);
 
   const base = import.meta.env.VITE_SUPABASE_URL + "/functions/v1";

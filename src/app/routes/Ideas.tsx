@@ -187,9 +187,9 @@ export default function Ideas() {
       (a, b) => (b.contents?.[0]?.count ?? 0) - (a.contents?.[0]?.count ?? 0),
     );
 
-  const filteredTopics = topics.filter((t) =>
+  /* const filteredTopics = topics.filter((t) =>
     t.name.toLowerCase().includes(topicSearch.toLowerCase()),
-  );
+  ); */
 
   const ALL_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 

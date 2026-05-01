@@ -1,28 +1,36 @@
 .guided-tour {
-
-  &__overlay {
+  &__mask {
     position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.55);
     z-index: 1050;
+    pointer-events: none;
+    transition: all 0.25s ease;
   }
 
   &__tooltip {
     position: fixed;
-    left: 260px;
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-secondary);
-    border-radius: var(--border-radius-lg);
+    left: 280px;
+    background: white;
+    border: 0.5px solid #e5e7eb;
+    border-radius: 12px;
     padding: 20px;
     width: 300px;
     z-index: 1300;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    animation: fadeIn 0.2s ease forwards;
+    opacity: 1;
+    animation: guidedTourSlideIn 0.2s ease forwards;
 
-    &--ideas    { top: 138px; }
-    &--contents { top: 176px; }
-    &--identity { top: 212px; }
-    &--activity { top: 250px; }
+    &--ideas {
+      top: 140px;
+    }
+    &--contents {
+      top: 176px;
+    }
+    &--identity {
+      top: 212px;
+    }
+    &--activity {
+      top: 248px;
+    }
   }
 
   &__header {
@@ -38,18 +46,19 @@
 
   &__step-count {
     font-size: 11px;
-    color: var(--color-text-tertiary);
+    color: #9ca3af;
   }
 
   &__title {
     font-size: 15px;
     font-weight: 500;
     margin-bottom: 8px;
+    color: #111827;
   }
 
   &__desc {
     font-size: 13px;
-    color: var(--color-text-secondary);
+    color: #6b7280;
     line-height: 1.5;
     margin-bottom: 16px;
   }
@@ -63,13 +72,13 @@
 
   &__skip {
     font-size: 12px;
-    color: var(--color-text-tertiary);
+    color: #9ca3af;
     background: none;
     border: none;
     cursor: pointer;
 
     &:hover {
-      color: var(--color-text-secondary);
+      color: #6b7280;
     }
   }
 
@@ -88,40 +97,46 @@
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: var(--color-border-secondary);
+    background: #d1d5db;
     transition: background 0.2s;
 
     &--active {
-      background: #7F77DD;
+      background: #7f77dd;
     }
   }
 
   &__highlight {
     position: fixed;
-    left: 16px;
-    width: 180px;
-    height: 38px;
-    border-radius: var(--border-radius-md);
-    background: rgba(127, 119, 221, 0.2);
-    border: 1.5px solid #7F77DD;
+    left: 8px;
+    width: 240px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(127, 119, 221, 0.15);
+    border: 1.5px solid #7f77dd;
     z-index: 1100;
     pointer-events: none;
     transition: top 0.25s ease;
 
-    &--ideas    { top: 138px; }
-    &--contents { top: 176px; }
-    &--identity { top: 212px; }
-    &--activity { top: 250px; }
+    &--ideas {
+      top: 142px;
+    }
+    &--contents {
+      top: 178px;
+    }
+    &--identity {
+      top: 214px;
+    }
+    &--activity {
+      top: 250px;
+    }
   }
 }
 
-@keyframes fadeIn {
+@keyframes guidedTourSlideIn {
   from {
-    opacity: 0;
     transform: translateX(-8px);
   }
   to {
-    opacity: 1;
     transform: translateX(0);
   }
 }
