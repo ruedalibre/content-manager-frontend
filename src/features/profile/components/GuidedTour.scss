@@ -9,7 +9,7 @@
 
   &__tooltip {
     position: fixed;
-    left: 210px;
+    left: 260px;
     background: var(--color-background-primary);
     border: 0.5px solid var(--color-border-secondary);
     border-radius: var(--border-radius-lg);
@@ -19,10 +19,10 @@
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     animation: fadeIn 0.2s ease;
 
-    &--ideas    { top: 88px; }
-    &--contents { top: 128px; }
-    &--identity { top: 168px; }
-    &--activity { top: 208px; }
+    &--ideas    { top: 138px; }
+    &--contents { top: 176px; }
+    &--identity { top: 212px; }
+    &--activity { top: 250px; }
   }
 
   &__header {
@@ -98,8 +98,8 @@
 
   &__highlight {
     position: fixed;
-    left: 6px;
-    width: 170px;
+    left: 16px;
+    width: 180px;
     height: 38px;
     border-radius: var(--border-radius-md);
     background: rgba(127, 119, 221, 0.2);
@@ -108,10 +108,10 @@
     pointer-events: none;
     transition: top 0.25s ease;
 
-    &--ideas    { top: 86px; }
-    &--contents { top: 126px; }
-    &--identity { top: 166px; }
-    &--activity { top: 206px; }
+    &--ideas    { top: 138px; }
+    &--contents { top: 176px; }
+    &--identity { top: 212px; }
+    &--activity { top: 250px; }
   }
 }
 

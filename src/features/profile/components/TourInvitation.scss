@@ -1,7 +1,7 @@
 .tour-invitation {
   position: fixed;
-  bottom: 120px;
-  left: 50%;
+  bottom: 250px;
+  left: 60%;
   transform: translateX(-50%);
   z-index: 1100;
   animation: slideUp 0.3s ease;
@@ -16,8 +16,7 @@
     align-items: center;
     gap: 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
-    min-width: 580px;
-    max-width: 680px;
+    min-width: 750px;
   }
 
   &__icon {
@@ -42,7 +41,6 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 260px;
   }
 
   &__actions {
