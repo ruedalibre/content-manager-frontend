@@ -6,6 +6,7 @@ import { useAnalyticsInsights } from "../../features/insights/hooks/useAnalytics
 import { useIdentityAI } from "../../features/insights/hooks/useIdentityAI.ts";
 import { useCreativeInsights } from "../../features/insights/hooks/useCreativeInsights.ts";
 import { useCreativeReport } from "../../features/insights/hooks/useCreativeReport";
+import { downloadReport } from "../../utils/downloadReport";
 
 import { type AnalyticsInsight } from "../../features/insights/types/insights.types.ts";
 
@@ -425,14 +426,23 @@ export default function Identity() {
               <span className="identity-report__date">
                 Generated {new Date(generatedAt!).toLocaleDateString()}
               </span>
-              <button
-                className="identity-report__regenerate"
-                onClick={() => generateReport(dna, true)}
-                disabled={generating}
-                type="button"
-              >
-                {generating ? "Generating..." : "↺ Regenerate"}
-              </button>
+              <div style={{ display: "flex", gap: "8px" }}>
+                <button
+                  className="identity-report__download"
+                  onClick={() => report && generatedAt && downloadReport(report, generatedAt)}
+                  type="button"
+                >
+                  ↓ Download report
+                </button>
+                <button
+                  className="identity-report__regenerate"
+                  onClick={() => generateReport(dna, true)}
+                  disabled={generating}
+                  type="button"
+                >
+                  {generating ? "Generating..." : "↺ Regenerate"}
+                </button>
+              </div>
             </div>
 
             {reportError && (
