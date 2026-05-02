@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { type CreativeSession, type Idea, type IdeaTopic } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
+import { downloadBrief } from "../../../utils/downloadBrief";
 
 /* =========================
    CONSTANTS
@@ -352,6 +353,17 @@ export default function RecipePanel({
 
         {/* ACTIONS */}
         <div className="recipe-panel__actions">
+          <button
+            className="btn-secondary"
+            onClick={() => downloadBrief(session, {
+              title: idea.title,
+              description: idea.description,
+              topics: ideaTopics
+            })}
+            type="button"
+          >
+            ↓ Download brief
+          </button>
           <button
             className="btn-secondary"
             onClick={onDiscard}
