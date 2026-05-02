@@ -218,7 +218,19 @@ export default function CreateIdeaModal({
             placeholder="Description (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
+            maxLength={500}
+            rows={3}
+            style={{ resize: "vertical", minHeight: "72px", maxHeight: "120px" }}
           />
+          <span style={{
+            fontSize: "11px",
+            color: "var(--color-text-tertiary)",
+            display: "block",
+            textAlign: "right",
+            marginTop: "4px"
+          }}>
+            {description.length}/500
+          </span>
 
           {/* ACTIONS */}
 
