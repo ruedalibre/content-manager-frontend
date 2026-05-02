@@ -5,6 +5,7 @@ import { useContentDNA } from "../../features/insights/hooks/useContentDNA.ts";
 import { useAnalyticsInsights } from "../../features/insights/hooks/useAnalyticsInsights.ts";
 import { useIdentityAI } from "../../features/insights/hooks/useIdentityAI.ts";
 import { useCreativeInsights } from "../../features/insights/hooks/useCreativeInsights.ts";
+import { useCreativeReport } from "../../features/insights/hooks/useCreativeReport";
 
 import { type AnalyticsInsight } from "../../features/insights/types/insights.types.ts";
 
@@ -104,6 +105,14 @@ export default function Identity() {
   const { insights: analyticsInsights } = useAnalyticsInsights("30d");
   const { result: aiResult, loading: aiLoading } = useIdentityAI(dna);
   const { insights: creativeInsights, loading: creativeInsightsLoading } = useCreativeInsights();
+  const {
+    report,
+    generatedAt,
+    loading: reportLoading,
+    generating,
+    error: reportError,
+    generateReport
+  } = useCreativeReport();
 
   const [expandedInsights, setExpandedInsights] = useState<Record<string, boolean>>({});
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -370,23 +379,97 @@ export default function Identity() {
       <Collapsible
         icon="✦"
         title="Deep analysis"
-        subtitle="Full creative report · on demand"
+        subtitle={report
+          ? `Last generated ${new Date(generatedAt!).toLocaleDateString()}`
+          : "Full creative report · on demand"
+        }
         isOpen={openSections.deep}
         onToggle={() => toggleSection("deep")}
       >
-        <div className="identity-report-placeholder">
-          <p className="identity-report-placeholder__title">
-            Your creative report
-          </p>
-          <p className="identity-report-placeholder__sub">
-            A narrative analysis of your creative identity,
-            your strongest opportunities, and where the
-            conversation around your topics is heading.
-          </p>
-          <button className="btn-primary" disabled>
-            Coming soon
-          </button>
-        </div>
+        {reportLoading ? (
+          <div className="identity-report-loading">
+            <p>Loading...</p>
+          </div>
+        ) : report ? (
+          <div className="identity-report">
+
+            <div className="identity-report__section">
+              <span className="identity-report__label">
+                Who you are as a creator
+              </span>
+              <p className="identity-report__text">{report.identity}</p>
+            </div>
+
+            <div className="identity-report__section">
+              <span className="identity-report__label">
+                What's happening in your content
+              </span>
+              <p className="identity-report__text">{report.current_state}</p>
+            </div>
+
+            <div className="identity-report__section">
+              <span className="identity-report__label">
+                Your biggest unexplored opportunity
+              </span>
+              <p className="identity-report__text">{report.opportunity}</p>
+            </div>
+
+            <div className="identity-report__section identity-report__section--question">
+              <span className="identity-report__label">
+                Worth sitting with
+              </span>
+              <p className="identity-report__question">{report.question}</p>
+            </div>
+
+            <div className="identity-report__footer">
+              <span className="identity-report__date">
+                Generated {new Date(generatedAt!).toLocaleDateString()}
+              </span>
+              <button
+                className="identity-report__regenerate"
+                onClick={() => generateReport(dna, true)}
+                disabled={generating}
+                type="button"
+              >
+                {generating ? "Generating..." : "↺ Regenerate"}
+              </button>
+            </div>
+
+            {reportError && (
+              <p className="identity-report__error">{reportError}</p>
+            )}
+
+          </div>
+        ) : (
+          <div className="identity-report-placeholder">
+            <p className="identity-report-placeholder__title">
+              Your creative report
+            </p>
+            <p className="identity-report-placeholder__sub">
+              A narrative analysis of your creative identity,
+              your strongest opportunities, and where your
+              creative work is heading.
+            </p>
+            {reportError && (
+              <p className="identity-report__error">{reportError}</p>
+            )}
+            <button
+              className="btn-primary"
+              onClick={() => generateReport(dna)}
+              disabled={generating}
+              type="button"
+            >
+              {generating
+                ? "Generating your report..."
+                : "✦ Generate report"}
+            </button>
+            {generating && (
+              <p className="identity-report-placeholder__hint">
+                This takes about 10 seconds...
+              </p>
+            )}
+          </div>
+        )}
       </Collapsible>
 
     </div>
