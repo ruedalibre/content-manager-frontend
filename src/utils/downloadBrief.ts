@@ -4,6 +4,7 @@ import {
   LevelFormat, NumberFormat
 } from "docx"
 import { saveAs } from "file-saver"
+import { trackDownload } from "./apiClient"
 
 type Session = {
   recipe: {
@@ -210,4 +211,9 @@ export async function downloadBrief(session: Session, idea: Idea) {
     .replace(/\s+/g, '_')
     .substring(0, 50)
   saveAs(blob, `brief_${filename}.docx`)
+  trackDownload('brief', {
+    idea_title: idea.title,
+    format: session.format,
+    content_role: session.content_role
+  })
 }

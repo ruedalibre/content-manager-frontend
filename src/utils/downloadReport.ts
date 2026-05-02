@@ -3,6 +3,7 @@ import {
   HeadingLevel, BorderStyle, AlignmentType
 } from "docx"
 import { saveAs } from "file-saver"
+import { trackDownload } from "./apiClient"
 
 type CreativeReport = {
   identity: string
@@ -141,4 +142,7 @@ export async function downloadReport(
 
   const blob = await Packer.toBlob(doc)
   saveAs(blob, `creator_report_${new Date(generatedAt).toISOString().split('T')[0]}.docx`)
+  trackDownload('report', {
+    generated_at: generatedAt
+  })
 }

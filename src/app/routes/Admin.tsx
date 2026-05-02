@@ -40,6 +40,9 @@ type EcosystemData = {
   pct_idea_to_content: number;
   active_users_30d: number;
   top_topics: { name: string; total: number }[];
+  total_brief_downloads: number;
+  total_report_downloads: number;
+  downloads_last_30d: number;
 };
 
 export default function Admin() {
@@ -521,6 +524,24 @@ export default function Admin() {
                     </div>
                     <div className="stat-label">Contents per idea</div>
                     <div className="stat-delta">↑ core metric</div>
+                  </div>
+                  <div className="admin-card stat-card">
+                    <div className="stat-value admin-highlight">
+                      {ecosystem.total_brief_downloads}
+                    </div>
+                    <div className="stat-label">Briefs downloaded</div>
+                  </div>
+                  <div className="admin-card stat-card">
+                    <div className="stat-value admin-highlight">
+                      {ecosystem.total_report_downloads}
+                    </div>
+                    <div className="stat-label">Reports downloaded</div>
+                  </div>
+                  <div className="admin-card stat-card">
+                    <div className="stat-value admin-highlight">
+                      {ecosystem.downloads_last_30d}
+                    </div>
+                    <div className="stat-label">Downloads (30 days)</div>
                   </div>
                 </div>
               </section>

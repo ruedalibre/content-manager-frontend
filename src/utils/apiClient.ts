@@ -19,3 +19,20 @@ export async function apiFetch(
     },
   });
 }
+
+export async function trackDownload(
+  eventType: 'brief' | 'report',
+  metadata?: Record<string, unknown>
+): Promise<void> {
+  try {
+    await apiFetch('me-track-download', {
+      method: 'POST',
+      body: JSON.stringify({
+        event_type: eventType,
+        metadata
+      })
+    })
+  } catch {
+    // Silent — never interrupt the download
+  }
+}
