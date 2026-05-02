@@ -215,7 +215,7 @@ export default function CreateIdeaModal({
           {/* DESCRIPTION */}
 
           <textarea
-            placeholder="Description (optional)"
+            placeholder="Add some context or additional details (optional)"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             maxLength={500}

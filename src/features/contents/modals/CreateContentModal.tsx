@@ -422,7 +422,7 @@ export default function CreateContentModal({
           {/* DESCRIPTION */}
           <textarea
             name="description"
-            placeholder="Description"
+            placeholder="Add some context or additional details (optional)"
             value={form.description}
             onChange={handleChange}
             maxLength={500}
