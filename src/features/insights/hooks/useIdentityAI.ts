@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../../supabaseClient.ts";
 import { type ContentDNA, type StandoutInsight, type CreativeStyleTag } from "../types/insights.types.ts";
+import { apiFetch } from "../../../utils/apiClient";
 
 type IdentityAIResult = {
   standout_insights: StandoutInsight[];
@@ -21,21 +21,10 @@ export function useIdentityAI(dna: ContentDNA | null) {
         setLoading(true);
         setError(null);
 
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-identity-insights`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${session?.access_token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ dna }),
-          },
-        );
+        const res = await apiFetch("me-identity-insights", {
+          method: "POST",
+          body: JSON.stringify({ dna }),
+        });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
