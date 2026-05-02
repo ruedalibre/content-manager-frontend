@@ -77,8 +77,8 @@ export default function RecipePanel({
   const [saving, setSaving] = useState(false);
   const [approved, setApproved] = useState(session.status === "reviewed");
 
-  // { [aspectKey]: string[] } — max 3 per aspect
-  const [alternatives, setAlternatives] = useState<Record<string, string[]>>({});
+  // { [aspectKey]: (string | string[])[] } — max 3 per aspect
+  const [alternatives, setAlternatives] = useState<Record<string, (string | string[])[]>>({});
 
   // { [aspectKey]: string } — current visible value (original or chosen alternative)
   const [currentValues, setCurrentValues] = useState<Record<string, string>>({});
@@ -132,11 +132,28 @@ export default function RecipePanel({
         format: session.format,
       });
 
+      let alternativeValue: string | string[] = result.alternative as string | string[];
+
+      if (aspectKey === 'structure' &&
+          typeof result.alternative === 'string') {
+        try {
+          const clean = (result.alternative as string)
+            .replace(/```json|```/g, '').trim();
+          alternativeValue = JSON.parse(clean);
+        } catch {
+          // Si falla el parse, dividir por saltos de línea
+          alternativeValue = (result.alternative as string)
+            .split('\n')
+            .map(s => s.replace(/^[-•*\d.]\s*/, '').trim())
+            .filter(s => s.length > 0);
+        }
+      }
+
       setAlternatives((prev) => ({
         ...prev,
         [aspectKey]: [
           ...(prev[aspectKey] ?? []),
-          result.alternative as string,
+          alternativeValue,
         ],
       }));
     } catch (err) {
@@ -231,7 +248,15 @@ export default function RecipePanel({
         {/* ALTERNATIVES */}
         {aspectAlts.map((alt, altIndex) => (
           <div key={altIndex} className="recipe-panel__alternative">
-            <p className="recipe-panel__alternative-text">{alt}</p>
+            {Array.isArray(alt) ? (
+              <ol className="recipe-panel__alternative-structure">
+                {(alt as string[]).map((step, si) => (
+                  <li key={si}>{step}</li>
+                ))}
+              </ol>
+            ) : (
+              <p className="recipe-panel__alternative-text">{alt}</p>
+            )}
             <button
               type="button"
               className="btn-choose-alt"

@@ -1177,6 +1177,20 @@
   margin: 0;
 }
 
+.recipe-panel__alternative-structure {
+  padding-left: 16px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  li {
+    font-size: 13px;
+    color: #111827;
+    line-height: 1.5;
+  }
+}
+
 .btn-choose-alt {
   font-size: 12px;
   color: #7f77dd;
