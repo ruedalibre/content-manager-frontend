@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { supabase } from "../../../supabaseClient"
+import { apiFetch } from "../../../utils/apiClient"
 
 export type ContentSystemContent = {
   id: string
@@ -26,17 +26,12 @@ export function useContentSystem() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchSystem = async () => {
       try {
         setLoading(true)
-        const { data: { session } } = await supabase.auth.getSession()
-        const res = await window.fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-system`,
-          { headers: { Authorization: `Bearer ${session?.access_token}` } }
-        )
+        const res = await apiFetch("me-content-system")
         if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const data = await res.json()
-        console.log("Content system response:", JSON.stringify(data, null, 2))
         setTopics(data.topics ?? [])
       } catch (err) {
         console.error("Content system error:", err)
@@ -45,7 +40,7 @@ export function useContentSystem() {
         setLoading(false)
       }
     }
-    fetch()
+    fetchSystem()
   }, [])
 
   return { topics, loading, error }

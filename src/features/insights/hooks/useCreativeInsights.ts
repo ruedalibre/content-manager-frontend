@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../../supabaseClient.ts";
+import { apiFetch } from "../../../utils/apiClient";
 
 export function useCreativeInsights() {
   const [insights, setInsights] = useState<
@@ -12,11 +12,7 @@ export function useCreativeInsights() {
     const fetch_insights = async () => {
       try {
         setLoading(true);
-        const { data: { session } } = await supabase.auth.getSession();
-        const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-creative-insights`,
-          { headers: { Authorization: `Bearer ${session?.access_token}` } }
-        );
+        const res = await apiFetch("me-creative-insights");
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         setInsights(data.insights ?? []);

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../../../supabaseClient.ts";
 import { type ContentDNA } from "../types/insights.types.ts";
+import { apiFetch } from "../../../utils/apiClient";
 
 export function useContentDNA() {
   const [dna, setDNA] = useState<ContentDNA | null>(null);
@@ -13,18 +13,7 @@ export function useContentDNA() {
         setLoading(true);
         setError(null);
 
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/content-dna`,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.access_token}`,
-            },
-          },
-        );
+        const res = await apiFetch("content-dna");
 
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
