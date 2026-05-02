@@ -8,7 +8,6 @@ import Login from "./app/routes/Login.tsx";
 import AuthGuard from "./auth/AuthGuard.tsx";
 import { useEffect } from "react";
 import { supabase } from "./supabaseClient.ts";
-import Insights from "./app/routes/Insights.tsx";
 import Identity from "./app/routes/Identity.tsx";
 
 /* =========================
@@ -77,7 +76,6 @@ export default function App() {
       >
         <Route path="/ideas" element={<Ideas />} />
         <Route path="/contents" element={<Contents />} />
-        <Route path="/insights" element={<Insights />} />
         <Route path="/identity" element={<Identity />} />
         <Route path="/activity" element={<Activity />} />
         <Route path="/admin" element={<Admin />} />
