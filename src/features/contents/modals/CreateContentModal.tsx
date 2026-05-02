@@ -425,7 +425,19 @@ export default function CreateContentModal({
             placeholder="Description"
             value={form.description}
             onChange={handleChange}
+            maxLength={500}
+            rows={3}
+            style={{ resize: "vertical", minHeight: "72px", maxHeight: "120px" }}
           />
+          <span style={{
+            fontSize: "11px",
+            color: "var(--color-text-tertiary)",
+            display: "block",
+            textAlign: "right",
+            marginTop: "4px"
+          }}>
+            {(form.description ?? "").length}/500
+          </span>
 
           {/* PLATFORM */}
           <select

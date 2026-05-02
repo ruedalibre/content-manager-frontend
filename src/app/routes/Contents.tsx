@@ -678,7 +678,23 @@ export default function Contents() {
                     <td>
                       <div className="content-title">
                         <strong>{item.title}</strong>
-                        {item.description && <span>{item.description}</span>}
+                        {item.description && (
+                          <span
+                            style={{
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                              fontSize: "12px",
+                              color: "var(--color-text-secondary)",
+                              lineHeight: "1.4",
+                              maxWidth: "300px"
+                            }}
+                            title={item.description}
+                          >
+                            {item.description}
+                          </span>
+                        )}
                       </div>
                     </td>
 
