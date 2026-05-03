@@ -31,9 +31,9 @@ async function warmDashboardEndpoints() {
     const endpoints = [
       "me-dashboard?period=30d",
       "me-insights?period=30d",
-      "admin-content-growth?period=30d",
-      "admin-content-growth-cumulative?period=30d",
-      "admin-content-growth-rate?period=30d",
+      "me-content-growth?period=30d",
+      "me-content-growth-cumulative?period=30d",
+      "me-content-growth-rate?period=30d",
       "me-activity-heatmap",
     ];
 
