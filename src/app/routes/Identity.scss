@@ -715,6 +715,31 @@
     }
   }
 
+  &__disclaimer {
+    font-size: 11px;
+    color: #9ca3af;
+    line-height: 1.5;
+    padding-top: 12px;
+    border-top: 0.5px solid #e5e7eb;
+    font-style: italic;
+    margin: 0;
+  }
+
+  &__copy {
+    font-size: 12px;
+    color: #6b7280;
+    background: none;
+    border: 0.5px solid #d1d5db;
+    border-radius: 8px;
+    padding: 4px 12px;
+    cursor: pointer;
+
+    &:hover {
+      color: #111827;
+      border-color: #9ca3af;
+    }
+  }
+
   &__error {
     font-size: 12px;
     color: #D85A30;
