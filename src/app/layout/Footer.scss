@@ -33,3 +33,17 @@
 .footer__content span:hover {
   color: #111827;
 }
+
+.footer__separator {
+  color: #d1d5db;
+  user-select: none;
+}
+
+.footer__legal-link {
+  color: #6b7280;
+  text-decoration: none;
+
+  &:hover {
+    color: #111827;
+  }
+}
