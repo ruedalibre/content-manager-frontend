@@ -26,8 +26,7 @@ async function warmDashboardEndpoints() {
       Authorization: `Bearer ${session.access_token}`,
     };
 
-    const base =
-      import.meta.env.VITE_SUPABASE_URL + "/functions/v1/";
+    const base = import.meta.env.VITE_SUPABASE_URL + "/functions/v1/";
 
     const endpoints = [
       "me-dashboard?period=30d",
@@ -51,7 +50,6 @@ async function warmDashboardEndpoints() {
 ========================= */
 
 export default function App() {
-
   useEffect(() => {
     // esperar un poco para no competir con login/render inicial
     const timer = setTimeout(() => {
@@ -65,6 +63,7 @@ export default function App() {
     <Routes>
       {/* Ruta pública */}
       <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Login />} />
 
       {/* Rutas privadas */}
       <Route
@@ -79,7 +78,6 @@ export default function App() {
         <Route path="/identity" element={<Identity />} />
         <Route path="/activity" element={<Activity />} />
         <Route path="/admin" element={<Admin />} />
-        
       </Route>
 
       {/* Fallback */}
