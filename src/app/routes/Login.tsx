@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import "./Login.scss";
 
@@ -7,6 +7,7 @@ type Mode = "signin" | "register";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
@@ -24,6 +25,14 @@ export default function Login() {
     };
     checkSession();
   }, [navigate]);
+
+  useEffect(() => {
+    const emailParam = searchParams.get("email");
+    if (emailParam) {
+      setEmail(decodeURIComponent(emailParam));
+      setMode("register");
+    }
+  }, [searchParams]);
 
   const resetForm = () => {
     setEmail("");
