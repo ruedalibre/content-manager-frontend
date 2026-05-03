@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "./Footer.scss";
 
 export default function Footer() {
@@ -36,6 +37,12 @@ export default function Footer() {
         <span>
           Build {formattedDate}
         </span>
+
+        <span className="footer__separator">·</span>
+
+        <Link to="/terms" className="footer__legal-link">Terms of Service</Link>
+        <span className="footer__separator">·</span>
+        <Link to="/privacy" className="footer__legal-link">Privacy Policy</Link>
       </div>
     </footer>
   );
