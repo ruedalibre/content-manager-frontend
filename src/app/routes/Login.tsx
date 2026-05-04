@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../../supabaseClient";
+import LanguageToggle from "../../components/ui/LanguageToggle";
 import "./Login.scss";
 
 type Mode = "signin" | "register";
@@ -229,6 +230,10 @@ export default function Login() {
           {t("login.backToLanding")}
         </a>
 
+      </div>
+
+      <div style={{ display: "flex", justifyContent: "center", marginTop: "8px" }}>
+        <LanguageToggle />
       </div>
     </div>
   );

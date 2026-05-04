@@ -1,5 +1,6 @@
 import { Menu } from "lucide-react"
 import { useLocation } from "react-router-dom"
+import LanguageToggle from "../../components/ui/LanguageToggle"
 import "./Topbar.scss"
 
 type Props = {
@@ -42,6 +43,8 @@ export default function Topbar({
           </span>
         )}
       </div>
+
+      <LanguageToggle />
     </header>
   )
 }
