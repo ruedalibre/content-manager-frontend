@@ -75,7 +75,10 @@
     "confirmDeleteIdea": "Eliminar idea",
     "confirmDeleteIdeaMessage": "Esta idea será eliminada permanentemente. Esta acción no se puede deshacer.",
     "confirmArchiveTopic": "Archivar tema",
-    "confirmArchiveTopicMessage": "El tema no aparecerá en los selectores pero las asociaciones existentes se conservan."
+    "confirmArchiveTopicMessage": "El tema no aparecerá en los selectores pero las asociaciones existentes se conservan.",
+    "ideaTitlePlaceholder": "Título de la idea",
+    "suggestions": "Sugerencias basadas en tu contenido",
+    "generatingIdeas": "Generando ideas para ti..."
   },
   "contents": {
     "title": "Contenidos",

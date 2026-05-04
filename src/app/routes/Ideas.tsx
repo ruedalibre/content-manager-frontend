@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   useIdeas,
   type Idea,
@@ -38,6 +39,7 @@ type RecipeState = {
 };
 
 export default function Ideas() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"ideas" | "topics">("ideas");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "manual" | "generated">("all");
@@ -261,7 +263,7 @@ export default function Ideas() {
   const handleGenerateRecipe = async (idea: Idea) => {
     const state = getRecipeStateForIdea(idea.id);
     if (!state.platform_id || !state.format) {
-      updateRecipeState(idea.id, { error: "Select platform and format first" });
+      updateRecipeState(idea.id, { error: t("ideas.selectPlatformError") });
       return;
     }
     updateRecipeState(idea.id, { generating: true, error: null });
@@ -332,8 +334,8 @@ export default function Ideas() {
 
   const handleDeleteIdea = (ideaId: string) => {
     openConfirm(
-      "Delete idea",
-      "This idea will be permanently deleted. This cannot be undone.",
+      t("ideas.confirmDeleteIdea"),
+      t("ideas.confirmDeleteIdeaMessage"),
       async () => {
         closeConfirm();
         try {
@@ -402,8 +404,8 @@ export default function Ideas() {
 
   const handleArchiveTopic = (topicId: string) => {
     openConfirm(
-      "Archive topic",
-      "This topic won't appear in selectors but existing associations are preserved.",
+      t("ideas.confirmArchiveTopic"),
+      t("ideas.confirmArchiveTopicMessage"),
       async () => {
         closeConfirm();
         try {
@@ -420,9 +422,9 @@ export default function Ideas() {
       {/* PAGE HEADER */}
       <div className="ideas-page__header">
         <div>
-          <h2 className="ideas-page__title">Your creative engine</h2>
+          <h2 className="ideas-page__title">{t("ideas.title")}</h2>
           <p className="ideas-page__subtitle">
-            Where your ideas become content.
+            {t("ideas.subtitle")}
           </p>
         </div>
         {activeTab === "ideas" ? (
@@ -431,14 +433,14 @@ export default function Ideas() {
             onClick={() => setShowIdeaModal(true)}
             type="button"
           >
-            + New Idea
+            {t("ideas.newIdea")}
           </button>
         ) : (
           <div className="topic-create-inline">
             <div className="topic-create-inline__field">
               <input
                 type="text"
-                placeholder="Topic name"
+                placeholder={t("ideas.topicPlaceholder")}
                 value={newTopicName}
                 onChange={(e) => setNewTopicName(e.target.value)}
                 maxLength={50}
@@ -459,7 +461,7 @@ export default function Ideas() {
               disabled={creatingTopic || !newTopicName.trim()}
               type="button"
             >
-              {creatingTopic ? "Adding..." : "+ Add"}
+              {creatingTopic ? t("common.loading") : t("ideas.addTopic")}
             </button>
           </div>
         )}
@@ -482,7 +484,7 @@ export default function Ideas() {
           onClick={() => setActiveTab("ideas")}
           type="button"
         >
-          Ideas
+          {t("ideas.tabIdeas")}
           <span className="ideas-tab__count">{ideas.length}</span>
         </button>
         <button
@@ -490,7 +492,7 @@ export default function Ideas() {
           onClick={() => setActiveTab("topics")}
           type="button"
         >
-          Topics
+          {t("ideas.tabTopics")}
           <span className="ideas-tab__count">{topics.length}</span>
         </button>
       </div>
@@ -502,7 +504,7 @@ export default function Ideas() {
           <div className="ideas-toolbar">
             <input
               type="text"
-              placeholder="Search ideas..."
+              placeholder={t("ideas.searchIdeas")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="ideas-search"
@@ -523,8 +525,7 @@ export default function Ideas() {
               <span>{ideas.length} ideas</span>
               <span>·</span>
               <span>
-                {ideas.filter((i) => (i.sessions?.length ?? 0) > 0).length} with
-                recipe
+                {ideas.filter((i) => (i.sessions?.length ?? 0) > 0).length} {t("ideas.withRecipe")}
               </span>
               <span>·</span>
               <span>
@@ -533,7 +534,7 @@ export default function Ideas() {
                     i.sessions?.some((s) => s.status === "executed"),
                   ).length
                 }{" "}
-                implemented
+                {t("ideas.implemented")}
               </span>
             </div>
           </div>
@@ -546,7 +547,7 @@ export default function Ideas() {
             <>
               {filteredIdeas.length === 0 && (
                 <div className="ideas-empty">
-                  <span>No ideas found</span>
+                  <span>{t("ideas.noIdeas")}</span>
                 </div>
               )}
 
@@ -575,7 +576,7 @@ export default function Ideas() {
                           <span
                             className={`badge ${isGenerated ? "badge--generated" : "badge--manual"}`}
                           >
-                            {isGenerated ? "Generated" : "Manual"}
+                            {isGenerated ? t("ideas.generated") : t("ideas.manual")}
                           </span>
                           {!isEditingThis && (
                             <div className="idea-card__controls">
@@ -780,7 +781,7 @@ export default function Ideas() {
                               <span className="idea-card__stats">
                                 {contentCount === 0
                                   ? "No contents yet"
-                                  : `${contentCount} content${contentCount !== 1 ? "s" : ""}`}
+                                  : `${contentCount} ${contentCount === 1 ? t("ideas.content") : t("ideas.contents")}`}
                               </span>
                               <button
                                 className={`btn-generate ${state.generating ? "btn-generate--loading" : ""}`}
@@ -828,7 +829,7 @@ export default function Ideas() {
           <div className="topics-toolbar">
             <input
               type="text"
-              placeholder="Search topics..."
+              placeholder={t("ideas.searchTopics")}
               value={topicSearch}
               onChange={(e) => {
                 setTopicSearch(e.target.value);
@@ -866,8 +867,8 @@ export default function Ideas() {
                 <div className="ideas-empty">
                   <span>
                     {topics.length === 0
-                      ? "No topics yet. Add your first one above."
-                      : "No topics match your search."}
+                      ? t("ideas.noTopics")
+                      : t("ideas.noTopicsMatch")}
                   </span>
                 </div>
               ) : (
@@ -896,7 +897,7 @@ export default function Ideas() {
                               className="topics-alpha-group__more"
                               onClick={() => toggleExpandLetter(letter)}
                             >
-                              {isExpanded ? "See less ↑" : `+${items.length - MAX_VISIBLE} more`}
+                              {isExpanded ? t("ideas.seeLess") : `+${items.length - MAX_VISIBLE} ${t("ideas.seeMore")}`}
                             </button>
                           )}
                         </div>
@@ -976,9 +977,9 @@ export default function Ideas() {
               {/* CONTENT SYSTEM VIEW */}
               <div className="content-system">
                 <div className="content-system__header">
-                  <span className="section-label">Content system</span>
+                  <span className="section-label">{t("ideas.contentSystem")}</span>
                   <p className="content-system__subtitle">
-                    How your topics, ideas and contents connect
+                    {t("ideas.contentSystemSubtitle")}
                   </p>
                   <div className="content-system__legend">
                     <span className="content-system__legend-item">
@@ -1001,7 +1002,7 @@ export default function Ideas() {
                 ) : filteredSystemTopics.length === 0 ? (
                   <p className="ideas-empty">
                     <span>
-                      Link ideas to topics to see your content system.
+                      {t("ideas.linkIdeasToTopics")}
                     </span>
                   </p>
                 ) : (
