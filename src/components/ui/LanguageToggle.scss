@@ -1,0 +1,31 @@
+.lang-toggle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &__btn {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 3px 6px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #9ca3af;
+    border-radius: 4px;
+    transition: color 0.15s;
+
+    &:hover {
+      color: #111827;
+    }
+
+    &--active {
+      color: #111827;
+      font-weight: 600;
+    }
+  }
+
+  &__divider {
+    font-size: 11px;
+    color: #d1d5db;
+  }
+}
