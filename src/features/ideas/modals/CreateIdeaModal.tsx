@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../../../supabaseClient";
 import "./CreateIdeaModal.scss";
 
@@ -29,6 +30,7 @@ export default function CreateIdeaModal({
   onCreated,
   ideaToEdit,
 }: Props) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -159,7 +161,7 @@ export default function CreateIdeaModal({
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h3>{isEditMode ? "Edit Idea" : "Create Idea"}</h3>
+        <h3>{isEditMode ? `${t("common.edit")} Idea` : `${t("common.create")} Idea`}</h3>
 
         <form onSubmit={handleSubmit}>
           {/* SUGGESTIONS (create mode only) */}
@@ -168,12 +170,12 @@ export default function CreateIdeaModal({
             <div className="create-idea-modal__suggestions">
               {loadingSuggestions ? (
                 <div className="create-idea-modal__suggestions-loading">
-                  <span>Generating ideas for you...</span>
+                  <span>{t("ideas.generatingIdeas")}</span>
                 </div>
               ) : suggestions.length > 0 ? (
                 <>
                   <span className="create-idea-modal__suggestions-label">
-                    Suggestions based on your content
+                    {t("ideas.suggestions")}
                   </span>
                   <div className="create-idea-modal__suggestions-chips">
                     {suggestions.map((s, i) => (
@@ -203,7 +205,7 @@ export default function CreateIdeaModal({
           {/* TITLE */}
 
           <input
-            placeholder="Idea title"
+            placeholder={t("ideas.ideaTitlePlaceholder")}
             value={title}
             onChange={(e) => {
               setTitle(e.target.value);
@@ -215,7 +217,7 @@ export default function CreateIdeaModal({
           {/* DESCRIPTION */}
 
           <textarea
-            placeholder="Add some context or additional details (optional)"
+            placeholder={t("contents.descriptionPlaceholder")}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             maxLength={500}
@@ -243,17 +245,17 @@ export default function CreateIdeaModal({
               }}
               className="btn-secondary"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
 
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading
                 ? isEditMode
-                  ? "Updating..."
-                  : "Creating..."
+                  ? t("contents.updating")
+                  : t("contents.creating")
                 : isEditMode
-                  ? "Update"
-                  : "Create"}
+                  ? t("common.update")
+                  : t("common.create")}
             </button>
           </div>
         </form>
