@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../../supabaseClient";
 import "./Admin.scss";
 
@@ -46,6 +47,7 @@ type EcosystemData = {
 };
 
 export default function Admin() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"operations" | "ecosystem">("operations");
 
   const [usersSummary, setUsersSummary] = useState<UsersSummary | null>(null);
@@ -232,8 +234,8 @@ export default function Admin() {
 
       <div className="admin-header">
         <div>
-          <h2>Admin</h2>
-          <p>Platform management and intelligence</p>
+          <h2>{t("admin.title")}</h2>
+          <p>{t("admin.subtitle")}</p>
         </div>
       </div>
 
@@ -245,7 +247,7 @@ export default function Admin() {
             onClick={() => setActiveTab(tab)}
             type="button"
           >
-            {tab === "operations" ? "Operations" : "Ecosystem"}
+            {tab === "operations" ? t("admin.operations") : t("admin.ecosystem")}
           </button>
         ))}
       </div>
@@ -256,23 +258,23 @@ export default function Admin() {
 
           {usersSummary && (
             <section className="admin-section">
-              <span className="section-label">Platform overview</span>
+              <span className="section-label">{t("admin.platformOverview")}</span>
               <div className="admin-stats">
                 <div className="admin-card stat-card">
                   <div className="stat-value">{usersSummary.total_users}</div>
-                  <div className="stat-label">Total users</div>
+                  <div className="stat-label">{t("admin.totalUsers")}</div>
                 </div>
                 <div className="admin-card stat-card">
                   <div className="stat-value">{usersSummary.users_with_content}</div>
-                  <div className="stat-label">With content</div>
+                  <div className="stat-label">{t("admin.withContent")}</div>
                 </div>
                 <div className="admin-card stat-card">
                   <div className="stat-value">{usersSummary.total_contents}</div>
-                  <div className="stat-label">Total contents</div>
+                  <div className="stat-label">{t("admin.totalContents")}</div>
                 </div>
                 <div className="admin-card stat-card">
                   <div className="stat-value">{usersSummary.avg_contents_per_user}</div>
-                  <div className="stat-label">Avg per user</div>
+                  <div className="stat-label">{t("admin.avgPerUser")}</div>
                 </div>
               </div>
             </section>
@@ -280,7 +282,7 @@ export default function Admin() {
 
           <section className="admin-section">
             <div className="admin-section__header">
-              <span className="section-label">Active users</span>
+              <span className="section-label">{t("admin.activeUsers")}</span>
               <select
                 className="admin-filter"
                 value={usersFilter}
@@ -297,11 +299,11 @@ export default function Admin() {
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th>Email</th>
-                    <th>Contents</th>
-                    <th>Registered</th>
-                    <th>Last content</th>
-                    <th>Status</th>
+                    <th>{t("admin.email")}</th>
+                    <th>{t("admin.totalContents")}</th>
+                    <th>{t("admin.registered")}</th>
+                    <th>{t("admin.lastContent")}</th>
+                    <th>{t("admin.status")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -325,7 +327,7 @@ export default function Admin() {
                                 : "admin-badge--inactive"
                             }`}
                           >
-                            {user.total_contents > 0 ? "Active" : "Inactive"}
+                            {user.total_contents > 0 ? t("admin.active") : t("admin.inactive")}
                           </span>
                         </td>
                       </tr>
@@ -358,7 +360,7 @@ export default function Admin() {
 
           {platformUsage.length > 0 && (
             <section className="admin-section">
-              <span className="section-label">Platform distribution</span>
+              <span className="section-label">{t("admin.platformDistribution")}</span>
               <div className="admin-card">
                 {platformUsage.map((p) => (
                   <div key={p.platform_name} className="admin-bar-row">
@@ -379,7 +381,7 @@ export default function Admin() {
           <section className="admin-section">
             <div className="admin-section__header">
               <span className="section-label">
-                Early access waitlist ({earlyTotal})
+                {t("admin.earlyAccessWaitlist")} ({earlyTotal})
               </span>
               <div className="admin-filters">
                 <select
@@ -390,9 +392,9 @@ export default function Admin() {
                     setEarlyPage(1);
                   }}
                 >
-                  <option value="all">All status</option>
-                  <option value="pending">Pending</option>
-                  <option value="invited">Invited</option>
+                  <option value="all">{t("admin.allStatus")}</option>
+                  <option value="pending">{t("admin.pending")}</option>
+                  <option value="invited">{t("admin.invited")}</option>
                 </select>
                 <select
                   className="admin-filter"
@@ -402,7 +404,7 @@ export default function Admin() {
                     setEarlyPage(1);
                   }}
                 >
-                  <option value="all">All languages</option>
+                  <option value="all">{t("admin.allLanguages")}</option>
                   <option value="en">English</option>
                   <option value="es">Spanish</option>
                 </select>
@@ -412,12 +414,12 @@ export default function Admin() {
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th>Email</th>
-                    <th>Platform</th>
-                    <th>Focus</th>
-                    <th>Lang</th>
-                    <th>Status</th>
-                    <th>Requested</th>
+                    <th>{t("admin.email")}</th>
+                    <th>{t("admin.platform")}</th>
+                    <th>{t("admin.focus")}</th>
+                    <th>{t("admin.lang")}</th>
+                    <th>{t("admin.status")}</th>
+                    <th>{t("admin.requested")}</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -448,7 +450,7 @@ export default function Admin() {
                             disabled={invitingId === r.id}
                             type="button"
                           >
-                            {invitingId === r.id ? "Sending..." : "Invite"}
+                            {invitingId === r.id ? t("admin.sending") : t("admin.invite")}
                           </button>
                         )}
                         {r.status === "invited" && (
@@ -498,50 +500,50 @@ export default function Admin() {
           ) : ecosystem ? (
             <>
               <section className="admin-section">
-                <span className="section-label">The system in numbers</span>
+                <span className="section-label">{t("admin.systemInNumbers")}</span>
                 <div className="admin-stats">
                   <div className="admin-card stat-card">
                     <div className="stat-value admin-highlight">
                       {ecosystem.total_ideas}
                     </div>
-                    <div className="stat-label">Ideas created</div>
+                    <div className="stat-label">{t("admin.ideasCreated")}</div>
                   </div>
                   <div className="admin-card stat-card">
                     <div className="stat-value admin-highlight">
                       {ecosystem.total_contents}
                     </div>
-                    <div className="stat-label">Contents registered</div>
+                    <div className="stat-label">{t("admin.contentsRegistered")}</div>
                   </div>
                   <div className="admin-card stat-card">
                     <div className="stat-value admin-highlight">
                       {ecosystem.total_briefs}
                     </div>
-                    <div className="stat-label">Briefs generated</div>
+                    <div className="stat-label">{t("admin.briefsGenerated")}</div>
                   </div>
                   <div className="admin-card stat-card">
                     <div className="stat-value admin-highlight">
                       {ecosystem.avg_contents_per_idea}
                     </div>
-                    <div className="stat-label">Contents per idea</div>
-                    <div className="stat-delta">↑ core metric</div>
+                    <div className="stat-label">{t("admin.contentsPerIdea")}</div>
+                    <div className="stat-delta">{t("admin.coreMetric")}</div>
                   </div>
                   <div className="admin-card stat-card">
                     <div className="stat-value admin-highlight">
                       {ecosystem.total_brief_downloads}
                     </div>
-                    <div className="stat-label">Briefs downloaded</div>
+                    <div className="stat-label">{t("admin.briefsDownloaded")}</div>
                   </div>
                   <div className="admin-card stat-card">
                     <div className="stat-value admin-highlight">
                       {ecosystem.total_report_downloads}
                     </div>
-                    <div className="stat-label">Reports downloaded</div>
+                    <div className="stat-label">{t("admin.reportsDownloaded")}</div>
                   </div>
                   <div className="admin-card stat-card">
                     <div className="stat-value admin-highlight">
                       {ecosystem.downloads_last_30d}
                     </div>
-                    <div className="stat-label">Downloads (30 days)</div>
+                    <div className="stat-label">{t("admin.downloads30d")}</div>
                   </div>
                 </div>
               </section>
@@ -549,27 +551,27 @@ export default function Admin() {
               <section className="admin-section">
                 <div className="admin-two-col">
                   <div>
-                    <span className="section-label">Creative process health</span>
+                    <span className="section-label">{t("admin.creativeProcessHealth")}</span>
                     <div className="admin-card admin-metrics">
                       {[
                         {
-                          label: "Idea → content conversion",
+                          label: t("admin.ideaToContentConversion"),
                           value: `${ecosystem.pct_idea_to_content}%`,
                         },
                         {
-                          label: "Ideas with multiple contents",
+                          label: t("admin.ideasWithMultipleContents"),
                           value: ecosystem.ideas_with_multiple_contents,
                         },
                         {
-                          label: "Contents with topics linked",
+                          label: t("admin.contentsWithTopics"),
                           value: `${ecosystem.pct_contents_with_topics}%`,
                         },
                         {
-                          label: "Contents with ideas linked",
+                          label: t("admin.contentsWithIdeas"),
                           value: `${ecosystem.pct_contents_with_ideas}%`,
                         },
                         {
-                          label: "Active users (30 days)",
+                          label: t("admin.activeUsers30d"),
                           value: ecosystem.active_users_30d,
                         },
                       ].map((m) => (
@@ -581,7 +583,7 @@ export default function Admin() {
                     </div>
                   </div>
                   <div>
-                    <span className="section-label">Top topics on platform</span>
+                    <span className="section-label">{t("admin.topTopicsOnPlatform")}</span>
                     <div className="admin-card">
                       {ecosystem.top_topics.map((t) => {
                         const max = ecosystem.top_topics[0]?.total ?? 1;

@@ -203,7 +203,40 @@
     "next": "Siguiente →",
     "optional": "Opcional",
     "selectMultiple": "Puedes seleccionar varias opciones",
-    "saving": "Guardando..."
+    "saving": "Guardando...",
+    "questions": {
+      "time_availability": {
+        "question": "¿Cuánto tiempo dedicas habitualmente a crear contenido cada semana?",
+        "options": {
+          "less_than_2h": { "label": "Menos de 2 horas", "desc": "Creo cuando puedo" },
+          "2_to_5h": { "label": "Entre 2 y 5 horas", "desc": "Tengo momentos definidos" },
+          "more_than_5h": { "label": "Más de 5 horas", "desc": "Es una actividad central en mi semana" },
+          "variable": { "label": "Variable", "desc": "No tengo un ritmo fijo" }
+        }
+      },
+      "production_setup": {
+        "question": "¿Cómo describes tu proceso de producción actual?",
+        "options": {
+          "solo": { "label": "Trabajo solo", "desc": "Hago todo yo mismo" },
+          "occasional_help": { "label": "Ayuda ocasional", "desc": "Alguien me apoya cuando puede" },
+          "small_team": { "label": "Equipo pequeño", "desc": "Hay roles definidos" },
+          "agency": { "label": "Agencia o equipo externo", "desc": "Trabajo con apoyo profesional" }
+        }
+      },
+      "idea_sources": {
+        "question": "¿De dónde vienen principalmente tus ideas para crear contenido?",
+        "options": {
+          "content_consumption": { "label": "De lo que leo, veo o escucho", "desc": "Me nutro de contenido de otros" },
+          "personal_experience": { "label": "De mi experiencia personal", "desc": "Mi vivencia es mi materia prima" },
+          "community": { "label": "De conversaciones con mi audiencia", "desc": "Mi comunidad me inspira" },
+          "trends": { "label": "De tendencias en redes sociales", "desc": "Respondo a lo que está pasando" }
+        }
+      },
+      "referents": {
+        "question": "¿Hay algún creador, medio o referente que admires especialmente?",
+        "placeholder": "Ej: Lex Fridman, National Geographic, Tim Ferriss..."
+      }
+    }
   },
   "tour": {
     "invitation": {
