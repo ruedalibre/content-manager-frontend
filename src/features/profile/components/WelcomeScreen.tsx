@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./WelcomeScreen.scss";
 
 /* =========================
@@ -18,99 +19,55 @@ type OnboardingData = {
 };
 
 /* =========================
-   QUESTIONS CONFIG
-========================= */
-
-const QUESTIONS = [
-  {
-    id: "time_availability",
-    question:
-      "¿Cuánto tiempo dedicas habitualmente a crear contenido cada semana?",
-    type: "single",
-    options: [
-      {
-        value: "less_than_2h",
-        label: "Menos de 2 horas",
-        desc: "Creo cuando puedo",
-      },
-      {
-        value: "2_to_5h",
-        label: "Entre 2 y 5 horas",
-        desc: "Tengo momentos definidos",
-      },
-      {
-        value: "more_than_5h",
-        label: "Más de 5 horas",
-        desc: "Es una actividad central en mi semana",
-      },
-      { value: "variable", label: "Variable", desc: "No tengo un ritmo fijo" },
-    ],
-  },
-  {
-    id: "production_setup",
-    question: "¿Cómo describes tu proceso de producción actual?",
-    type: "single",
-    options: [
-      { value: "solo", label: "Trabajo solo", desc: "Hago todo yo mismo" },
-      {
-        value: "occasional_help",
-        label: "Ayuda ocasional",
-        desc: "Alguien me apoya cuando puede",
-      },
-      {
-        value: "small_team",
-        label: "Equipo pequeño",
-        desc: "Hay roles definidos",
-      },
-      {
-        value: "agency",
-        label: "Agencia o equipo externo",
-        desc: "Trabajo con apoyo profesional",
-      },
-    ],
-  },
-  {
-    id: "idea_sources",
-    question: "¿De dónde vienen principalmente tus ideas para crear contenido?",
-    type: "multi",
-    options: [
-      {
-        value: "content_consumption",
-        label: "De lo que leo, veo o escucho",
-        desc: "Me nutro de contenido de otros",
-      },
-      {
-        value: "personal_experience",
-        label: "De mi experiencia personal",
-        desc: "Mi vivencia es mi materia prima",
-      },
-      {
-        value: "community",
-        label: "De conversaciones con mi audiencia",
-        desc: "Mi comunidad me inspira",
-      },
-      {
-        value: "trends",
-        label: "De tendencias en redes sociales",
-        desc: "Respondo a lo que está pasando",
-      },
-    ],
-  },
-  {
-    id: "referents",
-    question:
-      "¿Hay algún creador, medio o referente que admires especialmente?",
-    type: "text",
-    placeholder: "Ej: Lex Fridman, National Geographic, Tim Ferriss...",
-    optional: true,
-  },
-];
-
-/* =========================
    COMPONENT
 ========================= */
 
 export default function WelcomeScreen({ onComplete, onSkip }: Props) {
+  const { t } = useTranslation();
+
+  const QUESTIONS = [
+    {
+      id: "time_availability",
+      question: t("onboarding.questions.time_availability.question"),
+      type: "single",
+      options: [
+        { value: "less_than_2h", label: t("onboarding.questions.time_availability.options.less_than_2h.label"), desc: t("onboarding.questions.time_availability.options.less_than_2h.desc") },
+        { value: "2_to_5h", label: t("onboarding.questions.time_availability.options.2_to_5h.label"), desc: t("onboarding.questions.time_availability.options.2_to_5h.desc") },
+        { value: "more_than_5h", label: t("onboarding.questions.time_availability.options.more_than_5h.label"), desc: t("onboarding.questions.time_availability.options.more_than_5h.desc") },
+        { value: "variable", label: t("onboarding.questions.time_availability.options.variable.label"), desc: t("onboarding.questions.time_availability.options.variable.desc") },
+      ],
+    },
+    {
+      id: "production_setup",
+      question: t("onboarding.questions.production_setup.question"),
+      type: "single",
+      options: [
+        { value: "solo", label: t("onboarding.questions.production_setup.options.solo.label"), desc: t("onboarding.questions.production_setup.options.solo.desc") },
+        { value: "occasional_help", label: t("onboarding.questions.production_setup.options.occasional_help.label"), desc: t("onboarding.questions.production_setup.options.occasional_help.desc") },
+        { value: "small_team", label: t("onboarding.questions.production_setup.options.small_team.label"), desc: t("onboarding.questions.production_setup.options.small_team.desc") },
+        { value: "agency", label: t("onboarding.questions.production_setup.options.agency.label"), desc: t("onboarding.questions.production_setup.options.agency.desc") },
+      ],
+    },
+    {
+      id: "idea_sources",
+      question: t("onboarding.questions.idea_sources.question"),
+      type: "multi",
+      options: [
+        { value: "content_consumption", label: t("onboarding.questions.idea_sources.options.content_consumption.label"), desc: t("onboarding.questions.idea_sources.options.content_consumption.desc") },
+        { value: "personal_experience", label: t("onboarding.questions.idea_sources.options.personal_experience.label"), desc: t("onboarding.questions.idea_sources.options.personal_experience.desc") },
+        { value: "community", label: t("onboarding.questions.idea_sources.options.community.label"), desc: t("onboarding.questions.idea_sources.options.community.desc") },
+        { value: "trends", label: t("onboarding.questions.idea_sources.options.trends.label"), desc: t("onboarding.questions.idea_sources.options.trends.desc") },
+      ],
+    },
+    {
+      id: "referents",
+      question: t("onboarding.questions.referents.question"),
+      type: "text",
+      placeholder: t("onboarding.questions.referents.placeholder"),
+      optional: true,
+    },
+  ];
+
   const [step, setStep] = useState<"welcome" | "questions" | "saving">(
     "welcome",
   );
@@ -182,41 +139,33 @@ export default function WelcomeScreen({ onComplete, onSkip }: Props) {
           <div className="welcome-screen__icon">✦</div>
 
           <h1 className="welcome-screen__title">
-            Bienvenido a Content Intelligence
+            {t("onboarding.welcome")}
           </h1>
 
           <p className="welcome-screen__subtitle">
-            Esta plataforma te ayuda a entender cómo tus ideas evolucionan en
-            sistemas de contenido escalables. Cuanto más la uses, más precisa se
-            vuelve.
+            {t("onboarding.welcomeSubtitle")}
           </p>
 
           <div className="welcome-screen__how">
             <div className="welcome-screen__step">
               <span className="welcome-screen__step-num">01</span>
               <div>
-                <strong>Registra tus ideas y topics</strong>
-                <p>La unidad central no es el post — es la idea.</p>
+                <strong>{t("onboarding.step1Title")}</strong>
+                <p>{t("onboarding.step1Desc")}</p>
               </div>
             </div>
             <div className="welcome-screen__step">
               <span className="welcome-screen__step-num">02</span>
               <div>
-                <strong>Genera Recetas de Contenido</strong>
-                <p>
-                  La IA analiza tus patrones y te sugiere cómo desarrollar cada
-                  idea.
-                </p>
+                <strong>{t("onboarding.step2Title")}</strong>
+                <p>{t("onboarding.step2Desc")}</p>
               </div>
             </div>
             <div className="welcome-screen__step">
               <span className="welcome-screen__step-num">03</span>
               <div>
-                <strong>Descubre tu DNA creativo</strong>
-                <p>
-                  Con el tiempo, la plataforma te devuelve una lectura profunda
-                  de tu proceso.
-                </p>
+                <strong>{t("onboarding.step3Title")}</strong>
+                <p>{t("onboarding.step3Desc")}</p>
               </div>
             </div>
           </div>
@@ -227,20 +176,19 @@ export default function WelcomeScreen({ onComplete, onSkip }: Props) {
               onClick={() => setStep("questions")}
               type="button"
             >
-              Cuéntanos sobre ti →
+              {t("onboarding.tellUsAboutYou")}
             </button>
             <button
               className="welcome-screen__btn-skip"
               onClick={handleSkip}
               type="button"
             >
-              Empezar a explorar
+              {t("onboarding.startExploring")}
             </button>
           </div>
 
           <p className="welcome-screen__note">
-            Las preguntas son opcionales y nos ayudan a personalizar tu
-            experiencia desde el inicio.
+            {t("onboarding.questionsOptional")}
           </p>
         </div>
       </div>
@@ -274,7 +222,7 @@ export default function WelcomeScreen({ onComplete, onSkip }: Props) {
         <h2 className="onboarding-question">{question.question}</h2>
 
         {question.type === "optional" && (
-          <p className="onboarding-optional">Opcional</p>
+          <p className="onboarding-optional">{t("onboarding.optional")}</p>
         )}
 
         {/* SINGLE SELECT */}
@@ -302,7 +250,7 @@ export default function WelcomeScreen({ onComplete, onSkip }: Props) {
         {question.type === "multi" && (
           <>
             <p className="onboarding-hint">
-              Puedes seleccionar varias opciones
+              {t("onboarding.selectMultiple")}
             </p>
             <div className="onboarding-options">
               {question.options?.map((opt) => {
@@ -361,7 +309,7 @@ export default function WelcomeScreen({ onComplete, onSkip }: Props) {
             onClick={handleBack}
             disabled={currentQuestion === 0}
           >
-            ← Anterior
+            {t("onboarding.previous")}
           </button>
 
           <button
@@ -370,7 +318,7 @@ export default function WelcomeScreen({ onComplete, onSkip }: Props) {
             onClick={handleNext}
             disabled={saving}
           >
-            {saving ? "Guardando..." : isLast ? "Finalizar ✓" : "Siguiente →"}
+            {saving ? t("onboarding.saving") : isLast ? t("onboarding.finish") : t("onboarding.next")}
           </button>
         </div>
 
@@ -379,7 +327,7 @@ export default function WelcomeScreen({ onComplete, onSkip }: Props) {
           className="welcome-screen__btn-skip"
           onClick={handleSkip}
         >
-          Saltar y explorar
+          {t("onboarding.skipAndExplore")}
         </button>
       </div>
     </div>

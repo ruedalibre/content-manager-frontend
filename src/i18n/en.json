@@ -203,7 +203,40 @@
     "next": "Siguiente →",
     "optional": "Opcional",
     "selectMultiple": "Puedes seleccionar varias opciones",
-    "saving": "Guardando..."
+    "saving": "Guardando...",
+    "questions": {
+      "time_availability": {
+        "question": "How much time do you usually dedicate to creating content each week?",
+        "options": {
+          "less_than_2h": { "label": "Less than 2 hours", "desc": "I create when I can" },
+          "2_to_5h": { "label": "Between 2 and 5 hours", "desc": "I have defined moments" },
+          "more_than_5h": { "label": "More than 5 hours", "desc": "It's a central activity in my week" },
+          "variable": { "label": "Variable", "desc": "I don't have a fixed rhythm" }
+        }
+      },
+      "production_setup": {
+        "question": "How would you describe your current production process?",
+        "options": {
+          "solo": { "label": "I work alone", "desc": "I do everything myself" },
+          "occasional_help": { "label": "Occasional help", "desc": "Someone supports me when they can" },
+          "small_team": { "label": "Small team", "desc": "There are defined roles" },
+          "agency": { "label": "Agency or external team", "desc": "I work with professional support" }
+        }
+      },
+      "idea_sources": {
+        "question": "Where do your content ideas mainly come from?",
+        "options": {
+          "content_consumption": { "label": "From what I read, watch or listen to", "desc": "I draw from others' content" },
+          "personal_experience": { "label": "From my personal experience", "desc": "My life is my raw material" },
+          "community": { "label": "From conversations with my audience", "desc": "My community inspires me" },
+          "trends": { "label": "From social media trends", "desc": "I respond to what's happening" }
+        }
+      },
+      "referents": {
+        "question": "Is there a creator, media outlet or reference you especially admire?",
+        "placeholder": "e.g. Lex Fridman, National Geographic, Tim Ferriss..."
+      }
+    }
   },
   "tour": {
     "invitation": {
