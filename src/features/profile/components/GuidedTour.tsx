@@ -1,33 +1,7 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { createPortal } from "react-dom";
 import "./GuidedTour.scss";
-
-const TOUR_STEPS = [
-  {
-    target: 'ideas',
-    title: 'Ideas & Topics',
-    description: 'Start here. Create your ideas, organize them by topics, and generate AI-powered content briefs.',
-    icon: '💡',
-  },
-  {
-    target: 'contents',
-    title: 'Contents',
-    description: 'Register your published content and link it to the ideas that originated it.',
-    icon: '📄',
-  },
-  {
-    target: 'identity',
-    title: 'Identity & Insights',
-    description: 'Your creative mirror. Discover patterns, AI insights and how your identity as a creator evolves.',
-    icon: '✦',
-  },
-  {
-    target: 'activity',
-    title: 'Activity',
-    description: 'Track your publishing rhythm, growth trends and consistency over time.',
-    icon: '📊',
-  },
-];
 
 // Spotlight positions — must match sidebar nav item positions
 const SPOTLIGHT: Record<string, { top: number; left: number; width: number; height: number }> = {
@@ -44,6 +18,35 @@ type Props = {
 };
 
 export default function GuidedTour({ onComplete }: Props) {
+  const { t } = useTranslation();
+
+  const TOUR_STEPS = [
+    {
+      target: 'ideas',
+      title: t("tour.steps.ideas.title"),
+      description: t("tour.steps.ideas.description"),
+      icon: '💡',
+    },
+    {
+      target: 'contents',
+      title: t("tour.steps.contents.title"),
+      description: t("tour.steps.contents.description"),
+      icon: '📄',
+    },
+    {
+      target: 'identity',
+      title: t("tour.steps.identity.title"),
+      description: t("tour.steps.identity.description"),
+      icon: '✦',
+    },
+    {
+      target: 'activity',
+      title: t("tour.steps.activity.title"),
+      description: t("tour.steps.activity.description"),
+      icon: '📊',
+    },
+  ];
+
   const [step, setStep] = useState(0);
 
   const current = TOUR_STEPS[step];
@@ -80,7 +83,7 @@ export default function GuidedTour({ onComplete }: Props) {
         <div className="guided-tour__header">
           <span className="guided-tour__icon">{current.icon}</span>
           <span className="guided-tour__step-count">
-            {step + 1} / {TOUR_STEPS.length}
+            {step + 1} {t("tour.of")} {TOUR_STEPS.length}
           </span>
         </div>
         <h3 className="guided-tour__title">{current.title}</h3>
@@ -91,14 +94,14 @@ export default function GuidedTour({ onComplete }: Props) {
             onClick={handleSkip}
             type="button"
           >
-            Skip tour
+            {t("tour.skipTour")}
           </button>
           <button
             className="btn-primary guided-tour__next"
             onClick={handleNext}
             type="button"
           >
-            {isLast ? 'Done ✓' : 'Next →'}
+            {isLast ? t("tour.done") : t("tour.next")}
           </button>
         </div>
         <div className="guided-tour__dots">
