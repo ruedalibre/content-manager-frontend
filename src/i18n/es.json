@@ -93,7 +93,15 @@
     "noContents": "Sin contenidos aún",
     "addIdea": "💡 Agregar idea",
     "creating": "Creando...",
-    "updating": "Actualizando..."
+    "updating": "Actualizando...",
+    "firstPage": "Primera página",
+    "back5": "Retroceder 5 páginas",
+    "prevPage": "Página anterior",
+    "nextPage": "Página siguiente",
+    "forward5": "Avanzar 5 páginas",
+    "lastPage": "Última página",
+    "total": "contenidos en total",
+    "noContentsYet": "Sin contenidos aún. Empieza creando el primero."
   },
   "identity": {
     "title": "Identidad del Creador",
