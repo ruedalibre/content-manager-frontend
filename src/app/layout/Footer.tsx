@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./Footer.scss";
 
 export default function Footer() {
+  const { t } = useTranslation();
   const version = import.meta.env.VITE_APP_VERSION;
 
   const buildDate = import.meta.env.VITE_BUILD_DATE;
@@ -35,7 +37,7 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Terms of Service
+          {t("footer.terms")}
         </Link>
         <span className="footer__separator">·</span>
         <Link
@@ -44,7 +46,7 @@ export default function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Privacy Policy
+          {t("footer.privacy")}
         </Link>
       </div>
     </footer>

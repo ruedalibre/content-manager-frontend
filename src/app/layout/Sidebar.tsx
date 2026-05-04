@@ -1,5 +1,6 @@
 import { Lightbulb, FileText, Sparkles, BarChart3, Shield, X } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./Sidebar.scss";
 
 type Props = {
@@ -10,6 +11,8 @@ type Props = {
 };
 
 export default function Sidebar({ isOpen, onClose, onLogout, isAdmin }: Props) {
+  const { t } = useTranslation();
+
   return (
     <>
       {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
@@ -34,22 +37,22 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin }: Props) {
         <nav className="sidebar__nav">
           <NavLink to="/ideas" onClick={onClose}>
             <Lightbulb size={18} />
-            Ideas & Topics
+            {t("nav.ideas")}
           </NavLink>
 
           <NavLink to="/contents" onClick={onClose}>
             <FileText size={18} />
-            Contents
+            {t("nav.contents")}
           </NavLink>
 
           <NavLink to="/identity" onClick={onClose}>
             <Sparkles size={18} />
-            Identity & Insights
+            {t("nav.identity")}
           </NavLink>
 
           <NavLink to="/activity" onClick={onClose}>
             <BarChart3 size={18} />
-            Activity
+            {t("nav.activity")}
           </NavLink>
 
           {/* ADMIN */}
@@ -57,7 +60,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin }: Props) {
           {isAdmin && (
             <NavLink to="/admin" onClick={onClose}>
               <Shield size={18} />
-              Admin
+              {t("nav.admin")}
             </NavLink>
           )}
         </nav>
@@ -65,7 +68,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin }: Props) {
         {/* LOGOUT */}
 
         <button className="sidebar__logout" onClick={onLogout}>
-          Logout
+          {t("nav.logout")}
         </button>
       </aside>
     </>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { supabase } from "../../supabaseClient";
 import "./Login.scss";
 
@@ -8,6 +9,7 @@ type Mode = "signin" | "register";
 export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
 
   const [mode, setMode] = useState<Mode>("signin");
   const [email, setEmail] = useState("");
@@ -61,7 +63,7 @@ export default function Login() {
     });
 
     if (error) {
-      setError("Invalid email or password.");
+      setError(t("login.errors.invalidCredentials"));
       setLoading(false);
       return;
     }
@@ -79,13 +81,13 @@ export default function Login() {
 
     // Validar contraseñas
     if (password !== confirmPassword) {
-      setError("Passwords don't match.");
+      setError(t("login.errors.passwordMismatch"));
       setLoading(false);
       return;
     }
 
     if (password.length < 8) {
-      setError("Password must be at least 8 characters.");
+      setError(t("login.errors.passwordTooShort"));
       setLoading(false);
       return;
     }
@@ -105,13 +107,9 @@ export default function Login() {
 
       if (!checkData.invited) {
         if (checkData.reason === "pending") {
-          setError(
-            "Your email is on the waitlist but hasn't been invited yet. We'll notify you when your access is ready."
-          );
+          setError(t("login.errors.pendingInvite"));
         } else {
-          setError(
-            "This email hasn't been invited yet. Join the waitlist at content-intel.app"
-          );
+          setError(t("login.errors.notInvited"));
         }
         setLoading(false);
         return;
@@ -128,7 +126,7 @@ export default function Login() {
       }
 
       if (!authData.user) {
-        setError("Something went wrong. Please try again.");
+        setError(t("login.errors.generic"));
         setLoading(false);
         return;
       }
@@ -138,7 +136,7 @@ export default function Login() {
       navigate("/activity");
 
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("login.errors.generic"));
       setLoading(false);
     }
   };
@@ -153,9 +151,9 @@ export default function Login() {
         {/* HEADER */}
         <div className="login-header">
           <span className="login-logo">✦</span>
-          <h1 className="login-title">Content Intelligence</h1>
+          <h1 className="login-title">{t("login.title")}</h1>
           <p className="login-subtitle">
-            Your creative process, systematized.
+            {t("login.subtitle")}
           </p>
         </div>
 
@@ -166,14 +164,14 @@ export default function Login() {
             className={`login-toggle__btn ${mode === "signin" ? "login-toggle__btn--active" : ""}`}
             onClick={() => switchMode("signin")}
           >
-            Sign in
+            {t("login.signIn")}
           </button>
           <button
             type="button"
             className={`login-toggle__btn ${mode === "register" ? "login-toggle__btn--active" : ""}`}
             onClick={() => switchMode("register")}
           >
-            Create account
+            {t("login.createAccount")}
           </button>
         </div>
 
@@ -184,7 +182,7 @@ export default function Login() {
         >
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t("login.emailPlaceholder")}
             value={email}
             required
             onChange={(e) => setEmail(e.target.value)}
@@ -192,7 +190,7 @@ export default function Login() {
 
           <input
             type="password"
-            placeholder="Password"
+            placeholder={t("login.passwordPlaceholder")}
             value={password}
             required
             onChange={(e) => setPassword(e.target.value)}
@@ -201,7 +199,7 @@ export default function Login() {
           {mode === "register" && (
             <input
               type="password"
-              placeholder="Confirm password"
+              placeholder={t("login.confirmPasswordPlaceholder")}
               value={confirmPassword}
               required
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -217,8 +215,8 @@ export default function Login() {
             disabled={loading}
           >
             {loading
-              ? mode === "signin" ? "Signing in..." : "Creating account..."
-              : mode === "signin" ? "Sign in" : "Create account"
+              ? mode === "signin" ? t("login.signingIn") : t("login.creatingAccount")
+              : mode === "signin" ? t("login.signIn") : t("login.createAccount")
             }
           </button>
         </form>
@@ -228,7 +226,7 @@ export default function Login() {
           href="https://content-intel.app"
           className="login-back"
         >
-          ← Back to content-intel.app
+          {t("login.backToLanding")}
         </a>
 
       </div>
