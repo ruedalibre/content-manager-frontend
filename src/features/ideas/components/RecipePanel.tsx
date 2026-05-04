@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { type CreativeSession, type Idea, type IdeaTopic } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
 import { downloadBrief } from "../../../utils/downloadBrief";
@@ -8,13 +9,6 @@ import { downloadBrief } from "../../../utils/downloadBrief";
 ========================= */
 
 const EMOJIS = ["😞", "😕", "😐", "🙂", "😄"];
-const TOOLTIPS = [
-  "Completely off — needs a different approach",
-  "Not convincing — try again",
-  "Could be better — suggest an adjustment",
-  "Good — keeping this",
-  "Excellent — love it",
-];
 
 /* =========================
    TYPES
@@ -72,6 +66,16 @@ export default function RecipePanel({
   ideaTopics,
   platformName,
 }: RecipePanelProps) {
+  const { t } = useTranslation();
+
+  const TOOLTIPS = [
+    t("recipe.ratings.1"),
+    t("recipe.ratings.2"),
+    t("recipe.ratings.3"),
+    t("recipe.ratings.4"),
+    t("recipe.ratings.5"),
+  ];
+
   const [feedback, setFeedback] = useState<Record<string, number>>(
     session.feedback ?? {},
   );
@@ -307,7 +311,7 @@ export default function RecipePanel({
                 disabled={regenerating[aspectKey]}
                 onClick={() => handleRegenerate(aspectKey)}
               >
-                {regenerating[aspectKey] ? "Generating..." : "↺ Try again"}
+                {regenerating[aspectKey] ? t("recipe.tryAgainGenerating") : t("recipe.tryAgain")}
               </button>
             ) : (
               <span className="recipe-panel__no-more">
@@ -334,7 +338,7 @@ export default function RecipePanel({
               className="btn-choose-alt"
               onClick={() => handleChooseAlternative(aspectKey, altIndex)}
             >
-              Use this
+              {t("recipe.useThis")}
             </button>
           </div>
         ))}
@@ -371,7 +375,7 @@ export default function RecipePanel({
 
           {/* LEFT — COMBINATION */}
           <div className="recipe-panel__combination">
-            <h4 className="recipe-panel__section-title">Combination</h4>
+            <h4 className="recipe-panel__section-title">{t("recipe.combination")}</h4>
             <div className="recipe-panel__combo-item">
               <span className="recipe-panel__combo-label">💡 Idea</span>
               <span className="recipe-panel__combo-value">{idea.title}</span>
@@ -406,24 +410,22 @@ export default function RecipePanel({
           <div className="recipe-panel__recipe">
             <h4 className="recipe-panel__section-title">Brief</h4>
 
-            {renderAspect("angle", "Angle")}
-            {renderAspect("hook", "Hook")}
-            {renderAspect("tone", "Tone")}
-            {renderAspect("structure", "Structure", true)}
+            {renderAspect("angle", t("recipe.angle"))}
+            {renderAspect("hook", t("recipe.hook"))}
+            {renderAspect("tone", t("recipe.tone"))}
+            {renderAspect("structure", t("recipe.structure"), true)}
 
             {session.recipe.strategic_note && (
               <div className="recipe-panel__strategic-note">
                 <span className="recipe-panel__aspect-label">
-                  Strategic note
+                  {t("recipe.strategicNote")}
                 </span>
                 <p>{session.recipe.strategic_note}</p>
               </div>
             )}
 
             <p className="recipe-panel__disclaimer">
-              AI-assisted creative guide. AI-generated outputs may not
-              be eligible for copyright protection. Content Intelligence
-              App does not claim IP rights over this output.
+              {t("recipe.disclaimer")}
             </p>
           </div>
         </div>
@@ -439,28 +441,28 @@ export default function RecipePanel({
             })}
             type="button"
           >
-            ↓ Download brief
+            {t("recipe.downloadBrief")}
           </button>
           <button
             className="btn-secondary"
             onClick={handleCopyBrief}
             type="button"
           >
-            {copied ? "✓ Copied" : "⎘ Copy brief"}
+            {copied ? t("recipe.briefCopied") : t("recipe.copyBrief")}
           </button>
           <button
             className="btn-secondary"
             onClick={onDiscard}
             type="button"
           >
-            Discard
+            {t("recipe.discard")}
           </button>
           <button
             className="btn-primary"
             onClick={onCreateContent}
             type="button"
           >
-            Create content →
+            {t("recipe.createContent")} →
           </button>
           <button
             className={`btn-primary ${approved ? "btn-primary--approved" : ""}`}
@@ -468,7 +470,7 @@ export default function RecipePanel({
             disabled={saving || approved}
             type="button"
           >
-            {saving ? "Saving..." : approved ? "✓ Approved" : "Approve"}
+            {saving ? t("recipe.saving") : approved ? t("recipe.approved") : t("recipe.approve")}
           </button>
         </div>
 

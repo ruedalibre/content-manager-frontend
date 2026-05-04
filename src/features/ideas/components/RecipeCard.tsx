@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { type CreativeSession } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
 
@@ -14,6 +15,8 @@ export default function RecipeCard({
   onClick,
   showDiscardMessage,
 }: RecipeCardProps) {
+  const { t } = useTranslation();
+
   if (generating) {
     return (
       <div className="recipe-card recipe-card--generating">
@@ -23,7 +26,7 @@ export default function RecipeCard({
             <span />
             <span />
           </div>
-          <p>Generating recipe...</p>
+          <p>{t("recipe.generating")}</p>
         </div>
       </div>
     );
@@ -49,9 +52,9 @@ export default function RecipeCard({
       <div className="recipe-card recipe-card--empty">
         <div className="recipe-card__empty-content">
           <span className="recipe-card__empty-icon">📄</span>
-          <p className="recipe-card__empty-text">No recipe yet</p>
+          <p className="recipe-card__empty-text">{t("recipe.noRecipeYet")}</p>
           <p className="recipe-card__empty-hint">
-            Select platform and format, then generate
+            {t("recipe.selectPlatformFormat")}
           </p>
         </div>
       </div>
@@ -72,7 +75,7 @@ export default function RecipeCard({
       </div>
       <div className="recipe-card__footer">
         <span className="recipe-card__format">{session.format}</span>
-        <span className="recipe-card__cta">Ver receta completa →</span>
+        <span className="recipe-card__cta">{t("recipe.verRecetaCompleta")}</span>
       </div>
     </div>
   );
