@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDashboardData } from "../../features/dashboard/hooks/useDashboardData.ts";
 
 import KPISection from "../../features/dashboard/components/KPISection.tsx";
@@ -38,6 +39,7 @@ export default function Dashboard() {
 
   const growthVisual = getGrowthVisual(growthRateData);
 
+  const { t } = useTranslation();
   const { setTopbarContext } = useOutletContext<OutletContext>();
   const navigate = useNavigate();
 
@@ -47,15 +49,15 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (loading) {
-      setTopbarContext("Loading activity...");
+      setTopbarContext(t("activity.loadingActivity"));
       return;
     }
 
     if (data) {
       const labels = {
-        "7d": "Last 7 days",
-        "30d": "Last 30 days",
-        "90d": "Last 90 days",
+        "7d": t("activity.last7days"),
+        "30d": t("activity.last30days"),
+        "90d": t("activity.last90days"),
       };
 
       setTopbarContext(`${data.total_contents} contents · ${labels[period]}`);
@@ -68,7 +70,7 @@ export default function Dashboard() {
      LOADING
   ========================= */
 
-  if (loading) return <p>Loading activity...</p>;
+  if (loading) return <p>{t("activity.loadingActivity")}</p>;
   if (!data) return <p>No data available</p>;
 
   /* =========================
@@ -76,27 +78,27 @@ export default function Dashboard() {
   ========================= */
 
   if (data.total_contents === 0 && data.total_all_time > 0) {
-    const periodLabels = {
-      "7d": "the last 7 days",
-      "30d": "the last 30 days",
-      "90d": "the last 90 days",
+    const labels = {
+      "7d": t("activity.last7days"),
+      "30d": t("activity.last30days"),
+      "90d": t("activity.last90days"),
     };
 
     return (
       <div className="dashboard-empty">
-        <span className="dashboard-empty__badge">No activity</span>
+        <span className="dashboard-empty__badge">{t("activity.noActivity")}</span>
         <div className="dashboard-empty__icon">📅</div>
-        <h2>No content in {periodLabels[period]}</h2>
+        <h2>{t("activity.noContentInPeriod", { period: labels[period].toLowerCase() })}</h2>
         <p>
           You have published content before, but nothing in this period. Try
           selecting a different time range or create new content.
         </p>
         <div className="dashboard-empty__actions">
           <button className="btn-secondary" onClick={() => setPeriod("90d")}>
-            View last 90 days
+            {t("activity.viewLast90")}
           </button>
           <button className="btn-primary" onClick={() => navigate("/contents")}>
-            Go to Contents
+            {t("activity.goToContents")}
           </button>
         </div>
       </div>
@@ -110,16 +112,13 @@ export default function Dashboard() {
   if (data.total_contents === 0) {
     return (
       <div className="dashboard-empty">
-        <span className="dashboard-empty__badge">No data yet</span>
+        <span className="dashboard-empty__badge">{t("activity.noDataYet")}</span>
 
         <div className="dashboard-empty__icon">📊</div>
 
-        <h2>Your activity will appear here</h2>
+        <h2>{t("activity.activityWillAppear")}</h2>
 
-        <p>
-          Start by registering your first content to begin tracking your
-          production and performance.
-        </p>
+        <p>{t("activity.startByRegistering")}</p>
 
         <ul className="dashboard-empty__benefits">
           <li>Track your content production</li>
@@ -131,7 +130,7 @@ export default function Dashboard() {
           className="btn-primary"
           onClick={() => navigate("/contents?create=true")}
         >
-          + Create your first content
+          {t("activity.createFirstContent")}
         </button>
       </div>
     );
@@ -146,8 +145,8 @@ export default function Dashboard() {
       <div className="dashboard__performance">
         <div className="dashboard__performance-header">
           <div>
-            <h2>Performance</h2>
-            <p>Activity within selected period</p>
+            <h2>{t("activity.performance")}</h2>
+            <p>{t("activity.activityWithinPeriod")}</p>
           </div>
 
           <div className="dashboard__controls">
@@ -157,9 +156,9 @@ export default function Dashboard() {
                 setPeriod(e.target.value as "7d" | "30d" | "90d")
               }
             >
-              <option value="7d">Last 7 days</option>
-              <option value="30d">Last 30 days</option>
-              <option value="90d">Last 90 days</option>
+              <option value="7d">{t("activity.last7days")}</option>
+              <option value="30d">{t("activity.last30days")}</option>
+              <option value="90d">{t("activity.last90days")}</option>
             </select>
           </div>
         </div>
