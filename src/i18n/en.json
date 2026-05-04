@@ -93,7 +93,15 @@
     "noContents": "No contents yet",
     "addIdea": "💡 Add idea",
     "creating": "Creating...",
-    "updating": "Updating..."
+    "updating": "Updating...",
+    "firstPage": "First page",
+    "back5": "Back 5 pages",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "forward5": "Forward 5 pages",
+    "lastPage": "Last page",
+    "total": "total contents",
+    "noContentsYet": "No contents yet. Start by creating your first one."
   },
   "identity": {
     "title": "Creator Identity",

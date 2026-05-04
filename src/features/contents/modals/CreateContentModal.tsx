@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import "./CreateContentModal.scss";
 import { supabase } from "../../../supabaseClient.ts";
 import { useTopics } from "../../ideas/hooks/useTopics.ts";
@@ -58,6 +59,7 @@ type TopicComboboxProps = {
 };
 
 function TopicCombobox({ topics, selectedIds, onToggle }: TopicComboboxProps) {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
   const [isOpen, setIsOpen] = useState(false);
 
@@ -71,7 +73,7 @@ function TopicCombobox({ topics, selectedIds, onToggle }: TopicComboboxProps) {
     <div className="topic-combobox">
       <input
         type="text"
-        placeholder="Search topics..."
+        placeholder={t("ideas.searchTopics")}
         value={search}
         onChange={(e) => {
           setSearch(e.target.value);
@@ -113,6 +115,7 @@ export default function CreateContentModal({
   contentToEdit,
   idea,
 }: Props) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -394,10 +397,10 @@ export default function CreateContentModal({
       <div className="modal">
         <h3>
           {isEditMode
-            ? "Edit Content"
+            ? t("contents.editContent")
             : idea
-              ? "Create from Combination"
-              : "Create Content"}
+              ? t("contents.createFromCombination")
+              : t("contents.createContent")}
         </h3>
 
         {idea && !isEditMode && (
@@ -413,7 +416,7 @@ export default function CreateContentModal({
           {/* TITLE */}
           <input
             name="title"
-            placeholder="Title"
+            placeholder={t("contents.titlePlaceholder")}
             value={form.title}
             onChange={handleChange}
             required
@@ -422,7 +425,7 @@ export default function CreateContentModal({
           {/* DESCRIPTION */}
           <textarea
             name="description"
-            placeholder="Add some context or additional details (optional)"
+            placeholder={t("contents.descriptionPlaceholder")}
             value={form.description}
             onChange={handleChange}
             maxLength={500}
@@ -540,7 +543,7 @@ export default function CreateContentModal({
           {/* LOCATION */}
           <input
             name="location"
-            placeholder="Location"
+            placeholder={t("contents.locationPlaceholder")}
             value={form.location}
             onChange={handleChange}
           />
@@ -567,18 +570,18 @@ export default function CreateContentModal({
               }}
               className="btn-secondary"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <button type="submit" className="btn-primary" disabled={loading}>
               {loading
                 ? isEditMode
-                  ? "Updating..."
-                  : "Creating..."
+                  ? t("contents.updating")
+                  : t("contents.creating")
                 : isEditMode
-                  ? "Update"
+                  ? t("common.update")
                   : idea
-                    ? "Create from Combination"
-                    : "Create"}
+                    ? t("contents.createFromCombination")
+                    : t("common.create")}
             </button>
           </div>
         </form>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useOutletContext } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
@@ -51,6 +52,7 @@ type Idea = {
 ========================= */
 
 export default function Contents() {
+  const { t } = useTranslation();
   const [contents, setContents] = useState<ContentItem[]>([]);
   const [loading, setLoading] = useState(true);
   const { setTopbarContext } = useOutletContext<OutletContext>();
@@ -157,7 +159,7 @@ export default function Contents() {
   const fetchContents = async () => {
     try {
       setLoading(true);
-      setTopbarContext("Loading...");
+      setTopbarContext(t("common.loading"));
 
       const {
         data: { session },
@@ -284,7 +286,7 @@ export default function Contents() {
   useEffect(() => {
     if (!loading) {
       setTopbarContext(
-        total === 0 ? "No contents yet" : `${total} total contents`,
+        total === 0 ? t("contents.noContents") : `${total} ${t("contents.total")}`,
       );
     }
 
@@ -479,7 +481,7 @@ export default function Contents() {
         <div className="contents-filters">
           <input
             type="text"
-            placeholder="Search content..."
+            placeholder={t("contents.searchPlaceholder")}
             className="contents-filters__search"
             value={search}
             onChange={(e) => {
@@ -575,7 +577,7 @@ export default function Contents() {
             type="button"
             disabled={page === 1}
             onClick={() => setPage(1)}
-            title="First page"
+            title={t("contents.firstPage")}
           >
             «
           </button>
@@ -583,7 +585,7 @@ export default function Contents() {
             type="button"
             disabled={page <= 5}
             onClick={() => setPage((prev) => Math.max(prev - 5, 1))}
-            title="Back 5 pages"
+            title={t("contents.back5")}
           >
             ‹‹
           </button>
@@ -591,7 +593,7 @@ export default function Contents() {
             type="button"
             disabled={page === 1}
             onClick={() => setPage((prev) => prev - 1)}
-            title="Previous page"
+            title={t("contents.prevPage")}
           >
             ‹
           </button>
@@ -613,7 +615,7 @@ export default function Contents() {
             type="button"
             disabled={page >= totalPages}
             onClick={() => setPage((prev) => prev + 1)}
-            title="Next page"
+            title={t("contents.nextPage")}
           >
             ›
           </button>
@@ -621,7 +623,7 @@ export default function Contents() {
             type="button"
             disabled={page > totalPages - 5}
             onClick={() => setPage((prev) => Math.min(prev + 5, totalPages))}
-            title="Forward 5 pages"
+            title={t("contents.forward5")}
           >
             ››
           </button>
@@ -629,7 +631,7 @@ export default function Contents() {
             type="button"
             disabled={page === totalPages}
             onClick={() => setPage(totalPages)}
-            title="Last page"
+            title={t("contents.lastPage")}
           >
             »
           </button>
@@ -757,7 +759,7 @@ export default function Contents() {
                           title="Add to ideas library"
                           type="button"
                         >
-                          💡 Add idea
+                          {t("contents.addIdea")}
                         </button>
                       )}
                     </td>
@@ -792,7 +794,7 @@ export default function Contents() {
           <button
             disabled={page === 1}
             onClick={() => setPage(1)}
-            title="First page"
+            title={t("contents.firstPage")}
           >
             {"«"}
           </button>
@@ -801,7 +803,7 @@ export default function Contents() {
           <button
             disabled={page <= 5}
             onClick={() => setPage((prev) => Math.max(prev - 5, 1))}
-            title="Back 5 pages"
+            title={t("contents.back5")}
           >
             {"‹‹"}
           </button>
@@ -810,7 +812,7 @@ export default function Contents() {
           <button
             disabled={page === 1}
             onClick={() => setPage((prev) => prev - 1)}
-            title="Previous page"
+            title={t("contents.prevPage")}
           >
             {"‹"}
           </button>
@@ -837,7 +839,7 @@ export default function Contents() {
           <button
             disabled={page >= totalPages}
             onClick={() => setPage((prev) => prev + 1)}
-            title="Next page"
+            title={t("contents.nextPage")}
           >
             {"›"}
           </button>
@@ -846,7 +848,7 @@ export default function Contents() {
           <button
             disabled={page > totalPages - 5}
             onClick={() => setPage((prev) => Math.min(prev + 5, totalPages))}
-            title="Forward 5 pages"
+            title={t("contents.forward5")}
           >
             {"››"}
           </button>
@@ -855,7 +857,7 @@ export default function Contents() {
           <button
             disabled={page === totalPages}
             onClick={() => setPage(totalPages)}
-            title="Last page"
+            title={t("contents.lastPage")}
           >
             {"»"}
           </button>
