@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useOutletContext } from "react-router-dom";
 
 import { useContentDNA } from "../../features/insights/hooks/useContentDNA.ts";
@@ -32,6 +33,7 @@ type InsightExpanderProps = {
 ========================= */
 
 function InsightExpander({ code, insights, expanded, onToggle }: InsightExpanderProps) {
+  const { t } = useTranslation();
   const insight = insights.find((i) => i.code === code) ?? null;
   if (!insight) return null;
 
@@ -41,7 +43,7 @@ function InsightExpander({ code, insights, expanded, onToggle }: InsightExpander
         className="identity-insight-toggle"
         onClick={() => onToggle(code)}
       >
-        {expanded[code] ? "Hide insight" : "See insight"}
+        {expanded[code] ? t("identity.hideInsight") : t("identity.seeInsight")}
       </button>
 
       {expanded[code] && (
@@ -115,6 +117,7 @@ export default function Identity() {
     generateReport
   } = useCreativeReport();
 
+  const { t } = useTranslation();
   const [reportCopied, setReportCopied] = useState(false);
   const [expandedInsights, setExpandedInsights] = useState<Record<string, boolean>>({});
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -217,8 +220,8 @@ export default function Identity() {
       {/* ── HEADER ── */}
 
       <div className="identity-header">
-        <h2>Creator Identity</h2>
-        <p>Your creative fingerprint</p>
+        <h2>{t("identity.title")}</h2>
+        <p>{t("identity.subtitle")}</p>
       </div>
 
       {/* ── ROW 1 — Top ideas + Top topics ── */}
@@ -226,7 +229,7 @@ export default function Identity() {
       <div className="identity-row-two">
 
         <div className="identity-pattern-card">
-          <span className="section-label">Top ideas</span>
+          <span className="section-label">{t("identity.topIdeas")}</span>
           <ol className="identity-ideas-list">
             {(dna?.top_ideas ?? []).map((idea, i) => (
               <li key={i} className="identity-ideas-list__item">
@@ -241,7 +244,7 @@ export default function Identity() {
         </div>
 
         <div className="identity-pattern-card">
-          <span className="section-label">Top topics</span>
+          <span className="section-label">{t("identity.topTopics")}</span>
           <div className="identity-bars">
             {(dna?.topic_distribution ?? []).map((item) => (
               <div key={item.topic} className="identity-bars__row">
@@ -267,7 +270,7 @@ export default function Identity() {
       {/* ── ROW 2 — Content roles ancho completo ── */}
 
       <div className="identity-pattern-card" style={{ marginBottom: "12px" }}>
-        <span className="section-label">Content roles</span>
+        <span className="section-label">{t("identity.contentRoles")}</span>
         <div className="identity-roles-row">
           {(dna?.role_distribution ?? []).map((item) => (
             <div key={item.role} className="identity-stat-card">
@@ -289,7 +292,7 @@ export default function Identity() {
       <div className="identity-row-two">
 
         <div className="identity-pattern-card">
-          <span className="section-label">Platforms</span>
+          <span className="section-label">{t("identity.platforms")}</span>
           <div className="identity-bars">
             {(dna?.platform_distribution ?? []).map((item) => (
               <div key={item.platform} className="identity-bars__row">
@@ -311,7 +314,7 @@ export default function Identity() {
         </div>
 
         <div className="identity-pattern-card">
-          <span className="section-label">Formats</span>
+          <span className="section-label">{t("identity.formats")}</span>
           <div className="identity-bars">
             {(dna?.format_distribution ?? []).map((item) => (
               <div key={item.format} className="identity-bars__row">
@@ -338,7 +341,7 @@ export default function Identity() {
 
       {(aiLoading || (aiResult?.standout_insights?.length ?? 0) > 0) && (
         <section className="identity-section">
-          <span className="section-label">Standout insights</span>
+          <span className="section-label">{t("identity.standoutInsights")}</span>
           <div className="identity-highlights">
             {aiLoading ? (
               <>
@@ -371,7 +374,7 @@ export default function Identity() {
 
       {(aiLoading || (aiResult?.creative_style_tags?.length ?? 0) > 0) && (
         <section className="identity-section">
-          <span className="section-label">Creative style</span>
+          <span className="section-label">{t("identity.creativeStyle")}</span>
           <div className="identity-tags">
             {aiLoading ? (
               <>
@@ -401,8 +404,8 @@ export default function Identity() {
 
       <Collapsible
         icon="🔍"
-        title="Worth reflecting on"
-        subtitle="Patterns you might have missed"
+        title={t("identity.worthReflecting")}
+        subtitle={t("identity.worthReflectingSubtitle")}
         isOpen={openSections.reflecting}
         onToggle={() => toggleSection("reflecting")}
       >
@@ -413,7 +416,7 @@ export default function Identity() {
           </>
         ) : creativeInsights.length === 0 ? (
           <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
-            Not enough data yet to generate insights.
+            {t("identity.notEnoughData")}
           </p>
         ) : (
           creativeInsights.map((insight, i) => (
@@ -429,10 +432,10 @@ export default function Identity() {
 
       <Collapsible
         icon="✦"
-        title="Deep analysis"
+        title={t("identity.deepAnalysis")}
         subtitle={report
-          ? `Last generated ${new Date(generatedAt!).toLocaleDateString()}`
-          : "Full creative report · on demand"
+          ? `${t("identity.deepAnalysisLastGenerated")} ${new Date(generatedAt!).toLocaleDateString()}`
+          : t("identity.deepAnalysisSubtitle")
         }
         isOpen={openSections.deep}
         onToggle={() => toggleSection("deep")}
@@ -446,36 +449,34 @@ export default function Identity() {
 
             <div className="identity-report__section">
               <span className="identity-report__label">
-                Who you are as a creator
+                {t("identity.whoYouAre")}
               </span>
               <p className="identity-report__text">{report.identity}</p>
             </div>
 
             <div className="identity-report__section">
               <span className="identity-report__label">
-                What's happening in your content
+                {t("identity.whatsHappening")}
               </span>
               <p className="identity-report__text">{report.current_state}</p>
             </div>
 
             <div className="identity-report__section">
               <span className="identity-report__label">
-                Your biggest unexplored opportunity
+                {t("identity.biggestOpportunity")}
               </span>
               <p className="identity-report__text">{report.opportunity}</p>
             </div>
 
             <div className="identity-report__section identity-report__section--question">
               <span className="identity-report__label">
-                Worth sitting with
+                {t("identity.worthSittingWith")}
               </span>
               <p className="identity-report__question">{report.question}</p>
             </div>
 
             <p className="identity-report__disclaimer">
-              AI-assisted creative analysis. AI-generated outputs may not
-              be eligible for copyright protection. Content Intelligence
-              App does not claim IP rights over this output.
+              {t("identity.disclaimer")}
             </p>
 
             <div className="identity-report__footer">
@@ -488,7 +489,7 @@ export default function Identity() {
                   onClick={handleCopyReport}
                   type="button"
                 >
-                  {reportCopied ? "✓ Copied" : "⎘ Copy"}
+                  {reportCopied ? t("identity.copied") : t("identity.copyReport")}
                 </button>
                 <button
                   className="identity-report__download"
@@ -503,7 +504,7 @@ export default function Identity() {
                   disabled={generating}
                   type="button"
                 >
-                  {generating ? "Generating..." : "↺ Regenerate"}
+                  {generating ? t("identity.regenerating") : t("identity.regenerate")}
                 </button>
               </div>
             </div>
@@ -516,12 +517,10 @@ export default function Identity() {
         ) : (
           <div className="identity-report-placeholder">
             <p className="identity-report-placeholder__title">
-              Your creative report
+              {t("identity.reportTitle")}
             </p>
             <p className="identity-report-placeholder__sub">
-              A narrative analysis of your creative identity,
-              your strongest opportunities, and where your
-              creative work is heading.
+              {t("identity.reportSubtitle")}
             </p>
             {reportError && (
               <p className="identity-report__error">{reportError}</p>
@@ -533,8 +532,8 @@ export default function Identity() {
               type="button"
             >
               {generating
-                ? "Generating your report..."
-                : "✦ Generate report"}
+                ? t("identity.generatingReport")
+                : t("identity.generateReport")}
             </button>
             {generating && (
               <p className="identity-report-placeholder__hint">
