@@ -501,6 +501,7 @@ export default function CreateContentModal({
             <option value="personal">{t("contentRoles.personal")}</option>
             <option value="promotional">{t("contentRoles.promotional")}</option>
             <option value="curated">{t("contentRoles.curated")}</option>
+            <option value="sales">{t("contentRoles.sales")}</option>
           </select>
 
           {/* TOPICS */}
