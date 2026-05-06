@@ -451,7 +451,7 @@ export default function Contents() {
       setAddIdeaContent(null);
       setAddIdeaTitle("");
       setAddIdeaDescription("");
-      showSuccess("Idea saved to your library");
+      showSuccess(t("contents.saveIdea"));
     } catch (err) {
       setAddIdeaError(
         err instanceof Error ? err.message : "Failed to create idea"
@@ -472,7 +472,7 @@ export default function Contents() {
       <div className="contents-page">
         <div className="contents-page__header">
           <button className="btn-primary" onClick={handleCreate}>
-            + New Content
+            {t("contents.newContent")}
           </button>
         </div>
 
@@ -498,7 +498,7 @@ export default function Contents() {
               setPage(1);
             }}
           >
-            <option value="">All Platforms</option>
+            <option value="">{t("contents.allPlatforms")}</option>
 
             {platformOptions.map((p) => (
               <option key={p.id} value={p.id}>
@@ -515,11 +515,11 @@ export default function Contents() {
               setPage(1);
             }}
           >
-            <option value="">All Status</option>
+            <option value="">{t("contents.allStatus")}</option>
 
             {availableStatuses.map((s) => (
               <option key={s} value={s}>
-                {s}
+                {t(`status.${s}`, { defaultValue: s })}
               </option>
             ))}
           </select>
@@ -532,12 +532,13 @@ export default function Contents() {
               setPage(1);
             }}
           >
-            <option value="">All Roles</option>
-            <option value="educational">Educational</option>
-            <option value="inspirational">Inspirational</option>
-            <option value="personal">Personal</option>
-            <option value="promotional">Promotional</option>
-            <option value="curated">Curated</option>
+            <option value="">{t("contents.allRoles")}</option>
+            <option value="educational">{t("contentRoles.educational")}</option>
+            <option value="inspirational">{t("contentRoles.inspirational")}</option>
+            <option value="personal">{t("contentRoles.personal")}</option>
+            <option value="promotional">{t("contentRoles.promotional")}</option>
+            <option value="curated">{t("contentRoles.curated")}</option>
+            <option value="sales">{t("contentRoles.sales")}</option>
           </select>
 
           <select
@@ -548,7 +549,7 @@ export default function Contents() {
               setPage(1);
             }}
           >
-            <option value="">All Topics</option>
+            <option value="">{t("contents.allTopics")}</option>
             {topicOptions.map((t) => (
               <option key={t.id} value={t.id}>
                 {t.name}
@@ -561,14 +562,14 @@ export default function Contents() {
             className="btn-secondary"
             onClick={clearFilters}
           >
-            Clear
+            {t("contents.clearFilters")}
           </button>
         </div>
 
         <div className="contents-toolbar">
           <div className="contents-results">
             <span>
-              Showing {contents.length} of {total} contents
+              {t("contents.showing", { count: contents.length, total: total })}
             </span>
           </div>
         </div>
@@ -609,7 +610,7 @@ export default function Contents() {
               }}
               className="pagination__input"
             />
-            <span className="pagination__of">of {totalPages || 1}</span>
+            <span className="pagination__of">{t("contents.pageOf")} {totalPages || 1}</span>
           </span>
           <button
             type="button"
@@ -643,16 +644,16 @@ export default function Contents() {
           <table className="contents-table">
             <thead>
               <tr>
-                <th>Title</th>
-                <th>Platform</th>
-                <th>Format</th>
-                <th>Role</th>
-                <th>Topics</th>
-                <th>Status</th>
-                <th>Reusable</th>
-                <th>Created</th>
-                <th>Published</th>
-                <th>Archived</th>
+                <th>{t("contents.colTitle")}</th>
+                <th>{t("contents.colPlatform")}</th>
+                <th>{t("contents.colFormat")}</th>
+                <th>{t("contents.colRole")}</th>
+                <th>{t("contents.colTopics")}</th>
+                <th>{t("contents.colStatus")}</th>
+                <th>{t("contents.colReusable")}</th>
+                <th>{t("contents.colCreated")}</th>
+                <th>{t("contents.colPublished")}</th>
+                <th>{t("contents.colArchived")}</th>
                 <th></th>
                 <th></th>
               </tr>
@@ -670,7 +671,7 @@ export default function Contents() {
 
               {!loading && contents.length === 0 && (
                 <tr>
-                  <td colSpan={9}>No contents found</td>
+                  <td colSpan={9}>{t("contents.noContentsFound")}</td>
                 </tr>
               )}
 
@@ -705,7 +706,7 @@ export default function Contents() {
                     <td>
                       {item.content_role ? (
                         <span className={`role role--${item.content_role}`}>
-                          {item.content_role}
+                          {t(`contentRoles.${item.content_role}`, { defaultValue: item.content_role })}
                         </span>
                       ) : (
                         <span className="role role--none">—</span>
@@ -726,11 +727,11 @@ export default function Contents() {
 
                     <td>
                       <span className={`status ${item.status}`}>
-                        {item.status}
+                        {t(`status.${item.status}`, { defaultValue: item.status })}
                       </span>
                     </td>
 
-                    <td>{item.is_reusable ? "Yes" : "No"}</td>
+                    <td>{item.is_reusable ? t("contents.reusableYes") : t("contents.reusableNo")}</td>
 
                     <td>{new Date(item.created_at).toLocaleDateString()}</td>
 
@@ -769,14 +770,14 @@ export default function Contents() {
                         className="btn-link"
                         onClick={() => handleEdit(item)}
                       >
-                        Edit
+                        {t("contents.edit")}
                       </button>
 
                       <button
                         className="btn-link btn-link--danger"
                         onClick={() => handleDeleteClick(item)}
                       >
-                        Delete
+                        {t("contents.delete")}
                       </button>
                     </td>
                   </tr>
@@ -832,7 +833,7 @@ export default function Contents() {
               }}
               className="pagination__input"
             />
-            <span>of {totalPages || 1}</span>
+            <span>{t("contents.pageOf")} {totalPages || 1}</span>
           </span>
 
           {/* Página siguiente */}
@@ -875,8 +876,8 @@ export default function Contents() {
             fetchContents();
             showSuccess(
               isEditing
-                ? "Content updated successfully"
-                : "Content created successfully",
+                ? t("contents.contentUpdated")
+                : t("contents.contentCreated"),
             );
           }}
           contentToEdit={contentToEdit}
@@ -886,10 +887,10 @@ export default function Contents() {
         {isDeleteModalOpen && contentToDelete && (
           <div className="delete-modal-overlay">
             <div className="delete-modal">
-              <h3>Delete content</h3>
+              <h3>{t("contents.deleteModalTitle")}</h3>
 
               <p>
-                This will permanently remove{" "}
+                {t("contents.deleteModalBody")}{" "}
                 <strong>{contentToDelete.title}</strong>
               </p>
 
@@ -901,7 +902,7 @@ export default function Contents() {
                     setContentToDelete(null);
                   }}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
 
                 <button
@@ -909,7 +910,7 @@ export default function Contents() {
                   onClick={handleConfirmDelete}
                   disabled={isDeleting}
                 >
-                  {isDeleting ? "Deleting..." : "Delete"}
+                  {isDeleting ? t("contents.deleting") : t("contents.delete")}
                 </button>
               </div>
             </div>
@@ -924,14 +925,14 @@ export default function Contents() {
 
         {showToast && lastDeleted && (
           <div className="toast">
-            <span>Content deleted.</span>
+            <span>{t("contents.contentDeleted")}</span>
 
             <button
               className="toast__undo"
               onClick={handleUndo}
               disabled={isRestoring}
             >
-              {isRestoring ? "Restoring..." : "Undo"}
+              {isRestoring ? t("contents.restoring") : t("contents.undoDelete")}
             </button>
           </div>
         )}
@@ -939,22 +940,21 @@ export default function Contents() {
         {addIdeaContent && (
           <div className="modal-overlay">
             <div className="modal">
-              <h3>Add to ideas library</h3>
+              <h3>{t("contents.addToLibrary")}</h3>
               <p className="modal__subtitle">
-                Create an idea from this content. You can edit the title
-                to make it more conceptual.
+                {t("contents.addToLibrarySubtitle")}
               </p>
               <input
                 value={addIdeaTitle}
                 onChange={(e) => setAddIdeaTitle(e.target.value)}
-                placeholder="Idea title"
+                placeholder={t("ideas.ideaTitlePlaceholder")}
                 autoFocus
                 maxLength={100}
               />
               <textarea
                 value={addIdeaDescription}
                 onChange={(e) => setAddIdeaDescription(e.target.value)}
-                placeholder="Description (optional)"
+                placeholder={t("ideas.descriptionOptional")}
                 rows={2}
               />
               {addIdeaError && (
@@ -972,7 +972,7 @@ export default function Contents() {
                   disabled={addIdeaSaving}
                   type="button"
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
                 <button
                   className="btn-primary"
@@ -980,7 +980,7 @@ export default function Contents() {
                   disabled={addIdeaSaving || !addIdeaTitle.trim()}
                   type="button"
                 >
-                  {addIdeaSaving ? "Saving..." : "Save idea"}
+                  {addIdeaSaving ? t("contents.savingIdea") : t("contents.saveIdea")}
                 </button>
               </div>
             </div>
