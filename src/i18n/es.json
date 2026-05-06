@@ -220,7 +220,13 @@
     "noDataAvailable": "Sin datos disponibles",
     "heatmapTooltipOn": "el",
     "heatmapContent": "publicación",
-    "heatmapContents": "publicaciones"
+    "heatmapContents": "publicaciones",
+    "totalContents": "Total de contenidos",
+    "platformsUsed": "Plataformas usadas",
+    "reusable": "Reutilizables",
+    "growthRate": "Tasa de crecimiento",
+    "consistency": "Consistencia",
+    "publishingActivity": "Tu actividad de publicación durante el año"
   },
   "recipe": {
     "angle": "Ángulo",
