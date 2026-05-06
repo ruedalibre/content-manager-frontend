@@ -37,10 +37,9 @@ export default function RecipeCard({
       <div className="recipe-card recipe-card--discarded">
         <div className="recipe-card__empty-content">
           <span className="recipe-card__empty-icon">🔄</span>
-          <p className="recipe-card__empty-text">Recipe discarded</p>
+          <p className="recipe-card__empty-text">{t("recipe.discarded")}</p>
           <p className="recipe-card__empty-hint">
-            Try varying your combination — change topics, platform or format to
-            get a different recipe.
+            {t("recipe.tryNewCombination")}
           </p>
         </div>
       </div>

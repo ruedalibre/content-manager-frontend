@@ -10,6 +10,7 @@
     "add": "Agregar",
     "back": "Volver",
     "loading": "Cargando...",
+    "saving": "Guardando...",
     "error": "Algo salió mal. Intenta de nuevo.",
     "noData": "Sin datos aún"
   },
@@ -77,6 +78,7 @@
     "confirmArchiveTopic": "Archivar tema",
     "confirmArchiveTopicMessage": "El tema no aparecerá en los selectores pero las asociaciones existentes se conservan.",
     "ideaTitlePlaceholder": "Título de la idea",
+    "descriptionOptional": "Descripción (opcional)",
     "suggestions": "Sugerencias basadas en tu contenido",
     "generatingIdeas": "Generando ideas para ti..."
   },
@@ -183,7 +185,18 @@
     "combination": "Combinación",
     "verRecetaCompleta": "Ver receta completa →",
     "noRecipeYet": "Sin receta aún",
-    "selectPlatformFormat": "Selecciona plataforma y formato, luego genera"
+    "selectPlatformFormat": "Selecciona plataforma y formato, luego genera",
+    "discarded": "Receta descartada",
+    "tryNewCombination": "Prueba una nueva combinación arriba"
+  },
+  "status": {
+    "generated": "Generada",
+    "approved": "Aprobada",
+    "implemented": "Implementada",
+    "discarded": "Descartada",
+    "draft": "Borrador",
+    "published": "Publicado",
+    "archived": "Archivado"
   },
   "onboarding": {
     "welcome": "Bienvenido a Content Intelligence",
