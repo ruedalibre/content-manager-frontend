@@ -761,12 +761,12 @@ export default function Ideas() {
                                 }
                                 className="idea-card__select"
                               >
-                                <option value="">{t("ideas.rolePlaceholder")}</option>
-                                <option value="educational">{t("ideas.roleEducational")}</option>
-                                <option value="inspirational">{t("ideas.roleInspirational")}</option>
-                                <option value="personal">{t("ideas.rolePersonal")}</option>
-                                <option value="promotional">{t("ideas.rolePromotional")}</option>
-                                <option value="curated">{t("ideas.roleCurated")}</option>
+                                <option value="">{t("contentRoles.selectRole")}</option>
+                                <option value="educational">{t("contentRoles.educational")}</option>
+                                <option value="inspirational">{t("contentRoles.inspirational")}</option>
+                                <option value="personal">{t("contentRoles.personal")}</option>
+                                <option value="promotional">{t("contentRoles.promotional")}</option>
+                                <option value="curated">{t("contentRoles.curated")}</option>
                               </select>
                             </div>
 

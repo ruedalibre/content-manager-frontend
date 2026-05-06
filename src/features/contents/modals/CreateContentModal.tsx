@@ -495,12 +495,12 @@ export default function CreateContentModal({
             value={form.content_role}
             onChange={handleChange}
           >
-            <option value="">Select role (optional)</option>
-            <option value="educational">Educational</option>
-            <option value="inspirational">Inspirational</option>
-            <option value="personal">Personal</option>
-            <option value="promotional">Promotional</option>
-            <option value="curated">Curated</option>
+            <option value="">{t("contentRoles.selectRole")}</option>
+            <option value="educational">{t("contentRoles.educational")}</option>
+            <option value="inspirational">{t("contentRoles.inspirational")}</option>
+            <option value="personal">{t("contentRoles.personal")}</option>
+            <option value="promotional">{t("contentRoles.promotional")}</option>
+            <option value="curated">{t("contentRoles.curated")}</option>
           </select>
 
           {/* TOPICS */}
