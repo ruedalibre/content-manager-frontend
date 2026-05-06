@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   idea: {
@@ -26,6 +27,7 @@ export default function IdeaCard({
   onUpdate,
   onDelete,
 }: Props) {
+  const { t } = useTranslation();
   const isGenerated = idea.source === "generated";
 
   const [isEditing, setIsEditing] = useState(false);
@@ -81,7 +83,7 @@ export default function IdeaCard({
             isGenerated ? "badge--generated" : "badge--manual"
           }`}
         >
-          {isGenerated ? "Generated" : "Manual"}
+          {isGenerated ? t("ideas.generated") : t("ideas.manual")}
         </span>
 
         {!isEditing && (
@@ -89,7 +91,7 @@ export default function IdeaCard({
             <button
               className="btn-icon"
               onClick={() => setIsEditing(true)}
-              title="Edit idea"
+              title={t("common.edit")}
             >
               ✏️
             </button>
@@ -97,7 +99,7 @@ export default function IdeaCard({
               className="btn-icon btn-icon--danger"
               onClick={handleDelete}
               disabled={deleting}
-              title="Delete idea"
+              title={t("common.delete")}
             >
               {deleting ? "..." : "🗑️"}
             </button>
@@ -110,13 +112,13 @@ export default function IdeaCard({
           <input
             value={editTitle}
             onChange={(e) => setEditTitle(e.target.value)}
-            placeholder="Idea title"
+            placeholder={t("ideas.ideaTitlePlaceholder")}
             autoFocus
           />
           <textarea
             value={editDescription}
             onChange={(e) => setEditDescription(e.target.value)}
-            placeholder="Description (optional)"
+            placeholder={t("ideas.descriptionOptional")}
             rows={2}
           />
           {error && <p className="idea-card__error">{error}</p>}
@@ -133,7 +135,7 @@ export default function IdeaCard({
               onClick={handleSave}
               disabled={saving || !editTitle.trim()}
             >
-              {saving ? "Saving..." : "Save"}
+              {saving ? t("common.saving") : t("common.save")}
             </button>
           </div>
         </div>
