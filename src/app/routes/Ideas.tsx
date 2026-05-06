@@ -678,12 +678,12 @@ export default function Ideas() {
                             {isEditingTopicsThis && (
                               <div className="idea-card__topic-selector">
                                 <p className="idea-card__topic-selector-label">
-                                  Select topics:
+                                  {t("ideas.selectTopics")}
                                 </p>
                                 <div className="idea-card__topic-options">
                                   {topics.length === 0 ? (
                                     <p className="idea-card__no-topics">
-                                      No topics yet.
+                                      {t("ideas.noTopicsYet")}
                                     </p>
                                   ) : (
                                     topics.map((t: Topic) => (
@@ -704,7 +704,7 @@ export default function Ideas() {
                                     onClick={() => setEditingIdeaTopics(null)}
                                     type="button"
                                   >
-                                    Cancel
+                                    {t("common.cancel")}
                                   </button>
                                   <button
                                     className="btn-primary"
@@ -712,7 +712,7 @@ export default function Ideas() {
                                     disabled={savingTopics}
                                     type="button"
                                   >
-                                    {savingTopics ? "Saving..." : "Save"}
+                                    {savingTopics ? t("common.saving") : t("common.save")}
                                   </button>
                                 </div>
                               </div>
@@ -727,7 +727,7 @@ export default function Ideas() {
                                 }
                                 className="idea-card__select"
                               >
-                                <option value="">Platform</option>
+                                <option value="">{t("ideas.platformPlaceholder")}</option>
                                 {platforms.map((p) => (
                                   <option key={p.id} value={p.id}>
                                     {p.name}
@@ -744,7 +744,7 @@ export default function Ideas() {
                                 disabled={!state.platform_id}
                                 className="idea-card__select"
                               >
-                                <option value="">Format</option>
+                                <option value="">{t("ideas.formatPlaceholder")}</option>
                                 {formats.map((f) => (
                                   <option key={f} value={f}>
                                     {f}
@@ -761,14 +761,12 @@ export default function Ideas() {
                                 }
                                 className="idea-card__select"
                               >
-                                <option value="">Role (optional)</option>
-                                <option value="educational">Educational</option>
-                                <option value="inspirational">
-                                  Inspirational
-                                </option>
-                                <option value="personal">Personal</option>
-                                <option value="promotional">Promotional</option>
-                                <option value="curated">Curated</option>
+                                <option value="">{t("ideas.rolePlaceholder")}</option>
+                                <option value="educational">{t("ideas.roleEducational")}</option>
+                                <option value="inspirational">{t("ideas.roleInspirational")}</option>
+                                <option value="personal">{t("ideas.rolePersonal")}</option>
+                                <option value="promotional">{t("ideas.rolePromotional")}</option>
+                                <option value="curated">{t("ideas.roleCurated")}</option>
                               </select>
                             </div>
 
@@ -780,7 +778,7 @@ export default function Ideas() {
                             <div className="idea-card__footer">
                               <span className="idea-card__stats">
                                 {contentCount === 0
-                                  ? "No contents yet"
+                                  ? t("ideas.noContentsYet")
                                   : `${contentCount} ${contentCount === 1 ? t("ideas.content") : t("ideas.contents")}`}
                               </span>
                               <button
@@ -794,8 +792,8 @@ export default function Ideas() {
                                 type="button"
                               >
                                 {state.generating
-                                  ? "Generating..."
-                                  : "✨ Generate"}
+                                  ? t("recipe.generating")
+                                  : t("recipe.generate")}
                               </button>
                             </div>
                           </>
