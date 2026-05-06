@@ -76,7 +76,7 @@ export default function ContentGrowthCumulativeChart({ data }: Props) {
 
               return formatChartTooltip(raw);
             }}
-            formatter={(value: number) => [value, t("activity.chartCumulative")]}
+            formatter={(value: number | undefined) => [value, t("activity.chartCumulative")]}
           />
 
           {/* LINE */}
