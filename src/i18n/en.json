@@ -210,7 +210,17 @@
     "startByRegistering": "Start by registering your first content to begin tracking your production and performance.",
     "createFirstContent": "+ Create your first content",
     "performance": "Performance",
-    "activityWithinPeriod": "Activity within selected period"
+    "activityWithinPeriod": "Activity within selected period",
+    "contentsByPlatform": "Contents by Platform",
+    "contentGrowthTimeline": "Content Growth Timeline",
+    "cumulativeGrowth": "Cumulative Growth",
+    "trackProduction": "Track your content production",
+    "identifyPlatforms": "Identify your top platforms",
+    "understandGrowth": "Understand your growth",
+    "noDataAvailable": "No data available",
+    "heatmapTooltipOn": "on",
+    "heatmapContent": "publication",
+    "heatmapContents": "publications"
   },
   "recipe": {
     "angle": "Angle",

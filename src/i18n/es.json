@@ -210,7 +210,17 @@
     "startByRegistering": "Empieza registrando tu primer contenido para comenzar a rastrear tu producción.",
     "createFirstContent": "+ Crear tu primer contenido",
     "performance": "Desempeño",
-    "activityWithinPeriod": "Actividad en el período seleccionado"
+    "activityWithinPeriod": "Actividad en el período seleccionado",
+    "contentsByPlatform": "Contenidos por plataforma",
+    "contentGrowthTimeline": "Evolución de contenidos",
+    "cumulativeGrowth": "Crecimiento acumulado",
+    "trackProduction": "Rastrea tu producción de contenido",
+    "identifyPlatforms": "Identifica tus plataformas principales",
+    "understandGrowth": "Entiende tu crecimiento",
+    "noDataAvailable": "Sin datos disponibles",
+    "heatmapTooltipOn": "el",
+    "heatmapContent": "publicación",
+    "heatmapContents": "publicaciones"
   },
   "recipe": {
     "angle": "Ángulo",
