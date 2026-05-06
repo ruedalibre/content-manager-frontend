@@ -18,6 +18,7 @@ export type UserProfile = {
   onboarding_skipped: boolean;
   onboarding_completed_at: string | null;
   tour_status: 'pending' | 'completed' | 'dismissed' | null;
+  preferred_language: 'en' | 'es' | null;
   created_at: string;
   updated_at: string;
 };
@@ -162,6 +163,14 @@ export function useUserProfile() {
     }
   };
 
+  const updateLanguage = async (lang: 'en' | 'es') => {
+    try {
+      await updateProfile({ preferred_language: lang } as any);
+    } catch (err) {
+      console.error("Language update error:", err);
+    }
+  };
+
   const needsOnboarding =
     !loading &&
     profile !== null &&
@@ -193,5 +202,6 @@ export function useUserProfile() {
     skipOnboarding,
     completeOnboarding,
     updateTourStatus,
+    updateLanguage,
   };
 }
