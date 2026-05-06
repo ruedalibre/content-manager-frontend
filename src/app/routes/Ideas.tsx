@@ -517,12 +517,12 @@ export default function Ideas() {
                   onClick={() => setFilter(f)}
                   type="button"
                 >
-                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                  {f === "all" ? t("ideas.filterAll") : f === "manual" ? t("ideas.manual") : t("ideas.generated")}
                 </button>
               ))}
             </div>
             <div className="ideas-stats">
-              <span>{ideas.length} ideas</span>
+              <span>{ideas.length} {t("ideas.ideasCount")}</span>
               <span>·</span>
               <span>
                 {ideas.filter((i) => (i.sessions?.length ?? 0) > 0).length} {t("ideas.withRecipe")}
@@ -539,7 +539,7 @@ export default function Ideas() {
             </div>
           </div>
 
-          {loading && <p className="ideas-loading">Loading ideas...</p>}
+          {loading && <p className="ideas-loading">{t("ideas.loadingIdeas")}</p>}
           {error && <p className="ideas-error">{error}</p>}
 
           {/* DUAL GRID */}
@@ -553,8 +553,8 @@ export default function Ideas() {
 
               {filteredIdeas.length > 0 && (
                 <div className="ideas-dual-headers">
-                  <span>Idea</span>
-                  <span>Brief</span>
+                  <span>{t("ideas.columnIdea")}</span>
+                  <span>{t("ideas.columnBrief")}</span>
                 </div>
               )}
 
