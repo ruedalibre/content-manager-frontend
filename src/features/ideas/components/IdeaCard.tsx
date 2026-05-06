@@ -50,7 +50,7 @@ export default function IdeaCard({
       });
       setIsEditing(false);
     } catch {
-      setError("Failed to update idea. Please try again.");
+      setError(t("ideas.failedUpdate"));
     } finally {
       setSaving(false);
     }
@@ -63,7 +63,7 @@ export default function IdeaCard({
     try {
       await onDelete?.(idea.id);
     } catch {
-      setError("Failed to delete idea. Please try again.");
+      setError(t("ideas.failedDelete"));
       setDeleting(false);
     }
   };
@@ -147,7 +147,7 @@ export default function IdeaCard({
           )}
           <div className="idea-card__actions">
             <button className="btn-secondary" onClick={() => onUseIdea?.(idea)}>
-              Use idea
+              {t("ideas.useIdea")}
             </button>
           </div>
         </>
