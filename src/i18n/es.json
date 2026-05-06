@@ -87,14 +87,17 @@
     "noContentsYet": "Sin contenidos aún",
     "platformPlaceholder": "Plataforma",
     "formatPlaceholder": "Formato",
-    "rolePlaceholder": "Rol (opcional)",
-    "roleEducational": "Educativo",
-    "roleInspirational": "Inspiracional",
-    "rolePersonal": "Personal",
-    "rolePromotional": "Promocional",
-    "roleCurated": "Curado",
     "suggestions": "Sugerencias basadas en tu contenido",
     "generatingIdeas": "Generando ideas para ti..."
+  },
+  "contentRoles": {
+    "selectRole": "Seleccionar rol (opcional)",
+    "educational": "Educativo",
+    "inspirational": "Inspiracional",
+    "personal": "Personal",
+    "promotional": "Promocional",
+    "curated": "Curado",
+    "sales": "Comercial"
   },
   "contents": {
     "title": "Contenidos",
