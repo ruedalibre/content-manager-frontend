@@ -226,7 +226,9 @@
     "reusable": "Reusable",
     "growthRate": "Growth Rate",
     "consistency": "Consistency",
-    "publishingActivity": "Your publishing activity across the year"
+    "publishingActivity": "Your publishing activity across the year",
+    "chartContents": "Contents",
+    "chartCumulative": "Cumulative contents"
   },
   "recipe": {
     "angle": "Angle",
