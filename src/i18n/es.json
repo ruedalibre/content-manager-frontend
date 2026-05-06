@@ -226,7 +226,9 @@
     "reusable": "Reutilizables",
     "growthRate": "Tasa de crecimiento",
     "consistency": "Consistencia",
-    "publishingActivity": "Tu actividad de publicación durante el año"
+    "publishingActivity": "Tu actividad de publicación durante el año",
+    "chartContents": "Contenidos",
+    "chartCumulative": "Contenidos acumulados"
   },
   "recipe": {
     "angle": "Ángulo",

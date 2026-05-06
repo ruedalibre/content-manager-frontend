@@ -7,6 +7,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
+import { useTranslation } from "react-i18next";
 
 import {
   sortChartData,
@@ -24,6 +25,8 @@ type Props = {
 };
 
 export default function ContentGrowthCumulativeChart({ data }: Props) {
+  const { t } = useTranslation();
+
   if (!data || data.length === 0) return null;
 
   /* -------------------------
@@ -73,6 +76,7 @@ export default function ContentGrowthCumulativeChart({ data }: Props) {
 
               return formatChartTooltip(raw);
             }}
+            formatter={(value: number) => [value, t("activity.chartCumulative")]}
           />
 
           {/* LINE */}
