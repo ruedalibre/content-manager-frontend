@@ -90,7 +90,7 @@ export default function ContentGrowthTimelineChart({ data }: Props) {
 
               return formatChartTooltip(raw);
             }}
-            formatter={(value: number) => [value, t("activity.chartContents")]}
+            formatter={(value: number | undefined) => [value ?? 0, t("activity.chartContents")]}
           />
 
           {/* LINE */}
