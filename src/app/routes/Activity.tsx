@@ -71,7 +71,7 @@ export default function Dashboard() {
   ========================= */
 
   if (loading) return <p>{t("activity.loadingActivity")}</p>;
-  if (!data) return <p>No data available</p>;
+  if (!data) return <p>{t("activity.noDataAvailable")}</p>;
 
   /* =========================
      EMPTY STATE - NO CONTENTS IN PERIOD
@@ -90,8 +90,7 @@ export default function Dashboard() {
         <div className="dashboard-empty__icon">📅</div>
         <h2>{t("activity.noContentInPeriod", { period: labels[period].toLowerCase() })}</h2>
         <p>
-          You have published content before, but nothing in this period. Try
-          selecting a different time range or create new content.
+          {t("activity.noContentInPeriodDesc")}
         </p>
         <div className="dashboard-empty__actions">
           <button className="btn-secondary" onClick={() => setPeriod("90d")}>
@@ -121,9 +120,9 @@ export default function Dashboard() {
         <p>{t("activity.startByRegistering")}</p>
 
         <ul className="dashboard-empty__benefits">
-          <li>Track your content production</li>
-          <li>Identify your top platforms</li>
-          <li>Understand your growth</li>
+          <li>{t("activity.trackProduction")}</li>
+          <li>{t("activity.identifyPlatforms")}</li>
+          <li>{t("activity.understandGrowth")}</li>
         </ul>
 
         <button

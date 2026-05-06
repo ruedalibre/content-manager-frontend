@@ -1,4 +1,5 @@
 import { useMemo, useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import "./ActivityHeatmap.scss";
 
 import { parseLocalDate } from "../../../utils/chartDate.ts";
@@ -21,6 +22,7 @@ type Props = {
 ========================= */
 
 export default function ActivityHeatmap({ data }: Props) {
+  const { t } = useTranslation();
   const [tooltip, setTooltip] = useState<{
     x: number;
     y: number;
@@ -248,8 +250,9 @@ export default function ActivityHeatmap({ data }: Props) {
           className="heatmap__tooltip"
           style={{ left: tooltip.x, top: tooltip.y }}
         >
-          <strong>{tooltip.value}</strong> publication
-          {tooltip.value !== 1 ? "s" : ""} on{" "}
+          <strong>{tooltip.value}</strong>{" "}
+          {tooltip.value !== 1 ? t("activity.heatmapContents") : t("activity.heatmapContent")}{" "}
+          {t("activity.heatmapTooltipOn")}{" "}
           {parseLocalDate(tooltip.date).toLocaleDateString()}
         </div>
       )}
