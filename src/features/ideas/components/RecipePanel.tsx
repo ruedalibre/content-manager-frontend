@@ -377,12 +377,12 @@ export default function RecipePanel({
           <div className="recipe-panel__combination">
             <h4 className="recipe-panel__section-title">{t("recipe.combination")}</h4>
             <div className="recipe-panel__combo-item">
-              <span className="recipe-panel__combo-label">💡 Idea</span>
+              <span className="recipe-panel__combo-label">{t("recipe.comboIdea")}</span>
               <span className="recipe-panel__combo-value">{idea.title}</span>
             </div>
             {idea.topics && idea.topics.length > 0 && (
               <div className="recipe-panel__combo-item">
-                <span className="recipe-panel__combo-label">🏷️ Topics</span>
+                <span className="recipe-panel__combo-label">{t("recipe.comboTopics")}</span>
                 <div className="recipe-panel__combo-chips">
                   {idea.topics.map((t) => (
                     <span key={t.id} className="topic-chip topic-chip--small">
@@ -393,12 +393,12 @@ export default function RecipePanel({
               </div>
             )}
             <div className="recipe-panel__combo-item">
-              <span className="recipe-panel__combo-label">📱 Format</span>
+              <span className="recipe-panel__combo-label">{t("recipe.comboFormat")}</span>
               <span className="recipe-panel__combo-value">{session.format}</span>
             </div>
             {session.content_role && (
               <div className="recipe-panel__combo-item">
-                <span className="recipe-panel__combo-label">🎭 Role</span>
+                <span className="recipe-panel__combo-label">{t("recipe.comboRole")}</span>
                 <span className="recipe-panel__combo-value">
                   {session.content_role}
                 </span>
@@ -408,7 +408,7 @@ export default function RecipePanel({
 
           {/* RIGHT — RECIPE */}
           <div className="recipe-panel__recipe">
-            <h4 className="recipe-panel__section-title">Brief</h4>
+            <h4 className="recipe-panel__section-title">{t("recipe.brief")}</h4>
 
             {renderAspect("angle", t("recipe.angle"))}
             {renderAspect("hook", t("recipe.hook"))}
