@@ -423,5 +423,64 @@
     "briefsDownloaded": "Briefs descargados",
     "reportsDownloaded": "Informes descargados",
     "downloads30d": "Descargas (30 días)"
+  },
+  "insights": {
+    "content_production": {
+      "zero": "No has producido contenido en este período.",
+      "some": "Produjiste {{count}} piezas de contenido en este período.",
+      "strong": "Estás manteniendo un ritmo de publicación sólido.",
+      "low": "Tu actividad de publicación es relativamente baja.",
+      "action_strong": "Mantén tu consistencia de publicación.",
+      "action_low": "Intenta aumentar tu frecuencia de publicación esta semana."
+    },
+    "top_platform": {
+      "single": "Tu plataforma más usada es {{platform}} ({{percent}}%).",
+      "multiple": "Tus plataformas más usadas son {{platform}} ({{percent}}%).",
+      "focused": "Tu estrategia de contenido parece muy enfocada en esta plataforma.",
+      "balanced": "Tu distribución de plataformas es relativamente equilibrada.",
+      "action_focused": "Considera potenciar aún más esta plataforma.",
+      "action_balanced": "Experimenta con diferentes plataformas para descubrir oportunidades de crecimiento.",
+      "no_data": "Aún no hay suficientes datos de plataforma."
+    },
+    "best_format": {
+      "has_format": "Principalmente creas contenido en formato {{format}}.",
+      "no_data": "Aún no hay suficientes datos de formato.",
+      "dominant": "Este formato parece ser tu vehículo natural de contenido.",
+      "diverse": "Estás experimentando con múltiples formatos.",
+      "action_dominant": "Considera priorizar este formato en próximas publicaciones.",
+      "action_diverse": "Continúa probando formatos para identificar tu punto fuerte."
+    },
+    "peak_day": {
+      "has_day": "Eres más activo los {{day}}.",
+      "no_data": "Aún no hay suficientes datos de actividad.",
+      "has_rhythm": "Tu ritmo de publicación parece concentrarse en días específicos.",
+      "no_rhythm": "No hay suficiente actividad para detectar un ritmo de publicación.",
+      "action_rhythm": "Considera programar más publicaciones alrededor de estos días.",
+      "action_no_rhythm": "Empieza a publicar de forma consistente para construir un patrón."
+    },
+    "idea_reuse": {
+      "has_reuse": "{{count}} ideas han generado múltiples piezas de contenido.",
+      "no_reuse": "Aún no se detectan ideas reutilizadas.",
+      "powerful": "Las ideas reutilizables pueden convertirse en poderosos motores de contenido.",
+      "not_leveraging": "Puede que aún no estés aprovechando las ideas reutilizables.",
+      "action_expand": "Expande tus ideas más fuertes en series.",
+      "action_identify": "Identifica ideas que puedan convertirse en múltiples piezas de contenido."
+    },
+    "content_role": {
+      "has_role": "La mayoría de tu contenido cumple un rol {{role}}.",
+      "no_role": "Los roles de contenido aún no están definidos.",
+      "clear": "Tu contenido parece cumplir un rol estratégico claro.",
+      "diverse": "Tus roles de contenido son diversos.",
+      "action_clear": "Apóyate en este rol para fortalecer tu posicionamiento.",
+      "action_diverse": "Considera definir un rol más claro para tu contenido."
+    },
+    "dominant_topic": {
+      "has_topic": "La mayoría de tu contenido se enfoca en {{topic}}.",
+      "no_topic": "Aún no se detecta un tema dominante.",
+      "core": "Este tema parece ser tu área de expertise principal.",
+      "diverse": "Tus temas están relativamente diversificados.",
+      "action_core": "Considera construir una serie de contenido recurrente alrededor de este tema.",
+      "action_diverse": "Enfócate en identificar un foco temático más fuerte."
+    }
   }
 }

@@ -423,5 +423,64 @@
     "briefsDownloaded": "Briefs downloaded",
     "reportsDownloaded": "Reports downloaded",
     "downloads30d": "Downloads (30 days)"
+  },
+  "insights": {
+    "content_production": {
+      "zero": "You haven't produced content in this period.",
+      "some": "You produced {{count}} pieces of content in this period.",
+      "strong": "You are maintaining a strong publishing rhythm.",
+      "low": "Your publishing activity is relatively low.",
+      "action_strong": "Maintain your publishing consistency.",
+      "action_low": "Try increasing your publishing frequency this week."
+    },
+    "top_platform": {
+      "single": "Your most used platform is {{platform}} ({{percent}}%).",
+      "multiple": "Your most used platforms are {{platform}} ({{percent}}%).",
+      "focused": "Your content strategy seems strongly focused on this platform.",
+      "balanced": "Your platform distribution is relatively balanced.",
+      "action_focused": "Consider doubling down on this platform.",
+      "action_balanced": "Experiment with different platforms to discover growth opportunities.",
+      "no_data": "Not enough platform data yet."
+    },
+    "best_format": {
+      "has_format": "You mostly create {{format}} content.",
+      "no_data": "Not enough format data yet.",
+      "dominant": "This format appears to be your natural content vehicle.",
+      "diverse": "You are experimenting with multiple formats.",
+      "action_dominant": "Consider prioritizing this format in upcoming posts.",
+      "action_diverse": "Continue testing formats to identify your strongest one."
+    },
+    "peak_day": {
+      "has_day": "You are most active on {{day}}.",
+      "no_data": "Not enough activity data yet.",
+      "has_rhythm": "Your publishing rhythm appears to concentrate around specific days.",
+      "no_rhythm": "There is not enough activity to detect a publishing rhythm.",
+      "action_rhythm": "Consider scheduling more posts around these days.",
+      "action_no_rhythm": "Start publishing consistently to build a pattern."
+    },
+    "idea_reuse": {
+      "has_reuse": "{{count}} ideas have generated multiple pieces of content.",
+      "no_reuse": "No reused ideas detected yet.",
+      "powerful": "Reusable ideas can become powerful content engines.",
+      "not_leveraging": "You may not yet be leveraging reusable ideas.",
+      "action_expand": "Expand your strongest ideas into series.",
+      "action_identify": "Identify ideas that can be turned into multiple pieces of content."
+    },
+    "content_role": {
+      "has_role": "Most of your content serves a {{role}} role.",
+      "no_role": "Content roles are not defined yet.",
+      "clear": "Your content appears to serve a clear strategic role.",
+      "diverse": "Your content roles are diverse.",
+      "action_clear": "Lean into this role to strengthen your positioning.",
+      "action_diverse": "Consider defining a clearer role for your content."
+    },
+    "dominant_topic": {
+      "has_topic": "Most of your content focuses on {{topic}}.",
+      "no_topic": "No dominant topic detected yet.",
+      "core": "This topic appears to be your core expertise.",
+      "diverse": "Your topics are relatively diversified.",
+      "action_core": "Consider building a recurring content series around this topic.",
+      "action_diverse": "Focus on identifying a stronger thematic focus."
+    }
   }
 }
