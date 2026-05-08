@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   children: React.ReactNode;
@@ -8,6 +9,7 @@ type Props = {
 
 export default function AuthGuard({ children }: Props) {
   const [sessionExists, setSessionExists] = useState<boolean | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const getInitialSession = async () => {
@@ -31,7 +33,7 @@ export default function AuthGuard({ children }: Props) {
 
   // Mientras no sabemos el estado
   if (sessionExists === null) {
-    return <div>Loading...</div>;
+    return <div>{t("common.loading")}</div>;
   }
 
   // No autenticado
