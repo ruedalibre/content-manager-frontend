@@ -32,7 +32,12 @@ type InsightExpanderProps = {
    SUBCOMPONENTS
 ========================= */
 
-function InsightExpander({ code, insights, expanded, onToggle }: InsightExpanderProps) {
+function InsightExpander({
+  code,
+  insights,
+  expanded,
+  onToggle,
+}: InsightExpanderProps) {
   const { t } = useTranslation();
   const insight = insights.find((i) => i.code === code) ?? null;
   if (!insight) return null;
@@ -96,9 +101,7 @@ function Collapsible({
           ▸
         </span>
       </div>
-      {isOpen && (
-        <div className="identity-collapsible__body">{children}</div>
-      )}
+      {isOpen && <div className="identity-collapsible__body">{children}</div>}
     </div>
   );
 }
@@ -113,19 +116,22 @@ export default function Identity() {
   const { dna, loading: dnaLoading } = useContentDNA();
   const { insights: analyticsInsights } = useAnalyticsInsights("30d");
   const { result: aiResult, loading: aiLoading } = useIdentityAI(dna);
-  const { insights: creativeInsights, loading: creativeInsightsLoading } = useCreativeInsights();
+  const { insights: creativeInsights, loading: creativeInsightsLoading } =
+    useCreativeInsights();
   const {
     report,
     generatedAt,
     loading: reportLoading,
     generating,
     error: reportError,
-    generateReport
+    generateReport,
   } = useCreativeReport();
 
   const { t } = useTranslation();
   const [reportCopied, setReportCopied] = useState(false);
-  const [expandedInsights, setExpandedInsights] = useState<Record<string, boolean>>({});
+  const [expandedInsights, setExpandedInsights] = useState<
+    Record<string, boolean>
+  >({});
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     reflecting: false,
     deep: false,
@@ -167,18 +173,18 @@ export default function Identity() {
       `AI-assisted creative analysis. AI-generated outputs`,
       `may not be eligible for copyright protection.`,
       `Content Intelligence App does not claim IP rights over this output.`,
-    ]
+    ];
 
-    const text = lines.join('\n')
+    const text = lines.join("\n");
 
     try {
-      await navigator.clipboard.writeText(text)
-      setReportCopied(true)
-      setTimeout(() => setReportCopied(false), 2000)
+      await navigator.clipboard.writeText(text);
+      setReportCopied(true);
+      setTimeout(() => setReportCopied(false), 2000);
     } catch {
-      console.error('Copy failed')
+      // silent — clipboard API may not be available
     }
-  }
+  };
 
   const toggleInsight = (code: string) => {
     setExpandedInsights((prev) => ({ ...prev, [code]: !prev[code] }));
@@ -222,7 +228,6 @@ export default function Identity() {
 
   return (
     <div className="identity-page">
-
       {/* ── HEADER ── */}
 
       <div className="identity-header">
@@ -233,7 +238,6 @@ export default function Identity() {
       {/* ── ROW 1 — Top ideas + Top topics ── */}
 
       <div className="identity-row-two">
-
         <div className="identity-pattern-card">
           <span className="section-label">{t("identity.topIdeas")}</span>
           <ol className="identity-ideas-list">
@@ -242,7 +246,8 @@ export default function Identity() {
                 <span className="identity-ideas-list__rank">{i + 1}</span>
                 <span className="identity-ideas-list__title">{idea.title}</span>
                 <span className="identity-ideas-list__count">
-                  {idea.content_count} {idea.content_count === 1 ? "content" : "contents"}
+                  {idea.content_count}{" "}
+                  {idea.content_count === 1 ? "content" : "contents"}
                 </span>
               </li>
             ))}
@@ -256,10 +261,14 @@ export default function Identity() {
               <div key={item.topic} className="identity-bars__row">
                 <span className="identity-bars__label">{item.topic}</span>
                 <div className="identity-bars__track">
-                  <div className="identity-bars__fill"
-                    style={{ width: `${item.percentage}%` }} />
+                  <div
+                    className="identity-bars__fill"
+                    style={{ width: `${item.percentage}%` }}
+                  />
                 </div>
-                <span className="identity-bars__percentage">{item.percentage}%</span>
+                <span className="identity-bars__percentage">
+                  {item.percentage}%
+                </span>
               </div>
             ))}
           </div>
@@ -270,7 +279,6 @@ export default function Identity() {
             onToggle={toggleInsight}
           />
         </div>
-
       </div>
 
       {/* ── ROW 2 — Content roles ancho completo ── */}
@@ -280,7 +288,9 @@ export default function Identity() {
         <div className="identity-roles-row">
           {(dna?.role_distribution ?? []).map((item) => (
             <div key={item.role} className="identity-stat-card">
-              <span className="identity-stat-card__value">{item.percentage}%</span>
+              <span className="identity-stat-card__value">
+                {item.percentage}%
+              </span>
               <span className="identity-stat-card__label">{item.role}</span>
             </div>
           ))}
@@ -296,7 +306,6 @@ export default function Identity() {
       {/* ── ROW 3 — Platforms + Formats ── */}
 
       <div className="identity-row-two">
-
         <div className="identity-pattern-card">
           <span className="section-label">{t("identity.platforms")}</span>
           <div className="identity-bars">
@@ -304,10 +313,14 @@ export default function Identity() {
               <div key={item.platform} className="identity-bars__row">
                 <span className="identity-bars__label">{item.platform}</span>
                 <div className="identity-bars__track">
-                  <div className="identity-bars__fill"
-                    style={{ width: `${item.percentage}%` }} />
+                  <div
+                    className="identity-bars__fill"
+                    style={{ width: `${item.percentage}%` }}
+                  />
                 </div>
-                <span className="identity-bars__percentage">{item.percentage}%</span>
+                <span className="identity-bars__percentage">
+                  {item.percentage}%
+                </span>
               </div>
             ))}
           </div>
@@ -326,10 +339,14 @@ export default function Identity() {
               <div key={item.format} className="identity-bars__row">
                 <span className="identity-bars__label">{item.format}</span>
                 <div className="identity-bars__track">
-                  <div className="identity-bars__fill"
-                    style={{ width: `${item.percentage}%` }} />
+                  <div
+                    className="identity-bars__fill"
+                    style={{ width: `${item.percentage}%` }}
+                  />
                 </div>
-                <span className="identity-bars__percentage">{item.percentage}%</span>
+                <span className="identity-bars__percentage">
+                  {item.percentage}%
+                </span>
               </div>
             ))}
           </div>
@@ -340,14 +357,15 @@ export default function Identity() {
             onToggle={toggleInsight}
           />
         </div>
-
       </div>
 
       {/* ── STANDOUT INSIGHTS — siempre visible ── */}
 
       {(aiLoading || (aiResult?.standout_insights?.length ?? 0) > 0) && (
         <section className="identity-section">
-          <span className="section-label">{t("identity.standoutInsights")}</span>
+          <span className="section-label">
+            {t("identity.standoutInsights")}
+          </span>
           <div className="identity-highlights">
             {aiLoading ? (
               <>
@@ -358,7 +376,9 @@ export default function Identity() {
               <>
                 {aiResult?.standout_insights.slice(0, 2).map((insight, i) => (
                   <div key={i} className="identity-highlight-card">
-                    <span className="identity-highlight-card__title">{insight.title}</span>
+                    <span className="identity-highlight-card__title">
+                      {insight.title}
+                    </span>
                     <p>{insight.text}</p>
                   </div>
                 ))}
@@ -367,7 +387,7 @@ export default function Identity() {
                     <p>
                       {t(
                         getInsight("content_production")!.insight_key,
-                        getInsight("content_production")!.insight_data ?? {}
+                        getInsight("content_production")!.insight_data ?? {},
                       )}{" "}
                       {t(getInsight("content_production")!.strategy_key)}
                     </p>
@@ -430,7 +450,9 @@ export default function Identity() {
         ) : (
           creativeInsights.map((insight, i) => (
             <div key={i} className="identity-insight-card">
-              <span className="identity-insight-card__label">{insight.label}</span>
+              <span className="identity-insight-card__label">
+                {insight.label}
+              </span>
               <p className="identity-insight-card__text">{insight.text}</p>
             </div>
           ))
@@ -442,9 +464,10 @@ export default function Identity() {
       <Collapsible
         icon="✦"
         title={t("identity.deepAnalysis")}
-        subtitle={report
-          ? `${t("identity.deepAnalysisLastGenerated")} ${new Date(generatedAt!).toLocaleDateString()}`
-          : t("identity.deepAnalysisSubtitle")
+        subtitle={
+          report
+            ? `${t("identity.deepAnalysisLastGenerated")} ${new Date(generatedAt!).toLocaleDateString()}`
+            : t("identity.deepAnalysisSubtitle")
         }
         isOpen={openSections.deep}
         onToggle={() => toggleSection("deep")}
@@ -455,7 +478,6 @@ export default function Identity() {
           </div>
         ) : report ? (
           <div className="identity-report">
-
             <div className="identity-report__section">
               <span className="identity-report__label">
                 {t("identity.whoYouAre")}
@@ -498,11 +520,15 @@ export default function Identity() {
                   onClick={handleCopyReport}
                   type="button"
                 >
-                  {reportCopied ? t("identity.copied") : t("identity.copyReport")}
+                  {reportCopied
+                    ? t("identity.copied")
+                    : t("identity.copyReport")}
                 </button>
                 <button
                   className="identity-report__download"
-                  onClick={() => report && generatedAt && downloadReport(report, generatedAt)}
+                  onClick={() =>
+                    report && generatedAt && downloadReport(report, generatedAt)
+                  }
                   type="button"
                 >
                   ↓ Download report
@@ -513,7 +539,9 @@ export default function Identity() {
                   disabled={generating}
                   type="button"
                 >
-                  {generating ? t("identity.regenerating") : t("identity.regenerate")}
+                  {generating
+                    ? t("identity.regenerating")
+                    : t("identity.regenerate")}
                 </button>
               </div>
             </div>
@@ -521,7 +549,6 @@ export default function Identity() {
             {reportError && (
               <p className="identity-report__error">{reportError}</p>
             )}
-
           </div>
         ) : (
           <div className="identity-report-placeholder">
@@ -552,7 +579,6 @@ export default function Identity() {
           </div>
         )}
       </Collapsible>
-
     </div>
   );
 }
