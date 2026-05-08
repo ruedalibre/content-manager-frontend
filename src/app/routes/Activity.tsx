@@ -93,10 +93,10 @@ export default function Dashboard() {
           {t("activity.noContentInPeriodDesc")}
         </p>
         <div className="dashboard-empty__actions">
-          <button className="btn-secondary" onClick={() => setPeriod("90d")}>
+          <button type="button" className="btn-secondary" onClick={() => setPeriod("90d")}>
             {t("activity.viewLast90")}
           </button>
-          <button className="btn-primary" onClick={() => navigate("/contents")}>
+          <button type="button" className="btn-primary" onClick={() => navigate("/contents")}>
             {t("activity.goToContents")}
           </button>
         </div>
@@ -126,6 +126,7 @@ export default function Dashboard() {
         </ul>
 
         <button
+          type="button"
           className="btn-primary"
           onClick={() => navigate("/contents?create=true")}
         >
