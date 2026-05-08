@@ -23,7 +23,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin }: Props) {
         <div className="sidebar__header sidebar__header--mobile">
           <h2>Content Intelligence Platform</h2>
 
-          <button onClick={onClose}>
+          <button type="button" onClick={onClose}>
             <X size={20} />
           </button>
         </div>
@@ -67,7 +67,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin }: Props) {
 
         {/* LOGOUT */}
 
-        <button className="sidebar__logout" onClick={onLogout}>
+        <button type="button" className="sidebar__logout" onClick={onLogout}>
           {t("nav.logout")}
         </button>
       </aside>
