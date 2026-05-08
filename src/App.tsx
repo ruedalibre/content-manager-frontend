@@ -1,5 +1,5 @@
 import AppLayout from "./app/layout/AppLayout.tsx";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Activity from "./app/routes/Activity.tsx";
 import Contents from "./app/routes/Contents.tsx";
 import Ideas from "./app/routes/Ideas.tsx";
@@ -83,6 +83,9 @@ export default function App() {
         <Route path="/activity" element={<Activity />} />
         <Route path="/admin" element={<Admin />} />
       </Route>
+
+      {/* Raíz */}
+      <Route path="/" element={<Navigate to="/ideas" replace />} />
 
       {/* Fallback */}
       <Route path="*" element={<Login />} />
