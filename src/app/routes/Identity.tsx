@@ -217,7 +217,7 @@ export default function Identity() {
   if (dnaLoading) {
     return (
       <div className="identity-page">
-        <p>Loading your identity...</p>
+        <p>{t("identity.loadingIdentity")}</p>
       </div>
     );
   }
@@ -247,7 +247,7 @@ export default function Identity() {
                 <span className="identity-ideas-list__title">{idea.title}</span>
                 <span className="identity-ideas-list__count">
                   {idea.content_count}{" "}
-                  {idea.content_count === 1 ? "content" : "contents"}
+                  {idea.content_count === 1 ? t("ideas.content") : t("ideas.contents")}
                 </span>
               </li>
             ))}
@@ -291,7 +291,7 @@ export default function Identity() {
               <span className="identity-stat-card__value">
                 {item.percentage}%
               </span>
-              <span className="identity-stat-card__label">{item.role}</span>
+              <span className="identity-stat-card__label">{t(`contentRoles.${item.role}`, { defaultValue: item.role })}</span>
             </div>
           ))}
         </div>
@@ -512,7 +512,7 @@ export default function Identity() {
 
             <div className="identity-report__footer">
               <span className="identity-report__date">
-                Generated {new Date(generatedAt!).toLocaleDateString()}
+                {t("identity.generatedOn")} {new Date(generatedAt!).toLocaleDateString()}
               </span>
               <div style={{ display: "flex", gap: "8px" }}>
                 <button
@@ -531,7 +531,7 @@ export default function Identity() {
                   }
                   type="button"
                 >
-                  ↓ Download report
+                  {t("identity.downloadReport")}
                 </button>
                 <button
                   className="identity-report__regenerate"
@@ -573,7 +573,7 @@ export default function Identity() {
             </button>
             {generating && (
               <p className="identity-report-placeholder__hint">
-                This takes about 10 seconds...
+                {t("identity.generatingHint")}
               </p>
             )}
           </div>

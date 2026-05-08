@@ -214,7 +214,11 @@
     "reportSubtitle": "Un análisis narrativo de tu identidad creativa, tus mayores oportunidades y hacia dónde se dirige tu trabajo creativo.",
     "seeInsight": "Ver insight",
     "hideInsight": "Ocultar insight",
-    "disclaimer": "Análisis creativo asistido por IA. Los resultados generados por IA pueden no ser elegibles para protección de derechos de autor. Content Intelligence App no reclama derechos de propiedad intelectual sobre este resultado."
+    "disclaimer": "Análisis creativo asistido por IA. Los resultados generados por IA pueden no ser elegibles para protección de derechos de autor. Content Intelligence App no reclama derechos de propiedad intelectual sobre este resultado.",
+    "loadingIdentity": "Cargando tu identidad...",
+    "generatedOn": "Generado el",
+    "generatingHint": "Esto toma unos 10 segundos...",
+    "downloadReport": "↓ Descargar informe"
   },
   "activity": {
     "title": "Actividad",

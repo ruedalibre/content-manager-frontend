@@ -214,7 +214,11 @@
     "reportSubtitle": "A narrative analysis of your creative identity, your strongest opportunities, and where your creative work is heading.",
     "seeInsight": "See insight",
     "hideInsight": "Hide insight",
-    "disclaimer": "AI-assisted creative analysis. AI-generated outputs may not be eligible for copyright protection. Content Intelligence App does not claim IP rights over this output."
+    "disclaimer": "AI-assisted creative analysis. AI-generated outputs may not be eligible for copyright protection. Content Intelligence App does not claim IP rights over this output.",
+    "loadingIdentity": "Loading your identity...",
+    "generatedOn": "Generated",
+    "generatingHint": "This takes about 10 seconds...",
+    "downloadReport": "↓ Download report"
   },
   "activity": {
     "title": "Activity",
