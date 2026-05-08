@@ -465,10 +465,10 @@ export default function CreateContentModal({
             disabled={!form.platform_id}
             required
           >
-            <option value="">Select format</option>
+            <option value="">{t("ideas.formatPlaceholder")}</option>
             {formats.map((f) => (
               <option key={f} value={f}>
-                {f}
+                {t(`formats.${f}`, { defaultValue: f })}
               </option>
             ))}
           </select>

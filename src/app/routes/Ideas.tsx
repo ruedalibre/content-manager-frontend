@@ -747,7 +747,7 @@ export default function Ideas() {
                                 <option value="">{t("ideas.formatPlaceholder")}</option>
                                 {formats.map((f) => (
                                   <option key={f} value={f}>
-                                    {f}
+                                    {t(`formats.${f}`, { defaultValue: f })}
                                   </option>
                                 ))}
                               </select>
