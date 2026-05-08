@@ -324,7 +324,7 @@ export default function Ideas() {
       });
       setEditingIdea(null);
     } catch {
-      setEditError("Failed to update idea.");
+      setEditError(t("common.failedUpdate"));
     } finally {
       setEditSaving(false);
     }
@@ -339,7 +339,7 @@ export default function Ideas() {
         try {
           await deleteIdea(ideaId);
         } catch {
-          setActionError("Failed to delete idea.");
+          setActionError(t("common.failedDelete"));
         }
       },
     );
@@ -365,7 +365,7 @@ export default function Ideas() {
       await updateIdeaTopics(editingIdeaTopics, selectedTopicIds);
       setEditingIdeaTopics(null);
     } catch {
-      setActionError("Failed to update idea topics.");
+      setActionError(t("common.failedUpdate"));
     } finally {
       setSavingTopics(false);
     }
@@ -380,7 +380,7 @@ export default function Ideas() {
       setNewTopicName("");
     } catch (err) {
       setTopicError(
-        err instanceof Error ? err.message : "Failed to create topic.",
+        err instanceof Error ? err.message : t("common.failedCreate"),
       );
     } finally {
       setCreatingTopic(false);
@@ -394,7 +394,7 @@ export default function Ideas() {
       await updateTopic(editingTopic.id, editTopicName.trim());
       setEditingTopic(null);
     } catch {
-      setActionError("Failed to update topic.");
+      setActionError(t("common.failedUpdate"));
     } finally {
       setSavingTopic(false);
     }
@@ -409,7 +409,7 @@ export default function Ideas() {
         try {
           await archiveTopic(topicId);
         } catch {
-          setActionError("Failed to archive topic.");
+          setActionError(t("common.failedDelete"));
         }
       },
     );

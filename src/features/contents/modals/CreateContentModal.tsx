@@ -344,7 +344,7 @@ export default function CreateContentModal({
       const data = await res.json();
 
       if (!res.ok) {
-        setSubmitError(data.error || "Error saving content");
+        setSubmitError(data.error || t("common.errorSaving"));
         setLoading(false);
         return;
       }
@@ -380,7 +380,7 @@ export default function CreateContentModal({
       resetForm();
     } catch (err) {
       console.error(err);
-      setSubmitError("Unexpected error. Please try again.");
+      setSubmitError(t("common.error"));
     } finally {
       setLoading(false);
     }
