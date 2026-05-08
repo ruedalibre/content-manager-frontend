@@ -503,7 +503,7 @@ export default function Admin() {
       {activeTab === "ecosystem" && (
         <div className="admin-tab-content">
           {loadingEco ? (
-            <p>Loading ecosystem data...</p>
+            <p>{t("admin.loadingEcosystem")}</p>
           ) : ecosystem ? (
             <>
               <section className="admin-section">
@@ -614,7 +614,7 @@ export default function Admin() {
               </section>
             </>
           ) : (
-            <p>No ecosystem data available.</p>
+            <p>{t("admin.noEcosystemData")}</p>
           )}
         </div>
       )}

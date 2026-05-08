@@ -590,7 +590,7 @@ export default function Ideas() {
                               <button
                                 className="btn-icon"
                                 onClick={() => handleEditOpen(idea)}
-                                title="Edit"
+                                title={t("common.edit")}
                                 type="button"
                               >
                                 ✏️
@@ -598,7 +598,7 @@ export default function Ideas() {
                               <button
                                 className="btn-icon btn-icon--danger"
                                 onClick={() => handleDeleteIdea(idea.id)}
-                                title="Delete"
+                                title={t("common.delete")}
                                 type="button"
                               >
                                 🗑️
@@ -675,7 +675,7 @@ export default function Ideas() {
                                 className="topic-chip topic-chip--add"
                                 onClick={() => handleOpenTopicSelector(idea)}
                                 type="button"
-                                title="Edit topics"
+                                title={t("common.editTopics")}
                               >
                                 {isEditingTopicsThis ? "✕" : "＋"}
                               </button>
@@ -986,7 +986,7 @@ export default function Ideas() {
                                             setEditTopicName(topic.name);
                                           }}
                                           type="button"
-                                          title="Edit"
+                                          title={t("common.edit")}
                                         >
                                           ✏️
                                         </button>
@@ -996,7 +996,7 @@ export default function Ideas() {
                                             handleArchiveTopic(topic.id)
                                           }
                                           type="button"
-                                          title="Archive"
+                                          title={t("common.archive")}
                                         >
                                           🗄️
                                         </button>

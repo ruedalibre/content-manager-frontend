@@ -19,7 +19,9 @@
     "loading": "Loading...",
     "saving": "Saving...",
     "error": "Something went wrong. Please try again.",
-    "noData": "No data yet"
+    "noData": "No data yet",
+    "addToIdeas": "Add to ideas library",
+    "editTopics": "Edit topics"
   },
   "nav": {
     "ideas": "Ideas & Topics",
@@ -433,7 +435,9 @@
     "briefsDownloaded": "Briefs downloaded",
     "reportsDownloaded": "Reports downloaded",
     "downloads30d": "Downloads (30 days)",
-    "failedInvite": "Failed to send invitation. Try again."
+    "failedInvite": "Failed to send invitation. Try again.",
+    "loadingEcosystem": "Loading ecosystem data...",
+    "noEcosystemData": "No ecosystem data available."
   },
   "insights": {
     "content_production": {
