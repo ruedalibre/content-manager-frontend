@@ -474,7 +474,7 @@ export default function Identity() {
       >
         {reportLoading ? (
           <div className="identity-report-loading">
-            <p>Loading...</p>
+            <p>{t("common.loading")}</p>
           </div>
         ) : report ? (
           <div className="identity-report">
