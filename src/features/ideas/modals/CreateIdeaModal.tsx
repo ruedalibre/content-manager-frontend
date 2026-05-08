@@ -35,6 +35,7 @@ export default function CreateIdeaModal({
   const [description, setDescription] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [selectedSuggestion, setSelectedSuggestion] = useState(false);
@@ -91,6 +92,7 @@ export default function CreateIdeaModal({
     setTitle("");
     setDescription("");
     setSelectedSuggestion(false);
+    setSubmitError(null);
   };
 
   /* =========================
@@ -132,7 +134,7 @@ export default function CreateIdeaModal({
 
       if (!res.ok) {
         console.error(data);
-        alert("Error saving idea");
+        setSubmitError(t("common.errorSaving"));
         setLoading(false);
         return;
       }
@@ -142,7 +144,7 @@ export default function CreateIdeaModal({
       resetForm();
     } catch (err) {
       console.error(err);
-      alert("Unexpected error");
+      setSubmitError(t("common.error"));
     } finally {
       setLoading(false);
     }
@@ -235,6 +237,10 @@ export default function CreateIdeaModal({
           </span>
 
           {/* ACTIONS */}
+
+          {submitError && (
+            <p className="modal__error">{submitError}</p>
+          )}
 
           <div className="modal-actions">
             <button

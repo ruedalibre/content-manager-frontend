@@ -3,6 +3,7 @@
     "save": "Guardar",
     "cancel": "Cancelar",
     "confirm": "Confirmar",
+    "errorSaving": "Error al guardar. Intenta de nuevo.",
     "create": "Crear",
     "update": "Actualizar",
     "delete": "Eliminar",
@@ -422,7 +423,8 @@
     "activeUsers30d": "Usuarios activos (30 días)",
     "briefsDownloaded": "Briefs descargados",
     "reportsDownloaded": "Informes descargados",
-    "downloads30d": "Descargas (30 días)"
+    "downloads30d": "Descargas (30 días)",
+    "failedInvite": "Error al enviar la invitación. Intenta de nuevo."
   },
   "insights": {
     "content_production": {
