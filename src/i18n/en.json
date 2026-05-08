@@ -172,7 +172,11 @@
     "addToLibrary": "Add to ideas library",
     "addToLibrarySubtitle": "Create an idea from this content. You can edit the title to make it more conceptual.",
     "saveIdea": "Save idea",
-    "savingIdea": "Saving..."
+    "savingIdea": "Saving...",
+    "selectPlatform": "Select platform",
+    "topicsLabel": "Topics",
+    "reusable": "Reusable",
+    "usingCombination": "Using combination from idea"
   },
   "identity": {
     "title": "Creator Identity",

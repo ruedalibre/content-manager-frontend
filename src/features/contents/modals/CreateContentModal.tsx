@@ -406,7 +406,7 @@ export default function CreateContentModal({
         {idea && !isEditMode && (
           <div className="idea-context">
             <span className="idea-context__label">
-              Using combination from idea
+              {t("contents.usingCombination")}
             </span>
             <strong className="idea-context__title">{idea.title}</strong>
           </div>
@@ -449,7 +449,7 @@ export default function CreateContentModal({
             onChange={(e) => handlePlatformChange(e.target.value)}
             required
           >
-            <option value="">Select platform</option>
+            <option value="">{t("contents.selectPlatform")}</option>
             {platforms.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name}
@@ -475,9 +475,9 @@ export default function CreateContentModal({
 
           {/* STATUS */}
           <select name="status" value={form.status} onChange={handleChange}>
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-            <option value="archived">Archived</option>
+            <option value="draft">{t("status.draft")}</option>
+            <option value="published">{t("status.published")}</option>
+            <option value="archived">{t("status.archived")}</option>
           </select>
 
           {form.status === "published" && (
@@ -508,7 +508,7 @@ export default function CreateContentModal({
           {/* TOPICS */}
           {topics.length > 0 && (
             <div className="modal__topics">
-              <p className="modal__label">Topics</p>
+              <p className="modal__label">{t("contents.topicsLabel")}</p>
 
               {/* SELECTED CHIPS */}
               {selectedTopicIds.length > 0 && (
@@ -557,7 +557,7 @@ export default function CreateContentModal({
               checked={form.is_reusable}
               onChange={handleChange}
             />
-            Reusable
+            {t("contents.reusable")}
           </label>
 
           {submitError && <p className="modal__error">{submitError}</p>}
