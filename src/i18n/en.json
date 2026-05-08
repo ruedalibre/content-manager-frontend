@@ -2,6 +2,7 @@
   "common": {
     "save": "Save",
     "cancel": "Cancel",
+    "confirm": "Confirm",
     "create": "Create",
     "update": "Update",
     "delete": "Delete",
@@ -63,6 +64,8 @@
     "manual": "Manual",
     "contents": "contents",
     "content": "content",
+    "topic": "Topic",
+    "idea": "Idea",
     "noRecipeYet": "No recipe yet",
     "selectPlatformFirst": "Select platform and format, then generate",
     "selectPlatformError": "Select platform and format first",

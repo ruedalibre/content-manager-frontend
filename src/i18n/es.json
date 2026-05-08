@@ -2,6 +2,7 @@
   "common": {
     "save": "Guardar",
     "cancel": "Cancelar",
+    "confirm": "Confirmar",
     "create": "Crear",
     "update": "Actualizar",
     "delete": "Eliminar",
@@ -63,6 +64,8 @@
     "manual": "Manual",
     "contents": "contenidos",
     "content": "contenido",
+    "topic": "Tema",
+    "idea": "Idea",
     "noRecipeYet": "Sin brief aún",
     "selectPlatformFirst": "Selecciona plataforma y formato, luego genera",
     "selectPlatformError": "Selecciona plataforma y formato primero",
