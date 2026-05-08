@@ -11,9 +11,10 @@ export type CreativeStyleTag = {
 export type AnalyticsInsight = {
   code: string;
   title: string;
-  insight: string;
-  strategy: string;
-  action: string;
+  insight_key: string;
+  insight_data?: Record<string, string | number>;
+  strategy_key: string;
+  action_key: string;
   confidence: number;
 };
 
