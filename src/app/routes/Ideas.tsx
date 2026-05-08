@@ -606,7 +606,7 @@ export default function Ideas() {
                             <input
                               value={editTitle}
                               onChange={(e) => setEditTitle(e.target.value)}
-                              placeholder="Idea title"
+                              placeholder={t("ideas.ideaTitlePlaceholder")}
                               autoFocus
                             />
                             <textarea
@@ -614,7 +614,7 @@ export default function Ideas() {
                               onChange={(e) =>
                                 setEditDescription(e.target.value)
                               }
-                              placeholder="Description (optional)"
+                              placeholder={t("ideas.descriptionOptional")}
                               rows={2}
                             />
                             {editError && (
@@ -627,7 +627,7 @@ export default function Ideas() {
                                 disabled={editSaving}
                                 type="button"
                               >
-                                Cancel
+                                {t("common.cancel")}
                               </button>
                               <button
                                 className="btn-primary"
@@ -635,7 +635,7 @@ export default function Ideas() {
                                 disabled={editSaving || !editTitle.trim()}
                                 type="button"
                               >
-                                {editSaving ? "Saving..." : "Save"}
+                                {editSaving ? t("common.saving") : t("common.save")}
                               </button>
                             </div>
                           </div>
@@ -661,7 +661,7 @@ export default function Ideas() {
                                 ))
                               ) : (
                                 <span className="idea-card__no-topics">
-                                  No topics
+                                  {t("ideas.noTopicsYet")}
                                 </span>
                               )}
                               <button
@@ -856,7 +856,7 @@ export default function Ideas() {
           </div>
 
           {topicsLoading && (
-            <p className="ideas-loading">Loading topics...</p>
+            <p className="ideas-loading">{t("common.loading")}</p>
           )}
 
           {!topicsLoading && (
@@ -922,7 +922,7 @@ export default function Ideas() {
                                           onClick={() => setEditingTopic(null)}
                                           type="button"
                                         >
-                                          Cancel
+                                          {t("common.cancel")}
                                         </button>
                                         <button
                                           className="btn-primary"
@@ -930,7 +930,7 @@ export default function Ideas() {
                                           disabled={savingTopic}
                                           type="button"
                                         >
-                                          {savingTopic ? "..." : "Save"}
+                                          {savingTopic ? t("common.saving") : t("common.save")}
                                         </button>
                                       </div>
                                     </div>
@@ -983,15 +983,15 @@ export default function Ideas() {
                   <div className="content-system__legend">
                     <span className="content-system__legend-item">
                       <span className="content-system__legend-dot content-system__legend-dot--topic" />
-                      Topic
+                      {t("ideas.topic")}
                     </span>
                     <span className="content-system__legend-item">
                       <span className="content-system__legend-dot content-system__legend-dot--idea" />
-                      Idea
+                      {t("ideas.idea")}
                     </span>
                     <span className="content-system__legend-item">
                       <span className="content-system__legend-dot content-system__legend-dot--content" />
-                      Content
+                      {t("ideas.content")}
                     </span>
                   </div>
                 </div>
@@ -1018,11 +1018,10 @@ export default function Ideas() {
                           <div className="cs-topic__dot" />
                           <span className="cs-topic__name">{topic.name}</span>
                           <span className="cs-topic__stats">
-                            {topic.ideas.length} idea
-                            {topic.ideas.length !== 1 ? "s" : ""} ·{" "}
+                            {topic.ideas.length} {t("ideas.ideasCount")} ·{" "}
                             {topic.ideas.reduce(
                               (s, i) => s + i.contents.length, 0
-                            )} contents
+                            )} {t("ideas.contents")}
                           </span>
                         </div>
 
@@ -1042,8 +1041,10 @@ export default function Ideas() {
                                     {idea.title}
                                   </span>
                                   <span className="cs-idea__count">
-                                    {idea.contents.length} content
-                                    {idea.contents.length !== 1 ? "s" : ""}
+                                    {idea.contents.length}{" "}
+                                    {idea.contents.length === 1
+                                      ? t("ideas.content")
+                                      : t("ideas.contents")}
                                   </span>
                                 </div>
 
@@ -1052,7 +1053,7 @@ export default function Ideas() {
                                     {idea.contents.length === 0 ? (
                                       <div className="cs-content">
                                         <span className="cs-content__empty">
-                                          No contents yet
+                                          {t("ideas.noContentsYet")}
                                         </span>
                                       </div>
                                     ) : (
@@ -1179,8 +1180,8 @@ export default function Ideas() {
           isOpen={confirmModal.isOpen}
           title={confirmModal.title}
           message={confirmModal.message}
-          confirmLabel="Confirm"
-          cancelLabel="Cancel"
+          confirmLabel={t("common.confirm")}
+          cancelLabel={t("common.cancel")}
           danger={true}
           onConfirm={confirmModal.onConfirm}
           onCancel={closeConfirm}
