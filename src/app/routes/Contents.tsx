@@ -757,7 +757,7 @@ export default function Contents() {
                             setAddIdeaDescription(item.description ?? "");
                             setAddIdeaError(null);
                           }}
-                          title="Add to ideas library"
+                          title={t("common.addToIdeas")}
                           type="button"
                         >
                           {t("contents.addIdea")}
