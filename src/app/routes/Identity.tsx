@@ -48,9 +48,15 @@ function InsightExpander({ code, insights, expanded, onToggle }: InsightExpander
 
       {expanded[code] && (
         <div className="identity-insight-body">
-          <p className="identity-insight-body__insight">{insight.insight}</p>
-          <p className="identity-insight-body__strategy">{insight.strategy}</p>
-          <p className="identity-insight-body__action">{insight.action}</p>
+          <p className="identity-insight-body__insight">
+            {t(insight.insight_key, insight.insight_data ?? {})}
+          </p>
+          <p className="identity-insight-body__strategy">
+            {t(insight.strategy_key)}
+          </p>
+          <p className="identity-insight-body__action">
+            {t(insight.action_key)}
+          </p>
         </div>
       )}
     </div>
@@ -359,8 +365,11 @@ export default function Identity() {
                 {getInsight("content_production") && (
                   <div className="identity-highlight-card">
                     <p>
-                      {getInsight("content_production")!.insight}{" "}
-                      {getInsight("content_production")!.strategy}
+                      {t(
+                        getInsight("content_production")!.insight_key,
+                        getInsight("content_production")!.insight_data ?? {}
+                      )}{" "}
+                      {t(getInsight("content_production")!.strategy_key)}
                     </p>
                   </div>
                 )}
