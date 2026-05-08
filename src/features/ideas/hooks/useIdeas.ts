@@ -133,9 +133,9 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
         }));
 
         const sortedIdeas = [...mapped].sort((a, b) => {
-          const aCount = a.contents?.[0]?.count ?? 0;
-          const bCount = b.contents?.[0]?.count ?? 0;
-          return bCount - aCount;
+          return (
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+          );
         });
 
         setIdeas(sortedIdeas);
@@ -183,14 +183,16 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
     // Actualizar solo la idea afectada en el array local
     if (!data.duplicate && data.session) {
-      setIdeas(prev => prev.map(idea => {
-        if (idea.id !== params.idea_id) return idea;
-        const existingSessions = idea.sessions ?? [];
-        return {
-          ...idea,
-          sessions: [...existingSessions, data.session]
-        };
-      }));
+      setIdeas((prev) =>
+        prev.map((idea) => {
+          if (idea.id !== params.idea_id) return idea;
+          const existingSessions = idea.sessions ?? [];
+          return {
+            ...idea,
+            sessions: [...existingSessions, data.session],
+          };
+        }),
+      );
     }
 
     return data;

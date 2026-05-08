@@ -51,7 +51,9 @@ export default function Ideas() {
   const [editDescription, setEditDescription] = useState("");
   const [editSaving, setEditSaving] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
-  const [editingIdeaTopics, setEditingIdeaTopics] = useState<string | null>(null);
+  const [editingIdeaTopics, setEditingIdeaTopics] = useState<string | null>(
+    null,
+  );
   const [selectedTopicIds, setSelectedTopicIds] = useState<string[]>([]);
   const [savingTopics, setSavingTopics] = useState(false);
   const [newTopicName, setNewTopicName] = useState("");
@@ -62,9 +64,15 @@ export default function Ideas() {
   const [savingTopic, setSavingTopic] = useState(false);
   const [topicSearch, setTopicSearch] = useState("");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
-  const [expandedLetters, setExpandedLetters] = useState<Record<string, boolean>>({});
-  const [openSystemTopics, setOpenSystemTopics] = useState<Record<string, boolean>>({});
-  const [openSystemIdeas, setOpenSystemIdeas] = useState<Record<string, boolean>>({});
+  const [expandedLetters, setExpandedLetters] = useState<
+    Record<string, boolean>
+  >({});
+  const [openSystemTopics, setOpenSystemTopics] = useState<
+    Record<string, boolean>
+  >({});
+  const [openSystemIdeas, setOpenSystemIdeas] = useState<
+    Record<string, boolean>
+  >({});
   const [actionError, setActionError] = useState<string | null>(null);
   const [recipeState, setRecipeState] = useState<RecipeState>({});
   const [expandedSession, setExpandedSession] = useState<{
@@ -107,21 +115,22 @@ export default function Ideas() {
     archiveTopic,
   } = useTopics();
 
-  const { topics: systemTopics, loading: contentSystemLoading } = useContentSystem();
+  const { topics: systemTopics, loading: contentSystemLoading } =
+    useContentSystem();
 
   const { platforms } = usePlatforms();
   const { loadFormats } = useFormats();
 
   const toggleSystemTopic = (id: string) => {
-    setOpenSystemTopics(prev => ({ ...prev, [id]: !prev[id] }));
+    setOpenSystemTopics((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const toggleSystemIdea = (id: string) => {
-    setOpenSystemIdeas(prev => ({ ...prev, [id]: !prev[id] }));
+    setOpenSystemIdeas((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   const toggleExpandLetter = (letter: string) => {
-    setExpandedLetters(prev => ({ ...prev, [letter]: !prev[letter] }));
+    setExpandedLetters((prev) => ({ ...prev, [letter]: !prev[letter] }));
   };
 
   const chunkIntoColumns = (
@@ -175,23 +184,12 @@ export default function Ideas() {
   }, [recipeState]);
 
   const normalizeFirstLetter = (str: string): string => {
-    return (
-      str
-        .normalize("NFD")
-        .replace(/[̀-ͯ]/g, "")[0]
-        ?.toUpperCase() ?? "#"
-    );
+    return str.normalize("NFD").replace(/[̀-ͯ]/g, "")[0]?.toUpperCase() ?? "#";
   };
 
-  const filteredIdeas = ideas
-    .filter((idea) => idea.title.toLowerCase().includes(search.toLowerCase()))
-    .sort(
-      (a, b) => (b.contents?.[0]?.count ?? 0) - (a.contents?.[0]?.count ?? 0),
-    );
-
-  /* const filteredTopics = topics.filter((t) =>
-    t.name.toLowerCase().includes(topicSearch.toLowerCase()),
-  ); */
+  const filteredIdeas = ideas.filter((idea) =>
+    idea.title.toLowerCase().includes(search.toLowerCase()),
+  );
 
   const ALL_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
@@ -202,8 +200,8 @@ export default function Ideas() {
   const filteredTopicGroups = (() => {
     let filtered = topics;
     if (topicSearch) {
-      filtered = filtered.filter(t =>
-        t.name.toLowerCase().includes(topicSearch.toLowerCase())
+      filtered = filtered.filter((t) =>
+        t.name.toLowerCase().includes(topicSearch.toLowerCase()),
       );
     }
     if (selectedLetter) {
@@ -223,7 +221,7 @@ export default function Ideas() {
       .map(([letter, items]) => ({ letter, items }));
   })();
 
-  const filteredSystemTopics = systemTopics.filter(t => {
+  const filteredSystemTopics = systemTopics.filter((t) => {
     if (topicSearch) {
       return t.name.toLowerCase().includes(topicSearch.toLowerCase());
     }
@@ -423,9 +421,7 @@ export default function Ideas() {
       <div className="ideas-page__header">
         <div>
           <h2 className="ideas-page__title">{t("ideas.title")}</h2>
-          <p className="ideas-page__subtitle">
-            {t("ideas.subtitle")}
-          </p>
+          <p className="ideas-page__subtitle">{t("ideas.subtitle")}</p>
         </div>
         {activeTab === "ideas" ? (
           <button
@@ -517,15 +513,22 @@ export default function Ideas() {
                   onClick={() => setFilter(f)}
                   type="button"
                 >
-                  {f === "all" ? t("ideas.filterAll") : f === "manual" ? t("ideas.manual") : t("ideas.generated")}
+                  {f === "all"
+                    ? t("ideas.filterAll")
+                    : f === "manual"
+                      ? t("ideas.manual")
+                      : t("ideas.generated")}
                 </button>
               ))}
             </div>
             <div className="ideas-stats">
-              <span>{ideas.length} {t("ideas.ideasCount")}</span>
+              <span>
+                {ideas.length} {t("ideas.ideasCount")}
+              </span>
               <span>·</span>
               <span>
-                {ideas.filter((i) => (i.sessions?.length ?? 0) > 0).length} {t("ideas.withRecipe")}
+                {ideas.filter((i) => (i.sessions?.length ?? 0) > 0).length}{" "}
+                {t("ideas.withRecipe")}
               </span>
               <span>·</span>
               <span>
@@ -539,7 +542,9 @@ export default function Ideas() {
             </div>
           </div>
 
-          {loading && <p className="ideas-loading">{t("ideas.loadingIdeas")}</p>}
+          {loading && (
+            <p className="ideas-loading">{t("ideas.loadingIdeas")}</p>
+          )}
           {error && <p className="ideas-error">{error}</p>}
 
           {/* DUAL GRID */}
@@ -576,7 +581,9 @@ export default function Ideas() {
                           <span
                             className={`badge ${isGenerated ? "badge--generated" : "badge--manual"}`}
                           >
-                            {isGenerated ? t("ideas.generated") : t("ideas.manual")}
+                            {isGenerated
+                              ? t("ideas.generated")
+                              : t("ideas.manual")}
                           </span>
                           {!isEditingThis && (
                             <div className="idea-card__controls">
@@ -712,7 +719,9 @@ export default function Ideas() {
                                     disabled={savingTopics}
                                     type="button"
                                   >
-                                    {savingTopics ? t("common.saving") : t("common.save")}
+                                    {savingTopics
+                                      ? t("common.saving")
+                                      : t("common.save")}
                                   </button>
                                 </div>
                               </div>
@@ -727,7 +736,9 @@ export default function Ideas() {
                                 }
                                 className="idea-card__select"
                               >
-                                <option value="">{t("ideas.platformPlaceholder")}</option>
+                                <option value="">
+                                  {t("ideas.platformPlaceholder")}
+                                </option>
                                 {platforms.map((p) => (
                                   <option key={p.id} value={p.id}>
                                     {p.name}
@@ -744,7 +755,9 @@ export default function Ideas() {
                                 disabled={!state.platform_id}
                                 className="idea-card__select"
                               >
-                                <option value="">{t("ideas.formatPlaceholder")}</option>
+                                <option value="">
+                                  {t("ideas.formatPlaceholder")}
+                                </option>
                                 {formats.map((f) => (
                                   <option key={f} value={f}>
                                     {t(`formats.${f}`, { defaultValue: f })}
@@ -761,13 +774,27 @@ export default function Ideas() {
                                 }
                                 className="idea-card__select"
                               >
-                                <option value="">{t("contentRoles.selectRole")}</option>
-                                <option value="educational">{t("contentRoles.educational")}</option>
-                                <option value="inspirational">{t("contentRoles.inspirational")}</option>
-                                <option value="personal">{t("contentRoles.personal")}</option>
-                                <option value="promotional">{t("contentRoles.promotional")}</option>
-                                <option value="curated">{t("contentRoles.curated")}</option>
-                                <option value="sales">{t("contentRoles.sales")}</option>
+                                <option value="">
+                                  {t("contentRoles.selectRole")}
+                                </option>
+                                <option value="educational">
+                                  {t("contentRoles.educational")}
+                                </option>
+                                <option value="inspirational">
+                                  {t("contentRoles.inspirational")}
+                                </option>
+                                <option value="personal">
+                                  {t("contentRoles.personal")}
+                                </option>
+                                <option value="promotional">
+                                  {t("contentRoles.promotional")}
+                                </option>
+                                <option value="curated">
+                                  {t("contentRoles.curated")}
+                                </option>
+                                <option value="sales">
+                                  {t("contentRoles.sales")}
+                                </option>
                               </select>
                             </div>
 
@@ -823,7 +850,6 @@ export default function Ideas() {
       {/* ========================= TOPICS TAB ========================= */}
       {activeTab === "topics" && (
         <div className="ideas-tab-content">
-
           {/* TOOLBAR CON SEARCH Y FILTRO ALFABÉTICO */}
           <div className="topics-toolbar">
             <input
@@ -843,7 +869,9 @@ export default function Ideas() {
                   className={`topics-alphabet__btn${selectedLetter === letter ? " topics-alphabet__btn--active" : ""}${!lettersWithTopics.has(letter) ? " topics-alphabet__btn--disabled" : ""}`}
                   onClick={() => {
                     if (!lettersWithTopics.has(letter)) return;
-                    setSelectedLetter(selectedLetter === letter ? null : letter);
+                    setSelectedLetter(
+                      selectedLetter === letter ? null : letter,
+                    );
                     setTopicSearch("");
                   }}
                   type="button"
@@ -855,9 +883,7 @@ export default function Ideas() {
             </div>
           </div>
 
-          {topicsLoading && (
-            <p className="ideas-loading">Loading topics...</p>
-          )}
+          {topicsLoading && <p className="ideas-loading">Loading topics...</p>}
 
           {!topicsLoading && (
             <>
@@ -878,11 +904,17 @@ export default function Ideas() {
                     const MAX_VISIBLE = MAX_COLS * MAX_PER_COL;
                     const isExpanded = expandedLetters[letter];
                     const hasMore = items.length > MAX_VISIBLE;
-                    const visibleItems = isExpanded ? items : items.slice(0, MAX_VISIBLE);
+                    const visibleItems = isExpanded
+                      ? items
+                      : items.slice(0, MAX_VISIBLE);
                     const itemsPerCol = isExpanded
                       ? Math.ceil(items.length / MAX_COLS)
                       : MAX_PER_COL;
-                    const columns = chunkIntoColumns(visibleItems, itemsPerCol, MAX_COLS);
+                    const columns = chunkIntoColumns(
+                      visibleItems,
+                      itemsPerCol,
+                      MAX_COLS,
+                    );
 
                     return (
                       <div key={letter} className="topics-alpha-group">
@@ -896,15 +928,20 @@ export default function Ideas() {
                               className="topics-alpha-group__more"
                               onClick={() => toggleExpandLetter(letter)}
                             >
-                              {isExpanded ? t("ideas.seeLess") : `+${items.length - MAX_VISIBLE} ${t("ideas.seeMore")}`}
+                              {isExpanded
+                                ? t("ideas.seeLess")
+                                : `+${items.length - MAX_VISIBLE} ${t("ideas.seeMore")}`}
                             </button>
                           )}
                         </div>
 
                         <div className="topics-alpha-group__columns">
                           {columns.map((col, colIndex) => (
-                            <div key={colIndex} className="topics-alpha-group__col">
-                              {col.map(topic => (
+                            <div
+                              key={colIndex}
+                              className="topics-alpha-group__col"
+                            >
+                              {col.map((topic) => (
                                 <div key={topic.id} className="topic-list-item">
                                   {editingTopic?.id === topic.id ? (
                                     <div className="topic-list-item__edit">
@@ -953,7 +990,9 @@ export default function Ideas() {
                                         </button>
                                         <button
                                           className="btn-icon btn-icon--danger"
-                                          onClick={() => handleArchiveTopic(topic.id)}
+                                          onClick={() =>
+                                            handleArchiveTopic(topic.id)
+                                          }
                                           type="button"
                                           title="Archive"
                                         >
@@ -976,7 +1015,9 @@ export default function Ideas() {
               {/* CONTENT SYSTEM VIEW */}
               <div className="content-system">
                 <div className="content-system__header">
-                  <span className="section-label">{t("ideas.contentSystem")}</span>
+                  <span className="section-label">
+                    {t("ideas.contentSystem")}
+                  </span>
                   <p className="content-system__subtitle">
                     {t("ideas.contentSystemSubtitle")}
                   </p>
@@ -1000,9 +1041,7 @@ export default function Ideas() {
                   <p className="ideas-loading">Loading...</p>
                 ) : filteredSystemTopics.length === 0 ? (
                   <p className="ideas-empty">
-                    <span>
-                      {t("ideas.linkIdeasToTopics")}
-                    </span>
+                    <span>{t("ideas.linkIdeasToTopics")}</span>
                   </p>
                 ) : (
                   <div className="cs-tree">
@@ -1012,7 +1051,9 @@ export default function Ideas() {
                           className="cs-topic__header"
                           onClick={() => toggleSystemTopic(topic.id)}
                         >
-                          <span className={`cs-chevron ${openSystemTopics[topic.id] ? "cs-chevron--open" : ""}`}>
+                          <span
+                            className={`cs-chevron ${openSystemTopics[topic.id] ? "cs-chevron--open" : ""}`}
+                          >
                             ▶
                           </span>
                           <div className="cs-topic__dot" />
@@ -1021,8 +1062,10 @@ export default function Ideas() {
                             {topic.ideas.length} idea
                             {topic.ideas.length !== 1 ? "s" : ""} ·{" "}
                             {topic.ideas.reduce(
-                              (s, i) => s + i.contents.length, 0
-                            )} contents
+                              (s, i) => s + i.contents.length,
+                              0,
+                            )}{" "}
+                            contents
                           </span>
                         </div>
 
@@ -1034,7 +1077,9 @@ export default function Ideas() {
                                   className="cs-idea__header"
                                   onClick={() => toggleSystemIdea(idea.id)}
                                 >
-                                  <span className={`cs-chevron ${openSystemIdeas[idea.id] ? "cs-chevron--open" : ""}`}>
+                                  <span
+                                    className={`cs-chevron ${openSystemIdeas[idea.id] ? "cs-chevron--open" : ""}`}
+                                  >
                                     ▶
                                   </span>
                                   <div className="cs-idea__dot" />
@@ -1102,8 +1147,8 @@ export default function Ideas() {
           }}
           onDiscard={async () => {
             await updateSessionStatus(expandedSession.session.id, "discarded");
-            setDiscardedIdeaIds((prev) =>
-              new Set([...prev, expandedSession.idea.id]),
+            setDiscardedIdeaIds(
+              (prev) => new Set([...prev, expandedSession.idea.id]),
             );
             setExpandedSession(null);
           }}
@@ -1126,9 +1171,8 @@ export default function Ideas() {
           updateRecipeAspect={updateRecipeAspect}
           ideaTopics={expandedSession.idea.topics ?? []}
           platformName={
-            platforms.find(
-              (p) => p.id === expandedSession.session.platform_id,
-            )?.name ?? ""
+            platforms.find((p) => p.id === expandedSession.session.platform_id)
+              ?.name ?? ""
           }
         />
       )}
