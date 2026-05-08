@@ -11,9 +11,10 @@ export type CreativeStyleTag = {
 export type AnalyticsInsight = {
   code: string;
   title: string;
-  insight: string;
-  strategy: string;
-  action: string;
+  insight_key: string;
+  insight_data?: Record<string, string | number>;
+  strategy_key: string;
+  action_key: string;
   confidence: number;
 };
 
@@ -51,7 +52,11 @@ export type ContentDNA = {
   topic_distribution: { topic: string; count: number; percentage: number }[];
   format_distribution: { format: string; count: number; percentage: number }[];
   role_distribution: { role: string; count: number; percentage: number }[];
-  platform_distribution: { platform: string; count: number; percentage: number }[];
+  platform_distribution: {
+    platform: string;
+    count: number;
+    percentage: number;
+  }[];
   publishing_rhythm: PublishingRhythm | null;
   completeness: Completeness | null;
 };
