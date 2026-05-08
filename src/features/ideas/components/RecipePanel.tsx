@@ -394,13 +394,17 @@ export default function RecipePanel({
             )}
             <div className="recipe-panel__combo-item">
               <span className="recipe-panel__combo-label">{t("recipe.comboFormat")}</span>
-              <span className="recipe-panel__combo-value">{session.format}</span>
+              <span className="recipe-panel__combo-value">
+                {t(`formats.${session.format}`, { defaultValue: session.format })}
+              </span>
             </div>
             {session.content_role && (
               <div className="recipe-panel__combo-item">
                 <span className="recipe-panel__combo-label">{t("recipe.comboRole")}</span>
                 <span className="recipe-panel__combo-value">
-                  {session.content_role}
+                  {session.content_role
+                    ? t(`contentRoles.${session.content_role}`, { defaultValue: session.content_role })
+                    : "—"}
                 </span>
               </div>
             )}

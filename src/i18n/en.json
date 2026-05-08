@@ -95,6 +95,15 @@
     "suggestions": "Suggestions based on your content",
     "generatingIdeas": "Generating ideas for you..."
   },
+  "formats": {
+    "image": "Image",
+    "video": "Video",
+    "text": "Text",
+    "carousel": "Carousel",
+    "story": "Story",
+    "post": "Post",
+    "reel": "Reel"
+  },
   "contentRoles": {
     "selectRole": "Select role (optional)",
     "educational": "Educational",
