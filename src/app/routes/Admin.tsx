@@ -63,6 +63,7 @@ export default function Admin() {
   const [earlyStatusFilter, setEarlyStatusFilter] = useState("all");
   const [earlyLangFilter, setEarlyLangFilter] = useState("all");
   const [invitingId, setInvitingId] = useState<string | null>(null);
+  const [inviteError, setInviteError] = useState<string | null>(null);
   const EARLY_LIMIT = 10;
 
   const [platformUsage, setPlatformUsage] = useState<
@@ -193,6 +194,7 @@ export default function Admin() {
   }, [activeTab]);
 
   const handleInvite = async (request: EarlyAccessRequest) => {
+    setInviteError(null);
     try {
       setInvitingId(request.id);
       const { data: { session } } = await supabase.auth.getSession();
@@ -211,7 +213,7 @@ export default function Admin() {
 
       if (!res.ok) {
         const err = await res.json();
-        alert(err.error || "Failed to invite");
+        setInviteError(err.error || t("admin.failedInvite"));
         return;
       }
 
@@ -444,14 +446,19 @@ export default function Admin() {
                       <td>{new Date(r.created_at).toLocaleDateString()}</td>
                       <td>
                         {r.status === "pending" && (
-                          <button
-                            className="admin-invite-btn"
-                            onClick={() => handleInvite(r)}
-                            disabled={invitingId === r.id}
-                            type="button"
-                          >
-                            {invitingId === r.id ? t("admin.sending") : t("admin.invite")}
-                          </button>
+                          <>
+                            <button
+                              className="admin-invite-btn"
+                              onClick={() => handleInvite(r)}
+                              disabled={invitingId === r.id}
+                              type="button"
+                            >
+                              {invitingId === r.id ? t("admin.sending") : t("admin.invite")}
+                            </button>
+                            {inviteError && invitingId === null && (
+                              <p className="admin-error">{inviteError}</p>
+                            )}
+                          </>
                         )}
                         {r.status === "invited" && (
                           <span className="admin-invited-date">

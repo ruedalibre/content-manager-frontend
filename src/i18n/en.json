@@ -3,6 +3,7 @@
     "save": "Save",
     "cancel": "Cancel",
     "confirm": "Confirm",
+    "errorSaving": "Error saving. Please try again.",
     "create": "Create",
     "update": "Update",
     "delete": "Delete",
@@ -422,7 +423,8 @@
     "activeUsers30d": "Active users (30 days)",
     "briefsDownloaded": "Briefs downloaded",
     "reportsDownloaded": "Reports downloaded",
-    "downloads30d": "Downloads (30 days)"
+    "downloads30d": "Downloads (30 days)",
+    "failedInvite": "Failed to send invitation. Try again."
   },
   "insights": {
     "content_production": {
