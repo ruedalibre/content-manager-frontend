@@ -644,18 +644,18 @@ export default function Contents() {
           <table className="contents-table">
             <thead>
               <tr>
-                <th>{t("contents.colTitle")}</th>
+                <th className="col-title">{t("contents.colTitle")}</th>
                 <th>{t("contents.colPlatform")}</th>
                 <th>{t("contents.colFormat")}</th>
                 <th>{t("contents.colRole")}</th>
-                <th>{t("contents.colTopics")}</th>
+                <th className="col-topics">{t("contents.colTopics")}</th>
                 <th>{t("contents.colStatus")}</th>
                 <th>{t("contents.colReusable")}</th>
-                <th>{t("contents.colCreated")}</th>
-                <th>{t("contents.colPublished")}</th>
-                <th>{t("contents.colArchived")}</th>
+                <th className="col-date">{t("contents.colCreated")}</th>
+                <th className="col-date">{t("contents.colPublished")}</th>
+                <th className="col-date">{t("contents.colArchived")}</th>
                 <th></th>
-                <th></th>
+                <th className="col-actions"></th>
               </tr>
             </thead>
 
@@ -678,7 +678,7 @@ export default function Contents() {
               {!loading &&
                 contents.map((item) => (
                   <tr key={item.id}>
-                    <td>
+                    <td className="col-title">
                       <div className="content-title">
                         <strong>{item.title}</strong>
                         {item.description && (
@@ -713,7 +713,7 @@ export default function Contents() {
                       )}
                     </td>
 
-                    <td>
+                    <td className="col-topics">
                       {item.topics && item.topics.length > 0 ? (
                         <ul className="content-topics-list">
                           {item.topics.map((t) => (
@@ -733,15 +733,15 @@ export default function Contents() {
 
                     <td>{item.is_reusable ? t("contents.reusableYes") : t("contents.reusableNo")}</td>
 
-                    <td>{new Date(item.created_at).toLocaleDateString()}</td>
+                    <td className="col-date">{new Date(item.created_at).toLocaleDateString()}</td>
 
-                    <td>
+                    <td className="col-date">
                       {item.published_at
                         ? new Date(item.published_at).toLocaleDateString()
                         : <span className="no-topics">—</span>}
                     </td>
 
-                    <td>
+                    <td className="col-date">
                       {item.archived_at
                         ? new Date(item.archived_at).toLocaleDateString()
                         : <span className="no-topics">—</span>}
