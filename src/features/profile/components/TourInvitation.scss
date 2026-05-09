@@ -1,0 +1,88 @@
+.tour-invitation {
+  position: fixed;
+  bottom: 250px;
+  left: 60%;
+  transform: translateX(-50%);
+  z-index: 1100;
+  opacity: 1;
+  animation: slideUp 0.3s ease forwards;
+  width: auto;
+
+  &__card {
+    background: white;
+    border: 0.5px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+    min-width: 750px;
+  }
+
+  &__icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: #111827;
+  }
+
+  &__subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  &__btn {
+    font-size: 13px;
+    padding: 8px 18px;
+    white-space: nowrap;
+  }
+
+  &__link {
+    font-size: 12px;
+    color: #6b7280;
+    background: none;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    padding: 4px;
+
+    &:hover {
+      color: #111827;
+    }
+
+    &--muted {
+      color: #9ca3af;
+
+      &:hover {
+        color: #6b7280;
+      }
+    }
+  }
+}
+
+@keyframes slideUp {
+  from { transform: translateX(-50%) translateY(12px); }
+  to   { transform: translateX(-50%) translateY(0); }
+}

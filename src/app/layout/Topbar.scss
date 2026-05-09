@@ -1,0 +1,47 @@
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 6rem;
+  padding: 1.2rem 1.5rem;
+
+  background: rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid #e5e7eb;
+
+  position: sticky;
+  top: 0;
+  z-index: 50;
+
+  backdrop-filter: blur(6px);
+}
+
+.topbar__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.topbar__menu-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.topbar__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.topbar__context {
+  font-size: 0.8rem;
+  color: #6b7280;
+  min-height: 1rem;
+  transition: opacity 0.15s ease;
+}
+
+/* Desktop hide hamburger */
+
+@media (min-width: 768px) {
+  .topbar__menu-btn {
+    display: none;
+  }
+}

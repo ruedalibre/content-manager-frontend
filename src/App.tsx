@@ -1,22 +1,94 @@
-import { Routes, Route } from "react-router-dom"
-import DashboardLayout from "./layout/DahboardLayout.tsx"
+import AppLayout from "./app/layout/AppLayout.tsx";
+import { Routes, Route, Navigate } from "react-router-dom";
+import Activity from "./app/routes/Activity.tsx";
+import Contents from "./app/routes/Contents.tsx";
+import Ideas from "./app/routes/Ideas.tsx";
+import Admin from "./app/routes/Admin.tsx";
+import Login from "./app/routes/Login.tsx";
+import Terms from "./app/routes/Terms.tsx";
+import Privacy from "./app/routes/Privacy.tsx";
+import AuthGuard from "./auth/AuthGuard.tsx";
+import { useEffect } from "react";
+import { supabase } from "./supabaseClient.ts";
+import Identity from "./app/routes/Identity.tsx";
 
-import Dashboard from "./pages/Dashboard"
-import Contents from "./pages/Contents"
-import Reusable from "./pages/Reusable"
-import Admin from "./pages/Admin"
+/* =========================
+   WARM EDGE FUNCTIONS
+========================= */
+
+async function warmDashboardEndpoints() {
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) return;
+
+    const headers = {
+      Authorization: `Bearer ${session.access_token}`,
+    };
+
+    const base = import.meta.env.VITE_SUPABASE_URL + "/functions/v1/";
+
+    const endpoints = [
+      "me-dashboard?period=30d",
+      "me-insights?period=30d",
+      "me-content-growth?period=30d",
+      "me-content-growth-cumulative?period=30d",
+      "me-content-growth-rate?period=30d",
+      "me-activity-heatmap",
+    ];
+
+    endpoints.forEach((endpoint) => {
+      fetch(base + endpoint, { headers }).catch(() => {});
+    });
+  } catch (err) {
+    console.warn("Warmup failed:", err);
+  }
+}
+
+/* =========================
+   APP COMPONENT
+========================= */
 
 export default function App() {
+  useEffect(() => {
+    // esperar un poco para no competir con login/render inicial
+    const timer = setTimeout(() => {
+      warmDashboardEndpoints();
+    }, 1200);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <Routes>
-      <Route element={<DashboardLayout />}>
+      {/* Rutas públicas */}
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Login />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
 
-        <Route path="/" element={<Dashboard />} />
+      {/* Rutas privadas */}
+      <Route
+        element={
+          <AuthGuard>
+            <AppLayout />
+          </AuthGuard>
+        }
+      >
+        <Route path="/ideas" element={<Ideas />} />
         <Route path="/contents" element={<Contents />} />
-        <Route path="/reusable" element={<Reusable />} />
+        <Route path="/identity" element={<Identity />} />
+        <Route path="/activity" element={<Activity />} />
         <Route path="/admin" element={<Admin />} />
-
       </Route>
+
+      {/* Raíz */}
+      <Route path="/" element={<Navigate to="/ideas" replace />} />
+
+      {/* Fallback */}
+      <Route path="*" element={<Login />} />
     </Routes>
-  )
+  );
 }
