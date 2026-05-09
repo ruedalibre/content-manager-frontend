@@ -60,8 +60,9 @@
   flex-wrap: wrap;
   align-items: center;
 
-  // Sidebar (260px) + padding (48px) + filters min-width (~792px) = ~1100px
-  @media (max-width: 1100px) {
+  // Breakpoint at 1400px: covers 1366px laptops and typical desktop usage.
+  // Below this width, filters stack vertically instead of trying to wrap.
+  @media (max-width: 1400px) {
     flex-direction: column;
     align-items: stretch;
 
@@ -109,7 +110,11 @@
 
 .contents-table {
   width: 100%;
-  min-width: 900px; // Force overflow so wrapper scroll activates
+  // min-width must exceed the content area on target screens to force overflow:
+  // 1366px laptop → 1366 - 260px sidebar - 48px padding = 1058px content area
+  // 1440px screen → 1132px content area
+  // Using 1200px forces scroll on both without affecting wide (1920px) monitors
+  min-width: 1200px;
   border-collapse: collapse;
   font-size: 0.8rem;
 }
