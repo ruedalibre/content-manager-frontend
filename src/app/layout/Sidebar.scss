@@ -99,6 +99,8 @@
   .sidebar {
     position: static;
     transform: translateX(0);
+    flex-shrink: 0; /* Never compress — prevents visual jumps between pages */
+    width: 260px;   /* Explicit: overrides any flex recalculation */
   }
 
   .sidebar-overlay {
@@ -114,17 +116,21 @@
 
 .sidebar__logout {
   margin-top: 2rem;
-  padding: 1em;
+  padding: 0.7em 1em;
+  width: 100%;
   background: #1f2937;
   border: 1px solid #374151;
   border-radius: 8px;
 
   color: #f3f4f6;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
 
   cursor: pointer;
   transition: background 0.2s, border 0.2s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .sidebar__logout:hover {
