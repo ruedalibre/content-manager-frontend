@@ -51,6 +51,7 @@ export default function Privacy() {
             <li>Sell or share with third-party advertisers</li>
             <li>Train AI models</li>
             <li>Create individual profiles for advertising purposes</li>
+            <li>Access or review your individual content without your explicit request</li>
           </ul>
         </section>
 
@@ -73,6 +74,7 @@ export default function Privacy() {
         <section>
           <h2>6. Data Storage and Security</h2>
           <p>Your data is stored in Supabase's infrastructure with Row Level Security (RLS), encrypted connections (HTTPS/TLS), and hashed passwords. We implement reasonable security measures but cannot guarantee absolute security.</p>
+          <p>As the platform operator, we have technical access to your data through our infrastructure provider (Supabase). We commit to never accessing individual user data except when required to resolve a technical issue explicitly reported by you, and only with your knowledge. We will never browse, export, or analyze your personal content for any purpose other than resolving a reported problem.</p>
         </section>
 
         <section>
