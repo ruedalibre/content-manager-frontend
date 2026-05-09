@@ -60,13 +60,15 @@
   flex-wrap: wrap;
   align-items: center;
 
-  @media (max-width: 900px) {
+  // Sidebar (260px) + padding (48px) + filters min-width (~792px) = ~1100px
+  @media (max-width: 1100px) {
     flex-direction: column;
     align-items: stretch;
 
     .contents-filters__search,
     .contents-filters__select {
       width: 100%;
+      min-width: unset;
     }
   }
 }
@@ -107,6 +109,7 @@
 
 .contents-table {
   width: 100%;
+  min-width: 900px; // Force overflow so wrapper scroll activates
   border-collapse: collapse;
   font-size: 0.8rem;
 }
