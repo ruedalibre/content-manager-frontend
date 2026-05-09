@@ -110,11 +110,9 @@
 
 .contents-table {
   width: 100%;
-  // min-width must exceed the content area on target screens to force overflow:
-  // 1366px laptop → 1366 - 260px sidebar - 48px padding = 1058px content area
-  // 1440px screen → 1132px content area
-  // Using 1200px forces scroll on both without affecting wide (1920px) monitors
-  min-width: 1200px;
+  // 1366px laptop → 1366 - 260px sidebar - 48px padding ≈ 1058px content area
+  // 1000px is enough to overflow that area and activate the wrapper scrollbar
+  min-width: 1000px;
   border-collapse: collapse;
   font-size: 0.8rem;
 }
