@@ -1,7 +1,7 @@
 import {
   Document, Packer, Paragraph, TextRun,
   HeadingLevel, AlignmentType, BorderStyle,
-  LevelFormat, NumberFormat
+  LevelFormat
 } from "docx"
 import { saveAs } from "file-saver"
 import { trackDownload } from "./apiClient"
