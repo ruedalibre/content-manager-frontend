@@ -271,6 +271,7 @@
 .contents-pagination {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--s-1);
 
   button {
