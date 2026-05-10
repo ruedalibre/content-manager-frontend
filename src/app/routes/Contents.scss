@@ -22,23 +22,6 @@
    BUTTONS
 ========================= */
 
-.btn-primary {
-  background: var(--primary);
-  color: var(--text-on-primary);
-  border: none;
-  padding: var(--s-2) var(--s-5);
-  border-radius: var(--r-3);
-  font-size: var(--fs-14);
-  font-weight: 600;
-  font-family: var(--font-sans);
-  cursor: pointer;
-  transition: background var(--transition-fast);
-
-  &:hover {
-    background: var(--primary-hover);
-  }
-}
-
 .btn-link {
   background: none;
   border: none;
