@@ -2,43 +2,55 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
-  min-height: 6rem;
-  padding: 1.2rem 1.5rem;
-
-  background: rgba(255, 255, 255, 0.85);
-  border-bottom: 1px solid #e5e7eb;
-
+  gap: var(--s-4);
+  min-height: 56px;
+  padding: var(--s-3) var(--s-6);
+  background: rgba(251, 249, 244, 0.88);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
   z-index: 50;
-
-  backdrop-filter: blur(6px);
+  backdrop-filter: blur(8px);
+  transition: background var(--transition-base);
 }
 
 .topbar__title {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: var(--fs-24);
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: var(--tracking-tight);
+  font-style: italic;
 }
+
 .topbar__menu-btn {
   background: none;
   border: none;
   cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  padding: var(--s-1);
+  border-radius: var(--r-2);
+  transition: background var(--transition-fast);
+
+  &:hover {
+    background: var(--bg-muted);
+  }
 }
 
 .topbar__text {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .topbar__context {
-  font-size: 0.8rem;
-  color: #6b7280;
+  font-size: var(--fs-12);
+  color: var(--text-muted);
   min-height: 1rem;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--transition-fast);
 }
-
-/* Desktop hide hamburger */
 
 @media (min-width: 768px) {
   .topbar__menu-btn {
