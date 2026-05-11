@@ -52,19 +52,35 @@ export default function ContentGrowthCumulativeChart({ data }: Props) {
       }}
     >
       <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={formattedData}>
-          <CartesianGrid strokeDasharray="3 3" />
+        <LineChart
+          data={formattedData}
+          margin={{ top: 8, right: 8, bottom: 24, left: 0 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="var(--border)"
+            vertical={false}
+          />
 
           {/* X AXIS */}
 
           <XAxis
             dataKey="rawLabel"
             tickFormatter={(value) => formatChartLabel(value)}
+            tick={{ fontSize: 12, fill: "var(--text-muted)", fontFamily: "var(--font-sans)" }}
+            axisLine={false}
+            tickLine={false}
           />
 
           {/* Y AXIS */}
 
-          <YAxis allowDecimals={false} />
+          <YAxis
+            allowDecimals={false}
+            tick={{ fontSize: 12, fill: "var(--text-faint)", fontFamily: "var(--font-sans)" }}
+            axisLine={false}
+            tickLine={false}
+            width={28}
+          />
 
           {/* TOOLTIP */}
 
@@ -77,6 +93,15 @@ export default function ContentGrowthCumulativeChart({ data }: Props) {
               return formatChartTooltip(raw);
             }}
             formatter={(value: number | undefined) => [value ?? 0, t("activity.chartCumulative")]}
+            contentStyle={{
+              background: "var(--bg-elevated)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--r-3)",
+              fontSize: "12px",
+              fontFamily: "var(--font-sans)",
+              color: "var(--text)",
+              boxShadow: "var(--shadow-md)",
+            }}
           />
 
           {/* LINE */}
@@ -84,7 +109,7 @@ export default function ContentGrowthCumulativeChart({ data }: Props) {
           <Line
             type="monotone"
             dataKey="cumulative_total"
-            stroke="#16a34a"
+            stroke="var(--accent)"
             strokeWidth={2}
           />
         </LineChart>
