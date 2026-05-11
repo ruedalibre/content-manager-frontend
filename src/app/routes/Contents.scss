@@ -160,8 +160,8 @@
   }
 
   td.col-title {
-    min-width: 270px;
-    max-width: 300px;
+    min-width: 240px;
+    max-width: 280px;
     position: sticky;
     left: 0;
     z-index: 1;
@@ -215,7 +215,7 @@
 .status {
   padding: 3px 8px;
   border-radius: var(--r-pill);
-  font-size: var(--fs-12);
+  font-size: var(--fs-10);
   font-weight: 600;
   text-transform: capitalize;
   display: inline-flex;
@@ -365,7 +365,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--s-1);
-  font-size: var(--fs-12);
+  font-size: var(--fs-10);
   font-weight: 500;
   font-family: var(--font-sans);
   color: var(--accent);
