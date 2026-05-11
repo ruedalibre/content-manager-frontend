@@ -64,21 +64,35 @@ export default function ContentGrowthTimelineChart({ data }: Props) {
       }}
     >
       <ResponsiveContainer width="100%" height={350}>
-        <LineChart data={formattedData}>
-          <CartesianGrid strokeDasharray="3 3" />
+        <LineChart
+          data={formattedData}
+          margin={{ top: 8, right: 8, bottom: 24, left: 0 }}
+        >
+          <CartesianGrid
+            strokeDasharray="3 3"
+            stroke="var(--border)"
+            vertical={false}
+          />
 
           {/* X AXIS */}
 
           <XAxis
             dataKey="rawLabel"
-            tickFormatter={(value) =>
-              formatChartLabel(value)
-            }
+            tickFormatter={(value) => formatChartLabel(value)}
+            tick={{ fontSize: 12, fill: "var(--text-muted)", fontFamily: "var(--font-sans)" }}
+            axisLine={false}
+            tickLine={false}
           />
 
           {/* Y AXIS */}
 
-          <YAxis allowDecimals={false} />
+          <YAxis
+            allowDecimals={false}
+            tick={{ fontSize: 12, fill: "var(--text-faint)", fontFamily: "var(--font-sans)" }}
+            axisLine={false}
+            tickLine={false}
+            width={28}
+          />
 
           {/* TOOLTIP */}
 
@@ -91,6 +105,15 @@ export default function ContentGrowthTimelineChart({ data }: Props) {
               return formatChartTooltip(raw);
             }}
             formatter={(value: number | undefined) => [value ?? 0, t("activity.chartContents")]}
+            contentStyle={{
+              background: "var(--bg-elevated)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--r-3)",
+              fontSize: "12px",
+              fontFamily: "var(--font-sans)",
+              color: "var(--text)",
+              boxShadow: "var(--shadow-md)",
+            }}
           />
 
           {/* LINE */}
@@ -98,7 +121,7 @@ export default function ContentGrowthTimelineChart({ data }: Props) {
           <Line
             type="monotone"
             dataKey="total_contents"
-            stroke="#2563eb"
+            stroke="var(--primary)"
             strokeWidth={2}
             dot={{ r: 3 }}
           />
