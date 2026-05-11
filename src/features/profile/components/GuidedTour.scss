@@ -1,107 +1,96 @@
 .guided-tour {
-  &__mask {
-    position: fixed;
-    z-index: 1050;
-    pointer-events: none;
-    transition: all 0.25s ease;
-  }
-
   &__tooltip {
     position: fixed;
     left: 280px;
-    background: white;
-    border: 0.5px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 20px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-5);
+    padding: var(--s-5);
     width: 300px;
     z-index: 1300;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    opacity: 1;
+    box-shadow: var(--shadow-xl);
     animation: guidedTourSlideIn 0.2s ease forwards;
 
-    &--ideas {
-      top: 140px;
-    }
-    &--contents {
-      top: 176px;
-    }
-    &--identity {
-      top: 212px;
-    }
-    &--activity {
-      top: 248px;
-    }
+    &--ideas    { top: 140px; }
+    &--contents { top: 176px; }
+    &--identity { top: 212px; }
+    &--activity { top: 248px; }
   }
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: var(--s-3);
   }
 
   &__icon {
-    font-size: 20px;
+    font-size: var(--fs-20);
   }
 
   &__step-count {
-    font-size: 11px;
-    color: #9ca3af;
+    font-size: var(--fs-12);
+    color: var(--text-faint);
   }
 
   &__title {
-    font-size: 15px;
+    font-family: var(--font-display);
+    font-size: var(--fs-16);
     font-weight: 500;
-    margin-bottom: 8px;
-    color: #111827;
+    font-style: italic;
+    margin-bottom: var(--s-2);
+    color: var(--text);
+    letter-spacing: var(--tracking-tight);
   }
 
   &__desc {
-    font-size: 13px;
-    color: #6b7280;
-    line-height: 1.5;
-    margin-bottom: 16px;
+    font-size: var(--fs-13);
+    color: var(--text-muted);
+    line-height: var(--lh-normal);
+    margin-bottom: var(--s-4);
   }
 
   &__actions {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 14px;
+    margin-bottom: var(--s-4);
   }
 
   &__skip {
-    font-size: 12px;
-    color: #9ca3af;
+    font-size: var(--fs-12);
+    color: var(--text-faint);
     background: none;
     border: none;
     cursor: pointer;
+    font-family: var(--font-sans);
+    transition: color var(--transition-fast);
 
     &:hover {
-      color: #6b7280;
+      color: var(--text-muted);
     }
   }
 
   &__next {
-    font-size: 13px;
-    padding: 7px 18px;
+    font-size: var(--fs-13);
+    padding: var(--s-1) var(--s-4);
   }
 
   &__dots {
     display: flex;
     justify-content: center;
-    gap: 6px;
+    gap: var(--s-1);
   }
 
   &__dot {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #d1d5db;
-    transition: background 0.2s;
+    background: var(--border-strong);
+    transition: background var(--transition-fast);
 
     &--active {
-      background: #7f77dd;
+      background: var(--accent);
     }
   }
 
@@ -110,33 +99,21 @@
     left: 8px;
     width: 240px;
     height: 34px;
-    border-radius: 8px;
-    background: rgba(127, 119, 221, 0.15);
-    border: 1.5px solid #7f77dd;
+    border-radius: var(--r-3);
+    background: rgba(196, 120, 89, 0.12);
+    border: 1.5px solid var(--accent);
     z-index: 1100;
     pointer-events: none;
     transition: top 0.25s ease;
 
-    &--ideas {
-      top: 142px;
-    }
-    &--contents {
-      top: 178px;
-    }
-    &--identity {
-      top: 214px;
-    }
-    &--activity {
-      top: 250px;
-    }
+    &--ideas    { top: 142px; }
+    &--contents { top: 178px; }
+    &--identity { top: 214px; }
+    &--activity { top: 250px; }
   }
 }
 
 @keyframes guidedTourSlideIn {
-  from {
-    transform: translateX(-8px);
-  }
-  to {
-    transform: translateX(0);
-  }
+  from { transform: translateX(-8px); }
+  to   { transform: translateX(0); }
 }
