@@ -644,7 +644,7 @@ export default function Contents() {
           <table className="contents-table">
             <thead>
               <tr>
-                <th className="col-title">{t("contents.colTitle")}</th>
+                <th className="col-title-header">{t("contents.colTitle")}</th>
                 <th>{t("contents.colPlatform")}</th>
                 <th>{t("contents.colFormat")}</th>
                 <th>{t("contents.colRole")}</th>

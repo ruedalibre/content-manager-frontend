@@ -12,6 +12,7 @@ import { useUserProfile } from "../../features/profile/hooks/useUserProfile.ts";
 
 export default function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [topbarContext, setTopbarContext] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showTourInvite, setShowTourInvite] = useState(false);
@@ -83,9 +84,11 @@ export default function AppLayout() {
         onClose={() => setIsSidebarOpen(false)}
         onLogout={handleLogout}
         isAdmin={isAdmin}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(prev => !prev)}
       />
 
-      <div className="app-layout__content">
+      <div className={`app-layout__content${isSidebarCollapsed ? " app-layout__content--expanded" : ""}`}>
         <Topbar
           onMenuClick={() => setIsSidebarOpen(true)}
           context={topbarContext}
