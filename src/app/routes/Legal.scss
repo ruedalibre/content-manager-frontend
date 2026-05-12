@@ -1,71 +1,77 @@
 .legal-page {
   min-height: 100vh;
-  background: #f3f4f6;
-  padding: 48px 24px;
+  background: var(--bg-canvas);
+  padding: var(--s-9) var(--s-6);
 }
 
 .legal-content {
   max-width: 720px;
   margin: 0 auto;
-  background: white;
-  border: 0.5px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 48px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--r-5);
+  padding: var(--s-9);
+  box-shadow: var(--shadow-sm);
 
   h1 {
-    font-size: 24px;
+    font-family: var(--font-display);
+    font-size: var(--fs-32);
     font-weight: 500;
-    margin-bottom: 8px;
-    color: #111827;
+    font-style: italic;
+    letter-spacing: var(--tracking-tight);
+    margin-bottom: var(--s-2);
+    color: var(--text);
   }
 
   h2 {
-    font-size: 16px;
+    font-size: var(--fs-16);
     font-weight: 500;
-    margin-top: 32px;
-    margin-bottom: 12px;
-    color: #111827;
+    margin-top: var(--s-7);
+    margin-bottom: var(--s-3);
+    color: var(--text);
   }
 
   h3 {
-    font-size: 14px;
+    font-size: var(--fs-14);
     font-weight: 500;
-    margin-top: 16px;
-    margin-bottom: 8px;
-    color: #6b7280;
+    margin-top: var(--s-4);
+    margin-bottom: var(--s-2);
+    color: var(--text-secondary);
   }
 
   p {
-    font-size: 14px;
-    line-height: 1.7;
-    color: #6b7280;
-    margin-bottom: 12px;
+    font-size: var(--fs-14);
+    line-height: var(--lh-loose);
+    color: var(--text-muted);
+    margin-bottom: var(--s-3);
   }
 
   ul {
-    padding-left: 20px;
-    margin-bottom: 12px;
+    padding-left: var(--s-5);
+    margin-bottom: var(--s-3);
 
     li {
-      font-size: 14px;
-      line-height: 1.7;
-      color: #6b7280;
-      margin-bottom: 4px;
+      font-size: var(--fs-14);
+      line-height: var(--lh-loose);
+      color: var(--text-muted);
+      margin-bottom: var(--s-1);
     }
   }
 
   a {
-    color: #7F77DD;
+    color: var(--accent);
     text-decoration: none;
+    transition: color var(--transition-fast);
 
     &:hover {
+      color: var(--accent-hover);
       text-decoration: underline;
     }
   }
 
   section {
-    border-bottom: 0.5px solid #e5e7eb;
-    padding-bottom: 24px;
+    border-bottom: 0.5px solid var(--border-subtle);
+    padding-bottom: var(--s-6);
 
     &:last-child {
       border-bottom: none;
@@ -74,7 +80,8 @@
 }
 
 .legal-updated {
-  font-size: 12px;
-  color: #9ca3af;
-  margin-bottom: 32px;
+  font-size: var(--fs-12);
+  color: var(--text-faint);
+  margin-bottom: var(--s-7);
+  display: block;
 }
