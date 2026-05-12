@@ -1,0 +1,338 @@
+/* =========================
+   OVERLAY
+========================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-overlay);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
+  backdrop-filter: blur(4px);
+}
+
+/* =========================
+   MODAL CONTAINER
+========================= */
+
+.modal {
+  background: var(--bg-elevated);
+  padding: var(--s-6);
+  border-radius: var(--r-5);
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border);
+
+  // Scrollbar sutil dentro del modal
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: var(--r-pill);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-size: var(--fs-24);
+    font-weight: 500;
+    font-style: italic;
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+    margin: 0;
+  }
+
+  &--confirm {
+    max-width: 420px;
+  }
+}
+
+/* =========================
+   FORM
+========================= */
+
+.modal form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+/* =========================
+   INPUTS
+========================= */
+
+.modal input,
+.modal textarea,
+.modal select {
+  width: 100%;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-3);
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: var(--fs-14);
+  outline: none;
+  transition: border-color var(--transition-fast);
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: var(--primary);
+  }
+
+  &::placeholder {
+    color: var(--text-faint);
+  }
+}
+
+.modal textarea {
+  min-height: 80px;
+  resize: vertical;
+  line-height: var(--lh-normal);
+}
+
+/* =========================
+   CHECKBOX
+========================= */
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  margin-right: auto;
+  gap: var(--s-2);
+  font-size: var(--fs-13);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+/* =========================
+   ACTIONS
+========================= */
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+}
+
+/* =========================
+   MODAL LABEL
+========================= */
+
+.modal__title {
+  font-family: var(--font-display);
+  font-size: var(--fs-20);
+  font-weight: 500;
+  font-style: italic;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
+  margin: 0;
+}
+
+.modal__message {
+  font-size: var(--fs-14);
+  color: var(--text-secondary);
+  line-height: var(--lh-normal);
+  margin: 0;
+}
+
+.modal__label {
+  font-size: var(--fs-13);
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.modal__error {
+  font-size: var(--fs-12);
+  color: var(--danger);
+  margin: 0;
+}
+
+.modal__topics {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.modal__topic-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}
+
+.topic-chip__remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--fs-14);
+  color: inherit;
+  padding: 0 0 0 4px;
+  line-height: 1;
+  opacity: 0.7;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+/* =========================
+   IDEA CONTEXT
+========================= */
+
+.idea-context {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-ring);
+  padding: var(--s-3);
+  border-radius: var(--r-3);
+  font-size: var(--fs-13);
+  color: var(--text-secondary);
+
+  &__label {
+    font-size: var(--fs-12);
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: var(--s-1);
+  }
+
+  strong {
+    display: block;
+    margin-top: var(--s-1);
+    color: var(--text);
+    font-weight: 500;
+  }
+}
+
+/* =========================
+   TOPIC COMBOBOX
+========================= */
+
+.topic-combobox {
+  position: relative;
+
+  &__input {
+    width: 100%;
+    padding: var(--s-2) var(--s-3);
+    border: 1px solid var(--border);
+    border-radius: var(--r-3);
+    font-size: var(--fs-13);
+    font-family: var(--font-sans);
+    background: var(--bg-elevated);
+    color: var(--text);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color var(--transition-fast);
+
+    &:focus {
+      border-color: var(--primary);
+    }
+
+    &::placeholder {
+      color: var(--text-faint);
+    }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--r-3);
+    box-shadow: var(--shadow-md);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+  }
+
+  &__option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: var(--s-2) var(--s-3);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: var(--fs-13);
+    font-family: var(--font-sans);
+    color: var(--text-secondary);
+    transition: background var(--transition-fast);
+
+    &:hover {
+      background: var(--bg-muted);
+    }
+  }
+}
+
+/* =========================
+   AI SUGGESTIONS (CreateIdeaModal)
+========================= */
+
+.create-idea-modal__suggestions {
+  margin-bottom: var(--s-4);
+}
+
+.create-idea-modal__suggestions-loading {
+  font-size: var(--fs-12);
+  color: var(--text-faint);
+  padding: var(--s-2) 0;
+  font-style: italic;
+}
+
+.create-idea-modal__suggestions-label {
+  font-size: var(--fs-12);
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--text-faint);
+  display: block;
+  margin-bottom: var(--s-2);
+}
+
+.create-idea-modal__suggestions-chips {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+
+.create-idea-modal__chip {
+  font-size: var(--fs-13);
+  text-align: left;
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-3);
+  border: 0.5px solid var(--border);
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: var(--lh-snug);
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+
+  &:hover {
+    background: var(--accent-soft);
+    border-color: var(--accent-ring);
+    color: var(--accent-active);
+  }
+
+  &--selected {
+    background: var(--accent-soft);
+    border-color: var(--accent-ring);
+    color: var(--accent-active);
+    font-weight: 500;
+  }
+}

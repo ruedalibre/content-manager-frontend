@@ -1,5 +1,8 @@
-/* Reset */
+@use "./tokens";
 @use "./pages";
+@use "./modals";
+
+/* Reset */
 
 * {
   box-sizing: border-box;
@@ -11,9 +14,59 @@ html,
 body,
 #root {
   height: 100%;
-  font-family: system-ui, Arial, sans-serif;
 }
 
 body {
-  background: #f3f4f6;
+  background: var(--bg-canvas);
+  color: var(--text);
+  font-family: var(--font-sans);
+}
+
+/* =========================
+   GLOBAL BUTTONS
+========================= */
+
+.btn-primary {
+  background: var(--primary);
+  color: var(--text-on-primary);
+  border: none;
+  padding: var(--s-2) var(--s-5);
+  border-radius: var(--r-3);
+  font-size: var(--fs-14);
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    background: var(--primary-hover);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  padding: var(--s-2) var(--s-5);
+  border-radius: var(--r-3);
+  font-size: var(--fs-14);
+  font-weight: 500;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+
+  &:hover:not(:disabled) {
+    border-color: var(--border-strong);
+    color: var(--text);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }

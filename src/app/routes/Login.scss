@@ -2,73 +2,81 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   align-items: center;
   justify-content: center;
-  background: #f3f4f6;
-  padding: 24px;
+  background: var(--bg-canvas);
+  padding: var(--s-6);
+  gap: var(--s-4);
 }
 
 .login-card {
-  background: white;
-  border: 0.5px solid #e5e7eb;
-  border-radius: 12px;
-  padding: 40px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--r-6);
+  padding: var(--s-8);
   width: 100%;
   max-width: 400px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--s-6);
+  box-shadow: var(--shadow-md);
 }
 
 .login-header {
-  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: var(--s-2);
+  text-align: center;
 }
 
 .login-logo {
-  font-size: 24px;
-  color: #7F77DD;
+  font-size: var(--fs-32);
 }
 
 .login-title {
-  font-size: 20px;
+  font-family: var(--font-display);
+  font-size: var(--fs-24);
   font-weight: 500;
-  color: #111827;
+  font-style: italic;
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
+  margin: 0;
 }
 
 .login-subtitle {
-  font-size: 13px;
-  color: #6b7280;
+  font-size: var(--fs-13);
+  color: var(--text-muted);
+  margin: 0;
 }
 
 .login-toggle {
   display: flex;
-  border: 0.5px solid #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
+  background: var(--bg-muted);
+  border-radius: var(--r-3);
+  padding: var(--s-1);
+  gap: var(--s-1);
 
   &__btn {
     flex: 1;
-    padding: 8px;
-    font-size: 13px;
-    font-weight: 500;
+    padding: var(--s-2);
     border: none;
+    border-radius: var(--r-2);
     background: none;
-    color: #6b7280;
+    font-size: var(--fs-13);
+    font-family: var(--font-sans);
+    color: var(--text-muted);
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: all var(--transition-fast);
 
-    &:hover:not(.login-toggle__btn--active) {
-      background: #f3f4f6;
+    &:hover {
+      color: var(--text);
     }
 
     &--active {
-      background: #EEEDFE;
-      color: #3C3489;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-weight: 500;
     }
   }
 }
@@ -76,51 +84,76 @@
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--s-4);
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-1);
+    font-size: var(--fs-13);
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
 
   input {
-    width: 100%;
-    padding: 10px 14px;
-    font-size: 14px;
-    border: 0.5px solid #e5e7eb;
-    border-radius: 8px;
-    background: white;
-    color: #111827;
+    padding: var(--s-2) var(--s-3);
+    border: 1px solid var(--border);
+    border-radius: var(--r-3);
+    font-size: var(--fs-14);
+    font-family: var(--font-sans);
+    background: var(--bg-elevated);
+    color: var(--text);
     outline: none;
+    transition: border-color var(--transition-fast);
+    box-sizing: border-box;
+    width: 100%;
 
     &:focus {
-      border-color: #AFA9EC;
+      border-color: var(--primary);
+    }
+
+    &::placeholder {
+      color: var(--text-faint);
     }
   }
 }
 
 .login-error {
-  font-size: 12px;
-  color: #D85A30;
-  line-height: 1.4;
+  font-size: var(--fs-13);
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-radius: var(--r-3);
+  padding: var(--s-2) var(--s-3);
   margin: 0;
 }
 
 .login-success {
-  font-size: 12px;
-  color: #1D9E75;
+  font-size: var(--fs-13);
+  color: var(--success);
+  background: var(--success-soft);
+  border-radius: var(--r-3);
+  padding: var(--s-2) var(--s-3);
   margin: 0;
 }
 
 .login-submit {
   width: 100%;
-  padding: 10px;
-  font-size: 14px;
-  margin-top: 4px;
+  padding: var(--s-3);
+  font-size: var(--fs-14);
 }
 
 .login-back {
-  font-size: 12px;
-  color: #9ca3af;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--fs-13);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
   text-align: center;
-  text-decoration: none;
+  padding: var(--s-1);
+  transition: color var(--transition-fast);
 
   &:hover {
-    color: #6b7280;
+    color: var(--text);
   }
 }

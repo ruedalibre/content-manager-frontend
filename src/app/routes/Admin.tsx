@@ -103,48 +103,23 @@ export default function Admin() {
   useEffect(() => {
     const loadUsers = async () => {
       try {
-        const { data: users } = await supabase
-          .from("users")
-          .select("id, email, created_at")
-          .order("created_at", { ascending: false });
+        const { data: { session } } = await supabase.auth.getSession()
+        const res = await fetch(
+          `${base}/admin-users-list`,
+          { headers: { Authorization: `Bearer ${session?.access_token}` } }
+        )
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        const users = await res.json()
 
-        if (users) {
-          const enriched = await Promise.all(
-            users.map(async (u) => {
-              const { count } = await supabase
-                .from("contents")
-                .select("*", { count: "exact", head: true })
-                .eq("user_id", u.id)
-                .eq("is_deleted", false);
-
-              const { data: lastContent } = await supabase
-                .from("contents")
-                .select("created_at")
-                .eq("user_id", u.id)
-                .eq("is_deleted", false)
-                .order("created_at", { ascending: false })
-                .limit(1)
-                .single();
-
-              return {
-                ...u,
-                total_contents: count ?? 0,
-                last_content_date: lastContent?.created_at ?? null,
-              };
-            })
-          );
-
-          let filtered = enriched;
-          if (usersFilter === "active") {
-            filtered = enriched.filter((u) => u.total_contents > 0);
-          } else if (usersFilter === "inactive") {
-            filtered = enriched.filter((u) => u.total_contents === 0);
-          }
-
-          setActiveUsers(filtered);
+        let filtered = users
+        if (usersFilter === "active") {
+          filtered = users.filter((u: any) => u.total_contents > 0)
+        } else if (usersFilter === "inactive") {
+          filtered = users.filter((u: any) => u.total_contents === 0)
         }
+        setActiveUsers(filtered)
       } catch (err) {
-        console.error("Users load error:", err);
+        console.error("Users load error:", err)
       }
     };
     loadUsers();

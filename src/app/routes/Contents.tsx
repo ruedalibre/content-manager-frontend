@@ -644,7 +644,7 @@ export default function Contents() {
           <table className="contents-table">
             <thead>
               <tr>
-                <th className="col-title">{t("contents.colTitle")}</th>
+                <th className="col-title-header">{t("contents.colTitle")}</th>
                 <th>{t("contents.colPlatform")}</th>
                 <th>{t("contents.colFormat")}</th>
                 <th>{t("contents.colRole")}</th>
@@ -766,14 +766,14 @@ export default function Contents() {
                     </td>
 
                     <td className="actions-cell">
-                      <button
+                      <button type="button"
                         className="btn-link"
                         onClick={() => handleEdit(item)}
                       >
                         {t("contents.edit")}
                       </button>
 
-                      <button
+                      <button type="button"
                         className="btn-link btn-link--danger"
                         onClick={() => handleDeleteClick(item)}
                       >
@@ -909,6 +909,7 @@ export default function Contents() {
                   className="btn-primary btn-danger"
                   onClick={handleConfirmDelete}
                   disabled={isDeleting}
+                  type="button"
                 >
                   {isDeleting ? t("contents.deleting") : t("contents.delete")}
                 </button>

@@ -9,19 +9,19 @@
   width: auto;
 
   &__card {
-    background: white;
-    border: 0.5px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 20px 28px;
+    background: var(--bg-elevated);
+    border: 0.5px solid var(--border);
+    border-radius: var(--r-4);
+    padding: var(--s-5) var(--s-6);
     display: flex;
     align-items: center;
-    gap: 16px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
+    gap: var(--s-4);
+    box-shadow: var(--shadow-xl);
     min-width: 750px;
   }
 
   &__icon {
-    font-size: 24px;
+    font-size: var(--fs-24);
     flex-shrink: 0;
   }
 
@@ -31,15 +31,15 @@
   }
 
   &__title {
-    font-size: 15px;
+    font-size: var(--fs-15);
     font-weight: 500;
-    margin-bottom: 4px;
-    color: #111827;
+    margin-bottom: var(--s-1);
+    color: var(--text);
   }
 
   &__subtitle {
-    font-size: 13px;
-    color: #6b7280;
+    font-size: var(--fs-13);
+    color: var(--text-muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -48,35 +48,37 @@
   &__actions {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--s-3);
     flex-shrink: 0;
     margin-left: auto;
   }
 
   &__btn {
-    font-size: 13px;
-    padding: 8px 18px;
+    font-size: var(--fs-13);
+    padding: var(--s-2) var(--s-5);
     white-space: nowrap;
   }
 
   &__link {
-    font-size: 12px;
-    color: #6b7280;
+    font-size: var(--fs-12);
+    color: var(--text-muted);
     background: none;
     border: none;
     cursor: pointer;
     white-space: nowrap;
-    padding: 4px;
+    padding: var(--s-1);
+    font-family: var(--font-sans);
+    transition: color var(--transition-fast);
 
     &:hover {
-      color: #111827;
+      color: var(--text);
     }
 
     &--muted {
-      color: #9ca3af;
+      color: var(--text-faint);
 
       &:hover {
-        color: #6b7280;
+        color: var(--text-muted);
       }
     }
   }
