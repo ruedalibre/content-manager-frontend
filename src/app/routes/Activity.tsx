@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Calendar, BarChart3 } from "lucide-react";
 import { useDashboardData } from "../../features/dashboard/hooks/useDashboardData.ts";
 
 import KPISection from "../../features/dashboard/components/KPISection.tsx";
@@ -87,7 +88,9 @@ export default function Dashboard() {
     return (
       <div className="dashboard-empty">
         <span className="dashboard-empty__badge">{t("activity.noActivity")}</span>
-        <div className="dashboard-empty__icon">📅</div>
+        <div className="dashboard-empty__icon">
+          <Calendar size={42} strokeWidth={1.5} />
+        </div>
         <h2>{t("activity.noContentInPeriod", { period: labels[period].toLowerCase() })}</h2>
         <p>
           {t("activity.noContentInPeriodDesc")}
@@ -113,7 +116,9 @@ export default function Dashboard() {
       <div className="dashboard-empty">
         <span className="dashboard-empty__badge">{t("activity.noDataYet")}</span>
 
-        <div className="dashboard-empty__icon">📊</div>
+        <div className="dashboard-empty__icon">
+          <BarChart3 size={42} strokeWidth={1.5} />
+        </div>
 
         <h2>{t("activity.activityWillAppear")}</h2>
 
