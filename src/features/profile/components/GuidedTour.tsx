@@ -1,6 +1,8 @@
 import { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { createPortal } from "react-dom";
+import { Lightbulb, FileText, Sparkles, BarChart3 } from "lucide-react";
 import "./GuidedTour.scss";
 
 // Spotlight positions — must match sidebar nav item positions
@@ -20,30 +22,30 @@ type Props = {
 export default function GuidedTour({ onComplete }: Props) {
   const { t } = useTranslation();
 
-  const TOUR_STEPS = [
+  const TOUR_STEPS: { target: string; title: string; description: string; icon: React.ReactNode }[] = [
     {
       target: 'ideas',
       title: t("tour.steps.ideas.title"),
       description: t("tour.steps.ideas.description"),
-      icon: '💡',
+      icon: <Lightbulb size={18} strokeWidth={1.5} />,
     },
     {
       target: 'contents',
       title: t("tour.steps.contents.title"),
       description: t("tour.steps.contents.description"),
-      icon: '📄',
+      icon: <FileText size={18} strokeWidth={1.5} />,
     },
     {
       target: 'identity',
       title: t("tour.steps.identity.title"),
       description: t("tour.steps.identity.description"),
-      icon: '✦',
+      icon: <Sparkles size={18} strokeWidth={1.5} />,
     },
     {
       target: 'activity',
       title: t("tour.steps.activity.title"),
       description: t("tour.steps.activity.description"),
-      icon: '📊',
+      icon: <BarChart3 size={18} strokeWidth={1.5} />,
     },
   ];
 
