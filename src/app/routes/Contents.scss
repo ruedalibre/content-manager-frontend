@@ -22,6 +22,23 @@
    BUTTONS
 ========================= */
 
+.btn-primary {
+  background: var(--primary);
+  color: var(--text-on-primary);
+  border: none;
+  padding: var(--s-2) var(--s-5);
+  border-radius: var(--r-3);
+  font-size: var(--fs-14);
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+
+  &:hover {
+    background: var(--primary-hover);
+  }
+}
+
 .btn-link {
   background: none;
   border: none;
@@ -151,31 +168,16 @@
     padding-bottom: var(--s-3);
   }
 
-  th.col-title-header {
-    position: sticky;
-    left: 0;
-    z-index: 2;
-    background: var(--bg-surface);
-    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.06);
-  }
-
   td.col-title {
-    min-width: 240px;
-    max-width: 280px;
-    position: sticky;
-    left: 0;
-    z-index: 1;
-    background: var(--bg-elevated);
-    box-shadow: 2px 0 4px rgba(0, 0, 0, 0.04);
-  }
-
-  tr:hover td.col-title {
-    background: var(--bg-surface);
+    min-width: 160px;
+    max-width: 220px;
   }
 
   td.col-topics {
-    min-width: 150px;
-    max-width: 220px;
+    white-space: normal;
+    word-break: break-word;
+    min-width: 120px;
+    max-width: 180px;
   }
 
   td.col-date {
@@ -215,7 +217,7 @@
 .status {
   padding: 3px 8px;
   border-radius: var(--r-pill);
-  font-size: var(--fs-10);
+  font-size: var(--fs-12);
   font-weight: 600;
   text-transform: capitalize;
   display: inline-flex;
@@ -253,9 +255,7 @@
   li {
     font-size: var(--fs-12);
     color: var(--text-muted);
-    white-space: normal;
-    word-break: break-word;
-    line-height: var(--lh-snug);
+    white-space: nowrap;
   }
 }
 
@@ -271,7 +271,6 @@
 .contents-pagination {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: var(--s-1);
 
   button {
@@ -365,7 +364,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--s-1);
-  font-size: var(--fs-10);
+  font-size: var(--fs-12);
   font-weight: 500;
   font-family: var(--font-sans);
   color: var(--accent);
