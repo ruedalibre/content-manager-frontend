@@ -191,8 +191,10 @@
 }
 
 .dashboard-empty__icon {
-  font-size: 42px;
   margin-bottom: var(--s-4);
+  color: var(--text-faint);
+  display: flex;
+  justify-content: center;
 }
 
 .dashboard-empty h2 {
