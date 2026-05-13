@@ -150,7 +150,7 @@ export default function Login() {
         <div className="login-panel__brand">
           <span className="login-panel__logo">✦</span>
           <span className="login-panel__name">
-            Content Intelligence
+            Content Intelligence App
           </span>
         </div>
 

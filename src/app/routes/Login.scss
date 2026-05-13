@@ -77,7 +77,7 @@
 
 .login-panel__tagline {
   font-family: var(--font-display);
-  font-size: var(--fs-48);
+  font-size: var(--fs-64);
   font-weight: 500;
   line-height: var(--lh-tight);
   letter-spacing: var(--tracking-tight);
@@ -91,7 +91,7 @@
 }
 
 .login-panel__sub {
-  font-size: var(--fs-14);
+  font-size: var(--fs-16);
   color: rgba(255, 255, 255, 0.55);
   line-height: var(--lh-loose);
   margin: 0;
@@ -100,7 +100,7 @@
 
 .login-panel__quote {
   font-family: var(--font-display);
-  font-size: var(--fs-13);
+  font-size: var(--fs-16);
   font-style: italic;
   color: rgba(255, 255, 255, 0.35);
   margin: 0;
