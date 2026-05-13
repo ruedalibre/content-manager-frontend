@@ -12,8 +12,13 @@ export default function Login() {
   const [searchParams] = useSearchParams()
   const { t } = useTranslation()
 
-  const [mode, setMode] = useState<Mode>("signin")
-  const [email, setEmail] = useState("")
+  const [mode, setMode] = useState<Mode>(() =>
+    searchParams.get("email") ? "register" : "signin"
+  )
+  const [email, setEmail] = useState(() => {
+    const emailParam = searchParams.get("email")
+    return emailParam ? decodeURIComponent(emailParam) : ""
+  })
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
@@ -23,18 +28,10 @@ export default function Login() {
   useEffect(() => {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession()
-      if (session) navigate("/ideas")
+      if (session) navigate("/activity")
     }
     checkSession()
   }, [navigate])
-
-  useEffect(() => {
-    const emailParam = searchParams.get("email")
-    if (emailParam) {
-      setEmail(decodeURIComponent(emailParam))
-      setMode("register")
-    }
-  }, [searchParams])
 
   const resetForm = () => {
     setPassword("")
@@ -65,7 +62,7 @@ export default function Login() {
       return
     }
 
-    navigate("/ideas")
+    navigate("/activity")
   }
 
   /* REGISTER */
