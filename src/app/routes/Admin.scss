@@ -381,6 +381,52 @@
 
 // ── Waitlist Intelligence additions ──
 
+// Chart card
+.admin-card--chart {
+  padding-top: var(--s-5);
+  padding-bottom: var(--s-4);
+}
+
+.admin-chart-legend {
+  display: flex;
+  gap: var(--s-4);
+  justify-content: flex-end;
+  margin-top: var(--s-3);
+  padding-top: var(--s-3);
+  border-top: 1px solid var(--divider);
+}
+
+.admin-chart-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 2px;
+    border-radius: 1px;
+  }
+
+  &--primary::before {
+    background: var(--primary);
+  }
+
+  &--accent::before {
+    background: var(--accent);
+    background-image: repeating-linear-gradient(
+      90deg,
+      var(--accent) 0px,
+      var(--accent) 4px,
+      transparent 4px,
+      transparent 6px
+    );
+  }
+}
+
 .admin-two-col {
   display: grid;
   grid-template-columns: 1fr 1fr;
