@@ -1,3 +1,12 @@
+:root {
+  --pastel-primary:   color-mix(in srgb, var(--primary) 45%, var(--bg-canvas));
+  --pastel-accent:    color-mix(in srgb, var(--accent) 45%, var(--bg-canvas));
+  --pastel-primary-d: color-mix(in srgb, var(--primary) 65%, var(--bg-canvas));
+  --pastel-accent-d:  color-mix(in srgb, var(--accent) 65%, var(--bg-canvas));
+  --pastel-text:      color-mix(in srgb, var(--text) 35%, var(--bg-canvas));
+  --pastel-border:    color-mix(in srgb, var(--border-strong) 55%, var(--bg-canvas));
+}
+
 .admin-page {
   display: flex;
   flex-direction: column;
