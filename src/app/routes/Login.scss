@@ -364,6 +364,10 @@
       margin: 0;
     }
 
+    .login-panel__name {
+      font-size: var(--fs-10);
+    }
+
     // Logo is small and subordinate
     .login-panel__logo {
       font-size: var(--fs-11);
