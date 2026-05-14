@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "../../supabaseClient";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell,
 } from "recharts";
 import "./Admin.scss";
 
@@ -69,8 +70,6 @@ export default function Admin() {
 
   // Waitlist Intelligence — computed from allEarlyAccess (full dataset, no pagination)
   const [allEarlyAccess, setAllEarlyAccess] = useState<EarlyAccessRequest[]>([]);
-  const [focusPage, setFocusPage] = useState(1);
-  const FOCUS_LIMIT = 5;
 
   const [, setLoadingOps] = useState(true);
   const [loadingEco, setLoadingEco] = useState(false);
@@ -365,15 +364,6 @@ export default function Admin() {
             const sortedPlatforms = Object.entries(platformCounts).sort((a, b) => b[1] - a[1]);
             const maxPlatform = sortedPlatforms[0]?.[1] ?? 1;
 
-            // Focus table pagination
-            const withFocus = records.filter(r => r.creator_focus);
-            const totalFocus = withFocus.length;
-            const totalFocusPages = Math.ceil(totalFocus / FOCUS_LIMIT);
-            const paginatedFocus = withFocus.slice(
-              (focusPage - 1) * FOCUS_LIMIT,
-              focusPage * FOCUS_LIMIT
-            );
-
             return (
               <>
                 {/* 1 — KPIs */}
@@ -512,51 +502,84 @@ export default function Admin() {
                   </div>
                 </section>
 
-                {/* 4 — Creator focus (tabla paginada) */}
+                {/* 4 — Distribución por idioma (donut) */}
                 <section className="admin-section">
-                  <div className="admin-section__header">
-                    <span className="section-label">{t("admin.creatorFocusResponses")}</span>
-                    <span className="admin-section-hint" style={{ margin: 0 }}>
-                      {t("admin.creatorFocusHint", { count: totalFocus })}
-                    </span>
+                  <span className="section-label">{t("admin.languageDistribution")}</span>
+                  <div className="admin-card admin-card--chart">
+                    {(() => {
+                      const langCounts = allEarlyAccess.reduce((acc, r) => {
+                        const lang = r.language?.toLowerCase() === "es" ? "Español" : "English";
+                        acc[lang] = (acc[lang] || 0) + 1;
+                        return acc;
+                      }, {} as Record<string, number>);
+
+                      const pieData = Object.entries(langCounts).map(([name, value]) => ({ name, value }));
+                      const COLORS = ["var(--primary)", "var(--accent)"];
+                      const total = allEarlyAccess.length;
+
+                      return (
+                        <div style={{ display: "flex", alignItems: "center", gap: "var(--s-7)" }}>
+                          <ResponsiveContainer width={200} height={200}>
+                            <PieChart>
+                              <Pie
+                                data={pieData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius={54}
+                                outerRadius={80}
+                                paddingAngle={3}
+                                dataKey="value"
+                              >
+                                {pieData.map((_, index) => (
+                                  <Cell
+                                    key={index}
+                                    fill={COLORS[index % COLORS.length]}
+                                    stroke="var(--bg-elevated)"
+                                    strokeWidth={2}
+                                  />
+                                ))}
+                              </Pie>
+                              <Tooltip
+                                contentStyle={{
+                                  background: "var(--bg-elevated)",
+                                  border: "1px solid var(--border)",
+                                  borderRadius: "var(--r-3)",
+                                  fontSize: 12,
+                                  color: "var(--text)",
+                                  boxShadow: "var(--shadow-md)",
+                                }}
+                                formatter={(value, name) => [
+                                  `${value} (${Math.round(((value as number) / total) * 100)}%)`,
+                                  name,
+                                ] as [string, string]}
+                              />
+                            </PieChart>
+                          </ResponsiveContainer>
+
+                          <div style={{ display: "flex", flexDirection: "column", gap: "var(--s-4)" }}>
+                            {pieData.map((entry, index) => (
+                              <div key={entry.name} style={{ display: "flex", alignItems: "center", gap: "var(--s-3)" }}>
+                                <div style={{
+                                  width: 10, height: 10, borderRadius: "50%",
+                                  background: COLORS[index % COLORS.length],
+                                  flexShrink: 0,
+                                }} />
+                                <span style={{ fontSize: "var(--fs-13)", color: "var(--text-secondary)", minWidth: 80 }}>
+                                  {entry.name}
+                                </span>
+                                <span style={{ fontSize: "var(--fs-20)", fontWeight: 600, color: "var(--text)", fontFamily: "var(--font-display)", lineHeight: 1 }}>
+                                  {entry.value}
+                                </span>
+                                <span style={{ fontSize: "var(--fs-12)", color: "var(--text-faint)" }}>
+                                  {Math.round((entry.value / total) * 100)}%
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
-                  <div className="admin-table-wrap">
-                    <table className="admin-table">
-                      <thead>
-                        <tr>
-                          <th>{t("admin.email")}</th>
-                          <th>{t("admin.platform")}</th>
-                          <th>{t("admin.lang")}</th>
-                          <th>{t("admin.focus")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {paginatedFocus.map((r) => (
-                          <tr key={r.id}>
-                            <td>{r.email}</td>
-                            <td>{r.platform_name ?? "—"}</td>
-                            <td>{r.language?.toUpperCase()}</td>
-                            <td>{r.creator_focus}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  {totalFocusPages > 1 && (
-                    <div className="admin-pagination">
-                      <button
-                        disabled={focusPage === 1}
-                        onClick={() => setFocusPage(p => p - 1)}
-                        type="button"
-                      >‹</button>
-                      <span>{focusPage} of {totalFocusPages}</span>
-                      <button
-                        disabled={focusPage >= totalFocusPages}
-                        onClick={() => setFocusPage(p => p + 1)}
-                        type="button"
-                      >›</button>
-                    </div>
-                  )}
                 </section>
 
                 {/* 5 — Lista de espera completa (solo lectura) */}
@@ -572,6 +595,7 @@ export default function Admin() {
                           <th>{t("admin.platform")}</th>
                           <th>{t("admin.focus")}</th>
                           <th>{t("admin.status")}</th>
+                          <th>{t("admin.lang")}</th>
                           <th>{t("admin.requested")}</th>
                         </tr>
                       </thead>
@@ -586,6 +610,15 @@ export default function Admin() {
                                 r.status === "invited" ? "admin-badge--invited" : "admin-badge--pending"
                               }`}>
                                 {r.status}
+                              </span>
+                            </td>
+                            <td>
+                              <span className={`admin-badge ${
+                                r.language?.toLowerCase() === "es"
+                                  ? "admin-badge--invited"
+                                  : "admin-badge--pending"
+                              }`}>
+                                {r.language?.toUpperCase() ?? "—"}
                               </span>
                             </td>
                             <td>{new Date(r.created_at).toLocaleDateString()}</td>
