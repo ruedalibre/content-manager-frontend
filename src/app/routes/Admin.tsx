@@ -430,122 +430,6 @@ export default function Admin() {
             </section>
           )}
 
-          <section className="admin-section">
-            <div className="admin-section__header">
-              <span className="section-label">
-                {t("admin.earlyAccessWaitlist")} ({earlyTotal})
-              </span>
-              <div className="admin-filters">
-                <select
-                  className="admin-filter"
-                  value={earlyStatusFilter}
-                  onChange={(e) => {
-                    setEarlyStatusFilter(e.target.value);
-                    setEarlyPage(1);
-                  }}
-                >
-                  <option value="all">{t("admin.allStatus")}</option>
-                  <option value="pending">{t("admin.pending")}</option>
-                  <option value="invited">{t("admin.invited")}</option>
-                </select>
-                <select
-                  className="admin-filter"
-                  value={earlyLangFilter}
-                  onChange={(e) => {
-                    setEarlyLangFilter(e.target.value);
-                    setEarlyPage(1);
-                  }}
-                >
-                  <option value="all">{t("admin.allLanguages")}</option>
-                  <option value="en">English</option>
-                  <option value="es">Spanish</option>
-                </select>
-              </div>
-            </div>
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>{t("admin.email")}</th>
-                    <th>{t("admin.platform")}</th>
-                    <th>{t("admin.focus")}</th>
-                    <th>{t("admin.lang")}</th>
-                    <th>{t("admin.status")}</th>
-                    <th>{t("admin.requested")}</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {earlyAccess.map((r) => (
-                    <tr key={r.id}>
-                      <td>{r.email}</td>
-                      <td>{r.platform_name ?? "—"}</td>
-                      <td>{r.creator_focus ?? "—"}</td>
-                      <td>{r.language?.toUpperCase()}</td>
-                      <td>
-                        <span
-                          className={`admin-badge ${
-                            r.status === "invited"
-                              ? "admin-badge--invited"
-                              : "admin-badge--pending"
-                          }`}
-                        >
-                          {r.status}
-                        </span>
-                      </td>
-                      <td>{new Date(r.created_at).toLocaleDateString()}</td>
-                      <td>
-                        {r.status === "pending" && (
-                          <>
-                            <button
-                              className="admin-invite-btn"
-                              onClick={() => handleInvite(r)}
-                              disabled={invitingId === r.id}
-                              type="button"
-                            >
-                              {invitingId === r.id ? t("admin.sending") : t("admin.invite")}
-                            </button>
-                            {inviteError && invitingId === null && (
-                              <p className="admin-error">{inviteError}</p>
-                            )}
-                          </>
-                        )}
-                        {r.status === "invited" && (
-                          <span className="admin-invited-date">
-                            {r.invited_at
-                              ? new Date(r.invited_at).toLocaleDateString()
-                              : "—"}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {earlyTotal > EARLY_LIMIT && (
-              <div className="admin-pagination">
-                <button
-                  disabled={earlyPage === 1}
-                  onClick={() => setEarlyPage((p) => p - 1)}
-                  type="button"
-                >
-                  ‹
-                </button>
-                <span>
-                  {earlyPage} of {Math.ceil(earlyTotal / EARLY_LIMIT)}
-                </span>
-                <button
-                  disabled={earlyPage >= Math.ceil(earlyTotal / EARLY_LIMIT)}
-                  onClick={() => setEarlyPage((p) => p + 1)}
-                  type="button"
-                >
-                  ›
-                </button>
-              </div>
-            )}
-          </section>
-
         </div>
       )}
 
@@ -712,53 +596,49 @@ export default function Admin() {
 
                 {/* 4 — Creator focus (tabla paginada) */}
                 <section className="admin-section">
-                  <span className="section-label">{t("admin.creatorFocusResponses")}</span>
-                  <div className="admin-card">
-                    <p className="admin-section-hint">
+                  <div className="admin-section__header">
+                    <span className="section-label">{t("admin.creatorFocusResponses")}</span>
+                    <span className="admin-section-hint" style={{ margin: 0 }}>
                       {t("admin.creatorFocusHint", { count: totalFocus })}
-                    </p>
-                    <div className="tbl">
-                      <table>
-                        <thead>
-                          <tr>
-                            <th>{t("admin.email")}</th>
-                            <th>{t("admin.platform")}</th>
-                            <th>{t("admin.focus")}</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {paginatedFocus.map((r) => (
-                            <tr key={r.id}>
-                              <td style={{ fontFamily: "var(--font-mono)", fontSize: "var(--fs-12)" }}>
-                                {r.email}
-                              </td>
-                              <td>
-                                <span className="badge">{r.platform_name ?? "—"}</span>
-                              </td>
-                              <td style={{ color: "var(--text-secondary)" }}>
-                                {r.creator_focus}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    {totalFocusPages > 1 && (
-                      <div className="admin-pagination">
-                        <button
-                          disabled={focusPage === 1}
-                          onClick={() => setFocusPage(p => p - 1)}
-                          type="button"
-                        >‹</button>
-                        <span>{focusPage} of {totalFocusPages}</span>
-                        <button
-                          disabled={focusPage >= totalFocusPages}
-                          onClick={() => setFocusPage(p => p + 1)}
-                          type="button"
-                        >›</button>
-                      </div>
-                    )}
+                    </span>
                   </div>
+                  <div className="admin-table-wrap">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>{t("admin.email")}</th>
+                          <th>{t("admin.platform")}</th>
+                          <th>{t("admin.lang")}</th>
+                          <th>{t("admin.focus")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {paginatedFocus.map((r) => (
+                          <tr key={r.id}>
+                            <td>{r.email}</td>
+                            <td>{r.platform_name ?? "—"}</td>
+                            <td>{r.language?.toUpperCase()}</td>
+                            <td>{r.creator_focus}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {totalFocusPages > 1 && (
+                    <div className="admin-pagination">
+                      <button
+                        disabled={focusPage === 1}
+                        onClick={() => setFocusPage(p => p - 1)}
+                        type="button"
+                      >‹</button>
+                      <span>{focusPage} of {totalFocusPages}</span>
+                      <button
+                        disabled={focusPage >= totalFocusPages}
+                        onClick={() => setFocusPage(p => p + 1)}
+                        type="button"
+                      >›</button>
+                    </div>
+                  )}
                 </section>
 
                 {/* 5 — Lista de espera completa (solo lectura) */}
