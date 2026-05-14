@@ -178,6 +178,16 @@ export default function Admin() {
 
   const base = import.meta.env.VITE_SUPABASE_URL + "/functions/v1";
 
+  const PLATFORM_COLORS = [
+    "var(--primary)",
+    "var(--pastel-accent-d)",
+    "var(--accent)",
+    "var(--pastel-primary)",
+    "var(--pastel-accent)",
+    "var(--pastel-text)",
+    "var(--pastel-border)",
+  ];
+
   useEffect(() => {
     const loadOperations = async () => {
       try {
@@ -327,6 +337,7 @@ export default function Admin() {
       {activeTab === "operations" && (
         <div className="admin-tab-content">
 
+          {/* 1 — KPIs */}
           {usersSummary && (
             <section className="admin-section">
               <span className="section-label">{t("admin.platformOverview")}</span>
@@ -351,6 +362,54 @@ export default function Admin() {
             </section>
           )}
 
+          {/* 2 — Donuts: user status + platform distribution */}
+          <div className="admin-two-col">
+
+            {/* Donut — User status */}
+            {usersSummary && (() => {
+              const inactive = usersSummary.total_users - usersSummary.users_with_content;
+              const statusData = [
+                { name: t("admin.active"), value: usersSummary.users_with_content },
+                { name: t("admin.inactive"), value: inactive },
+              ];
+              return (
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.userStatus")}</span>
+                  <div className="admin-card admin-card--chart">
+                    <WaitlistDonut
+                      data={statusData}
+                      colors={["var(--accent)", "var(--bg-muted)"]}
+                      total={usersSummary.total_users}
+                    />
+                  </div>
+                </section>
+              );
+            })()}
+
+            {/* Donut — Platform distribution */}
+            {platformUsage.length > 0 && (() => {
+              const platformData = platformUsage.map(p => ({
+                name: p.platform_name,
+                value: p.total_contents,
+              }));
+              const platformTotal = platformData.reduce((s, p) => s + p.value, 0);
+              return (
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.platformDistribution")}</span>
+                  <div className="admin-card admin-card--chart">
+                    <WaitlistDonut
+                      data={platformData}
+                      colors={PLATFORM_COLORS}
+                      total={platformTotal}
+                    />
+                  </div>
+                </section>
+              );
+            })()}
+
+          </div>
+
+          {/* 3 — Active users table (moved to bottom) */}
           <section className="admin-section">
             <div className="admin-section__header">
               <span className="section-label">{t("admin.activeUsers")}</span>
@@ -429,26 +488,6 @@ export default function Admin() {
             )}
           </section>
 
-          {platformUsage.length > 0 && (
-            <section className="admin-section">
-              <span className="section-label">{t("admin.platformDistribution")}</span>
-              <div className="admin-card">
-                {platformUsage.map((p) => (
-                  <div key={p.platform_name} className="admin-bar-row">
-                    <span className="admin-bar-label">{p.platform_name}</span>
-                    <div className="admin-bar-track">
-                      <div
-                        className="admin-bar-fill"
-                        style={{ width: `${p.percentage}%` }}
-                      />
-                    </div>
-                    <span className="admin-bar-pct">{p.percentage}%</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-
         </div>
       )}
 
@@ -464,15 +503,6 @@ export default function Admin() {
             const weeklyData = groupByWeek(records);
             const platformCounts = countBy(records, "platform_name");
             const sortedPlatforms = Object.entries(platformCounts).sort((a, b) => b[1] - a[1]);
-            const PLATFORM_COLORS = [
-              "var(--primary)",
-              "var(--pastel-accent-d)",
-              "var(--accent)",
-              "var(--pastel-primary)",
-              "var(--pastel-accent)",
-              "var(--pastel-text)",
-              "var(--pastel-border)",
-            ];
             const platformPieData = sortedPlatforms.map(([name, value]) => ({ name, value }));
 
             return (

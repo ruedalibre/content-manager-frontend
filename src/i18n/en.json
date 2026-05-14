@@ -409,6 +409,7 @@
     "totalContents": "Total contents",
     "avgPerUser": "Avg per user",
     "activeUsers": "Active users",
+    "userStatus": "User status",
     "platformDistribution": "Platform distribution",
     "earlyAccessWaitlist": "Early access waitlist",
     "allStatus": "All status",
