@@ -144,6 +144,18 @@ export default function Login() {
 
       {/* LEFT PANEL */}
       <div className="login-panel login-panel--left">
+
+        {/* Extra decorative circles — radii intentionally irregular */}
+        <svg
+          className="login-panel__circles-svg"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <circle cx="75%" cy="60%" r="170" fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="1" />
+          <circle cx="25%" cy="25%" r="280" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+          <circle cx="55%" cy="85%" r="310" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="1" />
+        </svg>
+
         <div className="login-panel__brand">
           <span className="login-panel__logo">✦</span>
           <span className="login-panel__name">
@@ -164,6 +176,22 @@ export default function Login() {
           "{t("login.quote")}"
         </p>
       </div>
+
+      {/* DIAGONAL DIVIDER */}
+      <svg
+        className="login-divider-svg"
+        aria-hidden="true"
+        focusable="false"
+        viewBox="0 0 40 100"
+        preserveAspectRatio="none"
+      >
+        <line
+          x1="20" y1="0"
+          x2="16" y2="100"
+          stroke="rgba(255,255,255,0.15)"
+          strokeWidth="1.5"
+        />
+      </svg>
 
       {/* RIGHT PANEL */}
       <div className="login-panel login-panel--right">
