@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../../supabaseClient";
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+} from "recharts";
 import "./Admin.scss";
 
 type ActiveUser = {
@@ -74,6 +77,8 @@ export default function Admin() {
 
   // Waitlist Intelligence — computed from allEarlyAccess (full dataset, no pagination)
   const [allEarlyAccess, setAllEarlyAccess] = useState<EarlyAccessRequest[]>([]);
+  const [focusPage, setFocusPage] = useState(1);
+  const FOCUS_LIMIT = 5;
 
   const [, setLoadingOps] = useState(true);
   const [loadingEco, setLoadingEco] = useState(false);
@@ -555,13 +560,21 @@ export default function Admin() {
             const invited = records.filter(r => r.status === "invited").length;
             const weeklyData = groupByWeek(records);
             const platformCounts = countBy(records, "platform_name");
-            const keywords = extractKeywords(records);
             const sortedPlatforms = Object.entries(platformCounts).sort((a, b) => b[1] - a[1]);
             const maxPlatform = sortedPlatforms[0]?.[1] ?? 1;
 
+            // Focus table pagination
+            const withFocus = records.filter(r => r.creator_focus);
+            const totalFocus = withFocus.length;
+            const totalFocusPages = Math.ceil(totalFocus / FOCUS_LIMIT);
+            const paginatedFocus = withFocus.slice(
+              (focusPage - 1) * FOCUS_LIMIT,
+              focusPage * FOCUS_LIMIT
+            );
+
             return (
               <>
-                {/* KPIs */}
+                {/* 1 — KPIs */}
                 <section className="admin-section">
                   <span className="section-label">{t("admin.waitlistOverview")}</span>
                   <div className="admin-stats">
@@ -586,70 +599,202 @@ export default function Admin() {
                   </div>
                 </section>
 
-                <div className="admin-two-col">
-                  {/* Crecimiento semanal */}
-                  <section className="admin-section">
-                    <span className="section-label">{t("admin.weeklyGrowth")}</span>
-                    <div className="admin-card">
-                      {weeklyData.map((w, i) => {
-                        const maxCount = Math.max(...weeklyData.map(x => x.count));
-                        const pct = Math.round((w.count / maxCount) * 100);
-                        const d = new Date(w.week);
-                        const label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                        return (
-                          <div key={i} className="admin-bar-row">
-                            <span className="admin-bar-label admin-bar-label--mono">{label}</span>
-                            <div className="admin-bar-track">
-                              <div className="admin-bar-fill" style={{ width: `${pct}%` }} />
-                            </div>
-                            <span className="admin-bar-pct">{w.count}</span>
-                            <span className="admin-bar-cumulative">/{w.cumulative}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </section>
-
-                  {/* Plataformas */}
-                  <section className="admin-section">
-                    <span className="section-label">{t("admin.platformBreakdown")}</span>
-                    <div className="admin-card">
-                      {sortedPlatforms.map(([name, count]) => (
-                        <div key={name} className="admin-bar-row">
-                          <span className="admin-bar-label">{name}</span>
-                          <div className="admin-bar-track">
-                            <div
-                              className="admin-bar-fill"
-                              style={{ width: `${Math.round((count / maxPlatform) * 100)}%` }}
-                            />
-                          </div>
-                          <span className="admin-bar-pct">{count}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                </div>
-
-                {/* Keywords de creator_focus */}
+                {/* 2 — Crecimiento acumulado (AreaChart) */}
                 <section className="admin-section">
-                  <span className="section-label">{t("admin.creatorFocusThemes")}</span>
+                  <span className="section-label">{t("admin.weeklyGrowth")}</span>
+                  <div className="admin-card admin-card--chart">
+                    <ResponsiveContainer width="100%" height={220}>
+                      <AreaChart
+                        data={weeklyData}
+                        margin={{ top: 8, right: 16, left: -20, bottom: 0 }}
+                      >
+                        <defs>
+                          <linearGradient id="gradCumulative" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.18} />
+                            <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="gradWeekly" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.15} />
+                            <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="var(--border-subtle)"
+                          vertical={false}
+                        />
+                        <XAxis
+                          dataKey="week"
+                          tick={{ fontSize: 11, fill: "var(--text-faint)", fontFamily: "var(--font-mono)" }}
+                          tickFormatter={(val: string) => {
+                            const d = new Date(val);
+                            return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                          }}
+                          axisLine={false}
+                          tickLine={false}
+                          interval="preserveStartEnd"
+                        />
+                        <YAxis
+                          tick={{ fontSize: 11, fill: "var(--text-faint)" }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            background: "var(--bg-elevated)",
+                            border: "1px solid var(--border)",
+                            borderRadius: "var(--r-3)",
+                            fontSize: 12,
+                            color: "var(--text)",
+                            boxShadow: "var(--shadow-md)",
+                          }}
+                          labelFormatter={(val: string) => {
+                            const d = new Date(val);
+                            return `Week of ${d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`;
+                          }}
+                          formatter={(value: number, name: string) => [
+                            value,
+                            name === "cumulative"
+                              ? t("admin.totalAccumulated")
+                              : t("admin.newThisWeek"),
+                          ]}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="cumulative"
+                          stroke="var(--primary)"
+                          strokeWidth={2}
+                          fill="url(#gradCumulative)"
+                          dot={false}
+                          activeDot={{ r: 4, fill: "var(--primary)" }}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="count"
+                          stroke="var(--accent)"
+                          strokeWidth={1.5}
+                          fill="url(#gradWeekly)"
+                          dot={false}
+                          activeDot={{ r: 3, fill: "var(--accent)" }}
+                          strokeDasharray="4 2"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                    <div className="admin-chart-legend">
+                      <span className="admin-chart-legend__item admin-chart-legend__item--primary">
+                        {t("admin.totalAccumulated")}
+                      </span>
+                      <span className="admin-chart-legend__item admin-chart-legend__item--accent">
+                        {t("admin.newThisWeek")}
+                      </span>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 3 — Distribución por plataforma */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.platformBreakdown")}</span>
+                  <div className="admin-card">
+                    {sortedPlatforms.map(([name, count]) => (
+                      <div key={name} className="admin-bar-row">
+                        <span className="admin-bar-label">{name}</span>
+                        <div className="admin-bar-track">
+                          <div
+                            className="admin-bar-fill"
+                            style={{ width: `${Math.round((count / maxPlatform) * 100)}%` }}
+                          />
+                        </div>
+                        <span className="admin-bar-pct">{count}</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* 4 — Creator focus (tabla paginada) */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.creatorFocusResponses")}</span>
                   <div className="admin-card">
                     <p className="admin-section-hint">
-                      {t("admin.creatorFocusHint", { count: records.filter(r => r.creator_focus).length })}
+                      {t("admin.creatorFocusHint", { count: totalFocus })}
                     </p>
-                    <div className="admin-keyword-cloud">
-                      {keywords.map(({ word, count }) => (
-                        <span
-                          key={word}
-                          className="admin-keyword"
-                          style={{ fontSize: `${Math.max(11, Math.min(16, 10 + count * 1.2))}px` }}
-                          title={`${count} mentions`}
-                        >
-                          {word}
-                          <span className="admin-keyword__count">{count}</span>
-                        </span>
-                      ))}
+                    <div className="tbl">
+                      <table>
+                        <thead>
+                          <tr>
+                            <th>{t("admin.email")}</th>
+                            <th>{t("admin.platform")}</th>
+                            <th>{t("admin.focus")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {paginatedFocus.map((r) => (
+                            <tr key={r.id}>
+                              <td style={{ fontFamily: "var(--font-mono)", fontSize: "var(--fs-12)" }}>
+                                {r.email}
+                              </td>
+                              <td>
+                                <span className="badge">{r.platform_name ?? "—"}</span>
+                              </td>
+                              <td style={{ color: "var(--text-secondary)" }}>
+                                {r.creator_focus}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
                     </div>
+                    {totalFocusPages > 1 && (
+                      <div className="admin-pagination">
+                        <button
+                          disabled={focusPage === 1}
+                          onClick={() => setFocusPage(p => p - 1)}
+                          type="button"
+                        >‹</button>
+                        <span>{focusPage} of {totalFocusPages}</span>
+                        <button
+                          disabled={focusPage >= totalFocusPages}
+                          onClick={() => setFocusPage(p => p + 1)}
+                          type="button"
+                        >›</button>
+                      </div>
+                    )}
+                  </div>
+                </section>
+
+                {/* 5 — Lista de espera completa (solo lectura) */}
+                <section className="admin-section">
+                  <span className="section-label">
+                    {t("admin.earlyAccessWaitlist")} ({allEarlyAccess.length})
+                  </span>
+                  <div className="admin-table-wrap">
+                    <table className="admin-table">
+                      <thead>
+                        <tr>
+                          <th>{t("admin.email")}</th>
+                          <th>{t("admin.platform")}</th>
+                          <th>{t("admin.focus")}</th>
+                          <th>{t("admin.status")}</th>
+                          <th>{t("admin.requested")}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {allEarlyAccess.map((r) => (
+                          <tr key={r.id}>
+                            <td>{r.email}</td>
+                            <td>{r.platform_name ?? "—"}</td>
+                            <td style={{ color: "var(--text-muted)" }}>{r.creator_focus ?? "—"}</td>
+                            <td>
+                              <span className={`admin-badge ${
+                                r.status === "invited" ? "admin-badge--invited" : "admin-badge--pending"
+                              }`}>
+                                {r.status}
+                              </span>
+                            </td>
+                            <td>{new Date(r.created_at).toLocaleDateString()}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
                   </div>
                 </section>
               </>
