@@ -60,14 +60,6 @@ export default function Admin() {
   const [usersFilter, setUsersFilter] = useState<"all" | "active" | "inactive">("all");
   const USERS_LIMIT = 10;
 
-  const [earlyAccess, setEarlyAccess] = useState<EarlyAccessRequest[]>([]);
-  const [earlyTotal, setEarlyTotal] = useState(0);
-  const [earlyPage, setEarlyPage] = useState(1);
-  const [earlyStatusFilter, setEarlyStatusFilter] = useState("all");
-  const [earlyLangFilter, setEarlyLangFilter] = useState("all");
-  const [invitingId, setInvitingId] = useState<string | null>(null);
-  const [inviteError, setInviteError] = useState<string | null>(null);
-  const EARLY_LIMIT = 10;
 
   const [platformUsage, setPlatformUsage] = useState<
     { platform_name: string; total_contents: number; percentage: string }[]
@@ -134,30 +126,6 @@ export default function Admin() {
   }, [usersFilter]);
 
   useEffect(() => {
-    const loadEarlyAccess = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-
-        let url = `${base}/admin-early-access?page=${earlyPage}&limit=${EARLY_LIMIT}`;
-        if (earlyStatusFilter !== "all") url += `&status=${earlyStatusFilter}`;
-        if (earlyLangFilter !== "all") url += `&language=${earlyLangFilter}`;
-
-        const res = await fetch(url, {
-          headers: { Authorization: `Bearer ${session?.access_token}` },
-        });
-
-        if (!res.ok) return;
-        const json = await res.json();
-        setEarlyAccess(json.data ?? []);
-        setEarlyTotal(json.total ?? 0);
-      } catch (err) {
-        console.error("Early access load error:", err);
-      }
-    };
-    loadEarlyAccess();
-  }, [earlyPage, earlyStatusFilter, earlyLangFilter]);
-
-  useEffect(() => {
     if (activeTab !== "waitlist" || allEarlyAccess.length > 0) return;
     const loadAll = async () => {
       try {
@@ -194,44 +162,6 @@ export default function Admin() {
     loadEcosystem();
   }, [activeTab]);
 
-  const handleInvite = async (request: EarlyAccessRequest) => {
-    setInviteError(null);
-    try {
-      setInvitingId(request.id);
-      const { data: { session } } = await supabase.auth.getSession();
-
-      const res = await fetch(`${base}/admin-invite-user`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          request_id: request.id,
-          access_url: "https://app.content-intel.app",
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        setInviteError(err.error || t("admin.failedInvite"));
-        return;
-      }
-
-      setEarlyAccess((prev) =>
-        prev.map((r) =>
-          r.id === request.id
-            ? { ...r, status: "invited", invited_at: new Date().toISOString() }
-            : r
-        )
-      );
-    } catch (err) {
-      console.error("Invite error:", err);
-    } finally {
-      setInvitingId(null);
-    }
-  };
-
   // ── Waitlist analytics helpers ──
   function countBy<T>(arr: T[], key: keyof T): Record<string, number> {
     return arr.reduce((acc, item) => {
@@ -253,18 +183,6 @@ export default function Admin() {
     const sorted = Object.entries(weeks).sort((a, b) => a[0].localeCompare(b[0]));
     let cum = 0;
     return sorted.map(([week, count]) => { cum += count; return { week, count, cumulative: cum }; });
-  }
-
-  function extractKeywords(records: EarlyAccessRequest[]): { word: string; count: number }[] {
-    const stop = new Set(["and","for","the","with","in","of","to","a","an","on","is","at","by","from","as","or","that","are","be","this","it","about","their","not","also","new","my","me","us","our","your","its","has","have","we","but","so","can","you","how","what","who","why","when","more","into","up","out","based","via","using","across","within","between","without","through","content","creator"]);
-    const freq: Record<string, number> = {};
-    records.forEach((r) => {
-      if (!r.creator_focus) return;
-      r.creator_focus.toLowerCase().replace(/[^a-z\s]/g, "").split(/\s+/)
-        .filter((w) => w.length > 3 && !stop.has(w))
-        .forEach((w) => { freq[w] = (freq[w] || 0) + 1; });
-    });
-    return Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 20).map(([word, count]) => ({ word, count }));
   }
 
   return (
@@ -532,16 +450,16 @@ export default function Admin() {
                             color: "var(--text)",
                             boxShadow: "var(--shadow-md)",
                           }}
-                          labelFormatter={(val: string) => {
-                            const d = new Date(val);
+                          labelFormatter={(val) => {
+                            const d = new Date(String(val));
                             return `Week of ${d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`;
                           }}
-                          formatter={(value: number, name: string) => [
-                            value,
+                          formatter={(value, name) => [
+                            value ?? 0,
                             name === "cumulative"
                               ? t("admin.totalAccumulated")
                               : t("admin.newThisWeek"),
-                          ]}
+                          ] as [number, string]}
                         />
                         <Area
                           type="monotone"
