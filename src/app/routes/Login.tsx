@@ -186,8 +186,8 @@ export default function Login() {
         preserveAspectRatio="none"
       >
         <line
-          x1="20" y1="0"
-          x2="16" y2="100"
+          x1="16" y1="0"
+          x2="20" y2="100"
           stroke="rgba(255,255,255,0.15)"
           strokeWidth="1.5"
         />
