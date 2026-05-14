@@ -154,7 +154,7 @@ function WaitlistDonut({
 
 export default function Admin() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<"operations" | "waitlist" | "ecosystem">("operations");
+  const [activeTab, setActiveTab] = useState<"operations" | "ecosystem" | "waitlist">("operations");
 
   const [usersSummary, setUsersSummary] = useState<UsersSummary | null>(null);
 
@@ -306,20 +306,20 @@ export default function Admin() {
           {t("admin.operations")}
         </button>
         <button
-          key="waitlist"
-          className={`admin-tab ${activeTab === "waitlist" ? "admin-tab--active" : ""}`}
-          onClick={() => setActiveTab("waitlist")}
-          type="button"
-        >
-          {t("admin.waitlistIntelligence")}
-        </button>
-        <button
           key="ecosystem"
           className={`admin-tab ${activeTab === "ecosystem" ? "admin-tab--active" : ""}`}
           onClick={() => setActiveTab("ecosystem")}
           type="button"
         >
           {t("admin.ecosystem")}
+        </button>
+        <button
+          key="waitlist"
+          className={`admin-tab ${activeTab === "waitlist" ? "admin-tab--active" : ""}`}
+          onClick={() => setActiveTab("waitlist")}
+          type="button"
+        >
+          {t("admin.waitlistIntelligence")}
         </button>
       </div>
 
@@ -466,12 +466,12 @@ export default function Admin() {
             const sortedPlatforms = Object.entries(platformCounts).sort((a, b) => b[1] - a[1]);
             const PLATFORM_COLORS = [
               "var(--primary)",
+              "var(--pastel-accent-d)",
               "var(--accent)",
-              "var(--primary-hover)",
-              "var(--accent-hover)",
-              "var(--text-secondary)",
-              "var(--text-faint)",
-              "var(--border-strong)",
+              "var(--pastel-primary)",
+              "var(--pastel-accent)",
+              "var(--pastel-text)",
+              "var(--pastel-border)",
             ];
             const platformPieData = sortedPlatforms.map(([name, value]) => ({ name, value }));
 
