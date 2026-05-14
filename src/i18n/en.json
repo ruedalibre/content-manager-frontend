@@ -458,7 +458,8 @@
     "creatorFocusHint": "Text analysis of creator_focus field · {{count}} responses",
     "totalAccumulated": "Total accumulated",
     "newThisWeek": "New this week",
-    "creatorFocusResponses": "Creator focus — full responses"
+    "creatorFocusResponses": "Creator focus — full responses",
+    "languageDistribution": "Language distribution"
   },
   "insights": {
     "content_production": {
