@@ -5,6 +5,10 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
 } from "recharts";
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell,
+} from "recharts";
 import "./Admin.scss";
 
 type ActiveUser = {
@@ -49,6 +53,108 @@ type EcosystemData = {
   total_report_downloads: number;
   downloads_last_30d: number;
 };
+
+// ── Shared donut chart for waitlist analytics ──
+type DonutEntry = { name: string; value: number };
+function WaitlistDonut({
+  data,
+  colors,
+  total,
+}: {
+  data: DonutEntry[];
+  colors: string[];
+  total: number;
+}) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "var(--s-6)" }}>
+      <div style={{ flexShrink: 0 }}>
+        <ResponsiveContainer width={180} height={180}>
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius={50}
+              outerRadius={76}
+              paddingAngle={2}
+              dataKey="value"
+            >
+              {data.map((_, i) => (
+                <Cell
+                  key={i}
+                  fill={colors[i % colors.length]}
+                  stroke="var(--bg-elevated)"
+                  strokeWidth={2}
+                />
+              ))}
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                background: "var(--bg-elevated)",
+                border: "1px solid var(--border)",
+                borderRadius: "var(--r-3)",
+                fontSize: 12,
+                color: "var(--text)",
+                boxShadow: "var(--shadow-md)",
+              }}
+              formatter={(value, name) => [
+                `${value} · ${Math.round(((value as number) / total) * 100)}%`,
+                name,
+              ] as [string, string]}
+            />
+          </PieChart>
+        </ResponsiveContainer>
+      </div>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--s-2)" }}>
+        {data.map((entry, i) => (
+          <div
+            key={entry.name}
+            style={{
+              display: "grid",
+              gridTemplateColumns: "8px 1fr auto auto",
+              alignItems: "center",
+              gap: "var(--s-2) var(--s-3)",
+            }}
+          >
+            <div style={{
+              width: 8, height: 8, borderRadius: "50%",
+              background: colors[i % colors.length],
+              flexShrink: 0,
+            }} />
+            <span style={{
+              fontSize: "var(--fs-12)",
+              color: "var(--text-secondary)",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}>
+              {entry.name}
+            </span>
+            <span style={{
+              fontSize: "var(--fs-13)",
+              fontWeight: 600,
+              color: "var(--text)",
+              fontFamily: "var(--font-display)",
+              textAlign: "right",
+              minWidth: 20,
+            }}>
+              {entry.value}
+            </span>
+            <span style={{
+              fontSize: "var(--fs-11)",
+              color: "var(--text-faint)",
+              textAlign: "right",
+              minWidth: 36,
+              fontFamily: "var(--font-mono)",
+            }}>
+              {Math.round((entry.value / total) * 100)}%
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function Admin() {
   const { t } = useTranslation();
@@ -362,10 +468,20 @@ export default function Admin() {
             const weeklyData = groupByWeek(records);
             const platformCounts = countBy(records, "platform_name");
             const sortedPlatforms = Object.entries(platformCounts).sort((a, b) => b[1] - a[1]);
-            const maxPlatform = sortedPlatforms[0]?.[1] ?? 1;
+            const PLATFORM_COLORS = [
+              "var(--primary)",
+              "var(--accent)",
+              "var(--primary-hover)",
+              "var(--accent-hover)",
+              "var(--text-secondary)",
+              "var(--text-faint)",
+              "var(--border-strong)",
+            ];
+            const platformPieData = sortedPlatforms.map(([name, value]) => ({ name, value }));
 
             return (
               <>
+                {/* 1 — KPIs */}
                 {/* 1 — KPIs */}
                 <section className="admin-section">
                   <span className="section-label">{t("admin.waitlistOverview")}</span>
@@ -482,105 +598,132 @@ export default function Admin() {
                     </div>
                   </div>
                 </section>
-
-                {/* 3 — Distribución por plataforma */}
+                {/* 2 — Crecimiento acumulado (AreaChart) */}
                 <section className="admin-section">
-                  <span className="section-label">{t("admin.platformBreakdown")}</span>
-                  <div className="admin-card">
-                    {sortedPlatforms.map(([name, count]) => (
-                      <div key={name} className="admin-bar-row">
-                        <span className="admin-bar-label">{name}</span>
-                        <div className="admin-bar-track">
-                          <div
-                            className="admin-bar-fill"
-                            style={{ width: `${Math.round((count / maxPlatform) * 100)}%` }}
+                  <span className="section-label">{t("admin.weeklyGrowth")}</span>
+                  <div className="admin-card admin-card--chart">
+                    <ResponsiveContainer width="100%" height={220}>
+                      <AreaChart
+                        data={weeklyData}
+                        margin={{ top: 8, right: 16, left: -20, bottom: 0 }}
+                      >
+                        <defs>
+                          <linearGradient id="gradCumulative" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.18} />
+                            <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+                          </linearGradient>
+                          <linearGradient id="gradWeekly" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.15} />
+                            <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="var(--border-subtle)"
+                          vertical={false}
+                        />
+                        <XAxis
+                          dataKey="week"
+                          tick={{ fontSize: 11, fill: "var(--text-faint)", fontFamily: "var(--font-mono)" }}
+                          tickFormatter={(val: string) => {
+                            const d = new Date(val);
+                            return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                          }}
+                          axisLine={false}
+                          tickLine={false}
+                          interval="preserveStartEnd"
+                        />
+                        <YAxis
+                          tick={{ fontSize: 11, fill: "var(--text-faint)" }}
+                          axisLine={false}
+                          tickLine={false}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            background: "var(--bg-elevated)",
+                            border: "1px solid var(--border)",
+                            borderRadius: "var(--r-3)",
+                            fontSize: 12,
+                            color: "var(--text)",
+                            boxShadow: "var(--shadow-md)",
+                          }}
+                          labelFormatter={(val) => {
+                            const d = new Date(String(val));
+                            return `Week of ${d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`;
+                          }}
+                          formatter={(value, name) => [
+                            value ?? 0,
+                            name === "cumulative"
+                              ? t("admin.totalAccumulated")
+                              : t("admin.newThisWeek"),
+                          ] as [number, string]}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="cumulative"
+                          stroke="var(--primary)"
+                          strokeWidth={2}
+                          fill="url(#gradCumulative)"
+                          dot={false}
+                          activeDot={{ r: 4, fill: "var(--primary)" }}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="count"
+                          stroke="var(--accent)"
+                          strokeWidth={1.5}
+                          fill="url(#gradWeekly)"
+                          dot={false}
+                          activeDot={{ r: 3, fill: "var(--accent)" }}
+                          strokeDasharray="4 2"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                    <div className="admin-chart-legend">
+                      <span className="admin-chart-legend__item admin-chart-legend__item--primary">
+                        {t("admin.totalAccumulated")}
+                      </span>
+                      <span className="admin-chart-legend__item admin-chart-legend__item--accent">
+                        {t("admin.newThisWeek")}
+                      </span>
+                    </div>
+                  </div>
+                </section>
+
+                {/* 3+4 — Distribución por idioma y plataforma (donuts lado a lado) */}
+                {(() => {
+                  const langCounts = allEarlyAccess.reduce((acc, r) => {
+                    const lang = r.language?.toLowerCase() === "es" ? "Español" : "English";
+                    acc[lang] = (acc[lang] || 0) + 1;
+                    return acc;
+                  }, {} as Record<string, number>);
+                  const pieData = Object.entries(langCounts).map(([name, value]) => ({ name, value }));
+
+                  return (
+                    <div className="admin-two-col">
+                      <section className="admin-section">
+                        <span className="section-label">{t("admin.languageDistribution")}</span>
+                        <div className="admin-card admin-card--chart">
+                          <WaitlistDonut
+                            data={pieData}
+                            colors={["var(--primary)", "var(--accent)"]}
+                            total={total}
                           />
                         </div>
-                        <span className="admin-bar-pct">{count}</span>
-                      </div>
-                    ))}
-                  </div>
-                </section>
-
-                {/* 4 — Distribución por idioma (donut) */}
-                <section className="admin-section">
-                  <span className="section-label">{t("admin.languageDistribution")}</span>
-                  <div className="admin-card admin-card--chart">
-                    {(() => {
-                      const langCounts = allEarlyAccess.reduce((acc, r) => {
-                        const lang = r.language?.toLowerCase() === "es" ? "Español" : "English";
-                        acc[lang] = (acc[lang] || 0) + 1;
-                        return acc;
-                      }, {} as Record<string, number>);
-
-                      const pieData = Object.entries(langCounts).map(([name, value]) => ({ name, value }));
-                      const COLORS = ["var(--primary)", "var(--accent)"];
-                      const total = allEarlyAccess.length;
-
-                      return (
-                        <div style={{ display: "flex", alignItems: "center", gap: "var(--s-7)" }}>
-                          <ResponsiveContainer width={200} height={200}>
-                            <PieChart>
-                              <Pie
-                                data={pieData}
-                                cx="50%"
-                                cy="50%"
-                                innerRadius={54}
-                                outerRadius={80}
-                                paddingAngle={3}
-                                dataKey="value"
-                              >
-                                {pieData.map((_, index) => (
-                                  <Cell
-                                    key={index}
-                                    fill={COLORS[index % COLORS.length]}
-                                    stroke="var(--bg-elevated)"
-                                    strokeWidth={2}
-                                  />
-                                ))}
-                              </Pie>
-                              <Tooltip
-                                contentStyle={{
-                                  background: "var(--bg-elevated)",
-                                  border: "1px solid var(--border)",
-                                  borderRadius: "var(--r-3)",
-                                  fontSize: 12,
-                                  color: "var(--text)",
-                                  boxShadow: "var(--shadow-md)",
-                                }}
-                                formatter={(value, name) => [
-                                  `${value} (${Math.round(((value as number) / total) * 100)}%)`,
-                                  name,
-                                ] as [string, string]}
-                              />
-                            </PieChart>
-                          </ResponsiveContainer>
-
-                          <div style={{ display: "flex", flexDirection: "column", gap: "var(--s-4)" }}>
-                            {pieData.map((entry, index) => (
-                              <div key={entry.name} style={{ display: "flex", alignItems: "center", gap: "var(--s-3)" }}>
-                                <div style={{
-                                  width: 10, height: 10, borderRadius: "50%",
-                                  background: COLORS[index % COLORS.length],
-                                  flexShrink: 0,
-                                }} />
-                                <span style={{ fontSize: "var(--fs-13)", color: "var(--text-secondary)", minWidth: 80 }}>
-                                  {entry.name}
-                                </span>
-                                <span style={{ fontSize: "var(--fs-20)", fontWeight: 600, color: "var(--text)", fontFamily: "var(--font-display)", lineHeight: 1 }}>
-                                  {entry.value}
-                                </span>
-                                <span style={{ fontSize: "var(--fs-12)", color: "var(--text-faint)" }}>
-                                  {Math.round((entry.value / total) * 100)}%
-                                </span>
-                              </div>
-                            ))}
-                          </div>
+                      </section>
+                      <section className="admin-section">
+                        <span className="section-label">{t("admin.platformBreakdown")}</span>
+                        <div className="admin-card admin-card--chart">
+                          <WaitlistDonut
+                            data={platformPieData}
+                            colors={PLATFORM_COLORS}
+                            total={total}
+                          />
                         </div>
-                      );
-                    })()}
-                  </div>
-                </section>
+                      </section>
+                    </div>
+                  );
+                })()}
 
                 {/* 5 — Lista de espera completa (solo lectura) */}
                 <section className="admin-section">
