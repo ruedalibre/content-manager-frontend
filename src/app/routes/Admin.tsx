@@ -48,7 +48,7 @@ type EcosystemData = {
 
 export default function Admin() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<"operations" | "ecosystem">("operations");
+  const [activeTab, setActiveTab] = useState<"operations" | "waitlist" | "ecosystem">("operations");
 
   const [usersSummary, setUsersSummary] = useState<UsersSummary | null>(null);
 
@@ -71,6 +71,9 @@ export default function Admin() {
   >([]);
 
   const [ecosystem, setEcosystem] = useState<EcosystemData | null>(null);
+
+  // Waitlist Intelligence — computed from allEarlyAccess (full dataset, no pagination)
+  const [allEarlyAccess, setAllEarlyAccess] = useState<EarlyAccessRequest[]>([]);
 
   const [, setLoadingOps] = useState(true);
   const [loadingEco, setLoadingEco] = useState(false);
@@ -150,6 +153,24 @@ export default function Admin() {
   }, [earlyPage, earlyStatusFilter, earlyLangFilter]);
 
   useEffect(() => {
+    if (activeTab !== "waitlist" || allEarlyAccess.length > 0) return;
+    const loadAll = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch(`${base}/admin-early-access?page=1&limit=500`, {
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        });
+        if (!res.ok) return;
+        const json = await res.json();
+        setAllEarlyAccess(json.data ?? []);
+      } catch (err) {
+        console.error("Waitlist analytics load error:", err);
+      }
+    };
+    loadAll();
+  }, [activeTab]);
+
+  useEffect(() => {
     if (activeTab !== "ecosystem" || ecosystem) return;
     const loadEcosystem = async () => {
       try {
@@ -206,6 +227,41 @@ export default function Admin() {
     }
   };
 
+  // ── Waitlist analytics helpers ──
+  function countBy<T>(arr: T[], key: keyof T): Record<string, number> {
+    return arr.reduce((acc, item) => {
+      const val = String(item[key] ?? "Unknown");
+      acc[val] = (acc[val] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+  }
+
+  function groupByWeek(records: EarlyAccessRequest[]): { week: string; count: number; cumulative: number }[] {
+    const weeks: Record<string, number> = {};
+    records.forEach((r) => {
+      const d = new Date(r.created_at);
+      const mon = new Date(d);
+      mon.setDate(d.getDate() - d.getDay() + 1);
+      const key = mon.toISOString().slice(0, 10);
+      weeks[key] = (weeks[key] || 0) + 1;
+    });
+    const sorted = Object.entries(weeks).sort((a, b) => a[0].localeCompare(b[0]));
+    let cum = 0;
+    return sorted.map(([week, count]) => { cum += count; return { week, count, cumulative: cum }; });
+  }
+
+  function extractKeywords(records: EarlyAccessRequest[]): { word: string; count: number }[] {
+    const stop = new Set(["and","for","the","with","in","of","to","a","an","on","is","at","by","from","as","or","that","are","be","this","it","about","their","not","also","new","my","me","us","our","your","its","has","have","we","but","so","can","you","how","what","who","why","when","more","into","up","out","based","via","using","across","within","between","without","through","content","creator"]);
+    const freq: Record<string, number> = {};
+    records.forEach((r) => {
+      if (!r.creator_focus) return;
+      r.creator_focus.toLowerCase().replace(/[^a-z\s]/g, "").split(/\s+/)
+        .filter((w) => w.length > 3 && !stop.has(w))
+        .forEach((w) => { freq[w] = (freq[w] || 0) + 1; });
+    });
+    return Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 20).map(([word, count]) => ({ word, count }));
+  }
+
   return (
     <div className="admin-page">
 
@@ -217,16 +273,30 @@ export default function Admin() {
       </div>
 
       <div className="admin-tabs">
-        {(["operations", "ecosystem"] as const).map((tab) => (
-          <button
-            key={tab}
-            className={`admin-tab ${activeTab === tab ? "admin-tab--active" : ""}`}
-            onClick={() => setActiveTab(tab)}
-            type="button"
-          >
-            {tab === "operations" ? t("admin.operations") : t("admin.ecosystem")}
-          </button>
-        ))}
+        <button
+          key="operations"
+          className={`admin-tab ${activeTab === "operations" ? "admin-tab--active" : ""}`}
+          onClick={() => setActiveTab("operations")}
+          type="button"
+        >
+          {t("admin.operations")}
+        </button>
+        <button
+          key="waitlist"
+          className={`admin-tab ${activeTab === "waitlist" ? "admin-tab--active" : ""}`}
+          onClick={() => setActiveTab("waitlist")}
+          type="button"
+        >
+          {t("admin.waitlistIntelligence")}
+        </button>
+        <button
+          key="ecosystem"
+          className={`admin-tab ${activeTab === "ecosystem" ? "admin-tab--active" : ""}`}
+          onClick={() => setActiveTab("ecosystem")}
+          type="button"
+        >
+          {t("admin.ecosystem")}
+        </button>
       </div>
 
       {/* OPERATIONS TAB */}
@@ -471,6 +541,120 @@ export default function Admin() {
             )}
           </section>
 
+        </div>
+      )}
+
+      {/* WAITLIST INTELLIGENCE TAB */}
+      {activeTab === "waitlist" && (
+        <div className="admin-tab-content">
+          {allEarlyAccess.length === 0 ? (
+            <p>{t("admin.loading")}</p>
+          ) : (() => {
+            const records = allEarlyAccess;
+            const total = records.length;
+            const invited = records.filter(r => r.status === "invited").length;
+            const weeklyData = groupByWeek(records);
+            const platformCounts = countBy(records, "platform_name");
+            const keywords = extractKeywords(records);
+            const sortedPlatforms = Object.entries(platformCounts).sort((a, b) => b[1] - a[1]);
+            const maxPlatform = sortedPlatforms[0]?.[1] ?? 1;
+
+            return (
+              <>
+                {/* KPIs */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.waitlistOverview")}</span>
+                  <div className="admin-stats">
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">{total}</div>
+                      <div className="stat-label">{t("admin.totalRegistered")}</div>
+                    </div>
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">{invited}</div>
+                      <div className="stat-label">{t("admin.invited")}</div>
+                    </div>
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">
+                        {total > 0 ? Math.round((invited / total) * 100) : 0}%
+                      </div>
+                      <div className="stat-label">{t("admin.inviteRate")}</div>
+                    </div>
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">{weeklyData.length}</div>
+                      <div className="stat-label">{t("admin.weeksActive")}</div>
+                    </div>
+                  </div>
+                </section>
+
+                <div className="admin-two-col">
+                  {/* Crecimiento semanal */}
+                  <section className="admin-section">
+                    <span className="section-label">{t("admin.weeklyGrowth")}</span>
+                    <div className="admin-card">
+                      {weeklyData.map((w, i) => {
+                        const maxCount = Math.max(...weeklyData.map(x => x.count));
+                        const pct = Math.round((w.count / maxCount) * 100);
+                        const d = new Date(w.week);
+                        const label = d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+                        return (
+                          <div key={i} className="admin-bar-row">
+                            <span className="admin-bar-label admin-bar-label--mono">{label}</span>
+                            <div className="admin-bar-track">
+                              <div className="admin-bar-fill" style={{ width: `${pct}%` }} />
+                            </div>
+                            <span className="admin-bar-pct">{w.count}</span>
+                            <span className="admin-bar-cumulative">/{w.cumulative}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+
+                  {/* Plataformas */}
+                  <section className="admin-section">
+                    <span className="section-label">{t("admin.platformBreakdown")}</span>
+                    <div className="admin-card">
+                      {sortedPlatforms.map(([name, count]) => (
+                        <div key={name} className="admin-bar-row">
+                          <span className="admin-bar-label">{name}</span>
+                          <div className="admin-bar-track">
+                            <div
+                              className="admin-bar-fill"
+                              style={{ width: `${Math.round((count / maxPlatform) * 100)}%` }}
+                            />
+                          </div>
+                          <span className="admin-bar-pct">{count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+
+                {/* Keywords de creator_focus */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.creatorFocusThemes")}</span>
+                  <div className="admin-card">
+                    <p className="admin-section-hint">
+                      {t("admin.creatorFocusHint", { count: records.filter(r => r.creator_focus).length })}
+                    </p>
+                    <div className="admin-keyword-cloud">
+                      {keywords.map(({ word, count }) => (
+                        <span
+                          key={word}
+                          className="admin-keyword"
+                          style={{ fontSize: `${Math.max(11, Math.min(16, 10 + count * 1.2))}px` }}
+                          title={`${count} mentions`}
+                        >
+                          {word}
+                          <span className="admin-keyword__count">{count}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+              </>
+            );
+          })()}
         </div>
       )}
 

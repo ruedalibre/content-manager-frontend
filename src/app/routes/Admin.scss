@@ -378,3 +378,68 @@
   color: var(--text);
   font-family: var(--font-mono);
 }
+
+// ── Waitlist Intelligence additions ──
+
+.admin-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-5);
+
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.admin-bar-label--mono {
+  font-family: var(--font-mono);
+  font-size: var(--fs-12);
+}
+
+.admin-bar-cumulative {
+  font-size: var(--fs-12);
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  min-width: 36px;
+  text-align: right;
+}
+
+.admin-section-hint {
+  font-size: var(--fs-12);
+  color: var(--text-faint);
+  font-style: italic;
+  margin-bottom: var(--s-3);
+}
+
+.admin-keyword-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  padding: var(--s-2) 0;
+}
+
+.admin-keyword {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--r-pill);
+  background: var(--bg-muted);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  cursor: default;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+
+  &:hover {
+    background: var(--primary-soft);
+    border-color: var(--primary-ring);
+    color: var(--primary);
+  }
+}
+
+.admin-keyword__count {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-left: 2px;
+}

@@ -445,7 +445,17 @@
     "downloads30d": "Descargas (30 días)",
     "failedInvite": "Error al enviar la invitación. Intenta de nuevo.",
     "loadingEcosystem": "Cargando datos del ecosistema...",
-    "noEcosystemData": "Sin datos del ecosistema disponibles."
+    "noEcosystemData": "Sin datos del ecosistema disponibles.",
+    "loading": "Cargando...",
+    "waitlistIntelligence": "Inteligencia del Waitlist",
+    "waitlistOverview": "Resumen del Waitlist",
+    "totalRegistered": "Total registrados",
+    "inviteRate": "Tasa de invitación",
+    "weeksActive": "Semanas activas",
+    "weeklyGrowth": "Crecimiento semanal",
+    "platformBreakdown": "Distribución por plataforma",
+    "creatorFocusThemes": "Temas de creator focus",
+    "creatorFocusHint": "Análisis de texto del campo creator_focus · {{count}} respuestas"
   },
   "insights": {
     "content_production": {
