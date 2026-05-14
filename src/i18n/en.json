@@ -455,7 +455,10 @@
     "weeklyGrowth": "Weekly growth",
     "platformBreakdown": "Platform breakdown",
     "creatorFocusThemes": "Creator focus themes",
-    "creatorFocusHint": "Text analysis of creator_focus field · {{count}} responses"
+    "creatorFocusHint": "Text analysis of creator_focus field · {{count}} responses",
+    "totalAccumulated": "Total accumulated",
+    "newThisWeek": "New this week",
+    "creatorFocusResponses": "Creator focus — full responses"
   },
   "insights": {
     "content_production": {
