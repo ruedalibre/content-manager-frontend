@@ -5,10 +5,6 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
 } from "recharts";
-import {
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  PieChart, Pie, Cell,
-} from "recharts";
 import "./Admin.scss";
 
 type ActiveUser = {
@@ -482,7 +478,6 @@ export default function Admin() {
             return (
               <>
                 {/* 1 — KPIs */}
-                {/* 1 — KPIs */}
                 <section className="admin-section">
                   <span className="section-label">{t("admin.waitlistOverview")}</span>
                   <div className="admin-stats">
@@ -507,97 +502,6 @@ export default function Admin() {
                   </div>
                 </section>
 
-                {/* 2 — Crecimiento acumulado (AreaChart) */}
-                <section className="admin-section">
-                  <span className="section-label">{t("admin.weeklyGrowth")}</span>
-                  <div className="admin-card admin-card--chart">
-                    <ResponsiveContainer width="100%" height={220}>
-                      <AreaChart
-                        data={weeklyData}
-                        margin={{ top: 8, right: 16, left: -20, bottom: 0 }}
-                      >
-                        <defs>
-                          <linearGradient id="gradCumulative" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.18} />
-                            <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-                          </linearGradient>
-                          <linearGradient id="gradWeekly" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="var(--accent)" stopOpacity={0.15} />
-                            <stop offset="95%" stopColor="var(--accent)" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="var(--border-subtle)"
-                          vertical={false}
-                        />
-                        <XAxis
-                          dataKey="week"
-                          tick={{ fontSize: 11, fill: "var(--text-faint)", fontFamily: "var(--font-mono)" }}
-                          tickFormatter={(val: string) => {
-                            const d = new Date(val);
-                            return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-                          }}
-                          axisLine={false}
-                          tickLine={false}
-                          interval="preserveStartEnd"
-                        />
-                        <YAxis
-                          tick={{ fontSize: 11, fill: "var(--text-faint)" }}
-                          axisLine={false}
-                          tickLine={false}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            background: "var(--bg-elevated)",
-                            border: "1px solid var(--border)",
-                            borderRadius: "var(--r-3)",
-                            fontSize: 12,
-                            color: "var(--text)",
-                            boxShadow: "var(--shadow-md)",
-                          }}
-                          labelFormatter={(val) => {
-                            const d = new Date(String(val));
-                            return `Week of ${d.toLocaleDateString("en-US", { month: "long", day: "numeric" })}`;
-                          }}
-                          formatter={(value, name) => [
-                            value ?? 0,
-                            name === "cumulative"
-                              ? t("admin.totalAccumulated")
-                              : t("admin.newThisWeek"),
-                          ] as [number, string]}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="cumulative"
-                          stroke="var(--primary)"
-                          strokeWidth={2}
-                          fill="url(#gradCumulative)"
-                          dot={false}
-                          activeDot={{ r: 4, fill: "var(--primary)" }}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="count"
-                          stroke="var(--accent)"
-                          strokeWidth={1.5}
-                          fill="url(#gradWeekly)"
-                          dot={false}
-                          activeDot={{ r: 3, fill: "var(--accent)" }}
-                          strokeDasharray="4 2"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                    <div className="admin-chart-legend">
-                      <span className="admin-chart-legend__item admin-chart-legend__item--primary">
-                        {t("admin.totalAccumulated")}
-                      </span>
-                      <span className="admin-chart-legend__item admin-chart-legend__item--accent">
-                        {t("admin.newThisWeek")}
-                      </span>
-                    </div>
-                  </div>
-                </section>
                 {/* 2 — Crecimiento acumulado (AreaChart) */}
                 <section className="admin-section">
                   <span className="section-label">{t("admin.weeklyGrowth")}</span>
