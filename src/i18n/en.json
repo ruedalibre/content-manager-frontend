@@ -445,7 +445,17 @@
     "downloads30d": "Downloads (30 days)",
     "failedInvite": "Failed to send invitation. Try again.",
     "loadingEcosystem": "Loading ecosystem data...",
-    "noEcosystemData": "No ecosystem data available."
+    "noEcosystemData": "No ecosystem data available.",
+    "loading": "Loading...",
+    "waitlistIntelligence": "Waitlist Intelligence",
+    "waitlistOverview": "Waitlist Overview",
+    "totalRegistered": "Total registered",
+    "inviteRate": "Invite rate",
+    "weeksActive": "Weeks active",
+    "weeklyGrowth": "Weekly growth",
+    "platformBreakdown": "Platform breakdown",
+    "creatorFocusThemes": "Creator focus themes",
+    "creatorFocusHint": "Text analysis of creator_focus field · {{count}} responses"
   },
   "insights": {
     "content_production": {
