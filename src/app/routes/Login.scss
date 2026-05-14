@@ -2,6 +2,7 @@
   min-height: 100vh;
   display: flex;
   flex-direction: row;
+  position: relative;
 }
 
 /* =========================
@@ -18,8 +19,11 @@
   justify-content: space-between;
   position: relative;
   overflow: hidden;
+  clip-path: polygon(0 0, 96% 0, 100% 100%, 0 100%);
+  z-index: 1;
+  margin-right: -2px;
 
-  // Decorative circle
+  // Decorative circle — large, top-right
   &::before {
     content: "";
     position: absolute;
@@ -32,6 +36,7 @@
     pointer-events: none;
   }
 
+  // Decorative circle — medium, bottom-left
   &::after {
     content: "";
     position: absolute;
@@ -43,10 +48,16 @@
     left: -80px;
     pointer-events: none;
   }
+}
 
-  @media (max-width: 768px) {
-    display: none;
-  }
+// Extra decorative circles via inline SVG (3 additional)
+.login-panel__circles-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
 }
 
 .login-panel__brand {
@@ -54,6 +65,8 @@
   align-items: center;
   gap: var(--s-2);
   color: rgba(255, 255, 255, 0.9);
+  position: relative;
+  z-index: 1;
 }
 
 .login-panel__logo {
@@ -73,6 +86,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--s-4);
+  position: relative;
+  z-index: 1;
 }
 
 .login-panel__tagline {
@@ -105,6 +120,23 @@
   color: rgba(255, 255, 255, 0.35);
   margin: 0;
   line-height: var(--lh-normal);
+  position: relative;
+  z-index: 1;
+}
+
+/* =========================
+   DIAGONAL DIVIDER SVG
+========================= */
+
+.login-divider-svg {
+  position: absolute;
+  top: 0;
+  left: calc(50% - 1px);
+  height: 100%;
+  width: 40px;
+  z-index: 10;
+  overflow: visible;
+  pointer-events: none;
 }
 
 /* =========================
@@ -293,13 +325,57 @@
   }
 }
 
+/* =========================
+   RESPONSIVE — MOBILE
+========================= */
+
 @media (max-width: 768px) {
   .login-page {
     flex-direction: column;
   }
 
+  // Hide diagonal divider in vertical layout
+  .login-divider-svg {
+    display: none;
+  }
+
+  // Left panel becomes a compact header strip
+  .login-panel--left {
+    width: 100%;
+    height: 28vh;
+    min-height: 140px;
+    max-height: 200px;
+    clip-path: none;
+    margin-right: 0;
+    padding: var(--s-5) var(--s-6);
+    justify-content: center;
+    gap: var(--s-3);
+
+    // Hide descriptive text that doesn't fit
+    .login-panel__sub,
+    .login-panel__quote {
+      display: none;
+    }
+
+    // Scale down headline
+    .login-panel__tagline {
+      font-size: clamp(1.4rem, 5vw, 1.8rem);
+      margin-bottom: 0;
+    }
+
+    // Smaller logo mark
+    .login-panel__logo {
+      font-size: var(--fs-14);
+    }
+  }
+
+  // Form panel takes remaining screen
   .login-panel--right {
-    min-height: 100vh;
-    padding: var(--s-6);
+    width: 100%;
+    flex: 1;
+    overflow-y: auto;
+    align-items: flex-start;
+    justify-content: flex-start;
+    padding: var(--s-7) var(--s-5) var(--s-6);
   }
 }
