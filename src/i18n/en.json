@@ -496,7 +496,8 @@
     "surveyKnowsAnalytics": "Platform analytics",
     "surveyKnowsIntuition": "Personal intuition",
     "surveyKnowsAudience": "Audience feedback",
-    "surveyKnowsUnsure": "Not really sure"
+    "surveyKnowsUnsure": "Not really sure",
+    "surveyResponses": "Responses"
   },
   "insights": {
     "content_production": {
