@@ -50,6 +50,37 @@ type EcosystemData = {
   downloads_last_30d: number;
 };
 
+type SurveyRow = {
+  language: string | null;
+  platform: string | null;
+  frequency: string | null;
+  content_type: string | null;
+  content_educational: string | null;
+  content_reviews: string | null;
+  content_personal: string | null;
+  content_tutorials: string | null;
+  content_entertainment: string | null;
+  content_mixed: string | null;
+  ideas_random: string | null;
+  ideas_notes: string | null;
+  ideas_trends: string | null;
+  ideas_audience: string | null;
+  ideas_ai: string | null;
+  ideas_system: string | null;
+  keeps_ideas: string | null;
+  reuses_ideas: string | null;
+  creates_series: string | null;
+  most_difficult: string | null;
+  knows_what_works_analytics: string | null;
+  knows_what_works_intuition: string | null;
+  knows_what_works_audience: string | null;
+  knows_what_works_unsure: string | null;
+  most_valuable: string | null;
+  workflow_wish: string | null;
+  wants_early_access: string | null;
+  submitted_at: string | null;
+};
+
 // ── Shared donut chart for waitlist analytics ──
 type DonutEntry = { name: string; value: number };
 function WaitlistDonut({
@@ -154,7 +185,7 @@ function WaitlistDonut({
 
 export default function Admin() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<"operations" | "ecosystem" | "waitlist">("operations");
+  const [activeTab, setActiveTab] = useState<"operations" | "ecosystem" | "waitlist" | "survey">("operations");
 
   const [usersSummary, setUsersSummary] = useState<UsersSummary | null>(null);
 
@@ -172,6 +203,10 @@ export default function Admin() {
 
   // Waitlist Intelligence — computed from allEarlyAccess (full dataset, no pagination)
   const [allEarlyAccess, setAllEarlyAccess] = useState<EarlyAccessRequest[]>([]);
+
+  const [surveyData, setSurveyData] = useState<SurveyRow[]>([]);
+  const [surveyOpenPage, setSurveyOpenPage] = useState(1);
+  const SURVEY_OPEN_LIMIT = 5;
 
   const [, setLoadingOps] = useState(true);
   const [loadingEco, setLoadingEco] = useState(false);
@@ -273,7 +308,28 @@ export default function Admin() {
     loadEcosystem();
   }, [activeTab]);
 
-  // ── Waitlist analytics helpers ──
+  useEffect(() => {
+    if (activeTab !== "survey" || surveyData.length > 0) return;
+    const load = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch(`${base}/admin-survey-responses`, {
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        });
+        if (!res.ok) return;
+        setSurveyData(await res.json());
+      } catch (err) {
+        console.error("Survey load error:", err);
+      }
+    };
+    load();
+  }, [activeTab]);
+
+  // ── Analytics helpers ──
+  function countTrue(arr: SurveyRow[], key: keyof SurveyRow): number {
+    return arr.filter(r => r[key] === "TRUE").length;
+  }
+
   function countBy<T>(arr: T[], key: keyof T): Record<string, number> {
     return arr.reduce((acc, item) => {
       const val = String(item[key] ?? "Unknown");
@@ -330,6 +386,14 @@ export default function Admin() {
           type="button"
         >
           {t("admin.waitlistIntelligence")}
+        </button>
+        <button
+          key="survey"
+          className={`admin-tab ${activeTab === "survey" ? "admin-tab--active" : ""}`}
+          onClick={() => setActiveTab("survey")}
+          type="button"
+        >
+          {t("admin.surveyTab")}
         </button>
       </div>
 
@@ -828,6 +892,368 @@ export default function Admin() {
           ) : (
             <p>{t("admin.noEcosystemData")}</p>
           )}
+        </div>
+      )}
+
+      {/* SURVEY TAB */}
+      {activeTab === "survey" && (
+        <div className="admin-tab-content">
+          {surveyData.length === 0 ? (
+            <p>{t("admin.loading")}</p>
+          ) : (() => {
+            const d = surveyData;
+            const total = d.length;
+
+            // ── Aggregations ──
+            const wantsAccess = d.filter(r =>
+              r.wants_early_access === "Sí" || r.wants_early_access === "Yes"
+            ).length;
+
+            const platformCounts = countBy(d as any[], "platform");
+            const platformData = Object.entries(platformCounts)
+              .sort((a, b) => b[1] - a[1])
+              .map(([name, value]) => ({ name, value }));
+
+            const freqCounts = countBy(d as any[], "frequency");
+            const freqLabels: Record<string, string> = {
+              "Varias veces a la semana": "Varias veces/sem",
+              "A diario": "A diario",
+              "Every day": "A diario",
+              "Una vez a la semana": "Una vez/sem",
+              "Once a week": "Una vez/sem",
+              "De vez en cuando": "Ocasionalmente",
+              "Unas cuantas veces al mes": "Varias veces/mes",
+            };
+            const freqData = Object.entries(freqCounts)
+              .sort((a, b) => b[1] - a[1])
+              .map(([name, value]) => ({ name: freqLabels[name] ?? name, value }));
+
+            const keepsLabels: Record<string, string> = {
+              "Sí, en una aplicación de notas": "App de notas",
+              "No, suelo guardar las ideas en mi cabeza": "En la cabeza",
+              "No, I usually keep ideas in my head": "En la cabeza",
+              "Sí, en una herramienta de productividad (Notion, etc.)": "Notion / Productividad",
+              "Sí, en hojas de cálculo": "Spreadsheet",
+            };
+            const keepsCounts = countBy(d as any[], "keeps_ideas");
+            const keepsData = Object.entries(keepsCounts)
+              .sort((a, b) => b[1] - a[1])
+              .map(([name, value]) => ({ name: keepsLabels[name] ?? name, value }));
+
+            const reusesLabels: Record<string, string> = {
+              "A veces": "A veces", "Sometimes": "A veces",
+              "A menudo": "A menudo", "Often": "A menudo",
+              "Rara vez": "Rara vez", "Rarely": "Rara vez",
+            };
+            const reusesCounts = countBy(d as any[], "reuses_ideas");
+            const reusesData = Object.entries(reusesCounts)
+              .sort((a, b) => b[1] - a[1])
+              .map(([name, value]) => ({ name: reusesLabels[name] ?? name, value }));
+
+            const seriesLabels: Record<string, string> = {
+              "A veces": "A veces", "Sometimes": "A veces",
+              "Sí, con frecuencia": "Sí, frecuentemente", "Yes, often": "Sí, frecuentemente",
+              "Nunca": "Nunca", "Never": "Nunca",
+              "Rara vez": "Rara vez", "Rarely": "Rara vez",
+            };
+            const seriesCounts = countBy(d as any[], "creates_series");
+            const seriesData = Object.entries(seriesCounts)
+              .sort((a, b) => b[1] - a[1])
+              .map(([name, value]) => ({ name: seriesLabels[name] ?? name, value }));
+
+            const ideasMulti = [
+              { label: t("admin.surveyIdeasRandom"),   count: countTrue(d, "ideas_random") },
+              { label: t("admin.surveyIdeasNotes"),    count: countTrue(d, "ideas_notes") },
+              { label: t("admin.surveyIdeasTrends"),   count: countTrue(d, "ideas_trends") },
+              { label: t("admin.surveyIdeasAudience"), count: countTrue(d, "ideas_audience") },
+              { label: t("admin.surveyIdeasAI"),       count: countTrue(d, "ideas_ai") },
+              { label: t("admin.surveyIdeasSystem"),   count: countTrue(d, "ideas_system") },
+            ].sort((a, b) => b.count - a.count);
+
+            const knowsMulti = [
+              { label: t("admin.surveyKnowsAnalytics"), count: countTrue(d, "knows_what_works_analytics") },
+              { label: t("admin.surveyKnowsIntuition"), count: countTrue(d, "knows_what_works_intuition") },
+              { label: t("admin.surveyKnowsAudience"),  count: countTrue(d, "knows_what_works_audience") },
+              { label: t("admin.surveyKnowsUnsure"),    count: countTrue(d, "knows_what_works_unsure") },
+            ].sort((a, b) => b.count - a.count);
+
+            const contentMulti = [
+              { label: t("admin.surveyContentEducational"),   count: countTrue(d, "content_educational") },
+              { label: t("admin.surveyContentMixed"),         count: countTrue(d, "content_mixed") },
+              { label: t("admin.surveyContentEntertainment"), count: countTrue(d, "content_entertainment") },
+              { label: t("admin.surveyContentReviews"),       count: countTrue(d, "content_reviews") },
+              { label: t("admin.surveyContentPersonal"),      count: countTrue(d, "content_personal") },
+              { label: t("admin.surveyContentTutorials"),     count: countTrue(d, "content_tutorials") },
+            ].sort((a, b) => b.count - a.count);
+
+            const difficultCounts = countBy(d as any[], "most_difficult");
+            const difficultLabels: Record<string, string> = {
+              "Entender qué funciona": "Entender qué funciona",
+              "Encontrar ideas": "Encontrar ideas",
+              "Find ideas": "Encontrar ideas",
+              "Organizar el contenido": "Organizar el contenido",
+              "Organize your content": "Organizar el contenido",
+              "Decidir qué publicar a continuación": "Decidir qué publicar",
+              "Mantener la coherencia": "Mantener coherencia",
+              "Maintain consistency": "Mantener coherencia",
+            };
+            const difficultData = Object.entries(difficultCounts)
+              .map(([name, value]) => ({ name: difficultLabels[name] ?? name, value }))
+              .reduce((acc: { name: string; value: number }[], item) => {
+                const existing = acc.find(x => x.name === item.name);
+                if (existing) existing.value += item.value;
+                else acc.push({ ...item });
+                return acc;
+              }, [])
+              .sort((a, b) => b.value - a.value);
+
+            const valuableCounts = countBy(d as any[], "most_valuable");
+            const valuableLabels: Record<string, string> = {
+              "Entender qué es lo que mejor funciona": "Entender qué funciona",
+              "Convertir ideas en series de contenido": "Ideas → series",
+              "Descubrir nuevas ideas de contenido": "Descubrir ideas",
+              "Identificar patrones en mi contenido": "Identificar patrones",
+              "Turn ideas into content series": "Ideas → series",
+              "Discover new content ideas": "Descubrir ideas",
+              "Identify patterns in my content": "Identificar patrones",
+              "Organize my ideas": "Organizar ideas",
+            };
+            const valuableData = Object.entries(valuableCounts)
+              .map(([name, value]) => ({ name: valuableLabels[name] ?? name, value }))
+              .reduce((acc: { name: string; value: number }[], item) => {
+                const existing = acc.find(x => x.name === item.name);
+                if (existing) existing.value += item.value;
+                else acc.push({ ...item });
+                return acc;
+              }, [])
+              .sort((a, b) => b.value - a.value);
+
+            const maxDifficult = difficultData[0]?.value ?? 1;
+            const maxValuable = valuableData[0]?.value ?? 1;
+            const maxMulti = Math.max(...ideasMulti.map(x => x.count), 1);
+
+            const openResponses = d.filter(r => r.workflow_wish);
+            const openTotal = openResponses.length;
+            const openPages = Math.ceil(openTotal / SURVEY_OPEN_LIMIT);
+            const openPaginated = openResponses.slice(
+              (surveyOpenPage - 1) * SURVEY_OPEN_LIMIT,
+              surveyOpenPage * SURVEY_OPEN_LIMIT
+            );
+
+            return (
+              <>
+                {/* ── KPIs ── */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.surveyOverview")}</span>
+                  <div className="admin-stats">
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">{total}</div>
+                      <div className="stat-label">{t("admin.surveyTotalResponses")}</div>
+                    </div>
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">{wantsAccess}</div>
+                      <div className="stat-label">{t("admin.surveyWantsAccess")}</div>
+                    </div>
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">
+                        {Math.round((wantsAccess / total) * 100)}%
+                      </div>
+                      <div className="stat-label">{t("admin.surveyAccessRate")}</div>
+                    </div>
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">{openTotal}</div>
+                      <div className="stat-label">{t("admin.surveyOpenResponses")}</div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* ── Plataforma + Frecuencia ── */}
+                <div className="admin-two-col">
+                  <section className="admin-section">
+                    <span className="section-label">{t("admin.surveyPlatform")}</span>
+                    <div className="admin-card admin-card--chart">
+                      <WaitlistDonut data={platformData} colors={PLATFORM_COLORS} total={total} />
+                    </div>
+                  </section>
+                  <section className="admin-section">
+                    <span className="section-label">{t("admin.surveyFrequency")}</span>
+                    <div className="admin-card admin-card--chart">
+                      <WaitlistDonut
+                        data={freqData}
+                        colors={["var(--primary)", "var(--accent)", "var(--pastel-primary-d)", "var(--pastel-accent-d)", "var(--pastel-primary)", "var(--pastel-accent)"]}
+                        total={total}
+                      />
+                    </div>
+                  </section>
+                </div>
+
+                {/* ── Comportamiento creativo: 3 donuts ── */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.surveyCreativeBehavior")}</span>
+                  <div className="admin-three-col">
+                    <div className="admin-card admin-card--chart">
+                      <p className="admin-section-hint">{t("admin.surveyKeepsIdeas")}</p>
+                      <WaitlistDonut data={keepsData} colors={["var(--primary)", "var(--accent)", "var(--pastel-primary-d)", "var(--pastel-accent-d)"]} total={total} />
+                    </div>
+                    <div className="admin-card admin-card--chart">
+                      <p className="admin-section-hint">{t("admin.surveyReusesIdeas")}</p>
+                      <WaitlistDonut data={reusesData} colors={["var(--primary)", "var(--pastel-primary-d)", "var(--accent)"]} total={total} />
+                    </div>
+                    <div className="admin-card admin-card--chart">
+                      <p className="admin-section-hint">{t("admin.surveyCreatesSeries")}</p>
+                      <WaitlistDonut data={seriesData} colors={["var(--primary)", "var(--accent)", "var(--pastel-border)", "var(--pastel-accent)"]} total={total} />
+                    </div>
+                  </div>
+                </section>
+
+                {/* ── Tipo de contenido + Generación de ideas ── */}
+                <div className="admin-two-col">
+                  <section className="admin-section">
+                    <span className="section-label">{t("admin.surveyContentType")}</span>
+                    <div className="admin-card">
+                      {contentMulti.map(item => (
+                        <div key={item.label} className="admin-bar-row">
+                          <span className="admin-bar-label">{item.label}</span>
+                          <div className="admin-bar-track">
+                            <div className="admin-bar-fill" style={{ width: `${Math.round((item.count / total) * 100)}%` }} />
+                          </div>
+                          <span className="admin-bar-pct">{item.count}</span>
+                        </div>
+                      ))}
+                      <p className="admin-section-hint" style={{ marginTop: "var(--s-3)" }}>
+                        {t("admin.surveyMultiSelectHint")}
+                      </p>
+                    </div>
+                  </section>
+                  <section className="admin-section">
+                    <span className="section-label">{t("admin.surveyIdeaGeneration")}</span>
+                    <div className="admin-card">
+                      {ideasMulti.map(item => (
+                        <div key={item.label} className="admin-bar-row">
+                          <span className="admin-bar-label">{item.label}</span>
+                          <div className="admin-bar-track">
+                            <div className="admin-bar-fill" style={{ width: `${Math.round((item.count / maxMulti) * 100)}%` }} />
+                          </div>
+                          <span className="admin-bar-pct">{item.count}</span>
+                        </div>
+                      ))}
+                      <p className="admin-section-hint" style={{ marginTop: "var(--s-3)" }}>
+                        {t("admin.surveyMultiSelectHint")}
+                      </p>
+                    </div>
+                  </section>
+                </div>
+
+                {/* ── Cómo miden qué funciona ── */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.surveyKnowsWhatWorks")}</span>
+                  <div className="admin-card">
+                    {knowsMulti.map(item => (
+                      <div key={item.label} className="admin-bar-row">
+                        <span className="admin-bar-label">{item.label}</span>
+                        <div className="admin-bar-track">
+                          <div className="admin-bar-fill" style={{ width: `${Math.round((item.count / total) * 100)}%` }} />
+                        </div>
+                        <span className="admin-bar-pct">{item.count}</span>
+                      </div>
+                    ))}
+                    <p className="admin-section-hint" style={{ marginTop: "var(--s-3)" }}>
+                      {t("admin.surveyMultiSelectHint")}
+                    </p>
+                  </div>
+                </section>
+
+                {/* ── Pain points + Feature más valiosa ── */}
+                <div className="admin-two-col">
+                  <section className="admin-section">
+                    <span className="section-label">{t("admin.surveyMostDifficult")}</span>
+                    <div className="admin-card">
+                      {difficultData.map(item => (
+                        <div key={item.name} className="admin-bar-row">
+                          <span className="admin-bar-label">{item.name}</span>
+                          <div className="admin-bar-track">
+                            <div
+                              className="admin-bar-fill admin-bar-fill--accent"
+                              style={{ width: `${Math.round((item.value / maxDifficult) * 100)}%` }}
+                            />
+                          </div>
+                          <span className="admin-bar-pct">{item.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                  <section className="admin-section">
+                    <span className="section-label">{t("admin.surveyMostValuable")}</span>
+                    <div className="admin-card">
+                      {valuableData.map((item, i) => (
+                        <div key={item.name} className="admin-bar-row">
+                          <span className="admin-bar-label">{item.name}</span>
+                          <div className="admin-bar-track">
+                            <div
+                              className="admin-bar-fill"
+                              style={{
+                                width: `${Math.round((item.value / maxValuable) * 100)}%`,
+                                background: i === 0 ? "var(--accent)" : "var(--primary)",
+                              }}
+                            />
+                          </div>
+                          <span className="admin-bar-pct">{item.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                </div>
+
+                {/* ── Respuestas abiertas paginadas ── */}
+                <section className="admin-section">
+                  <span className="section-label">
+                    {t("admin.surveyWorkflowWish")} ({openTotal})
+                  </span>
+                  <div className="admin-card">
+                    <div className="admin-table-wrap">
+                      <table className="admin-table">
+                        <thead>
+                          <tr>
+                            <th style={{ width: 60 }}>{t("admin.lang")}</th>
+                            <th style={{ width: 100 }}>{t("admin.platform")}</th>
+                            <th>{t("admin.surveyWishResponse")}</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {openPaginated.map((r, i) => (
+                            <tr key={i}>
+                              <td>
+                                <span className={`admin-badge ${
+                                  (r.language ?? "en") === "es"
+                                    ? "admin-badge--invited"
+                                    : "admin-badge--pending"
+                                }`}>
+                                  {(r.language ?? "en").toUpperCase()}
+                                </span>
+                              </td>
+                              <td style={{ color: "var(--text-secondary)", fontSize: "var(--fs-12)" }}>
+                                {r.platform}
+                              </td>
+                              <td style={{ color: "var(--text-secondary)" }}>
+                                {r.workflow_wish}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    {openPages > 1 && (
+                      <div className="admin-pagination">
+                        <button disabled={surveyOpenPage === 1} onClick={() => setSurveyOpenPage(p => p - 1)} type="button">‹</button>
+                        <span>{surveyOpenPage} of {openPages}</span>
+                        <button disabled={surveyOpenPage >= openPages} onClick={() => setSurveyOpenPage(p => p + 1)} type="button">›</button>
+                      </div>
+                    )}
+                  </div>
+                </section>
+              </>
+            );
+          })()}
         </div>
       )}
 
