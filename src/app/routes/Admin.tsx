@@ -4,6 +4,8 @@ import { supabase } from "../../supabaseClient";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
+  BarChart, Bar,
+  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
 } from "recharts";
 import "./Admin.scss";
 
@@ -326,6 +328,42 @@ export default function Admin() {
   }, [activeTab]);
 
   // ── Analytics helpers ──
+  function normalizeSurveyRow(r: SurveyRow): SurveyRow {
+    const freqMap: Record<string, string> = {
+      "Every day": "A diario",
+      "Once a week": "Una vez a la semana",
+      "Rarely": "Rara vez",
+      "Sometimes": "A veces",
+      "Often": "A menudo",
+      "Never": "Nunca",
+      "Yes, often": "Sí, con frecuencia",
+      "Not right now": "Ahora mismo no",
+      "Maybe": "Quizás",
+      "Yes": "Sí",
+    };
+    return {
+      ...r,
+      frequency: freqMap[r.frequency ?? ""] ?? r.frequency,
+      reuses_ideas: freqMap[r.reuses_ideas ?? ""] ?? r.reuses_ideas,
+      creates_series: freqMap[r.creates_series ?? ""] ?? r.creates_series,
+      wants_early_access: freqMap[r.wants_early_access ?? ""] ?? r.wants_early_access,
+      most_difficult: ({
+        "Find ideas": "Encontrar ideas",
+        "Organize your content": "Organizar el contenido",
+        "Maintain consistency": "Mantener la coherencia",
+      } as Record<string, string>)[r.most_difficult ?? ""] ?? r.most_difficult,
+      most_valuable: ({
+        "Turn ideas into content series": "Convertir ideas en series de contenido",
+        "Discover new content ideas": "Descubrir nuevas ideas de contenido",
+        "Identify patterns in my content": "Identificar patrones en mi contenido",
+        "Organize my ideas": "Organizar mis ideas",
+      } as Record<string, string>)[r.most_valuable ?? ""] ?? r.most_valuable,
+      keeps_ideas: ({
+        "No, I usually keep ideas in my head": "No, suelo guardar las ideas en mi cabeza",
+      } as Record<string, string>)[r.keeps_ideas ?? ""] ?? r.keeps_ideas,
+    };
+  }
+
   function countTrue(arr: SurveyRow[], key: keyof SurveyRow): number {
     return arr.filter(r => r[key] === "TRUE").length;
   }
@@ -901,7 +939,7 @@ export default function Admin() {
           {surveyData.length === 0 ? (
             <p>{t("admin.loading")}</p>
           ) : (() => {
-            const d = surveyData;
+            const d = surveyData.map(normalizeSurveyRow);
             const total = d.length;
 
             // ── Aggregations ──
@@ -1078,11 +1116,49 @@ export default function Admin() {
                   <section className="admin-section">
                     <span className="section-label">{t("admin.surveyFrequency")}</span>
                     <div className="admin-card admin-card--chart">
-                      <WaitlistDonut
-                        data={freqData}
-                        colors={["var(--primary)", "var(--accent)", "var(--pastel-primary-d)", "var(--pastel-accent-d)", "var(--pastel-primary)", "var(--pastel-accent)"]}
-                        total={total}
-                      />
+                      <ResponsiveContainer width="100%" height={220}>
+                        <BarChart
+                          data={freqData}
+                          margin={{ top: 8, right: 16, left: -20, bottom: 40 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
+                          <XAxis
+                            dataKey="name"
+                            tick={{ fontSize: 11, fill: "var(--text-faint)", fontFamily: "var(--font-mono)" }}
+                            axisLine={false} tickLine={false}
+                            angle={-30} textAnchor="end" interval={0}
+                          />
+                          <YAxis
+                            tick={{ fontSize: 11, fill: "var(--text-faint)" }}
+                            axisLine={false} tickLine={false} allowDecimals={false}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              background: "var(--bg-elevated)",
+                              border: "1px solid var(--border)",
+                              borderRadius: "var(--r-3)",
+                              fontSize: 12, color: "var(--text)",
+                              boxShadow: "var(--shadow-md)",
+                            }}
+                            formatter={(value) => [(value ?? 0), t("admin.surveyResponses")] as [number, string]}
+                          />
+                          <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                            {freqData.map((_, i) => (
+                              <Cell
+                                key={i}
+                                fill={[
+                                  "var(--primary)",
+                                  "var(--accent)",
+                                  "var(--pastel-primary-d)",
+                                  "var(--pastel-accent-d)",
+                                  "var(--pastel-primary)",
+                                  "var(--pastel-accent)",
+                                ][i % 6]}
+                              />
+                            ))}
+                          </Bar>
+                        </BarChart>
+                      </ResponsiveContainer>
                     </div>
                   </section>
                 </div>
@@ -1163,46 +1239,66 @@ export default function Admin() {
                   </div>
                 </section>
 
-                {/* ── Pain points + Feature más valiosa ── */}
-                <div className="admin-two-col">
-                  <section className="admin-section">
-                    <span className="section-label">{t("admin.surveyMostDifficult")}</span>
-                    <div className="admin-card">
-                      {difficultData.map(item => (
-                        <div key={item.name} className="admin-bar-row">
-                          <span className="admin-bar-label">{item.name}</span>
-                          <div className="admin-bar-track">
-                            <div
-                              className="admin-bar-fill admin-bar-fill--accent"
-                              style={{ width: `${Math.round((item.value / maxDifficult) * 100)}%` }}
-                            />
-                          </div>
-                          <span className="admin-bar-pct">{item.value}</span>
+                {/* ── Pain points — barras horizontales ── */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.surveyMostDifficult")}</span>
+                  <div className="admin-card">
+                    {difficultData.map(item => (
+                      <div key={item.name} className="admin-bar-row">
+                        <span className="admin-bar-label">{item.name}</span>
+                        <div className="admin-bar-track">
+                          <div
+                            className="admin-bar-fill admin-bar-fill--accent"
+                            style={{ width: `${Math.round((item.value / maxDifficult) * 100)}%` }}
+                          />
                         </div>
-                      ))}
-                    </div>
-                  </section>
-                  <section className="admin-section">
-                    <span className="section-label">{t("admin.surveyMostValuable")}</span>
-                    <div className="admin-card">
-                      {valuableData.map((item, i) => (
-                        <div key={item.name} className="admin-bar-row">
-                          <span className="admin-bar-label">{item.name}</span>
-                          <div className="admin-bar-track">
-                            <div
-                              className="admin-bar-fill"
-                              style={{
-                                width: `${Math.round((item.value / maxValuable) * 100)}%`,
-                                background: i === 0 ? "var(--accent)" : "var(--primary)",
-                              }}
-                            />
-                          </div>
-                          <span className="admin-bar-pct">{item.value}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </section>
-                </div>
+                        <span className="admin-bar-pct">{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* ── Feature más valiosa — Radar ── */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.surveyMostValuable")}</span>
+                  <div className="admin-card admin-card--chart">
+                    <ResponsiveContainer width="100%" height={280}>
+                      <RadarChart data={valuableData} margin={{ top: 16, right: 40, bottom: 16, left: 40 }}>
+                        <PolarGrid stroke="var(--border-subtle)" />
+                        <PolarAngleAxis
+                          dataKey="name"
+                          tick={{ fontSize: 11, fill: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}
+                        />
+                        <PolarRadiusAxis
+                          angle={30}
+                          domain={[0, maxValuable]}
+                          tick={{ fontSize: 10, fill: "var(--text-faint)" }}
+                          axisLine={false}
+                          tickCount={maxValuable + 1}
+                        />
+                        <Radar
+                          name={t("admin.surveyResponses")}
+                          dataKey="value"
+                          stroke="var(--accent)"
+                          fill="var(--accent)"
+                          fillOpacity={0.18}
+                          strokeWidth={2}
+                          dot={{ fill: "var(--accent)", r: 4 } as any}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            background: "var(--bg-elevated)",
+                            border: "1px solid var(--border)",
+                            borderRadius: "var(--r-3)",
+                            fontSize: 12, color: "var(--text)",
+                            boxShadow: "var(--shadow-md)",
+                          }}
+                          formatter={(value) => [(value ?? 0), t("admin.surveyResponses")] as [number, string]}
+                        />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </section>
 
                 {/* ── Respuestas abiertas paginadas ── */}
                 <section className="admin-section">

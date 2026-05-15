@@ -496,7 +496,8 @@
     "surveyKnowsAnalytics": "Analítica de la plataforma",
     "surveyKnowsIntuition": "Intuición personal",
     "surveyKnowsAudience": "Comentarios de la audiencia",
-    "surveyKnowsUnsure": "No estoy muy seguro"
+    "surveyKnowsUnsure": "No estoy muy seguro",
+    "surveyResponses": "Respuestas"
   },
   "insights": {
     "content_production": {
