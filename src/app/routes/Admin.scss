@@ -440,6 +440,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: var(--s-5);
+  align-items: stretch;
 
   @media (max-width: 900px) {
     grid-template-columns: 1fr;
