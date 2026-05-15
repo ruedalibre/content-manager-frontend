@@ -1317,7 +1317,7 @@ export default function Admin() {
                         <PolarGrid stroke="var(--border-subtle)" strokeDasharray="3 3" />
                         <PolarAngleAxis
                           dataKey="name"
-                          tick={({ x, y, cx, cy, payload }: any) => {
+                          tick={({ x, y, cx, payload }: any) => {
                             const isRight = x > cx;
                             const words = payload.value.split(" ");
                             const lines: string[] = [];
