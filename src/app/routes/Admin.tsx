@@ -328,39 +328,54 @@ export default function Admin() {
   }, [activeTab]);
 
   // ── Analytics helpers ──
+
+  // Diccionario maestro EN → ES (un solo lugar para mantener)
+  const EN_TO_ES: Record<string, string> = {
+    // frequency
+    "Every day":                                    "A diario",
+    "Once a week":                                  "Una vez a la semana",
+    "A few times a month":                          "Unas cuantas veces al mes",
+    "Occasionally":                                 "De vez en cuando",
+    // reuses_ideas / creates_series
+    "Often":                                        "A menudo",
+    "Sometimes":                                    "A veces",
+    "Rarely":                                       "Rara vez",
+    "Never":                                        "Nunca",
+    "Yes, often":                                   "Sí, con frecuencia",
+    // keeps_ideas
+    "No, I usually keep ideas in my head":          "No, suelo guardar las ideas en mi cabeza",
+    "Yes, in a notes app":                          "Sí, en una aplicación de notas",
+    "Yes, in a productivity tool (Notion, etc.)":   "Sí, en una herramienta de productividad (Notion, etc.)",
+    "Yes, in spreadsheets":                         "Sí, en hojas de cálculo",
+    // most_difficult
+    "Find ideas":                                   "Encontrar ideas",
+    "Organize your content":                        "Organizar el contenido",
+    "Maintain consistency":                         "Mantener la coherencia",
+    "Decide what to post next":                     "Decidir qué publicar a continuación",
+    "Understand what works":                        "Entender qué funciona",
+    // most_valuable
+    "Turn ideas into content series":               "Convertir ideas en series de contenido",
+    "Discover new content ideas":                   "Descubrir nuevas ideas de contenido",
+    "Identify patterns in my content":              "Identificar patrones en mi contenido",
+    "Understand what works best":                   "Entender qué es lo que mejor funciona",
+    "Organize my ideas":                            "Organizar mis ideas",
+    // wants_early_access
+    "Yes":                                          "Sí",
+    "Maybe":                                        "Quizás",
+    "Not right now":                                "Ahora mismo no",
+  };
+
   function normalizeSurveyRow(r: SurveyRow): SurveyRow {
-    const freqMap: Record<string, string> = {
-      "Every day": "A diario",
-      "Once a week": "Una vez a la semana",
-      "Rarely": "Rara vez",
-      "Sometimes": "A veces",
-      "Often": "A menudo",
-      "Never": "Nunca",
-      "Yes, often": "Sí, con frecuencia",
-      "Not right now": "Ahora mismo no",
-      "Maybe": "Quizás",
-      "Yes": "Sí",
-    };
+    const n = (val: string | null) => (val ? (EN_TO_ES[val] ?? val) : val);
     return {
       ...r,
-      frequency: freqMap[r.frequency ?? ""] ?? r.frequency,
-      reuses_ideas: freqMap[r.reuses_ideas ?? ""] ?? r.reuses_ideas,
-      creates_series: freqMap[r.creates_series ?? ""] ?? r.creates_series,
-      wants_early_access: freqMap[r.wants_early_access ?? ""] ?? r.wants_early_access,
-      most_difficult: ({
-        "Find ideas": "Encontrar ideas",
-        "Organize your content": "Organizar el contenido",
-        "Maintain consistency": "Mantener la coherencia",
-      } as Record<string, string>)[r.most_difficult ?? ""] ?? r.most_difficult,
-      most_valuable: ({
-        "Turn ideas into content series": "Convertir ideas en series de contenido",
-        "Discover new content ideas": "Descubrir nuevas ideas de contenido",
-        "Identify patterns in my content": "Identificar patrones en mi contenido",
-        "Organize my ideas": "Organizar mis ideas",
-      } as Record<string, string>)[r.most_valuable ?? ""] ?? r.most_valuable,
-      keeps_ideas: ({
-        "No, I usually keep ideas in my head": "No, suelo guardar las ideas en mi cabeza",
-      } as Record<string, string>)[r.keeps_ideas ?? ""] ?? r.keeps_ideas,
+      frequency:          n(r.frequency),
+      reuses_ideas:       n(r.reuses_ideas),
+      creates_series:     n(r.creates_series),
+      keeps_ideas:        n(r.keeps_ideas),
+      most_difficult:     n(r.most_difficult),
+      most_valuable:      n(r.most_valuable),
+      wants_early_access: n(r.wants_early_access),
     };
   }
 
@@ -1107,9 +1122,9 @@ export default function Admin() {
 
                 {/* ── Plataforma + Frecuencia ── */}
                 <div className="admin-two-col">
-                  <section className="admin-section">
+                  <section className="admin-section" style={{ display: "flex", flexDirection: "column" }}>
                     <span className="section-label">{t("admin.surveyPlatform")}</span>
-                    <div className="admin-card admin-card--chart">
+                    <div className="admin-card admin-card--chart" style={{ flex: 1 }}>
                       <WaitlistDonut data={platformData} colors={PLATFORM_COLORS} total={total} />
                     </div>
                   </section>
@@ -1119,14 +1134,47 @@ export default function Admin() {
                       <ResponsiveContainer width="100%" height={220}>
                         <BarChart
                           data={freqData}
-                          margin={{ top: 8, right: 16, left: -20, bottom: 40 }}
+                          margin={{ top: 8, right: 16, left: -20, bottom: 20 }}
                         >
                           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
                           <XAxis
                             dataKey="name"
-                            tick={{ fontSize: 11, fill: "var(--text-faint)", fontFamily: "var(--font-mono)" }}
-                            axisLine={false} tickLine={false}
-                            angle={-30} textAnchor="end" interval={0}
+                            axisLine={false}
+                            tickLine={false}
+                            interval={0}
+                            height={60}
+                            tick={(props: any) => {
+                              const { x, y, payload } = props;
+                              const words = payload.value.split(" ");
+                              const lines: string[] = [];
+                              let current = "";
+                              words.forEach((w: string) => {
+                                if ((current + " " + w).trim().length > 10 && current) {
+                                  lines.push(current.trim());
+                                  current = w;
+                                } else {
+                                  current = (current + " " + w).trim();
+                                }
+                              });
+                              if (current) lines.push(current.trim());
+                              return (
+                                <g transform={`translate(${x},${y})`}>
+                                  {lines.map((line, i) => (
+                                    <text
+                                      key={i}
+                                      x={0} y={0}
+                                      dy={14 + i * 14}
+                                      textAnchor="middle"
+                                      fill="var(--text-faint)"
+                                      fontSize={11}
+                                      fontFamily="var(--font-mono)"
+                                    >
+                                      {line}
+                                    </text>
+                                  ))}
+                                </g>
+                              );
+                            }}
                           />
                           <YAxis
                             tick={{ fontSize: 11, fill: "var(--text-faint)" }}
