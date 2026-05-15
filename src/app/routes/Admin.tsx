@@ -134,15 +134,16 @@ function WaitlistDonut({
           </PieChart>
         </ResponsiveContainer>
       </div>
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "var(--s-2)" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         {data.map((entry, i) => (
           <div
             key={entry.name}
             style={{
               display: "grid",
-              gridTemplateColumns: "8px 1fr auto auto",
+              gridTemplateColumns: "8px auto 1fr auto",
               alignItems: "center",
               gap: "var(--s-2) var(--s-3)",
+              marginBottom: "var(--s-2)",
             }}
           >
             <div style={{
@@ -153,9 +154,11 @@ function WaitlistDonut({
             <span style={{
               fontSize: "var(--fs-12)",
               color: "var(--text-secondary)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
+              lineHeight: 1.3,
+              wordBreak: "break-word",
+              whiteSpace: "normal",
+              overflow: "visible",
+              textOverflow: "unset",
             }}>
               {entry.name}
             </span>
@@ -165,7 +168,6 @@ function WaitlistDonut({
               color: "var(--text)",
               fontFamily: "var(--font-display)",
               textAlign: "right",
-              minWidth: 20,
             }}>
               {entry.value}
             </span>
@@ -173,8 +175,8 @@ function WaitlistDonut({
               fontSize: "var(--fs-11)",
               color: "var(--text-faint)",
               textAlign: "right",
-              minWidth: 36,
               fontFamily: "var(--font-mono)",
+              whiteSpace: "nowrap",
             }}>
               {Math.round((entry.value / total) * 100)}%
             </span>
@@ -1310,15 +1312,47 @@ export default function Admin() {
                 <section className="admin-section">
                   <span className="section-label">{t("admin.surveyMostValuable")}</span>
                   <div className="admin-card admin-card--chart">
-                    <ResponsiveContainer width="100%" height={280}>
-                      <RadarChart data={valuableData} margin={{ top: 16, right: 40, bottom: 16, left: 40 }}>
-                        <PolarGrid stroke="var(--border-subtle)" />
+                    <ResponsiveContainer width="100%" height={520}>
+                      <RadarChart data={valuableData} margin={{ top: 40, right: 80, bottom: 40, left: 80 }}>
+                        <PolarGrid stroke="var(--border-subtle)" strokeDasharray="3 3" />
                         <PolarAngleAxis
                           dataKey="name"
-                          tick={{ fontSize: 11, fill: "var(--text-secondary)", fontFamily: "var(--font-sans)" }}
+                          tick={({ x, y, cx, cy, payload }: any) => {
+                            const isRight = x > cx;
+                            const words = payload.value.split(" ");
+                            const lines: string[] = [];
+                            let current = "";
+                            words.forEach((w: string) => {
+                              if ((current + " " + w).trim().length > 16 && current) {
+                                lines.push(current.trim());
+                                current = w;
+                              } else {
+                                current = (current + " " + w).trim();
+                              }
+                            });
+                            if (current) lines.push(current);
+                            return (
+                              <g>
+                                {lines.map((line, i) => (
+                                  <text
+                                    key={i}
+                                    x={x}
+                                    y={y + (i - (lines.length - 1) / 2) * 16}
+                                    textAnchor={isRight ? "start" : x === cx ? "middle" : "end"}
+                                    dominantBaseline="central"
+                                    fill="var(--text-secondary)"
+                                    fontSize={12}
+                                    fontFamily="var(--font-sans)"
+                                  >
+                                    {line}
+                                  </text>
+                                ))}
+                              </g>
+                            );
+                          }}
                         />
                         <PolarRadiusAxis
-                          angle={30}
+                          angle={90}
                           domain={[0, maxValuable]}
                           tick={{ fontSize: 10, fill: "var(--text-faint)" }}
                           axisLine={false}
@@ -1329,9 +1363,9 @@ export default function Admin() {
                           dataKey="value"
                           stroke="var(--accent)"
                           fill="var(--accent)"
-                          fillOpacity={0.18}
-                          strokeWidth={2}
-                          dot={{ fill: "var(--accent)", r: 4 } as any}
+                          fillOpacity={0.2}
+                          strokeWidth={2.5}
+                          dot={{ fill: "var(--accent)", r: 5, strokeWidth: 0 } as any}
                         />
                         <Tooltip
                           contentStyle={{
