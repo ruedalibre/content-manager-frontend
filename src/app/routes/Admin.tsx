@@ -1140,7 +1140,7 @@ export default function Admin() {
                               fontSize: 12, color: "var(--text)",
                               boxShadow: "var(--shadow-md)",
                             }}
-                            formatter={(value: number) => [value, t("admin.surveyResponses")]}
+                            formatter={(value) => [(value ?? 0), t("admin.surveyResponses")] as [number, string]}
                           />
                           <Bar dataKey="value" radius={[4, 4, 0, 0]}>
                             {freqData.map((_, i) => (
