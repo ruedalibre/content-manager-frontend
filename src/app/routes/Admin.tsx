@@ -330,12 +330,6 @@ export default function Admin() {
     return arr.filter(r => r[key] === "TRUE").length;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  function normalizeAnswer(val: string | null, map: Record<string, string>): string {
-    if (!val) return "—";
-    return map[val] ?? val;
-  }
-
   function countBy<T>(arr: T[], key: keyof T): Record<string, number> {
     return arr.reduce((acc, item) => {
       const val = String(item[key] ?? "Unknown");
