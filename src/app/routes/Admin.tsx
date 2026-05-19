@@ -208,6 +208,16 @@ export default function Admin() {
   // Waitlist Intelligence — computed from allEarlyAccess (full dataset, no pagination)
   const [allEarlyAccess, setAllEarlyAccess] = useState<EarlyAccessRequest[]>([]);
 
+  // Early Access — Operations tab (paginated, filterable, with invite action)
+  const [earlyAccess, setEarlyAccess] = useState<EarlyAccessRequest[]>([]);
+  const [earlyTotal, setEarlyTotal] = useState(0);
+  const [earlyPage, setEarlyPage] = useState(1);
+  const [earlyStatusFilter, setEarlyStatusFilter] = useState("all");
+  const [earlyLangFilter, setEarlyLangFilter] = useState("all");
+  const [invitingId, setInvitingId] = useState<string | null>(null);
+  const [inviteError, setInviteError] = useState<string | null>(null);
+  const EARLY_LIMIT = 10;
+
   const [surveyData, setSurveyData] = useState<SurveyRow[]>([]);
   const [surveyOpenPage, setSurveyOpenPage] = useState(1);
   const SURVEY_OPEN_LIMIT = 5;
@@ -274,6 +284,62 @@ export default function Admin() {
     };
     loadUsers();
   }, [usersFilter]);
+
+  useEffect(() => {
+    const loadEarlyAccess = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const params = new URLSearchParams({
+          page: String(earlyPage),
+          limit: String(EARLY_LIMIT),
+        });
+        if (earlyStatusFilter !== "all") params.set("status", earlyStatusFilter);
+        if (earlyLangFilter !== "all") params.set("language", earlyLangFilter);
+        const res = await fetch(`${base}/admin-early-access?${params}`, {
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        });
+        if (!res.ok) return;
+        const json = await res.json();
+        setEarlyAccess(json.data ?? []);
+        setEarlyTotal(json.total ?? 0);
+      } catch (err) {
+        console.error("Early access load error:", err);
+      }
+    };
+    loadEarlyAccess();
+  }, [earlyPage, earlyStatusFilter, earlyLangFilter]);
+
+  const handleInvite = async (r: EarlyAccessRequest) => {
+    setInvitingId(r.id);
+    setInviteError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${base}/admin-invite`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: r.id, email: r.email }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        setInviteError(err.error ?? "Error sending invite");
+      } else {
+        setEarlyAccess((prev) =>
+          prev.map((item) =>
+            item.id === r.id
+              ? { ...item, status: "invited", invited_at: new Date().toISOString() }
+              : item
+          )
+        );
+      }
+    } catch (err) {
+      setInviteError(String(err));
+    } finally {
+      setInvitingId(null);
+    }
+  };
 
   useEffect(() => {
     if (activeTab !== "waitlist" || allEarlyAccess.length > 0) return;
@@ -603,6 +669,103 @@ export default function Admin() {
                 >
                   ›
                 </button>
+              </div>
+            )}
+          </section>
+
+          {/* Early Access Waitlist — with invite action */}
+          <section className="admin-section">
+            <div className="admin-section__header">
+              <span className="section-label">{t("admin.earlyAccessWaitlist")}</span>
+              <div className="admin-filters">
+                <select
+                  className="admin-filter"
+                  value={earlyStatusFilter}
+                  onChange={(e) => { setEarlyStatusFilter(e.target.value); setEarlyPage(1); }}
+                >
+                  <option value="all">All</option>
+                  <option value="pending">Pending</option>
+                  <option value="invited">Invited</option>
+                </select>
+                <select
+                  className="admin-filter"
+                  value={earlyLangFilter}
+                  onChange={(e) => { setEarlyLangFilter(e.target.value); setEarlyPage(1); }}
+                >
+                  <option value="all">All languages</option>
+                  <option value="es">Español</option>
+                  <option value="en">English</option>
+                </select>
+              </div>
+            </div>
+            <div className="admin-table-wrap">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>{t("admin.email")}</th>
+                    <th>{t("admin.platform")}</th>
+                    <th>{t("admin.focus")}</th>
+                    <th>{t("admin.status")}</th>
+                    <th>{t("admin.lang")}</th>
+                    <th>{t("admin.registered")}</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {earlyAccess.map((r) => (
+                    <tr key={r.id}>
+                      <td>{r.email}</td>
+                      <td>{r.platform_name ?? "—"}</td>
+                      <td>{r.creator_focus ?? "—"}</td>
+                      <td>
+                        <span className={`admin-badge admin-badge--${r.status}`}>
+                          {r.status}
+                        </span>
+                      </td>
+                      <td>{r.language}</td>
+                      <td>{new Date(r.created_at).toLocaleDateString()}</td>
+                      <td>
+                        {r.status === "pending" && (
+                          <>
+                            <button
+                              className="admin-invite-btn"
+                              onClick={() => handleInvite(r)}
+                              disabled={invitingId === r.id}
+                              type="button"
+                            >
+                              {invitingId === r.id ? t("admin.sending") : t("admin.invite")}
+                            </button>
+                            {inviteError && invitingId === null && (
+                              <p className="admin-error">{inviteError}</p>
+                            )}
+                          </>
+                        )}
+                        {r.status === "invited" && (
+                          <span className="admin-invited-date">
+                            {r.invited_at
+                              ? new Date(r.invited_at).toLocaleDateString()
+                              : "—"}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {earlyTotal > EARLY_LIMIT && (
+              <div className="admin-pagination">
+                <button
+                  disabled={earlyPage === 1}
+                  onClick={() => setEarlyPage((p) => p - 1)}
+                  type="button"
+                >‹</button>
+                <span>{earlyPage} of {Math.ceil(earlyTotal / EARLY_LIMIT)}</span>
+                <button
+                  disabled={earlyPage >= Math.ceil(earlyTotal / EARLY_LIMIT)}
+                  onClick={() => setEarlyPage((p) => p + 1)}
+                  type="button"
+                >›</button>
               </div>
             )}
           </section>
