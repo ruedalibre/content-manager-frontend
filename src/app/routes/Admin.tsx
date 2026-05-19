@@ -314,13 +314,13 @@ export default function Admin() {
     setInviteError(null);
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(`${base}/admin-invite`, {
+      const res = await fetch(`${base}/admin-invite-user`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: r.id, email: r.email }),
+        body: JSON.stringify({ request_id: r.id }),
       });
       if (!res.ok) {
         const err = await res.json();
