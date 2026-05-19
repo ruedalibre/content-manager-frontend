@@ -673,103 +673,6 @@ export default function Admin() {
             )}
           </section>
 
-          {/* Early Access Waitlist — with invite action */}
-          <section className="admin-section">
-            <div className="admin-section__header">
-              <span className="section-label">{t("admin.earlyAccessWaitlist")}</span>
-              <div className="admin-filters">
-                <select
-                  className="admin-filter"
-                  value={earlyStatusFilter}
-                  onChange={(e) => { setEarlyStatusFilter(e.target.value); setEarlyPage(1); }}
-                >
-                  <option value="all">All</option>
-                  <option value="pending">Pending</option>
-                  <option value="invited">Invited</option>
-                </select>
-                <select
-                  className="admin-filter"
-                  value={earlyLangFilter}
-                  onChange={(e) => { setEarlyLangFilter(e.target.value); setEarlyPage(1); }}
-                >
-                  <option value="all">All languages</option>
-                  <option value="es">Español</option>
-                  <option value="en">English</option>
-                </select>
-              </div>
-            </div>
-            <div className="admin-table-wrap">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>{t("admin.email")}</th>
-                    <th>{t("admin.platform")}</th>
-                    <th>{t("admin.focus")}</th>
-                    <th>{t("admin.status")}</th>
-                    <th>{t("admin.lang")}</th>
-                    <th>{t("admin.registered")}</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {earlyAccess.map((r) => (
-                    <tr key={r.id}>
-                      <td>{r.email}</td>
-                      <td>{r.platform_name ?? "—"}</td>
-                      <td>{r.creator_focus ?? "—"}</td>
-                      <td>
-                        <span className={`admin-badge admin-badge--${r.status}`}>
-                          {r.status}
-                        </span>
-                      </td>
-                      <td>{r.language}</td>
-                      <td>{new Date(r.created_at).toLocaleDateString()}</td>
-                      <td>
-                        {r.status === "pending" && (
-                          <>
-                            <button
-                              className="admin-invite-btn"
-                              onClick={() => handleInvite(r)}
-                              disabled={invitingId === r.id}
-                              type="button"
-                            >
-                              {invitingId === r.id ? t("admin.sending") : t("admin.invite")}
-                            </button>
-                            {inviteError && invitingId === null && (
-                              <p className="admin-error">{inviteError}</p>
-                            )}
-                          </>
-                        )}
-                        {r.status === "invited" && (
-                          <span className="admin-invited-date">
-                            {r.invited_at
-                              ? new Date(r.invited_at).toLocaleDateString()
-                              : "—"}
-                          </span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {earlyTotal > EARLY_LIMIT && (
-              <div className="admin-pagination">
-                <button
-                  disabled={earlyPage === 1}
-                  onClick={() => setEarlyPage((p) => p - 1)}
-                  type="button"
-                >‹</button>
-                <span>{earlyPage} of {Math.ceil(earlyTotal / EARLY_LIMIT)}</span>
-                <button
-                  disabled={earlyPage >= Math.ceil(earlyTotal / EARLY_LIMIT)}
-                  onClick={() => setEarlyPage((p) => p + 1)}
-                  type="button"
-                >›</button>
-              </div>
-            )}
-          </section>
-
         </div>
       )}
 
@@ -941,11 +844,31 @@ export default function Admin() {
                   );
                 })()}
 
-                {/* 5 — Lista de espera completa (solo lectura) */}
+                {/* 5 — Lista de espera con acción de invitación */}
                 <section className="admin-section">
-                  <span className="section-label">
-                    {t("admin.earlyAccessWaitlist")} ({allEarlyAccess.length})
-                  </span>
+                  <div className="admin-section__header">
+                    <span className="section-label">{t("admin.earlyAccessWaitlist")}</span>
+                    <div className="admin-filters">
+                      <select
+                        className="admin-filter"
+                        value={earlyStatusFilter}
+                        onChange={(e) => { setEarlyStatusFilter(e.target.value); setEarlyPage(1); }}
+                      >
+                        <option value="all">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="invited">Invited</option>
+                      </select>
+                      <select
+                        className="admin-filter"
+                        value={earlyLangFilter}
+                        onChange={(e) => { setEarlyLangFilter(e.target.value); setEarlyPage(1); }}
+                      >
+                        <option value="all">All languages</option>
+                        <option value="es">Español</option>
+                        <option value="en">English</option>
+                      </select>
+                    </div>
+                  </div>
                   <div className="admin-table-wrap">
                     <table className="admin-table">
                       <thead>
@@ -955,11 +878,12 @@ export default function Admin() {
                           <th>{t("admin.focus")}</th>
                           <th>{t("admin.status")}</th>
                           <th>{t("admin.lang")}</th>
-                          <th>{t("admin.requested")}</th>
+                          <th>{t("admin.registered")}</th>
+                          <th></th>
                         </tr>
                       </thead>
                       <tbody>
-                        {allEarlyAccess.map((r) => (
+                        {earlyAccess.map((r) => (
                           <tr key={r.id}>
                             <td>{r.email}</td>
                             <td>{r.platform_name ?? "—"}</td>
@@ -981,11 +905,50 @@ export default function Admin() {
                               </span>
                             </td>
                             <td>{new Date(r.created_at).toLocaleDateString()}</td>
+                            <td>
+                              {r.status === "pending" && (
+                                <>
+                                  <button
+                                    className="admin-invite-btn"
+                                    onClick={() => handleInvite(r)}
+                                    disabled={invitingId === r.id}
+                                    type="button"
+                                  >
+                                    {invitingId === r.id ? t("admin.sending") : t("admin.invite")}
+                                  </button>
+                                  {inviteError && invitingId === null && (
+                                    <p className="admin-error">{inviteError}</p>
+                                  )}
+                                </>
+                              )}
+                              {r.status === "invited" && (
+                                <span className="admin-invited-date">
+                                  {r.invited_at
+                                    ? new Date(r.invited_at).toLocaleDateString()
+                                    : "—"}
+                                </span>
+                              )}
+                            </td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
+                  {earlyTotal > EARLY_LIMIT && (
+                    <div className="admin-pagination">
+                      <button
+                        disabled={earlyPage === 1}
+                        onClick={() => setEarlyPage((p) => p - 1)}
+                        type="button"
+                      >‹</button>
+                      <span>{earlyPage} of {Math.ceil(earlyTotal / EARLY_LIMIT)}</span>
+                      <button
+                        disabled={earlyPage >= Math.ceil(earlyTotal / EARLY_LIMIT)}
+                        onClick={() => setEarlyPage((p) => p + 1)}
+                        type="button"
+                      >›</button>
+                    </div>
+                  )}
                 </section>
               </>
             );
