@@ -1,250 +1,114 @@
-# 🚀 Content Manager App
+# Content Intelligence Platform — Frontend
 
-**Analytics & Content Intelligence SaaS for Digital Creators**
+React + TypeScript application for content creators to systematize their ideas and scale their content strategy.
 
-Content Manager is a full-stack SaaS platform designed to help creators, marketers and digital teams manage, analyze and optimize their content production across multiple platforms.
-
-It combines content inventory, analytics and reusable intelligence in a single dashboard.
+> The backend repository is private. Available for review upon request.
 
 ---
 
-## 🧠 Core Value Proposition
+## Product
 
-"Know what you create, where you publish, and what to reuse next."
+Content Intelligence helps creators understand how their ideas evolve into scalable content systems. Unlike traditional social media tools focused on scheduling and analytics, this platform focuses on the creative process: how ideas are generated, how they transform into content, and what patterns enable strategy at scale.
 
-The platform transforms raw content logs into:
+**Core loop:** Ideas → Content → Patterns → Insights → Strategy → New ideas
 
-• Platform distribution analytics  
-• Growth timelines  
-• Reusable content detection  
-• Activity heatmaps  
-• AI-like insights  
-• Performance indicators  
+**Central hypothesis:** Creators grow faster when they systematize their ideas, not just when they measure content performance.
 
 ---
 
-## 🏗️ Tech Stack
+## Key Features (MVP)
+
+- **Idea library** — capture and organize creative ideas
+- **Content registry** — log published content and link it back to its source idea
+- **Content DNA** — AI-powered pattern analysis across topics, formats, platforms and roles
+- **Smart Insights** — publishing rhythm, platform distribution, idea reuse signals
+- **Creative Recipe** — AI-generated content brief from a single idea
+- **Creative Report** — deep narrative analysis of the creator's creative identity
+- **Idea Generator** — new idea suggestions based on the creator's own patterns
+
+---
+
+## Tech Stack
 
 ### Frontend
-React + Vite  
-TypeScript  
-SCSS  
-Recharts (analytics visualization)  
-Responsive SaaS layout  
+- React 18 + TypeScript + Vite
+- Modular SCSS with CSS custom properties design system
+- `react-i18next` — full EN/ES bilingual support
+- `recharts` — data visualizations (AreaChart, BarChart, PieChart, RadarChart)
+- `lucide-react` — iconography
 
-### Backend
-Supabase (PostgreSQL)  
-Edge Functions (Deno)  
-Row Level Security (RLS)  
-SQL Views for analytics  
-JWT Authentication  
+### Backend *(private repo)*
+- Supabase Edge Functions (Deno/TypeScript)
+- PostgreSQL via Supabase with Row Level Security
+- Anthropic Claude API (`claude-sonnet-4-5`) — AI orchestration layer
+- Google Sheets API — survey data integration
 
-### Infra & Tooling
-GitHub versioning  
-Environment secrets  
-SaaS version endpoint  
-Health monitoring endpoint  
+### Infrastructure
+- Supabase — auth, database, edge functions, storage
+- Vercel — frontend deployment
+- Multi-tenant architecture with tenant-scoped RLS policies
 
 ---
 
-## 📊 Analytics Engine
+## Architecture Overview
 
-### KPI Dashboard
-• Total contents  
-• Platforms used  
-• Reusable contents  
-• Growth rate %  
-• Last activity  
-
-### Charts Implemented
-• Contents by platform  
-• Monthly growth timeline  
-• Cumulative growth  
-• Growth rate analysis  
-• Activity heatmap  
-
-### Insights Layer
-Automatic insights such as:
-
-• Most used platform  
-• Growth trends  
-• Reusable opportunities  
-• Content gaps  
-
----
-
-## 🧱 Backend Architecture
-
-Edge Functions currently implemented:
-• me-dashboard
-• me-contents
-• me-contents-history
-• me-contents-by-platform
-• me-contents-reusable
-
-• admin-users-summary
-• admin-platform-usage
-• admin-content-growth
-• admin-content-growth-cumulative
-• admin-content-growth-rate
-
-• me-insights
-• me-activity-heatmap
-
-• version
-• health
+```
+┌─────────────────────────────────────────────────┐
+│                  React Frontend                  │
+│         (this repo — public portfolio)           │
+└─────────────────┬───────────────────────────────┘
+                  │ REST / Supabase client
+┌─────────────────▼───────────────────────────────┐
+│              Supabase Edge Functions             │
+│           (private repo — business logic)        │
+│                                                  │
+│  generate-recipe   · content-dna                 │
+│  generate-ideas    · me-identity-insights        │
+│  me-creative-report· regenerate-aspect           │
+└─────────────────┬───────────────────────────────┘
+                  │
+       ┌──────────┴──────────┐
+       │                     │
+┌──────▼──────┐     ┌────────▼────────┐
+│  PostgreSQL  │     │  Anthropic API  │
+│  (Supabase)  │     │  Claude Sonnet  │
+└─────────────┘     └─────────────────┘
+```
 
 ---
 
-## 🗄️ Database Model (Simplified)
+## Admin Panel
 
-### contents
-id  
-user_id  
-platform_id  
-title  
-description  
-format  
-status  
-location  
-is_reusable  
-created_at  
-updated_at  
-published_at  
+Internal dashboard for product analytics and early adopter management:
 
-### platforms
-Platform catalog for analytics distribution.
-
-### users
-Authenticated creators.
-
-### tags *(future layer)*
-Content classification & semantic reuse.
+- **Operations** — user activity, platform distribution, content stats
+- **Ecosystem** — idea-to-content conversion, DNA health metrics, download tracking
+- **Waitlist Intelligence** — early access registrations, growth chart, language distribution
+- **Survey** — analysis of 29 creator survey responses: pain points, behaviors, feature validation
 
 ---
 
-## 📈 Product Roadmap
+## Design System
 
-### Phase 1 — MVP (Current)
-Content registry  
-Analytics dashboard  
-Growth engine  
-Heatmap  
-Insights endpoint  
+Token-based design system with runtime theming:
 
-### Phase 2 — Intelligence
-AI recommendations  
-Content scoring  
-Cross-platform optimization  
-
-### Phase 3 — SaaS Scale
-Teams & roles  
-Billing  
-API integrations  
-Export reports  
+- CSS custom properties for all colors, spacing, typography and radii
+- 4 primary palettes × 6 accent palettes × 4 neutral sets
+- Extended pastel palette derived via `color-mix()` from base tokens
+- 3 character modes: editorial, bold, crafted
+- Light / dark mode
+- Density: compact, comfortable, spacious
+- All combinations hot-swappable without page reload via a tweaks panel
 
 ---
 
-## 🖥️ Local Development
+## Status
 
-### Clone repository
-git clone https://github.com/ruedalibre/content-manager-frontend.git
-git clone https://github.com/ruedalibre/content-manager-backend.git
-
-
-### Install dependencies
-
-### Environment variables
-
-Create a .env file:
-
-VITE_SUPABASE_URL=your_project_url
-VITE_SUPABASE_ANON_KEY=your_public_anon_key
-
-# Only for local testing
-VITE_ACCESS_TOKEN=your_dev_session_token
-
-Note: Access tokens are only used for local development testing.
-In production they are generated via Supabase Auth login flow.
-
-
-### Run development server
+Currently in **private early access** — 29 creators on the waitlist, first batch invited.
 
 ---
 
-## 🔐 Authentication Model
+## Contact
 
-JWT via Supabase Auth  
-Row Level Security enforced  
-User-scoped analytics  
-Protected admin endpoints  
-
----
-
-## 📦 Versioning
-
-Semantic versioning structure:
-0.5.0 → Current MVP analytics build
-
-Version is exposed via the version endpoint and displayed in the SaaS footer.
-
----
-
-## 🧪 Health Monitoring
-
-Infrastructure and backend status available via health endpoint.
-
-Used for uptime monitoring and diagnostics.
-
----
-
-## 💡 Use Cases
-
-Content creators  
-Agencies  
-Social media managers  
-Creator economy professionals  
-Personal brands  
-Marketing teams  
-
----
-
-## 🧑‍💻 Author
-
-Andrés Pérez Díaz  
-
-Full-stack developer focused on:
-
-SaaS platforms  
-Analytics systems  
-Creator economy tools  
-Supabase architectures  
-
-GitHub  
-[https://github.com/ruedalibre](https://github.com/ruedalibre)
-
-LinkedIn  
-[https://linkedin/in/andres-perez-develop](https://www.linkedin.com/in/andres-perez-develop/)
-
----
-
-##License
-
-This repository is shared for portfolio and investor review purposes only.
-
-All rights reserved © 2026 Andrés Pérez Díaz.
-
-No part of this codebase may be copied, reproduced, distributed, or used to build competing products without explicit written permission.
-
-
----
-
-## ⭐ Future Vision
-
-Content Manager aims to become:
-
-The operating system for creator content analytics.
-
-From simple tracking → to predictive intelligence.
-
----
+Built by [Andrés Ruedalibre](https://github.com/ruedalibre)  
+Backend repo available for review upon request.
