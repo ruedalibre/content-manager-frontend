@@ -304,7 +304,10 @@
     "comboFormat": "📱 Formato",
     "comboRole": "🎭 Rol",
     "brief": "Brief",
-    "duplicateCombination": "Ya generaste un brief con esta combinación. Cambia la plataforma, formato, rol o tema para obtener un resultado diferente."
+    "duplicateCombination": "Ya generaste un brief con esta combinación. Cambia la plataforma, formato, rol o tema para obtener un resultado diferente.",
+    "briefs": "Briefs",
+    "briefSingular": "brief",
+    "briefPlural": "briefs"
   },
   "status": {
     "generated": "Borrador",

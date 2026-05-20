@@ -6,16 +6,17 @@ type BriefListProps = {
   sessions: CreativeSession[];
   generating: boolean;
   onOpenSession: (session: CreativeSession) => void;
+  platformName: (platformId: string) => string;
 };
 
 export default function BriefList({
   sessions,
   generating,
   onOpenSession,
+  platformName,
 }: BriefListProps) {
   const { t } = useTranslation();
 
-  // Filtrar descartados — no aparecen en la lista
   const activeSessions = sessions
     .filter((s) => s.status !== "discarded")
     .sort((a, b) =>
@@ -24,56 +25,84 @@ export default function BriefList({
 
   if (generating) {
     return (
-      <div className="brief-list brief-list--generating">
-        <div className="recipe-generating-dots">
-          <span /><span /><span />
+      <div className="brief-list-card">
+        <div className="brief-list-card__head">
+          <span className="brief-list-card__title">{t("recipe.briefs")}</span>
         </div>
-        <p className="brief-list__generating-text">{t("recipe.generating")}</p>
+        <div className="brief-list brief-list--generating">
+          <div className="recipe-generating-dots">
+            <span /><span /><span />
+          </div>
+          <p className="brief-list__hint">{t("recipe.generating")}</p>
+        </div>
       </div>
     );
   }
 
   if (activeSessions.length === 0) {
     return (
-      <div className="brief-list brief-list--empty">
-        <span className="brief-list__empty-icon">📄</span>
-        <p className="brief-list__empty-text">{t("recipe.noRecipeYet")}</p>
-        <p className="brief-list__empty-hint">{t("recipe.selectPlatformFormat")}</p>
+      <div className="brief-list-card">
+        <div className="brief-list-card__head">
+          <span className="brief-list-card__title">{t("recipe.briefs")}</span>
+          <span className="brief-list-card__count">0 {t("recipe.briefPlural")}</span>
+        </div>
+        <div className="brief-list brief-list--empty">
+          <span className="brief-list__empty-icon">📄</span>
+          <p className="brief-list__empty-text">{t("recipe.noRecipeYet")}</p>
+          <p className="brief-list__hint">{t("recipe.selectPlatformFormat")}</p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="brief-list">
-      {activeSessions.map((session) => (
-        <button
-          key={session.id}
-          className="brief-list__item"
-          onClick={() => onOpenSession(session)}
-          type="button"
-        >
-          <div className="brief-list__item-top">
-            <StatusBadge status={session.status} />
-            <span className="brief-list__item-date">
-              {new Date(session.created_at).toLocaleDateString()}
-            </span>
-          </div>
-          <p className="brief-list__item-angle">{session.recipe.angle}</p>
-          <div className="brief-list__item-meta">
-            <span className="brief-list__item-format">
-              {session.format}
-            </span>
-            {session.content_role && (
-              <span className="brief-list__item-role">
-                · {session.content_role}
+    <div className="brief-list-card">
+      <div className="brief-list-card__head">
+        <span className="brief-list-card__title">{t("recipe.briefs")}</span>
+        <span className="brief-list-card__count">
+          {activeSessions.length}{" "}
+          {activeSessions.length === 1
+            ? t("recipe.briefSingular")
+            : t("recipe.briefPlural")}
+        </span>
+      </div>
+      <div className="brief-list">
+        {activeSessions.map((session) => {
+          const platform = platformName(session.platform_id);
+          const format = session.format
+            ? t(`formats.${session.format}`, { defaultValue: session.format })
+            : "—";
+          const role = session.content_role
+            ? t(`contentRoles.${session.content_role}`, { defaultValue: session.content_role })
+            : null;
+          const date = new Date(session.created_at).toLocaleDateString();
+
+          return (
+            <div key={session.id} className="brief-list__row">
+              {/* Combinación */}
+              <span className="brief-list__combo">
+                {[platform, format, role].filter(Boolean).join(" · ")}
               </span>
-            )}
-            <span className="brief-list__item-cta">
-              {t("recipe.verRecetaCompleta")} →
-            </span>
-          </div>
-        </button>
-      ))}
+
+              {/* Spacer */}
+              <span className="brief-list__dots" aria-hidden="true" />
+
+              {/* Status + fecha + CTA */}
+              <div className="brief-list__actions">
+                <StatusBadge status={session.status} />
+                <span className="brief-list__date">{date}</span>
+                <button
+                  className="brief-list__cta"
+                  onClick={() => onOpenSession(session)}
+                  type="button"
+                >
+                  {t("recipe.verRecetaCompleta")} →
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

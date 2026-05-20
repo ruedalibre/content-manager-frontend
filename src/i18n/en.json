@@ -304,7 +304,10 @@
     "comboFormat": "📱 Format",
     "comboRole": "🎭 Role",
     "brief": "Brief",
-    "duplicateCombination": "You already generated a brief with this combination. Change the platform, format, role, or topic to get a different result."
+    "duplicateCombination": "You already generated a brief with this combination. Change the platform, format, role, or topic to get a different result.",
+    "briefs": "Briefs",
+    "briefSingular": "brief",
+    "briefPlural": "briefs"
   },
   "status": {
     "generated": "Draft",

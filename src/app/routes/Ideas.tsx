@@ -277,13 +277,14 @@ export default function Ideas() {
         });
         return;
       }
-      // Limpiar campos para la siguiente combinación
+      // Limpiar combinación completa incluyendo temas
       updateRecipeState(idea.id, {
         generating: false,
         platform_id: "",
         format: "",
         content_role: "",
       });
+      await updateIdeaTopics(idea.id, []);
       // Abrir el modal con el brief recién generado
       if (result.session) {
         setExpandedSession({ session: result.session, idea });
@@ -831,6 +832,9 @@ export default function Ideas() {
                         sessions={idea.sessions ?? []}
                         generating={state.generating}
                         onOpenSession={(session) => setExpandedSession({ session, idea })}
+                        platformName={(platformId) =>
+                          platforms.find((p) => p.id === platformId)?.name ?? "—"
+                        }
                       />
                     </div>
                   );
