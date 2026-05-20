@@ -1632,12 +1632,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--s-3) var(--s-4);
+    padding: var(--s-2) var(--s-3);
     border-bottom: 1px solid var(--border-subtle);
   }
 
   &__title {
-    font-size: var(--fs-11);
+    font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -1645,10 +1645,10 @@
   }
 
   &__count {
-    font-size: var(--fs-11);
+    font-size: 10px;
     color: var(--text-faint);
     background: var(--bg-muted);
-    padding: 2px var(--s-3);
+    padding: 1px var(--s-2);
     border-radius: var(--r-pill);
     border: 1px solid var(--border-subtle);
   }
@@ -1680,19 +1680,26 @@
     display: flex;
     align-items: center;
     gap: var(--s-3);
-    padding: var(--s-3) var(--s-4);
+    padding: var(--s-2) var(--s-3);
     border-bottom: 1px solid var(--border-subtle);
-    min-height: 44px;
+    min-height: 36px;
+    cursor: pointer;
 
     &:last-child { border-bottom: none; }
 
-    &:hover .brief-list__cta {
-      opacity: 1;
+    &:hover {
+      background: var(--bg-muted);
+
+      .brief-list__combo {
+        color: var(--primary);
+        text-decoration: underline;
+        text-underline-offset: 2px;
+      }
     }
   }
 
   &__combo {
-    font-size: var(--fs-13);
+    font-size: 11px;
     color: var(--text-secondary);
     white-space: nowrap;
     flex-shrink: 0;
@@ -1706,31 +1713,20 @@
     min-width: var(--s-4);
   }
 
-  &__actions {
+  &__right {
     display: flex;
     align-items: center;
-    gap: var(--s-3);
+    gap: var(--s-2);
     flex-shrink: 0;
+    margin-left: auto;
   }
 
   &__date {
-    font-size: var(--fs-11);
+    font-size: 10px;
     color: var(--text-faint);
     font-family: var(--font-mono);
     white-space: nowrap;
-  }
-
-  &__cta {
-    font-size: var(--fs-12);
-    color: var(--primary);
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    white-space: nowrap;
-    opacity: 0;
-    transition: opacity var(--transition-fast);
-
-    &:hover { text-decoration: underline; }
+    min-width: 36px;
+    text-align: right;
   }
 }
