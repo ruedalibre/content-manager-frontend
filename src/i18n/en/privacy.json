@@ -1,0 +1,142 @@
+{
+  "page_title": "Privacy Policy — Content Intelligence Platform",
+  "hero_label": "Legal",
+  "hero_title": "Privacy Policy",
+  "hero_entity": "Content Intelligence Platform",
+  "hero_effective": "Effective date: January 1, 2026",
+  "hero_updated": "Last updated: January 1, 2026",
+  "summary_label": "Plain language summary",
+  "summary_text": "We collect only what we need to run the service. We don't sell your data. We don't use your creative content to train AI models without your consent. You can request deletion of your data at any time.",
+  "toc_title": "Contents",
+  "back_to_site": "← Back to site",
+  "footer_copyright": "© 2026 Content Intelligence Platform",
+  "footer_terms": "Terms of Service",
+  "footer_privacy": "Privacy Policy",
+  "toc": {
+    "intro":         "1. Introduction",
+    "collect":       "2. Data We Collect",
+    "use":           "3. How We Use Your Data",
+    "sharing":       "4. Data Sharing",
+    "ai_data":       "5. AI & Your Data",
+    "storage":       "6. Data Storage",
+    "cookies":       "7. Cookies",
+    "rights":        "8. Your Rights",
+    "children":      "9. Children",
+    "international": "10. International",
+    "changes":       "11. Changes",
+    "contact":       "12. Contact"
+  },
+  "s_intro": {
+    "title": "Introduction",
+    "p1_before": "Content Intelligence Platform (\"we\", \"us\", \"our\") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your personal information when you use our Service at",
+    "p1_after": ".",
+    "p2": "By using the Service, you consent to the practices described in this policy. If you do not agree, please discontinue use of the Service."
+  },
+  "s_collect": {
+    "title": "Data We Collect",
+    "p1": "We collect information in the following categories:",
+    "table_headers": ["Category", "Examples", "Purpose"],
+    "table_rows": [
+      ["Account data",   "Email address, platform preference, creator type",     "Registration and onboarding"],
+      ["Content data",   "Ideas, briefs, content records, tags",                  "Core service functionality"],
+      ["Usage data",     "Features used, session duration, interaction patterns", "Service improvement"],
+      ["Technical data", "IP address, browser type, device type",                 "Security and analytics"],
+      ["Communications", "Support messages, feedback submissions",                "Customer support"]
+    ],
+    "p2": "We do not collect sensitive personal data such as government IDs, financial account numbers, health information, or biometric data."
+  },
+  "s_use": {
+    "title": "How We Use Your Data",
+    "p1": "We use the information we collect to:",
+    "list": [
+      "Provide, maintain, and improve the Service",
+      "Personalize your experience and generate AI-powered insights",
+      "Send transactional emails (account confirmation, updates)",
+      "Notify you of early access status and product updates",
+      "Respond to your support requests and feedback",
+      "Detect and prevent fraud, abuse, or security incidents",
+      "Comply with legal obligations"
+    ],
+    "p2": "We will not send marketing emails without your explicit consent, and you can unsubscribe at any time."
+  },
+  "s_sharing": {
+    "title": "Data Sharing and Disclosure",
+    "no_sell": "We do not sell your personal data.",
+    "p1": "We may share your information only in these limited circumstances:",
+    "list": [
+      "Service providers: We use trusted third-party services including Supabase (database and authentication), Stripe (payment processing, when activated), and Anthropic (AI model API). These providers process data only as necessary to deliver their services.",
+      "Legal requirements: We may disclose your information if required by law, court order, or governmental authority.",
+      "Business transfers: In the event of a merger, acquisition, or sale of assets, your data may be transferred. We will notify you before your data becomes subject to a different privacy policy.",
+      "With your consent: We may share data for other purposes with your explicit consent."
+    ]
+  },
+  "s_ai_data": {
+    "title": "AI Features and Your Data",
+    "p1": "Content Intelligence Platform uses AI to generate briefs, insights, and creative suggestions. Here is how we handle your data in this context:",
+    "list": [
+      "Your content and ideas are sent to our AI model provider (Anthropic) solely to generate responses for you",
+      "We do not use your creative content to train AI models without your explicit opt-in consent",
+      "AI-generated outputs are stored in your account and are not shared with other users",
+      "You can delete your content and associated AI outputs at any time"
+    ],
+    "p2": "Your creative voice remains yours. We use AI as a tool to amplify your process, not to extract value from your work."
+  },
+  "s_storage": {
+    "title": "Data Storage and Security",
+    "p1": "Your data is stored on Supabase infrastructure, hosted on servers located in the United States. We implement industry-standard security measures including:",
+    "list": [
+      "Encryption in transit (TLS/HTTPS) and at rest",
+      "Row-level security policies on database access",
+      "Regular security reviews and access controls",
+      "Limited employee access to production data"
+    ],
+    "p2": "We retain your personal data for as long as your account is active or as needed to provide the Service. You may request deletion of your account and associated data at any time.",
+    "p3": "While we take reasonable precautions, no system is completely secure. We cannot guarantee absolute security of your data."
+  },
+  "s_cookies": {
+    "title": "Cookies and Tracking",
+    "p1": "We use minimal cookies and similar technologies to operate the Service:",
+    "list": [
+      "Essential cookies: Required for authentication and session management. These cannot be disabled.",
+      "Analytics cookies: Used to understand how the Service is used and improve it. These can be declined."
+    ],
+    "p2": "We do not use advertising cookies or third-party tracking pixels. You can control cookie preferences through your browser settings."
+  },
+  "s_rights": {
+    "title": "Your Rights",
+    "p1": "Depending on your location, you may have the following rights regarding your personal data:",
+    "list": [
+      "Access: Request a copy of the personal data we hold about you",
+      "Correction: Request correction of inaccurate or incomplete data",
+      "Deletion: Request deletion of your personal data (\"right to be forgotten\")",
+      "Portability: Request your data in a machine-readable format",
+      "Objection: Object to processing of your data for certain purposes",
+      "Withdrawal of consent: Withdraw consent where processing is based on consent"
+    ],
+    "p2_before": "To exercise any of these rights, contact us at",
+    "p2_after": ". We will respond within 30 days."
+  },
+  "s_children": {
+    "title": "Children's Privacy",
+    "p1": "The Service is not directed to individuals under the age of 18. We do not knowingly collect personal information from children. If you become aware that a child has provided us with personal data, please contact us and we will take steps to delete such information."
+  },
+  "s_international": {
+    "title": "International Data Transfers",
+    "p1": "Content Intelligence Platform is operated from the United States. If you are located outside the United States, your information will be transferred to and processed in the United States, where data protection laws may differ from those in your country.",
+    "p2": "By using the Service, you consent to this transfer. We take reasonable steps to ensure your data is treated securely and in accordance with this Privacy Policy.",
+    "p3": "For users in the European Economic Area (EEA) or United Kingdom, we rely on Standard Contractual Clauses as the legal basis for data transfers."
+  },
+  "s_changes": {
+    "title": "Changes to This Policy",
+    "p1": "We may update this Privacy Policy from time to time. When we make material changes, we will notify you via email and update the \"Last updated\" date at the top of this page.",
+    "p2": "We encourage you to review this policy periodically. Your continued use of the Service after changes take effect constitutes your acceptance of the revised policy."
+  },
+  "s_contact": {
+    "title": "Contact Us",
+    "p1": "If you have questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact us:",
+    "email_label": "Email",
+    "website_label": "Website",
+    "entity_label": "Entity",
+    "p2": "We are committed to resolving privacy concerns promptly and transparently."
+  }
+}
