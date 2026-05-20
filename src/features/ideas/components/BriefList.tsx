@@ -78,7 +78,14 @@ export default function BriefList({
           const date = new Date(session.created_at).toLocaleDateString();
 
           return (
-            <div key={session.id} className="brief-list__row">
+            <div
+              key={session.id}
+              className="brief-list__row"
+              onClick={() => onOpenSession(session)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === "Enter" && onOpenSession(session)}
+            >
               {/* Combinación */}
               <span className="brief-list__combo">
                 {[platform, format, role].filter(Boolean).join(" · ")}
@@ -87,17 +94,10 @@ export default function BriefList({
               {/* Spacer */}
               <span className="brief-list__dots" aria-hidden="true" />
 
-              {/* Status + fecha + CTA */}
-              <div className="brief-list__actions">
+              {/* Status + fecha */}
+              <div className="brief-list__right">
                 <StatusBadge status={session.status} />
                 <span className="brief-list__date">{date}</span>
-                <button
-                  className="brief-list__cta"
-                  onClick={() => onOpenSession(session)}
-                  type="button"
-                >
-                  {t("recipe.verRecetaCompleta")} →
-                </button>
               </div>
             </div>
           );

@@ -219,7 +219,14 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       const data = await res.json();
       throw new Error(data.error || "Failed to update session");
     }
-    await loadIdeas();
+    setIdeas((prev) =>
+      prev.map((idea) => ({
+        ...idea,
+        sessions: idea.sessions?.map((s) =>
+          s.id !== sessionId ? s : { ...s, status }
+        ),
+      }))
+    );
   };
 
   /* =========================
@@ -244,7 +251,14 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       const data = await res.json();
       throw new Error(data.error || "Failed to save feedback");
     }
-    await loadIdeas();
+    setIdeas((prev) =>
+      prev.map((idea) => ({
+        ...idea,
+        sessions: idea.sessions?.map((s) =>
+          s.id !== sessionId ? s : { ...s, feedback }
+        ),
+      }))
+    );
   };
 
   /* =========================
@@ -268,14 +282,28 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       const data = await res.json();
       throw new Error(data.error || "Failed to update idea");
     }
-    await loadIdeas();
+    setIdeas((prev) =>
+      prev.map((idea) =>
+        idea.id !== ideaId
+          ? idea
+          : {
+              ...idea,
+              title: updates.title,
+              description: updates.description ?? idea.description,
+            }
+      )
+    );
   };
 
   /* =========================
      UPDATE IDEA TOPICS
   ========================= */
 
-  const updateIdeaTopics = async (ideaId: string, topicIds: string[]) => {
+  const updateIdeaTopics = async (
+    ideaId: string,
+    topicIds: string[],
+    topicObjects: IdeaTopic[],
+  ) => {
     const session = await getSession();
     const res = await fetch(`${base}/update-idea-topics/${ideaId}`, {
       method: "PUT",
@@ -289,7 +317,11 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       const data = await res.json();
       throw new Error(data.error || "Failed to update idea topics");
     }
-    await loadIdeas();
+    setIdeas((prev) =>
+      prev.map((idea) =>
+        idea.id !== ideaId ? idea : { ...idea, topics: topicObjects }
+      )
+    );
   };
 
   /* =========================
@@ -343,7 +375,14 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       const data = await res.json();
       throw new Error(data.error || "Failed to update recipe");
     }
-    await loadIdeas();
+    setIdeas((prev) =>
+      prev.map((idea) => ({
+        ...idea,
+        sessions: idea.sessions?.map((s) =>
+          s.id !== sessionId ? s : { ...s, recipe }
+        ),
+      }))
+    );
   };
 
   /* =========================
@@ -360,7 +399,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       const data = await res.json();
       throw new Error(data.error || "Failed to delete idea");
     }
-    await loadIdeas();
+    setIdeas((prev) => prev.filter((idea) => idea.id !== ideaId));
   };
 
   useEffect(() => {

@@ -284,7 +284,7 @@ export default function Ideas() {
         format: "",
         content_role: "",
       });
-      await updateIdeaTopics(idea.id, []);
+      await updateIdeaTopics(idea.id, [], []);
       // Abrir el modal con el brief recién generado
       if (result.session) {
         setExpandedSession({ session: result.session, idea });
@@ -362,7 +362,10 @@ export default function Ideas() {
     if (!editingIdeaTopics) return;
     setSavingTopics(true);
     try {
-      await updateIdeaTopics(editingIdeaTopics, selectedTopicIds);
+      const selectedTopics = topics
+        .filter((t) => selectedTopicIds.includes(t.id))
+        .map((t) => ({ id: t.id, name: t.name }));
+      await updateIdeaTopics(editingIdeaTopics, selectedTopicIds, selectedTopics);
       setEditingIdeaTopics(null);
     } catch {
       setActionError(t("common.failedUpdate"));
