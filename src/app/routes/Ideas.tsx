@@ -13,7 +13,7 @@ import { useFormats } from "../../features/contents/hooks/useFormats.ts";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
 import CreateIdeaModal from "../../features/ideas/modals/CreateIdeaModal.tsx";
 import ConfirmModal from "../../components/ui/ConfirmModal.tsx";
-import RecipeCard from "../../features/ideas/components/RecipeCard.tsx";
+import BriefList from "../../features/ideas/components/BriefList.tsx";
 import RecipePanel from "../../features/ideas/components/RecipePanel.tsx";
 import EditIdeaModal from "../../features/ideas/components/EditIdeaModal.tsx";
 import "./Ideas.scss";
@@ -88,9 +88,6 @@ export default function Ideas() {
     message: string;
     onConfirm: () => void;
   } | null>(null);
-  const [discardedIdeaIds, setDiscardedIdeaIds] = useState<Set<string>>(
-    new Set(),
-  );
 
   const {
     ideas,
@@ -276,25 +273,27 @@ export default function Ideas() {
       if (result.duplicate) {
         updateRecipeState(idea.id, {
           generating: false,
-          error: "A recipe already exists for this exact combination.",
+          error: t("recipe.duplicateCombination"),
         });
         return;
       }
-      updateRecipeState(idea.id, { generating: false });
+      // Limpiar campos para la siguiente combinación
+      updateRecipeState(idea.id, {
+        generating: false,
+        platform_id: "",
+        format: "",
+        content_role: "",
+      });
+      // Abrir el modal con el brief recién generado
+      if (result.session) {
+        setExpandedSession({ session: result.session, idea });
+      }
     } catch (err) {
       updateRecipeState(idea.id, {
         generating: false,
         error: err instanceof Error ? err.message : "Failed to generate recipe",
       });
     }
-  };
-
-  const getLatestSession = (idea: Idea): CreativeSession | null => {
-    if (!idea.sessions || idea.sessions.length === 0) return null;
-    return idea.sessions.sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
-    )[0];
   };
 
   const openConfirm = (
@@ -569,7 +568,6 @@ export default function Ideas() {
                   const isEditingThis = editingIdea?.id === idea.id;
                   const isEditingTopicsThis = editingIdeaTopics === idea.id;
                   const state = getRecipeStateForIdea(idea.id);
-                  const latestSession = getLatestSession(idea);
                   const contentCount = idea.contents?.[0]?.count ?? 0;
                   const formats = ideaFormats[idea.id] ?? [];
 
@@ -828,15 +826,11 @@ export default function Ideas() {
                         )}
                       </div>
 
-                      {/* RECIPE CARD */}
-                      <RecipeCard
-                        session={latestSession}
+                      {/* BRIEF LIST */}
+                      <BriefList
+                        sessions={idea.sessions ?? []}
                         generating={state.generating}
-                        showDiscardMessage={discardedIdeaIds.has(idea.id)}
-                        onClick={() =>
-                          latestSession &&
-                          setExpandedSession({ session: latestSession, idea })
-                        }
+                        onOpenSession={(session) => setExpandedSession({ session, idea })}
                       />
                     </div>
                   );
@@ -1148,9 +1142,7 @@ export default function Ideas() {
           }}
           onDiscard={async () => {
             await updateSessionStatus(expandedSession.session.id, "discarded");
-            setDiscardedIdeaIds(
-              (prev) => new Set([...prev, expandedSession.idea.id]),
-            );
+            // BriefList filtra descartados automáticamente al recargar
             setExpandedSession(null);
           }}
           onCreateContent={() => {

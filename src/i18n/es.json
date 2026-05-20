@@ -294,7 +294,7 @@
       "5": "Excelente — me encanta"
     },
     "combination": "Combinación",
-    "verRecetaCompleta": "Ver brief →",
+    "verRecetaCompleta": "Ver brief completo",
     "noRecipeYet": "Sin brief aún",
     "selectPlatformFormat": "Selecciona plataforma y formato, luego genera",
     "discarded": "Brief descartado",
@@ -303,11 +303,13 @@
     "comboTopics": "🏷️ Temas",
     "comboFormat": "📱 Formato",
     "comboRole": "🎭 Rol",
-    "brief": "Brief"
+    "brief": "Brief",
+    "duplicateCombination": "Ya generaste un brief con esta combinación. Cambia la plataforma, formato, rol o tema para obtener un resultado diferente."
   },
   "status": {
-    "generated": "Generada",
+    "generated": "Borrador",
     "approved": "Aprobada",
+    "converted": "Convertida",
     "implemented": "Implementada",
     "discarded": "Descartada",
     "draft": "Borrador",

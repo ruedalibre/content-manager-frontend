@@ -10,7 +10,7 @@ export default function StatusBadge({
   const map = {
     generated: { label: t("status.generated"), cls: "recipe-status--generated" },
     reviewed: { label: t("status.approved"), cls: "recipe-status--reviewed" },
-    executed: { label: t("status.implemented"), cls: "recipe-status--executed" },
+    executed: { label: t("status.converted"), cls: "recipe-status--executed" },
     discarded: { label: t("status.discarded"), cls: "recipe-status--discarded" },
   };
   const s = map[status] ?? map.generated;
