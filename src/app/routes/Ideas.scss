@@ -1729,4 +1729,19 @@
     min-width: 36px;
     text-align: right;
   }
+
+  &__flag {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    color: var(--text-faint);
+
+    i { font-size: 12px; }
+
+    &--downloaded {
+      color: var(--accent);
+
+      i { font-size: 12px; }
+    }
+  }
 }

@@ -305,6 +305,7 @@
     "comboRole": "🎭 Rol",
     "brief": "Brief",
     "duplicateCombination": "Ya generaste un brief con esta combinación. Cambia la plataforma, formato, rol o tema para obtener un resultado diferente.",
+    "comboPlatform": "Plataforma",
     "briefs": "Briefs",
     "briefSingular": "brief",
     "briefPlural": "briefs"

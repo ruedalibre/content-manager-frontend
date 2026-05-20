@@ -24,6 +24,7 @@ export type CreativeSession = {
   feedback: Record<string, number> | null;
   status: "generated" | "reviewed" | "executed" | "discarded";
   content_id: string | null;
+  downloaded_at: string | null;
   created_at: string;
 };
 
@@ -386,6 +387,31 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
   };
 
   /* =========================
+     MARK AS DOWNLOADED
+  ========================= */
+
+  const markAsDownloaded = async (sessionId: string) => {
+    const session = await getSession();
+    const downloadedAt = new Date().toISOString();
+    await fetch(`${base}/update-creative-session/${sessionId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({ downloaded_at: downloadedAt }),
+    });
+    setIdeas((prev) =>
+      prev.map((idea) => ({
+        ...idea,
+        sessions: idea.sessions?.map((s) =>
+          s.id !== sessionId ? s : { ...s, downloaded_at: downloadedAt }
+        ),
+      }))
+    );
+  };
+
+  /* =========================
      DELETE IDEA
   ========================= */
 
@@ -419,5 +445,6 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     deleteIdea,
     regenerateAspect,
     updateRecipeAspect,
+    markAsDownloaded,
   };
 }

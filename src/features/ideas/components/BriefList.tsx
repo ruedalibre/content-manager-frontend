@@ -94,8 +94,16 @@ export default function BriefList({
               {/* Spacer */}
               <span className="brief-list__dots" aria-hidden="true" />
 
-              {/* Status + fecha */}
+              {/* Status + descarga + fecha */}
               <div className="brief-list__right">
+                {session.downloaded_at && (
+                  <span
+                    className="brief-list__flag brief-list__flag--downloaded"
+                    title={new Date(session.downloaded_at).toLocaleDateString()}
+                  >
+                    <i className="ti ti-download" aria-hidden="true" />
+                  </span>
+                )}
                 <StatusBadge status={session.status} />
                 <span className="brief-list__date">{date}</span>
               </div>

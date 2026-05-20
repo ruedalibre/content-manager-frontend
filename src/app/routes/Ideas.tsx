@@ -16,6 +16,7 @@ import ConfirmModal from "../../components/ui/ConfirmModal.tsx";
 import BriefList from "../../features/ideas/components/BriefList.tsx";
 import RecipePanel from "../../features/ideas/components/RecipePanel.tsx";
 import EditIdeaModal from "../../features/ideas/components/EditIdeaModal.tsx";
+import { downloadBrief } from "../../utils/downloadBrief";
 import "./Ideas.scss";
 
 type IdeaForContent = {
@@ -102,6 +103,7 @@ export default function Ideas() {
     deleteIdea,
     regenerateAspect,
     updateRecipeAspect,
+    markAsDownloaded,
   } = useIdeas(filter);
 
   const {
@@ -1152,7 +1154,9 @@ export default function Ideas() {
             // BriefList filtra descartados automáticamente al recargar
             setExpandedSession(null);
           }}
-          onCreateContent={() => {
+          onCreateContent={async () => {
+            // Marcar la sesión como ejecutada
+            await updateSessionStatus(expandedSession.session.id, "executed");
             setSelectedIdea({
               id: expandedSession.idea.id,
               title: expandedSession.idea.title,
@@ -1164,6 +1168,14 @@ export default function Ideas() {
             });
             setExpandedSession(null);
             setShowCreateModal(true);
+          }}
+          onDownload={async () => {
+            downloadBrief(expandedSession.session, {
+              title: expandedSession.idea.title,
+              description: expandedSession.idea.description,
+              topics: expandedSession.idea.topics ?? [],
+            });
+            await markAsDownloaded(expandedSession.session.id);
           }}
           saveFeedback={saveFeedback}
           updateSessionStatus={updateSessionStatus}
