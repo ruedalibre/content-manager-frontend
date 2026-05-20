@@ -10,7 +10,7 @@
 .legal-nav {
   position: sticky;
   top: 0;
-  background: rgba(245, 242, 236, 0.92);
+  background: color-mix(in srgb, var(--bg-canvas) 92%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-subtle);
@@ -50,7 +50,7 @@
 
 // ── Hero ──
 .legal-hero {
-  background: var(--bg-dark);
+  background: var(--primary);
   padding: 4rem 2rem 3rem;
   position: relative;
   overflow: hidden;
@@ -275,7 +275,7 @@
 
 // ── Footer ──
 .legal-footer {
-  background: var(--bg-dark);
+  background: var(--primary);
   padding: 2.5rem;
   text-align: center;
 }
