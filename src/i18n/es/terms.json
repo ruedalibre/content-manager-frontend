@@ -1,0 +1,148 @@
+{
+  "page_title": "Términos de Servicio — Content Intelligence Platform",
+  "hero_label": "Legal",
+  "hero_title": "Términos de Servicio",
+  "hero_entity": "Content Intelligence Platform",
+  "hero_effective": "Fecha de vigencia: 1 de enero de 2026",
+  "hero_updated": "Última actualización: 1 de enero de 2026",
+  "summary_label": "Resumen en lenguaje simple",
+  "summary_text": "Estos términos rigen el uso de Content Intelligence Platform. Al usar nuestro servicio, aceptas estos términos. Ofrecemos una plataforma con IA para ayudar a creadores de contenido a organizar ideas y mejorar su proceso creativo. Por favor léelos con atención.",
+  "toc_title": "Contenido",
+  "back_to_site": "← Volver al sitio",
+  "footer_copyright": "© 2026 Content Intelligence Platform",
+  "footer_terms": "Términos de Servicio",
+  "footer_privacy": "Política de Privacidad",
+  "toc": {
+    "acceptance": "1. Aceptación",
+    "description": "2. Descripción del Servicio",
+    "accounts": "3. Cuentas",
+    "early_access": "4. Acceso Anticipado",
+    "content": "5. Tu Contenido",
+    "ai": "6. Funciones de IA",
+    "payments": "7. Pagos",
+    "prohibited": "8. Uso Prohibido",
+    "ip": "9. Propiedad Intelectual",
+    "disclaimer": "10. Descargo de Garantías",
+    "limitation": "11. Limitación de Responsabilidad",
+    "termination": "12. Terminación",
+    "governing": "13. Ley Aplicable",
+    "changes": "14. Cambios",
+    "contact": "15. Contacto"
+  },
+  "s_acceptance": {
+    "title": "Aceptación de los Términos",
+    "p1": "Al acceder o usar Content Intelligence Platform (\"el Servicio\", \"nosotros\"), aceptas quedar vinculado por estos Términos de Servicio (\"Términos\"). Si no estás de acuerdo, por favor no uses el Servicio.",
+    "p2": "Estos Términos aplican a todos los usuarios, incluyendo visitantes, usuarios registrados y participantes del acceso anticipado. Al registrarte o crear una cuenta, confirmas que tienes al menos 18 años y capacidad legal para celebrar este acuerdo."
+  },
+  "s_description": {
+    "title": "Descripción del Servicio",
+    "p1": "Content Intelligence Platform es una aplicación SaaS que ayuda a los creadores de contenido a capturar ideas, generar briefs asistidos por IA, descubrir patrones creativos y construir sistemas de contenido personales.",
+    "includes": "El Servicio incluye, entre otros:",
+    "list": [
+      "Herramientas de captura y organización de ideas",
+      "Generación de briefs de contenido con IA",
+      "Análisis de patrones creativos e insights",
+      "Perfil de ADN creativo",
+      "Participación en el programa de acceso anticipado"
+    ],
+    "p2": "Nos reservamos el derecho de modificar, suspender o descontinuar cualquier aspecto del Servicio en cualquier momento, especialmente durante la fase de acceso anticipado."
+  },
+  "s_accounts": {
+    "title": "Cuentas y Registro",
+    "p1": "Para acceder a ciertas funciones debes crear una cuenta con información precisa y actualizada.",
+    "p2_before": "Eres responsable de mantener la confidencialidad de tus credenciales. Debes notificarnos inmediatamente a",
+    "p2_after": "sobre cualquier uso no autorizado de tu cuenta.",
+    "p3": "Nos reservamos el derecho de rechazar el servicio, terminar cuentas o eliminar contenido a nuestra entera discreción."
+  },
+  "s_early_access": {
+    "title": "Programa de Acceso Anticipado",
+    "p1": "El Servicio está actualmente en fase de acceso anticipado. Al unirte, reconoces que:",
+    "list": [
+      "El Servicio aún no está completamente lanzado y puede contener errores o funciones incompletas",
+      "Las características, funcionalidades y precios están sujetos a cambios sin previo aviso",
+      "Los precios de acceso anticipado se ofrecen como beneficio y pueden no reflejar el precio final",
+      "Podemos recopilar datos de uso y feedback adicional para mejorar el Servicio",
+      "El acceso puede ser limitado, revocado o modificado en cualquier momento"
+    ],
+    "p2": "Tu participación ayuda a dar forma al producto final. Agradecemos tu feedback y paciencia mientras construimos."
+  },
+  "s_content": {
+    "title": "Tu Contenido",
+    "p1": "Conservas la propiedad total de todas las ideas, contenidos y materiales creativos que envíes al Servicio (\"Tu Contenido\"). Al usarlo, nos otorgas una licencia limitada, no exclusiva y libre de regalías para procesar, almacenar y mostrar Tu Contenido únicamente con el fin de prestarte el Servicio.",
+    "p2": "No reclamamos propiedad sobre Tu Contenido. No venderemos, compartiremos ni usaremos Tu Contenido para entrenar modelos de IA sin tu consentimiento explícito.",
+    "p3": "Garantizas que Tu Contenido no viola derechos de terceros, incluyendo derechos de propiedad intelectual, y cumple con la ley aplicable."
+  },
+  "s_ai": {
+    "title": "Contenido Generado por IA",
+    "p1": "El Servicio usa inteligencia artificial para generar briefs, insights y sugerencias. Reconoces que:",
+    "list": [
+      "El contenido generado por IA es un punto de partida y puede requerir edición o verificación",
+      "No garantizamos la exactitud o idoneidad del contenido generado por IA",
+      "Eres responsable de revisar cualquier contenido generado por IA antes de publicarlo",
+      "Los outputs de IA pueden ocasionalmente producir resultados inesperados o imperfectos"
+    ],
+    "p2": "Content Intelligence Platform amplifica tu creatividad — no reemplaza tu juicio ni tu voz creativa."
+  },
+  "s_payments": {
+    "title": "Pagos y Facturación",
+    "p1": "Las funciones de pago se introducirán después de la fase de acceso anticipado. Cuando estén disponibles:",
+    "list": [
+      "Los pagos se procesarán de forma segura a través de Stripe",
+      "Las suscripciones se facturan por adelantado mensual o anualmente",
+      "Todas las tarifas no son reembolsables salvo que la ley lo requiera",
+      "Nos reservamos el derecho de cambiar precios con al menos 30 días de aviso a los suscriptores existentes"
+    ],
+    "p2": "Los participantes del acceso anticipado con precios especiales serán notificados de sus términos de facturación por separado."
+  },
+  "s_prohibited": {
+    "title": "Uso Prohibido",
+    "p1": "Aceptas no usar el Servicio para:",
+    "list": [
+      "Violar leyes o regulaciones aplicables",
+      "Infringir derechos de propiedad intelectual de terceros",
+      "Generar o distribuir contenido dañino, abusivo o ilegal",
+      "Intentar acceder sin autorización a cualquier parte del Servicio",
+      "Usar medios automatizados para extraer datos del Servicio",
+      "Revender o redistribuir el Servicio sin permiso escrito",
+      "Hacerse pasar por otra persona o entidad",
+      "Interferir con la integridad o el rendimiento del Servicio"
+    ]
+  },
+  "s_ip": {
+    "title": "Propiedad Intelectual",
+    "p1": "El Servicio y su contenido original, características y funcionalidades son y seguirán siendo propiedad exclusiva de Content Intelligence Platform y sus licenciantes.",
+    "p2": "Nuestras marcas registradas no pueden usarse en relación con ningún producto o servicio sin nuestro consentimiento previo por escrito."
+  },
+  "s_disclaimer": {
+    "title": "Descargo de Garantías",
+    "p1": "El Servicio se proporciona \"tal como está\" y \"según disponibilidad\" sin garantías de ningún tipo, ya sean expresas o implícitas.",
+    "p2": "No garantizamos que el Servicio sea ininterrumpido, libre de errores o completamente seguro."
+  },
+  "s_limitation": {
+    "title": "Limitación de Responsabilidad",
+    "p1": "En la máxima medida permitida por la ley aplicable, Content Intelligence Platform no será responsable de daños indirectos, incidentales, especiales, consecuentes o punitivos.",
+    "p2": "Nuestra responsabilidad total no excederá el monto pagado por ti en los doce meses anteriores al reclamo, o $50 USD si no se han realizado pagos."
+  },
+  "s_termination": {
+    "title": "Terminación",
+    "p1_before": "Puedes terminar tu cuenta en cualquier momento contactándonos a",
+    "p2": "Nos reservamos el derecho de suspender o terminar tu acceso al Servicio en cualquier momento, con o sin causa, con o sin previo aviso."
+  },
+  "s_governing": {
+    "title": "Ley Aplicable",
+    "p1": "Estos Términos se regirán e interpretarán de conformidad con las leyes del Estado de Wyoming, Estados Unidos.",
+    "p2": "Cualquier disputa estará sujeta a la jurisdicción exclusiva de los tribunales estatales y federales ubicados en Wyoming."
+  },
+  "s_changes": {
+    "title": "Cambios a estos Términos",
+    "p1": "Nos reservamos el derecho de actualizar estos Términos en cualquier momento. Cuando hagamos cambios materiales, notificaremos a los usuarios registrados por correo electrónico.",
+    "p2": "El uso continuado del Servicio después de que los cambios entren en vigor constituye tu aceptación de los nuevos Términos."
+  },
+  "s_contact": {
+    "title": "Contáctanos",
+    "p1": "Si tienes preguntas sobre estos Términos, contáctanos:",
+    "email_label": "Correo electrónico",
+    "website_label": "Sitio web",
+    "entity_label": "Entidad"
+  }
+}
