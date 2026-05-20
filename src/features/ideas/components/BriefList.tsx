@@ -1,3 +1,4 @@
+import { Download } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { type CreativeSession } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
@@ -101,7 +102,7 @@ export default function BriefList({
                     className="brief-list__flag brief-list__flag--downloaded"
                     title={new Date(session.downloaded_at).toLocaleDateString()}
                   >
-                    <i className="ti ti-download" aria-hidden="true" />
+                    <Download size={12} aria-hidden="true" />
                   </span>
                 )}
                 <StatusBadge status={session.status} />
