@@ -6,7 +6,6 @@ import {
   type IdeaTopic,
 } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
-import { downloadBrief } from "../../../utils/downloadBrief";
 
 /* =========================
    CONSTANTS
@@ -25,6 +24,7 @@ type RecipePanelProps = {
   onApprove: () => void;
   onDiscard: () => void;
   onCreateContent: () => void;
+  onDownload: () => void;
   saveFeedback: (
     sessionId: string,
     feedback: Record<string, number>,
@@ -63,6 +63,7 @@ export default function RecipePanel({
   onClose,
   onDiscard,
   onCreateContent,
+  onDownload,
   saveFeedback,
   updateSessionStatus,
   regenerateAspect,
@@ -403,6 +404,14 @@ export default function RecipePanel({
                 </div>
               </div>
             )}
+            {platformName && (
+              <div className="recipe-panel__combo-item">
+                <span className="recipe-panel__combo-label">
+                  {t("recipe.comboPlatform")}
+                </span>
+                <span className="recipe-panel__combo-value">{platformName}</span>
+              </div>
+            )}
             <div className="recipe-panel__combo-item">
               <span className="recipe-panel__combo-label">
                 {t("recipe.comboFormat")}
@@ -455,13 +464,7 @@ export default function RecipePanel({
         <div className="recipe-panel__actions">
           <button
             className="btn-secondary"
-            onClick={() =>
-              downloadBrief(session, {
-                title: idea.title,
-                description: idea.description,
-                topics: ideaTopics,
-              })
-            }
+            onClick={onDownload}
             type="button"
           >
             {t("recipe.downloadBrief")}
