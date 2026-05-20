@@ -391,16 +391,8 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
   ========================= */
 
   const markAsDownloaded = async (sessionId: string) => {
-    const session = await getSession();
     const downloadedAt = new Date().toISOString();
-    await fetch(`${base}/update-creative-session/${sessionId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session?.access_token}`,
-      },
-      body: JSON.stringify({ downloaded_at: downloadedAt }),
-    });
+    // Actualización optimista — el icono aparece de inmediato
     setIdeas((prev) =>
       prev.map((idea) => ({
         ...idea,
@@ -409,6 +401,20 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
         ),
       }))
     );
+    // Persistir en BD (best-effort, no bloquea la UI)
+    try {
+      const session = await getSession();
+      await fetch(`${base}/update-creative-session/${sessionId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({ downloaded_at: downloadedAt }),
+      });
+    } catch {
+      // Silent — el icono ya está visible en local
+    }
   };
 
   /* =========================
