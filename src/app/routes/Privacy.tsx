@@ -1,114 +1,330 @@
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import "./Legal.scss";
 
-export default function Privacy() {
+const CONTACT_EMAIL = "andres@content-intel.app";
+const WEBSITE = "content-intel.app";
+
+const Privacy = () => {
+  const { t } = useTranslation("privacy");
+
+  useEffect(() => {
+    document.title = t("page_title");
+    window.scrollTo(0, 0);
+  }, [t]);
+
   return (
     <div className="legal-page">
-      <div className="legal-content">
-        <h1>Privacy Policy</h1>
-        <p className="legal-updated">Last updated: May 3, 2026</p>
+      {/* Nav */}
+      <nav className="legal-nav">
+        <div className="legal-nav__inner">
+          <Link to="/" className="legal-nav__logo">
+            Content <span>Intelligence</span>
+          </Link>
+          <Link to="/" className="legal-nav__back">
+            {t("back_to_site")}
+          </Link>
+        </div>
+      </nav>
 
-        <section>
-          <h2>1. Who We Are</h2>
-          <p>Content Intelligence App is operated by Andrés Pérez Díaz, a Colombian citizen. We are committed to protecting your personal information and being transparent about how we use it.</p>
-          <p>Contact: <a href="mailto:andres@content-intel.app">andres@content-intel.app</a></p>
-        </section>
-
-        <section>
-          <h2>2. Information We Collect</h2>
-          <h3>Information you provide directly:</h3>
-          <ul>
-            <li><strong>Email address</strong> — used for account creation and communications</li>
-            <li><strong>Password</strong> — stored securely and encrypted by our authentication provider</li>
-            <li><strong>Content data</strong> — ideas, topics, content records, and descriptions you create in the App</li>
-            <li><strong>Profile information</strong> — optional fields provided during onboarding</li>
-          </ul>
-          <h3>Information collected automatically:</h3>
-          <ul>
-            <li><strong>Usage data</strong> — which features you use, how often you generate briefs or reports, download events</li>
-            <li><strong>Session data</strong> — login timestamps and session information</li>
-          </ul>
-          <h3>Information we do not collect:</h3>
-          <ul>
-            <li>Payment or financial information (the Service is currently free)</li>
-            <li>Precise location data</li>
-            <li>Device identifiers or advertising IDs</li>
-            <li>Data from minors (the Service is restricted to users 18 and older)</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>3. How We Use Your Information</h2>
-          <p>We use your information to:</p>
-          <ul>
-            <li>Provide and improve the Service</li>
-            <li>Generate AI-powered creative briefs and reports personalized to your content patterns</li>
-            <li>Send account-related communications</li>
-            <li>Analyze aggregated, anonymized usage trends to improve the platform</li>
-            <li>Maintain the security and integrity of the Service</li>
-          </ul>
-          <p>We do not use your information to:</p>
-          <ul>
-            <li>Sell or share with third-party advertisers</li>
-            <li>Train AI models</li>
-            <li>Create individual profiles for advertising purposes</li>
-            <li>Access or review your individual content without your explicit request</li>
-          </ul>
-        </section>
-
-        <section>
-          <h2>4. Third-Party Services</h2>
-          <p>We use the following trusted third-party services:</p>
-          <ul>
-            <li><strong>Supabase</strong> — Database, authentication, and backend infrastructure</li>
-            <li><strong>Anthropic (Claude API)</strong> — AI-powered brief and report generation</li>
-            <li><strong>Resend</strong> — Transactional email delivery</li>
-          </ul>
-          <p>Your data is not shared with any other third parties.</p>
-        </section>
-
-        <section>
-          <h2>5. AI Processing</h2>
-          <p>When you generate a brief or creative report, your content patterns are sent to Anthropic's Claude API to generate a personalized response. This data is processed in real time and is not retained by Anthropic for training purposes under their standard API terms.</p>
-        </section>
-
-        <section>
-          <h2>6. Data Storage and Security</h2>
-          <p>Your data is stored in Supabase's infrastructure with Row Level Security (RLS), encrypted connections (HTTPS/TLS), and hashed passwords. We implement reasonable security measures but cannot guarantee absolute security.</p>
-          <p>As the platform operator, we have technical access to your data through our infrastructure provider (Supabase). We commit to never accessing individual user data except when required to resolve a technical issue explicitly reported by you, and only with your knowledge. We will never browse, export, or analyze your personal content for any purpose other than resolving a reported problem.</p>
-        </section>
-
-        <section>
-          <h2>7. Data Retention</h2>
-          <p>We retain your data for as long as your account is active. If you delete your account, your personal profile and content data will be deleted within 30 days. Anonymized, aggregated data may be retained for platform analytics.</p>
-        </section>
-
-        <section>
-          <h2>8. Your Rights</h2>
-          <p>Under Colombian data protection law (Ley 1581 de 2012), you have the right to access, correct, delete, and export your personal data, and to object to specific uses. Contact us at <a href="mailto:andres@content-intel.app">andres@content-intel.app</a> and we will respond within 15 business days.</p>
-        </section>
-
-        <section>
-          <h2>9. Cookies</h2>
-          <p>The App uses only essential session cookies necessary for authentication. We do not use advertising cookies, tracking pixels, or third-party analytics cookies.</p>
-        </section>
-
-        <section>
-          <h2>10. Children's Privacy</h2>
-          <p>This Service is not directed to individuals under 18 years of age. We do not knowingly collect personal information from minors.</p>
-        </section>
-
-        <section>
-          <h2>11. Changes to This Policy</h2>
-          <p>We may update this Privacy Policy from time to time. We will notify registered users by email of any significant changes.</p>
-        </section>
-
-        <section>
-          <h2>12. Contact</h2>
-          <p><strong>Andrés Pérez Díaz</strong><br />
-          <a href="mailto:andres@content-intel.app">andres@content-intel.app</a><br />
-          Colombia</p>
-        </section>
+      {/* Hero */}
+      <div className="legal-hero">
+        <div className="legal-hero__band" aria-hidden="true" />
+        <div className="legal-hero__inner">
+          <p className="legal-hero__label">{t("hero_label")}</p>
+          <h1 className="legal-hero__title">{t("hero_title")}</h1>
+          <div className="legal-hero__meta">
+            <span>{t("hero_entity")}</span>
+            <span aria-hidden="true">·</span>
+            <span>{t("hero_effective")}</span>
+            <span aria-hidden="true">·</span>
+            <span>{t("hero_updated")}</span>
+          </div>
+        </div>
       </div>
+
+      {/* Layout */}
+      <div className="legal-layout">
+        {/* TOC */}
+        <aside className="legal-toc" aria-label={t("toc_title")}>
+          <p className="legal-toc__title">{t("toc_title")}</p>
+          <ul className="legal-toc__list">
+            <li className="legal-toc__item">
+              <a href="#intro" className="legal-toc__link">
+                {t("toc.intro")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#collect" className="legal-toc__link">
+                {t("toc.collect")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#use" className="legal-toc__link">
+                {t("toc.use")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#sharing" className="legal-toc__link">
+                {t("toc.sharing")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#ai-data" className="legal-toc__link">
+                {t("toc.ai_data")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#storage" className="legal-toc__link">
+                {t("toc.storage")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#cookies" className="legal-toc__link">
+                {t("toc.cookies")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#rights" className="legal-toc__link">
+                {t("toc.rights")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#children" className="legal-toc__link">
+                {t("toc.children")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#international" className="legal-toc__link">
+                {t("toc.international")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#changes" className="legal-toc__link">
+                {t("toc.changes")}
+              </a>
+            </li>
+            <li className="legal-toc__item">
+              <a href="#contact" className="legal-toc__link">
+                {t("toc.contact")}
+              </a>
+            </li>
+          </ul>
+        </aside>
+
+        {/* Content */}
+        <main className="legal-content">
+          <div className="legal-highlight">
+            <p>
+              <strong>{t("summary_label")}:</strong> {t("summary_text")}
+            </p>
+          </div>
+
+          {/* 01 */}
+          <div className="legal-section" id="intro">
+            <span className="legal-section__num">01</span>
+            <h2>{t("s_intro.title")}</h2>
+            <p>
+              {t("s_intro.p1_before")}{" "}
+              <a href={`https://${WEBSITE}`}>{WEBSITE}</a>
+              {t("s_intro.p1_after")}
+            </p>
+            <p>{t("s_intro.p2")}</p>
+          </div>
+
+          {/* 02 */}
+          <div className="legal-section" id="collect">
+            <span className="legal-section__num">02</span>
+            <h2>{t("s_collect.title")}</h2>
+            <p>{t("s_collect.p1")}</p>
+            <table className="legal-table">
+              <thead>
+                <tr>
+                  {(
+                    t("s_collect.table_headers", {
+                      returnObjects: true,
+                    }) as string[]
+                  ).map((h, i) => (
+                    <th key={i}>{h}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {(
+                  t("s_collect.table_rows", {
+                    returnObjects: true,
+                  }) as string[][]
+                ).map((row, i) => (
+                  <tr key={i}>
+                    {row.map((cell, j) => (
+                      <td key={j}>
+                        {j === 0 ? <strong>{cell}</strong> : cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p>{t("s_collect.p2")}</p>
+          </div>
+
+          {/* 03 */}
+          <div className="legal-section" id="use">
+            <span className="legal-section__num">03</span>
+            <h2>{t("s_use.title")}</h2>
+            <p>{t("s_use.p1")}</p>
+            <ul>
+              {(t("s_use.list", { returnObjects: true }) as string[]).map(
+                (item, i) => (
+                  <li key={i}>{item}</li>
+                ),
+              )}
+            </ul>
+            <p>{t("s_use.p2")}</p>
+          </div>
+
+          {/* 04 */}
+          <div className="legal-section" id="sharing">
+            <span className="legal-section__num">04</span>
+            <h2>{t("s_sharing.title")}</h2>
+            <p>
+              <strong>{t("s_sharing.no_sell")}</strong> {t("s_sharing.p1")}
+            </p>
+            <ul>
+              {(t("s_sharing.list", { returnObjects: true }) as string[]).map(
+                (item, i) => (
+                  <li key={i}>{item}</li>
+                ),
+              )}
+            </ul>
+          </div>
+
+          {/* 05 */}
+          <div className="legal-section" id="ai-data">
+            <span className="legal-section__num">05</span>
+            <h2>{t("s_ai_data.title")}</h2>
+            <p>{t("s_ai_data.p1")}</p>
+            <ul>
+              {(t("s_ai_data.list", { returnObjects: true }) as string[]).map(
+                (item, i) => (
+                  <li key={i}>{item}</li>
+                ),
+              )}
+            </ul>
+            <p>{t("s_ai_data.p2")}</p>
+          </div>
+
+          {/* 06 */}
+          <div className="legal-section" id="storage">
+            <span className="legal-section__num">06</span>
+            <h2>{t("s_storage.title")}</h2>
+            <p>{t("s_storage.p1")}</p>
+            <ul>
+              {(t("s_storage.list", { returnObjects: true }) as string[]).map(
+                (item, i) => (
+                  <li key={i}>{item}</li>
+                ),
+              )}
+            </ul>
+            <p>{t("s_storage.p2")}</p>
+            <p>{t("s_storage.p3")}</p>
+          </div>
+
+          {/* 07 */}
+          <div className="legal-section" id="cookies">
+            <span className="legal-section__num">07</span>
+            <h2>{t("s_cookies.title")}</h2>
+            <p>{t("s_cookies.p1")}</p>
+            <ul>
+              {(t("s_cookies.list", { returnObjects: true }) as string[]).map(
+                (item, i) => (
+                  <li key={i}>{item}</li>
+                ),
+              )}
+            </ul>
+            <p>{t("s_cookies.p2")}</p>
+          </div>
+
+          {/* 08 */}
+          <div className="legal-section" id="rights">
+            <span className="legal-section__num">08</span>
+            <h2>{t("s_rights.title")}</h2>
+            <p>{t("s_rights.p1")}</p>
+            <ul>
+              {(t("s_rights.list", { returnObjects: true }) as string[]).map(
+                (item, i) => (
+                  <li key={i}>{item}</li>
+                ),
+              )}
+            </ul>
+            <p>
+              {t("s_rights.p2_before")}{" "}
+              <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+              {t("s_rights.p2_after")}
+            </p>
+          </div>
+
+          {/* 09 */}
+          <div className="legal-section" id="children">
+            <span className="legal-section__num">09</span>
+            <h2>{t("s_children.title")}</h2>
+            <p>{t("s_children.p1")}</p>
+          </div>
+
+          {/* 10 */}
+          <div className="legal-section" id="international">
+            <span className="legal-section__num">10</span>
+            <h2>{t("s_international.title")}</h2>
+            <p>{t("s_international.p1")}</p>
+            <p>{t("s_international.p2")}</p>
+            <p>{t("s_international.p3")}</p>
+          </div>
+
+          {/* 11 */}
+          <div className="legal-section" id="changes">
+            <span className="legal-section__num">11</span>
+            <h2>{t("s_changes.title")}</h2>
+            <p>{t("s_changes.p1")}</p>
+            <p>{t("s_changes.p2")}</p>
+          </div>
+
+          {/* 12 */}
+          <div className="legal-section" id="contact">
+            <span className="legal-section__num">12</span>
+            <h2>{t("s_contact.title")}</h2>
+            <p>{t("s_contact.p1")}</p>
+            <ul>
+              <li>
+                <strong>{t("s_contact.email_label")}:</strong>{" "}
+                <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+              </li>
+              <li>
+                <strong>{t("s_contact.website_label")}:</strong>{" "}
+                <a href={`https://${WEBSITE}`}>{WEBSITE}</a>
+              </li>
+              <li>
+                <strong>{t("s_contact.entity_label")}:</strong> Content
+                Intelligence Platform
+              </li>
+            </ul>
+            <p>{t("s_contact.p2")}</p>
+          </div>
+        </main>
+      </div>
+
+      {/* Footer */}
+      <footer className="legal-footer">
+        <div className="legal-footer__inner">
+          <p>
+            {t("footer_copyright")} ·{" "}
+            <Link to="/terms">{t("footer_terms")}</Link> ·{" "}
+            <Link to="/privacy">{t("footer_privacy")}</Link>
+          </p>
+        </div>
+      </footer>
     </div>
   );
-}
+};
+
+export default Privacy;
