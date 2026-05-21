@@ -50,7 +50,7 @@
     "timezone": "Timezone",
     "creatorRole": "Primary role",
     "selectRole": "Select role",
-    "timeAvailability": "Time available",
+    "timeAvailability": "Weekly hours dedicated to creating",
     "productionSetup": "Production setup",
     "referents": "Creative referents",
     "referentsPlaceholder": "Creators you admire",

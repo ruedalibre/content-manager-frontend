@@ -20,6 +20,7 @@ export default function Topbar({ onMenuClick, context }: Props) {
     "/identity": t("nav.identity"),
     "/activity": t("nav.activity"),
     "/admin": t("nav.admin"),
+    "/profile": t("nav.profile"),
   };
   const title = titles[location.pathname] ?? t("nav.ideas");
 
