@@ -479,6 +479,62 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     setIdeas((prev) => prev.filter((idea) => idea.id !== ideaId));
   };
 
+  /* =========================
+     LOAD ARCHIVED IDEAS
+  ========================= */
+
+  const loadArchivedIdeas = async (): Promise<Idea[]> => {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return [];
+
+      const { data: userRecord } = await supabase
+        .from("users")
+        .select("tenant_id")
+        .eq("id", user.id)
+        .single();
+
+      if (!userRecord) return [];
+
+      const { data, error } = await supabase
+        .from("creative_units")
+        .select("id, title, description, source, created_at, archived_at")
+        .eq("tenant_id", userRecord.tenant_id)
+        .not("archived_at", "is", null)
+        .order("archived_at", { ascending: false });
+
+      if (error || !data) return [];
+
+      const session = await getSession();
+      const headers = { Authorization: `Bearer ${session?.access_token}` };
+
+      const sessionsRes = await fetch(`${base}/me-creative-sessions`, {
+        headers,
+      });
+      const sessionsData: CreativeSession[] = sessionsRes.ok
+        ? await sessionsRes.json()
+        : [];
+
+      const sessionsMap = new Map<string, CreativeSession[]>();
+      sessionsData.forEach((s) => {
+        const existing = sessionsMap.get(s.idea_id) ?? [];
+        sessionsMap.set(s.idea_id, [...existing, s]);
+      });
+
+      return data.map((idea) => ({
+        ...idea,
+        sessions: sessionsMap.get(idea.id) ?? [],
+        topics: [],
+        contents: [{ count: 0 }],
+      }));
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  };
+
   useEffect(() => {
     loadIdeas();
   }, [filter]);
@@ -496,6 +552,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     archiveIdea,
     restoreIdea,
     deleteIdea,
+    loadArchivedIdeas,
     regenerateAspect,
     updateRecipeAspect,
     markAsDownloaded,
