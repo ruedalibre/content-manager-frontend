@@ -34,6 +34,7 @@ export type Idea = {
   description: string | null;
   source: string;
   created_at: string;
+  archived_at: string | null;
   contents?: { count: number }[];
   topics?: IdeaTopic[];
   sessions?: CreativeSession[];
@@ -77,7 +78,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
       let query = supabase
         .from("creative_units")
-        .select("id, title, description, source, created_at")
+        .select("id, title, description, source, created_at, archived_at")
         .eq("tenant_id", userRecord.tenant_id)
         .order("created_at", { ascending: false });
 
@@ -418,6 +419,49 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
   };
 
   /* =========================
+     ARCHIVE IDEA
+  ========================= */
+
+  const archiveIdea = async (ideaId: string) => {
+    const session = await getSession();
+    const res = await fetch(`${base}/archive-idea/${ideaId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({ archived: true }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Failed to archive idea");
+    }
+    // Remover de la lista activa localmente
+    setIdeas((prev) => prev.filter((idea) => idea.id !== ideaId));
+  };
+
+  /* =========================
+     RESTORE IDEA
+  ========================= */
+
+  const restoreIdea = async (ideaId: string) => {
+    const session = await getSession();
+    const res = await fetch(`${base}/archive-idea/${ideaId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({ archived: false }),
+    });
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.error || "Failed to restore idea");
+    }
+    await loadIdeas(); // Reload completo para traer la idea restaurada a la lista activa
+  };
+
+  /* =========================
      DELETE IDEA
   ========================= */
 
@@ -448,6 +492,8 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     saveFeedback,
     updateIdea,
     updateIdeaTopics,
+    archiveIdea,
+    restoreIdea,
     deleteIdea,
     regenerateAspect,
     updateRecipeAspect,

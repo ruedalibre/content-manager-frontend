@@ -1618,6 +1618,137 @@
   }
 }
 
+// ── Archived tab ──
+.archived-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.archived-item {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-4);
+  overflow: hidden;
+  background: var(--bg-surface);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    padding: var(--s-3) var(--s-4);
+    cursor: pointer;
+    user-select: none;
+    transition: background var(--transition-fast);
+
+    &:hover { background: var(--bg-muted); }
+  }
+
+  &__chevron {
+    color: var(--text-faint);
+    transition: transform 0.15s ease;
+    flex-shrink: 0;
+
+    &--open { transform: rotate(90deg); }
+  }
+
+  &__title {
+    font-size: var(--fs-13);
+    font-weight: 500;
+    color: var(--text-secondary);
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: var(--s-3);
+    flex-shrink: 0;
+  }
+
+  &__count {
+    font-size: 10px;
+    color: var(--text-faint);
+    background: var(--bg-muted);
+    padding: 1px var(--s-2);
+    border-radius: var(--r-pill);
+    border: 1px solid var(--border-subtle);
+  }
+
+  &__date {
+    font-size: 10px;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+  }
+
+  &__briefs {
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  &__no-briefs {
+    padding: var(--s-3) var(--s-4) var(--s-3) calc(var(--s-4) + 22px);
+    font-size: var(--fs-12);
+    color: var(--text-faint);
+    font-style: italic;
+  }
+}
+
+.archived-brief-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  padding: var(--s-2) var(--s-4) var(--s-2) calc(var(--s-4) + 22px);
+  border-bottom: 1px solid var(--border-subtle);
+
+  &:last-child { border-bottom: none; }
+
+  &__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+  }
+
+  &__combo {
+    font-size: var(--fs-12);
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  &__dots {
+    flex: 1;
+    border-bottom: 1px dotted var(--border-subtle);
+    min-width: var(--s-4);
+    max-width: 80px;
+  }
+}
+
+.btn-restore {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  font-size: var(--fs-11);
+  padding: var(--s-1) var(--s-3);
+  border-radius: var(--r-3);
+  border: 1px solid var(--border-subtle);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: var(--font-sans);
+  transition: background var(--transition-fast),
+              color var(--transition-fast);
+
+  &:hover {
+    background: var(--bg-muted);
+    color: var(--text);
+  }
+}
+
 // ── Brief List Card wrapper ──
 .brief-list-card {
   background: var(--bg-surface);
