@@ -473,7 +473,19 @@ export default function Ideas() {
       async () => {
         closeConfirm();
         try {
+          // Capturar la idea antes de archivarla — aún existe en el array activo
+          const ideaToArchive = ideas.find((i) => i.id === ideaId);
+
           await archiveIdea(ideaId);
+          // archiveIdea ya la remueve de `ideas` localmente
+
+          // Agregarla al array de archivadas para que el contador se actualice
+          if (ideaToArchive) {
+            setArchivedIdeas((prev) => [
+              { ...ideaToArchive, archived_at: new Date().toISOString() },
+              ...prev,
+            ]);
+          }
         } catch {
           setActionError(t("common.failedUpdate"));
         }
