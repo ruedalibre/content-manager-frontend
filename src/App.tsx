@@ -11,6 +11,7 @@ import AuthGuard from "./auth/AuthGuard.tsx";
 import { useEffect } from "react";
 import { supabase } from "./supabaseClient.ts";
 import Identity from "./app/routes/Identity.tsx";
+import Profile from "./app/routes/Profile.tsx";
 
 /* =========================
    WARM EDGE FUNCTIONS
@@ -81,6 +82,7 @@ export default function App() {
         <Route path="/contents" element={<Contents />} />
         <Route path="/identity" element={<Identity />} />
         <Route path="/activity" element={<Activity />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/admin" element={<Admin />} />
       </Route>
 

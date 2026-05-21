@@ -1,4 +1,4 @@
-import { Lightbulb, FileText, Sparkles, BarChart3, Shield, X, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
+import { Lightbulb, FileText, Sparkles, BarChart3, Shield, User, X, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./Sidebar.scss";
@@ -68,6 +68,11 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
           <NavLink to="/activity" onClick={onClose}>
             <BarChart3 size={18} />
             {!isCollapsed && <span>{t("nav.activity")}</span>}
+          </NavLink>
+
+            <NavLink to="/profile" onClick={onClose}>
+            <User size={18} />
+            {!isCollapsed && <span>{t("nav.profile")}</span>}
           </NavLink>
 
           {/* ADMIN */}

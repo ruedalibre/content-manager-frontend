@@ -1,6 +1,5 @@
 import { Menu } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import LanguageToggle from "../../components/ui/LanguageToggle.tsx";
 import { useTranslation } from "react-i18next";
 import "./Topbar.scss";
 
@@ -36,7 +35,6 @@ export default function Topbar({ onMenuClick, context }: Props) {
         {context && <span className="topbar__context">{context}</span>}
       </div>
 
-      <LanguageToggle />
     </header>
   );
 }
