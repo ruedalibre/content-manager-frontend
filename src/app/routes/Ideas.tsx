@@ -19,7 +19,6 @@ import RecipePanel from "../../features/ideas/components/RecipePanel.tsx";
 import EditIdeaModal from "../../features/ideas/components/EditIdeaModal.tsx";
 import StatusBadge from "../../features/ideas/components/StatusBadge.tsx";
 import { downloadBrief } from "../../utils/downloadBrief";
-import { supabase } from "../../supabaseClient.ts";
 import "./Ideas.scss";
 
 type IdeaForContent = {
@@ -44,7 +43,6 @@ type RecipeState = {
 
 export default function Ideas() {
   const { t } = useTranslation();
-  const base = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
   const [activeTab, setActiveTab] = useState<"ideas" | "topics" | "archived">("ideas");
   const [archivedIdeas, setArchivedIdeas] = useState<Idea[]>([]);
   const [loadingArchived, setLoadingArchived] = useState(false);
@@ -110,6 +108,7 @@ export default function Ideas() {
     archiveIdea,
     restoreIdea,
     deleteIdea,
+    loadArchivedIdeas: loadArchivedIdeasFromHook,
     regenerateAspect,
     updateRecipeAspect,
     markAsDownloaded,
@@ -433,16 +432,11 @@ export default function Ideas() {
      ARCHIVED IDEAS
   ========================= */
 
-  const loadArchivedIdeas = async () => {
+  const fetchArchivedIdeas = async () => {
     setLoadingArchived(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const res = await fetch(`${base}/me-ideas?archived=true`, {
-        headers: { Authorization: `Bearer ${session?.access_token}` },
-      });
-      if (!res.ok) return;
-      const data = await res.json();
-      setArchivedIdeas(data ?? []);
+      const data = await loadArchivedIdeasFromHook();
+      setArchivedIdeas(data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -451,7 +445,7 @@ export default function Ideas() {
   };
 
   useEffect(() => {
-    if (activeTab === "archived") loadArchivedIdeas();
+    if (activeTab === "archived") fetchArchivedIdeas();
   }, [activeTab]);
 
   const handleArchiveIdea = (ideaId: string) => {
