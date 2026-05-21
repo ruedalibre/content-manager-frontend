@@ -159,20 +159,39 @@ export default function Ideas() {
     setRecipeState((prev) => {
       const updated = { ...prev };
       ideas.forEach((idea) => {
-        if (!updated[idea.id] && idea.sessions && idea.sessions.length > 0) {
-          const latest = idea.sessions.sort(
+        // Solo inicializar si NO existe ya en el estado local
+        if (updated[idea.id]) return;
+
+        // Buscar la sesión activa más reciente
+        const sessions = idea.sessions ?? [];
+        const latest = sessions
+          .filter((s) => s.status !== "discarded")
+          .sort(
             (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime(),
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
           )[0];
+
+        if (!latest) {
+          // Sin sesiones activas — inicializar vacío
           updated[idea.id] = {
-            platform_id: latest.platform_id ?? "",
-            format: latest.format ?? "",
-            content_role: latest.content_role ?? "",
-            generating: false,
-            error: null,
+            platform_id: "", format: "", content_role: "",
+            generating: false, error: null,
           };
+          return;
         }
+
+        const isToday =
+          new Date(latest.created_at).toDateString() === new Date().toDateString();
+
+        // Si la última sesión es de hoy → dejar campos vacíos (ya generó hoy)
+        // Si es anterior → pre-llenar para conveniencia
+        updated[idea.id] = {
+          platform_id: isToday ? "" : (latest.platform_id ?? ""),
+          format: isToday ? "" : (latest.format ?? ""),
+          content_role: isToday ? "" : (latest.content_role ?? ""),
+          generating: false,
+          error: null,
+        };
       });
       return updated;
     });
@@ -287,14 +306,13 @@ export default function Ideas() {
         });
         return;
       }
-      // Limpiar combinación completa incluyendo temas
+      // Limpiar solo la combinación — los temas pertenecen a la idea, no al brief
       updateRecipeState(idea.id, {
         generating: false,
         platform_id: "",
         format: "",
         content_role: "",
       });
-      await updateIdeaTopics(idea.id, [], []);
       // Abrir el modal con el brief recién generado
       if (result.session) {
         setExpandedSession({ session: result.session, idea });
