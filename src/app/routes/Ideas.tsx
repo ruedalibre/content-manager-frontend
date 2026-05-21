@@ -43,7 +43,6 @@ type RecipeState = {
 
 export default function Ideas() {
   const { t } = useTranslation();
-  const base = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
   const [activeTab, setActiveTab] = useState<"ideas" | "topics" | "archived">("ideas");
   const [archivedIdeas, setArchivedIdeas] = useState<Idea[]>([]);
   const [loadingArchived, setLoadingArchived] = useState(false);
