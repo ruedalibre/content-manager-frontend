@@ -92,8 +92,8 @@
     "contentSystem": "Content system",
     "contentSystemSubtitle": "How your topics, ideas and contents connect",
     "linkIdeasToTopics": "Link ideas to topics to see your content system.",
-    "confirmDeleteIdea": "Delete idea",
-    "confirmDeleteIdeaMessage": "This idea will be permanently deleted. This cannot be undone.",
+    "confirmDeleteIdea": "Permanently delete idea",
+    "confirmDeleteIdeaMessage": "This action is permanent and cannot be undone. The idea and all its associated briefs will be deleted. Contents already created from it will not be affected.",
     "confirmArchiveTopic": "Archive topic",
     "confirmArchiveTopicMessage": "This topic won't appear in selectors but existing associations are preserved.",
     "ideaTitlePlaceholder": "Idea title",
@@ -112,7 +112,16 @@
     "platformPlaceholder": "Platform",
     "formatPlaceholder": "Format",
     "suggestions": "Suggestions based on your content",
-    "generatingIdeas": "Generating ideas for you..."
+    "generatingIdeas": "Generating ideas for you...",
+    "tabArchived": "Archived",
+    "noArchivedIdeas": "No archived ideas yet",
+    "archive": "Archive idea",
+    "restore": "Restore",
+    "archivedOn": "archived",
+    "confirmArchiveIdea": "Archive idea",
+    "confirmArchiveIdeaMessage": "The idea and its briefs will move to the Archived tab. You can restore it at any time.",
+    "confirmRestore": "Restore idea",
+    "confirmRestoreMessage": "The idea will return to your active ideas list."
   },
   "formats": {
     "image": "Image",

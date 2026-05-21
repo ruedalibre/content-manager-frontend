@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Archive, ChevronRight, Undo2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import {
   useIdeas,
@@ -16,7 +17,9 @@ import ConfirmModal from "../../components/ui/ConfirmModal.tsx";
 import BriefList from "../../features/ideas/components/BriefList.tsx";
 import RecipePanel from "../../features/ideas/components/RecipePanel.tsx";
 import EditIdeaModal from "../../features/ideas/components/EditIdeaModal.tsx";
+import StatusBadge from "../../features/ideas/components/StatusBadge.tsx";
 import { downloadBrief } from "../../utils/downloadBrief";
+import { supabase } from "../../supabaseClient.ts";
 import "./Ideas.scss";
 
 type IdeaForContent = {
@@ -41,7 +44,11 @@ type RecipeState = {
 
 export default function Ideas() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<"ideas" | "topics">("ideas");
+  const base = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
+  const [activeTab, setActiveTab] = useState<"ideas" | "topics" | "archived">("ideas");
+  const [archivedIdeas, setArchivedIdeas] = useState<Idea[]>([]);
+  const [loadingArchived, setLoadingArchived] = useState(false);
+  const [expandedArchived, setExpandedArchived] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "manual" | "generated">("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -100,6 +107,8 @@ export default function Ideas() {
     saveFeedback,
     updateIdea,
     updateIdeaTopics,
+    archiveIdea,
+    restoreIdea,
     deleteIdea,
     regenerateAspect,
     updateRecipeAspect,
@@ -420,6 +429,46 @@ export default function Ideas() {
     );
   };
 
+  /* =========================
+     ARCHIVED IDEAS
+  ========================= */
+
+  const loadArchivedIdeas = async () => {
+    setLoadingArchived(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const res = await fetch(`${base}/me-ideas?archived=true`, {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (!res.ok) return;
+      const data = await res.json();
+      setArchivedIdeas(data ?? []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingArchived(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "archived") loadArchivedIdeas();
+  }, [activeTab]);
+
+  const handleArchiveIdea = (ideaId: string) => {
+    openConfirm(
+      t("ideas.confirmArchiveIdea"),
+      t("ideas.confirmArchiveIdeaMessage"),
+      async () => {
+        closeConfirm();
+        try {
+          await archiveIdea(ideaId);
+        } catch {
+          setActionError(t("common.failedUpdate"));
+        }
+      },
+    );
+  };
+
   return (
     <div className="ideas-page">
       {/* PAGE HEADER */}
@@ -436,7 +485,7 @@ export default function Ideas() {
           >
             {t("ideas.newIdea")}
           </button>
-        ) : (
+        ) : activeTab === "topics" ? (
           <div className="topic-create-inline">
             <div className="topic-create-inline__field">
               <input
@@ -465,7 +514,7 @@ export default function Ideas() {
               {creatingTopic ? t("common.loading") : t("ideas.addTopic")}
             </button>
           </div>
-        )}
+        ) : null}
       </div>
 
       {topicError && <p className="error-text">{topicError}</p>}
@@ -495,6 +544,14 @@ export default function Ideas() {
         >
           {t("ideas.tabTopics")}
           <span className="ideas-tab__count">{topics.length}</span>
+        </button>
+        <button
+          className={`ideas-tab ${activeTab === "archived" ? "ideas-tab--active" : ""}`}
+          onClick={() => setActiveTab("archived")}
+          type="button"
+        >
+          {t("ideas.tabArchived")}
+          <span className="ideas-tab__count">{archivedIdeas.length}</span>
         </button>
       </div>
 
@@ -598,6 +655,14 @@ export default function Ideas() {
                                 type="button"
                               >
                                 ✏️
+                              </button>
+                              <button
+                                className="btn-icon"
+                                onClick={() => handleArchiveIdea(idea.id)}
+                                title={t("ideas.archive")}
+                                type="button"
+                              >
+                                <Archive size={14} />
                               </button>
                               <button
                                 className="btn-icon btn-icon--danger"
@@ -1135,6 +1200,123 @@ export default function Ideas() {
                 )}
               </div>
             </>
+          )}
+        </div>
+      )}
+
+      {/* ========================= ARCHIVED TAB ========================= */}
+      {activeTab === "archived" && (
+        <div className="ideas-tab-content">
+          {loadingArchived ? (
+            <p className="ideas-loading">{t("common.loading")}</p>
+          ) : archivedIdeas.length === 0 ? (
+            <div className="ideas-empty">
+              <Archive size={24} style={{ color: "var(--text-faint)" }} />
+              <span>{t("ideas.noArchivedIdeas")}</span>
+            </div>
+          ) : (
+            <div className="archived-list">
+              {archivedIdeas.map((idea) => {
+                const isExpanded = expandedArchived.has(idea.id);
+                const activeSessions = (idea.sessions ?? [])
+                  .filter((s) => s.status !== "discarded");
+
+                return (
+                  <div key={idea.id} className="archived-item">
+                    <div
+                      className="archived-item__header"
+                      onClick={() =>
+                        setExpandedArchived((prev) => {
+                          const next = new Set(prev);
+                          next.has(idea.id) ? next.delete(idea.id) : next.add(idea.id);
+                          return next;
+                        })
+                      }
+                    >
+                      <ChevronRight
+                        size={12}
+                        className={`archived-item__chevron${isExpanded ? " archived-item__chevron--open" : ""}`}
+                        aria-hidden="true"
+                      />
+                      <span className="archived-item__title">{idea.title}</span>
+                      <div className="archived-item__meta">
+                        <span className="archived-item__count">
+                          {activeSessions.length}{" "}
+                          {activeSessions.length === 1
+                            ? t("recipe.briefSingular")
+                            : t("recipe.briefPlural")}
+                        </span>
+                        {idea.archived_at && (
+                          <span className="archived-item__date">
+                            {t("ideas.archivedOn")}{" "}
+                            {new Date(idea.archived_at).toLocaleDateString()}
+                          </span>
+                        )}
+                        <button
+                          className="btn-restore"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openConfirm(
+                              t("ideas.confirmRestore"),
+                              t("ideas.confirmRestoreMessage"),
+                              async () => {
+                                closeConfirm();
+                                try {
+                                  await restoreIdea(idea.id);
+                                  setArchivedIdeas((prev) =>
+                                    prev.filter((i) => i.id !== idea.id),
+                                  );
+                                } catch {
+                                  setActionError(t("common.failedUpdate"));
+                                }
+                              },
+                            );
+                          }}
+                          type="button"
+                        >
+                          <Undo2 size={12} aria-hidden="true" />
+                          {t("ideas.restore")}
+                        </button>
+                      </div>
+                    </div>
+
+                    {isExpanded && (
+                      <div className="archived-item__briefs">
+                        {activeSessions.length === 0 ? (
+                          <p className="archived-item__no-briefs">
+                            {t("recipe.noRecipeYet")}
+                          </p>
+                        ) : (
+                          activeSessions.map((session) => {
+                            const platform =
+                              platforms.find((p) => p.id === session.platform_id)
+                                ?.name ?? "—";
+                            const format = t(`formats.${session.format}`, {
+                              defaultValue: session.format,
+                            });
+                            const role = session.content_role
+                              ? t(`contentRoles.${session.content_role}`, {
+                                  defaultValue: session.content_role,
+                                })
+                              : null;
+                            return (
+                              <div key={session.id} className="archived-brief-row">
+                                <div className="archived-brief-row__dot" />
+                                <span className="archived-brief-row__combo">
+                                  {[platform, format, role].filter(Boolean).join(" · ")}
+                                </span>
+                                <span className="archived-brief-row__dots" aria-hidden="true" />
+                                <StatusBadge status={session.status} />
+                              </div>
+                            );
+                          })
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       )}

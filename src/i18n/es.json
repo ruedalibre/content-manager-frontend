@@ -92,8 +92,8 @@
     "contentSystem": "Sistema de contenido",
     "contentSystemSubtitle": "Cómo se conectan tus temas, ideas y contenidos",
     "linkIdeasToTopics": "Vincula ideas a temas para ver tu sistema de contenido.",
-    "confirmDeleteIdea": "Eliminar idea",
-    "confirmDeleteIdeaMessage": "Esta idea será eliminada permanentemente. Esta acción no se puede deshacer.",
+    "confirmDeleteIdea": "Eliminar idea definitivamente",
+    "confirmDeleteIdeaMessage": "Esta acción es permanente e irreversible. Se eliminarán la idea y todos sus briefs asociados. Los contenidos creados a partir de ella no se verán afectados.",
     "confirmArchiveTopic": "Archivar tema",
     "confirmArchiveTopicMessage": "El tema no aparecerá en los selectores pero las asociaciones existentes se conservan.",
     "ideaTitlePlaceholder": "Título de la idea",
@@ -112,7 +112,16 @@
     "platformPlaceholder": "Plataforma",
     "formatPlaceholder": "Formato",
     "suggestions": "Sugerencias basadas en tu contenido",
-    "generatingIdeas": "Generando ideas para ti..."
+    "generatingIdeas": "Generando ideas para ti...",
+    "tabArchived": "Archivadas",
+    "noArchivedIdeas": "No tienes ideas archivadas",
+    "archive": "Archivar idea",
+    "restore": "Restaurar",
+    "archivedOn": "archivada",
+    "confirmArchiveIdea": "Archivar idea",
+    "confirmArchiveIdeaMessage": "La idea y sus briefs se moverán a la pestaña Archivadas. Podrás restaurarla en cualquier momento.",
+    "confirmRestore": "Restaurar idea",
+    "confirmRestoreMessage": "La idea volverá a aparecer en tu lista activa de ideas."
   },
   "formats": {
     "image": "Imagen",
