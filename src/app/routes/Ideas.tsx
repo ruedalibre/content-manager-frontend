@@ -19,6 +19,7 @@ import RecipePanel from "../../features/ideas/components/RecipePanel.tsx";
 import EditIdeaModal from "../../features/ideas/components/EditIdeaModal.tsx";
 import StatusBadge from "../../features/ideas/components/StatusBadge.tsx";
 import { downloadBrief } from "../../utils/downloadBrief";
+import { supabase } from "../../supabaseClient.ts";
 import "./Ideas.scss";
 
 type IdeaForContent = {
@@ -45,6 +46,7 @@ export default function Ideas() {
   const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<"ideas" | "topics" | "archived">("ideas");
   const [archivedIdeas, setArchivedIdeas] = useState<Idea[]>([]);
+  const [archivedCount, setArchivedCount] = useState(0);
   const [loadingArchived, setLoadingArchived] = useState(false);
   const [expandedArchived, setExpandedArchived] = useState<Set<string>>(new Set());
   const [search, setSearch] = useState("");
@@ -479,7 +481,10 @@ export default function Ideas() {
           await archiveIdea(ideaId);
           // archiveIdea ya la remueve de `ideas` localmente
 
-          // Agregarla al array de archivadas para que el contador se actualice
+          // Actualizar contador
+          setArchivedCount((prev) => prev + 1);
+
+          // Actualizar lista si ya fue cargada
           if (ideaToArchive) {
             setArchivedIdeas((prev) => [
               { ...ideaToArchive, archived_at: new Date().toISOString() },
@@ -492,6 +497,36 @@ export default function Ideas() {
       },
     );
   };
+
+  // Cargar solo el conteo de archivadas al montar — sin el contenido completo
+  useEffect(() => {
+    const fetchArchivedCount = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data: userRecord } = await supabase
+          .from("users")
+          .select("tenant_id")
+          .eq("id", user.id)
+          .single();
+
+        if (!userRecord) return;
+
+        const { count } = await supabase
+          .from("creative_units")
+          .select("*", { count: "exact", head: true })
+          .eq("tenant_id", userRecord.tenant_id)
+          .not("archived_at", "is", null);
+
+        setArchivedCount(count ?? 0);
+      } catch (err) {
+        console.error("Archived count error:", err);
+      }
+    };
+
+    fetchArchivedCount();
+  }, []); // Solo al montar
 
   return (
     <div className="ideas-page">
@@ -575,7 +610,7 @@ export default function Ideas() {
           type="button"
         >
           {t("ideas.tabArchived")}
-          <span className="ideas-tab__count">{archivedIdeas.length}</span>
+          <span className="ideas-tab__count">{archivedCount}</span>
         </button>
       </div>
 
@@ -1287,6 +1322,7 @@ export default function Ideas() {
                                 closeConfirm();
                                 try {
                                   await restoreIdea(idea.id);
+                                  setArchivedCount((prev) => Math.max(0, prev - 1));
                                   setArchivedIdeas((prev) =>
                                     prev.filter((i) => i.id !== idea.id),
                                   );
