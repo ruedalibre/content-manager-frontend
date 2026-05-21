@@ -79,7 +79,7 @@
   }
 
   & > h3 {
-    font-family: var(--font-display);
+    font-family: var(--font-mono);
     font-size: var(--fs-40);
     font-weight: 500;
     color: var(--text);
@@ -93,7 +93,7 @@
   display: flex;
   align-items: center;
   gap: var(--s-1);
-  font-family: var(--font-display);
+  font-family: var(--font-mono);
   font-size: var(--fs-40);
   font-weight: 500;
   line-height: 1;
