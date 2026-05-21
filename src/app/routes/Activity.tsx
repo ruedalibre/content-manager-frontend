@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Calendar, BarChart3 } from "lucide-react";
 import { useDashboardData } from "../../features/dashboard/hooks/useDashboardData.ts";
+import ProfileNudge from "../../components/ui/ProfileNudge.tsx";
 
 import KPISection from "../../features/dashboard/components/KPISection.tsx";
 import DashboardChartsSection from "../../features/dashboard/components/DashboardChartsSection.tsx";
@@ -147,6 +148,8 @@ export default function Dashboard() {
 
   return (
     <div className="dashboard">
+      <ProfileNudge />
+
       <div className="dashboard__performance">
         <div className="dashboard__performance-header">
           <div>

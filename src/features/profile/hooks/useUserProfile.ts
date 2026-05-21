@@ -21,6 +21,11 @@ export type UserProfile = {
   preferred_language: 'en' | 'es' | null;
   created_at: string;
   updated_at: string;
+  display_name: string | null;
+  country_code: string | null;
+  timezone: string | null;
+  creator_role: string | null;
+  profile_nudge_dismissed_at: string | null;
 };
 
 type OnboardingData = {
@@ -171,6 +176,10 @@ export function useUserProfile() {
     }
   };
 
+  function isProfileComplete(p: UserProfile): boolean {
+    return !!(p.display_name && p.country_code && p.creator_role);
+  }
+
   const needsOnboarding =
     !loading &&
     profile !== null &&
@@ -185,6 +194,24 @@ export function useUserProfile() {
     (profile.onboarding_completed || profile.onboarding_skipped) &&
     (profile.tour_status === 'pending' || profile.tour_status === null);
 
+  const showProfileNudge =
+    !loading &&
+    profile !== null &&
+    (profile.onboarding_completed || profile.onboarding_skipped) &&
+    profile.profile_nudge_dismissed_at === null &&
+    !isProfileComplete(profile) &&
+    new Date(profile.created_at) < new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+  const dismissProfileNudge = async () => {
+    try {
+      await updateProfile({
+        profile_nudge_dismissed_at: new Date().toISOString(),
+      } as any);
+    } catch (err) {
+      console.error("Dismiss nudge error:", err);
+    }
+  };
+
   useEffect(() => {
     loadProfile();
   }, []);
@@ -196,6 +223,8 @@ export function useUserProfile() {
     needsOnboarding,
     isFirstSession,
     showTourInvitation,
+    showProfileNudge,
+    dismissProfileNudge,
     loadProfile,
     createProfile,
     updateProfile,
