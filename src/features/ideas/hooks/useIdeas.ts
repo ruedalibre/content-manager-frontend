@@ -80,6 +80,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
         .from("creative_units")
         .select("id, title, description, source, created_at, archived_at")
         .eq("tenant_id", userRecord.tenant_id)
+        .is("archived_at", null)           // excluir archivadas de la vista principal
         .order("created_at", { ascending: false });
 
       if (filter === "manual") query = query.eq("source", "manual");
