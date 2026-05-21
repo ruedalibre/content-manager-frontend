@@ -10,7 +10,7 @@ export default defineConfig({
   define: {
     'import.meta.env.VITE_APP_VERSION': JSON.stringify(pkg.version),
     'import.meta.env.VITE_BUILD_DATE': JSON.stringify(new Date().toISOString()),
-    'import.meta.env.VITE_APP_NAME': JSON.stringify(pkg.name),
+    'import.meta.env.VITE_APP_NAME': JSON.stringify('Content Intelligence Platform'),
   },
   build: {
     chunkSizeWarningLimit: 600,
