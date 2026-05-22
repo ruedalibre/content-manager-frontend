@@ -551,7 +551,25 @@
     "surveyKnowsIntuition": "Intuición personal",
     "surveyKnowsAudience": "Comentarios de la audiencia",
     "surveyKnowsUnsure": "No estoy muy seguro",
-    "surveyResponses": "Respuestas"
+    "surveyResponses": "Respuestas",
+    "profilesTab": "Perfiles",
+    "profilesOverview": "Resumen de perfiles",
+    "totalProfiles": "Perfiles registrados",
+    "completeProfiles": "Perfiles completos",
+    "profileCompletionRate": "Tasa de completitud",
+    "profileFieldCompleteness": "Completitud de campos",
+    "profileFieldDisplayName": "Nombre visible",
+    "profileFieldCountry": "País",
+    "profileFieldTimezone": "Zona horaria",
+    "profileFieldRole": "Rol de creador",
+    "profileFieldTimeAvail": "Disponibilidad de tiempo",
+    "profileFieldSetup": "Setup de producción",
+    "profileLanguageDist": "Distribución por idioma",
+    "profileSetupDist": "Setup de producción",
+    "profileTimeDist": "Disponibilidad de tiempo",
+    "profileRoleDist": "Rol del creador",
+    "profileCountryDist": "Distribución por país",
+    "loadingProfiles": "Cargando datos de perfiles..."
   },
   "insights": {
     "content_production": {

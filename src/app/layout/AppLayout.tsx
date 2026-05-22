@@ -95,7 +95,7 @@ export default function AppLayout() {
         />
 
         <main className="app-layout__main">
-          <Outlet context={{ setTopbarContext }} />
+          <Outlet context={{ setTopbarContext, isAdmin }} />
         </main>
 
         <Footer />
