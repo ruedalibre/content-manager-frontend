@@ -560,7 +560,7 @@
     "profileFieldCompleteness": "Field completeness",
     "profileFieldDisplayName": "Display name",
     "profileFieldCountry": "Country",
-    "profileFieldTimezone": "Timezone",
+    "profileFieldLanguage": "Interface language",
     "profileFieldRole": "Creator role",
     "profileFieldTimeAvail": "Time availability",
     "profileFieldSetup": "Production setup",

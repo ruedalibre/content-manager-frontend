@@ -560,7 +560,7 @@
     "profileFieldCompleteness": "Completitud de campos",
     "profileFieldDisplayName": "Nombre visible",
     "profileFieldCountry": "País",
-    "profileFieldTimezone": "Zona horaria",
+    "profileFieldLanguage": "Idioma de la interfaz",
     "profileFieldRole": "Rol de creador",
     "profileFieldTimeAvail": "Disponibilidad de tiempo",
     "profileFieldSetup": "Setup de producción",
