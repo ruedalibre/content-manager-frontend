@@ -12,7 +12,7 @@
 .login-panel--left {
   width: 50%;
   flex-shrink: 0;
-  background: var(--primary);
+  background: #1a1f27;
   padding: var(--s-8);
   display: flex;
   flex-direction: column;
@@ -22,42 +22,30 @@
   clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
   z-index: 1;
   margin-right: -2px;
-
-  // Decorative circle — large, top-right
-  &::before {
-    content: "";
-    position: absolute;
-    width: 500px;
-    height: 500px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    top: -100px;
-    right: -150px;
-    pointer-events: none;
-  }
-
-  // Decorative circle — medium, bottom-left
-  &::after {
-    content: "";
-    position: absolute;
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    bottom: 80px;
-    left: -80px;
-    pointer-events: none;
-  }
 }
 
-// Extra decorative circles via inline SVG (3 additional)
-.login-panel__circles-svg {
+.login-panel__hero-bg {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  overflow: visible;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: grayscale(100%);
+  z-index: 0;
+}
+
+// Overlay — mismo gradiente azul-pizarra que el hero de la landing
+.login-panel__hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    160deg,
+    rgba(54, 73, 101, 0.82) 0%,
+    rgba(33, 48, 73, 0.88) 50%,
+    rgba(26, 31, 39, 0.94) 100%
+  );
+  mix-blend-mode: multiply;
+  z-index: 1;
 }
 
 .login-panel__brand {
@@ -66,7 +54,7 @@
   gap: var(--s-2);
   color: rgba(255, 255, 255, 0.9);
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .login-panel__logo {
@@ -87,7 +75,7 @@
   flex-direction: column;
   gap: var(--s-4);
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .login-panel__tagline {
@@ -121,7 +109,7 @@
   margin: 0;
   line-height: var(--lh-normal);
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 /* =========================
@@ -408,7 +396,9 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 
-  &:hover { color: var(--text); }
+  &:hover {
+    color: var(--text);
+  }
 }
 
 .login-form__back-link {
@@ -422,5 +412,7 @@
   padding: var(--s-2) 0;
   margin-top: var(--s-2);
 
-  &:hover { color: var(--text); }
+  &:hover {
+    color: var(--text);
+  }
 }
