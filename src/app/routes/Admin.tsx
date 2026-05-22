@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useOutletContext } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../../supabaseClient";
 import {
@@ -81,6 +82,22 @@ type SurveyRow = {
   workflow_wish: string | null;
   wants_early_access: string | null;
   submitted_at: string | null;
+};
+
+type ProfileStats = {
+  total_profiles: number;
+  complete_profiles: number;
+  with_display_name: number;
+  with_country: number;
+  with_timezone: number;
+  with_creator_role: number;
+  with_time_availability: number;
+  with_production_setup: number;
+  language_dist: { name: string; value: number }[];
+  production_setup_dist: { name: string; value: number }[];
+  time_availability_dist: { name: string; value: number }[];
+  creator_role_dist: { name: string; value: number }[];
+  country_dist: { name: string; value: number }[];
 };
 
 // ── Shared donut chart for waitlist analytics ──
@@ -189,7 +206,8 @@ function WaitlistDonut({
 
 export default function Admin() {
   const { t } = useTranslation();
-  const [activeTab, setActiveTab] = useState<"operations" | "ecosystem" | "waitlist" | "survey">("operations");
+  const { isAdmin } = useOutletContext<{ setTopbarContext: (ctx: string | null) => void; isAdmin: boolean }>();
+  const [activeTab, setActiveTab] = useState<"operations" | "ecosystem" | "waitlist" | "survey" | "profiles">("operations");
 
   const [usersSummary, setUsersSummary] = useState<UsersSummary | null>(null);
 
@@ -221,6 +239,9 @@ export default function Admin() {
   const [surveyData, setSurveyData] = useState<SurveyRow[]>([]);
   const [surveyOpenPage, setSurveyOpenPage] = useState(1);
   const SURVEY_OPEN_LIMIT = 5;
+
+  const [profileStats, setProfileStats] = useState<ProfileStats | null>(null);
+  const [loadingProfiles, setLoadingProfiles] = useState(false);
 
   const [, setLoadingOps] = useState(true);
   const [loadingEco, setLoadingEco] = useState(false);
@@ -395,6 +416,25 @@ export default function Admin() {
     load();
   }, [activeTab]);
 
+  useEffect(() => {
+    if (activeTab !== "profiles" || profileStats) return;
+    const load = async () => {
+      try {
+        setLoadingProfiles(true);
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch(`${base}/admin-profiles-stats`, {
+          headers: { Authorization: `Bearer ${session?.access_token}` },
+        });
+        if (res.ok) setProfileStats(await res.json());
+      } catch (err) {
+        console.error("Profiles stats error:", err);
+      } finally {
+        setLoadingProfiles(false);
+      }
+    };
+    load();
+  }, [activeTab]);
+
   // ── Analytics helpers ──
 
   // Diccionario maestro EN → ES (un solo lugar para mantener)
@@ -516,6 +556,16 @@ export default function Admin() {
         >
           {t("admin.surveyTab")}
         </button>
+        {isAdmin && (
+          <button
+            key="profiles"
+            className={`admin-tab ${activeTab === "profiles" ? "admin-tab--active" : ""}`}
+            onClick={() => setActiveTab("profiles")}
+            type="button"
+          >
+            {t("admin.profilesTab")}
+          </button>
+        )}
       </div>
 
       {/* OPERATIONS TAB */}
@@ -1073,6 +1123,159 @@ export default function Admin() {
           ) : (
             <p>{t("admin.noEcosystemData")}</p>
           )}
+        </div>
+      )}
+
+      {/* PROFILES TAB */}
+      {activeTab === "profiles" && (
+        <div className="admin-tab-content">
+          {loadingProfiles ? (
+            <p>{t("admin.loadingProfiles")}</p>
+          ) : !profileStats ? (
+            <p>{t("admin.loading")}</p>
+          ) : (() => {
+            const total = profileStats.total_profiles;
+            const completionRate = total > 0
+              ? Math.round((profileStats.complete_profiles / total) * 100)
+              : 0;
+
+            const fields = [
+              { label: t("admin.profileFieldDisplayName"), count: profileStats.with_display_name },
+              { label: t("admin.profileFieldRole"),        count: profileStats.with_creator_role },
+              { label: t("admin.profileFieldCountry"),     count: profileStats.with_country },
+              { label: t("admin.profileFieldTimezone"),    count: profileStats.with_timezone },
+              { label: t("admin.profileFieldTimeAvail"),   count: profileStats.with_time_availability },
+              { label: t("admin.profileFieldSetup"),       count: profileStats.with_production_setup },
+            ].sort((a, b) => b.count - a.count);
+
+            return (
+              <>
+                {/* KPIs */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.profilesOverview")}</span>
+                  <div className="admin-stats">
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">{total}</div>
+                      <div className="stat-label">{t("admin.totalProfiles")}</div>
+                    </div>
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">{profileStats.complete_profiles}</div>
+                      <div className="stat-label">{t("admin.completeProfiles")}</div>
+                    </div>
+                    <div className="admin-card stat-card">
+                      <div className="stat-value admin-highlight">{completionRate}%</div>
+                      <div className="stat-label">{t("admin.profileCompletionRate")}</div>
+                    </div>
+                  </div>
+                </section>
+
+                {/* Field completeness bars */}
+                <section className="admin-section">
+                  <span className="section-label">{t("admin.profileFieldCompleteness")}</span>
+                  <div className="admin-card">
+                    {fields.map(f => (
+                      <div key={f.label} className="admin-bar-row">
+                        <span className="admin-bar-label">{f.label}</span>
+                        <div className="admin-bar-track">
+                          <div
+                            className="admin-bar-fill"
+                            style={{ width: total > 0 ? `${Math.round((f.count / total) * 100)}%` : "0%" }}
+                          />
+                        </div>
+                        <span className="admin-bar-pct">
+                          {f.count} · {total > 0 ? Math.round((f.count / total) * 100) : 0}%
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
+
+                {/* Language + Production setup donuts */}
+                {(profileStats.language_dist.length > 0 || profileStats.production_setup_dist.length > 0) && (
+                  <div className="admin-two-col">
+                    {profileStats.language_dist.length > 0 && (
+                      <section className="admin-section">
+                        <span className="section-label">{t("admin.profileLanguageDist")}</span>
+                        <div className="admin-card admin-card--chart">
+                          <WaitlistDonut
+                            data={profileStats.language_dist}
+                            colors={["var(--primary)", "var(--accent)"]}
+                            total={profileStats.language_dist.reduce((s, d) => s + d.value, 0)}
+                          />
+                        </div>
+                      </section>
+                    )}
+                    {profileStats.production_setup_dist.length > 0 && (
+                      <section className="admin-section">
+                        <span className="section-label">{t("admin.profileSetupDist")}</span>
+                        <div className="admin-card admin-card--chart">
+                          <WaitlistDonut
+                            data={profileStats.production_setup_dist}
+                            colors={PLATFORM_COLORS}
+                            total={profileStats.production_setup_dist.reduce((s, d) => s + d.value, 0)}
+                          />
+                        </div>
+                      </section>
+                    )}
+                  </div>
+                )}
+
+                {/* Time availability + Creator role donuts */}
+                {(profileStats.time_availability_dist.length > 0 || profileStats.creator_role_dist.length > 0) && (
+                  <div className="admin-two-col">
+                    {profileStats.time_availability_dist.length > 0 && (
+                      <section className="admin-section">
+                        <span className="section-label">{t("admin.profileTimeDist")}</span>
+                        <div className="admin-card admin-card--chart">
+                          <WaitlistDonut
+                            data={profileStats.time_availability_dist}
+                            colors={PLATFORM_COLORS}
+                            total={profileStats.time_availability_dist.reduce((s, d) => s + d.value, 0)}
+                          />
+                        </div>
+                      </section>
+                    )}
+                    {profileStats.creator_role_dist.length > 0 && (
+                      <section className="admin-section">
+                        <span className="section-label">{t("admin.profileRoleDist")}</span>
+                        <div className="admin-card admin-card--chart">
+                          <WaitlistDonut
+                            data={profileStats.creator_role_dist}
+                            colors={PLATFORM_COLORS}
+                            total={profileStats.creator_role_dist.reduce((s, d) => s + d.value, 0)}
+                          />
+                        </div>
+                      </section>
+                    )}
+                  </div>
+                )}
+
+                {/* Country distribution */}
+                {profileStats.country_dist.length > 0 && (
+                  <section className="admin-section">
+                    <span className="section-label">{t("admin.profileCountryDist")}</span>
+                    <div className="admin-card">
+                      {profileStats.country_dist.map(c => {
+                        const max = profileStats.country_dist[0]?.value ?? 1;
+                        return (
+                          <div key={c.name} className="admin-bar-row">
+                            <span className="admin-bar-label">{c.name}</span>
+                            <div className="admin-bar-track">
+                              <div
+                                className="admin-bar-fill"
+                                style={{ width: `${Math.round((c.value / max) * 100)}%` }}
+                              />
+                            </div>
+                            <span className="admin-bar-pct">{c.value}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
 
