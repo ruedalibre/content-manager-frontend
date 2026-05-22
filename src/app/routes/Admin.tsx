@@ -85,19 +85,19 @@ type SurveyRow = {
 };
 
 type ProfileStats = {
-  total_profiles: number;
-  complete_profiles: number;
-  with_display_name: number;
+  total_users: number;
+  with_language: number;
+  with_time: number;
+  with_setup: number;
+  with_role: number;
   with_country: number;
-  with_timezone: number;
-  with_creator_role: number;
-  with_time_availability: number;
-  with_production_setup: number;
+  with_display_name: number;
+  with_referents: number;
   language_dist: { name: string; value: number }[];
-  setup_dist: { name: string; value: number }[];
-  time_availability_dist: { name: string; value: number }[];
-  creator_role_dist: { name: string; value: number }[];
-  country_dist: { name: string; value: number }[];
+  time_dist:     { name: string; value: number }[];
+  setup_dist:    { name: string; value: number }[];
+  role_dist:     { name: string; value: number }[];
+  country_dist:  { name: string; value: number }[];
 };
 
 // ── Shared donut chart for waitlist analytics ──
@@ -1134,18 +1134,18 @@ export default function Admin() {
           ) : !profileStats || !profileStats.language_dist ? (
             <p>{t("admin.loading")}</p>
           ) : (() => {
-            const total = profileStats.total_profiles;
+            const total = profileStats.total_users;
             const completionRate = total > 0
-              ? Math.round((profileStats.complete_profiles / total) * 100)
+              ? Math.round((profileStats.with_display_name / total) * 100)
               : 0;
 
             const fields = [
               { label: t("admin.profileFieldDisplayName"), count: profileStats.with_display_name },
-              { label: t("admin.profileFieldRole"),        count: profileStats.with_creator_role },
+              { label: t("admin.profileFieldRole"),        count: profileStats.with_role },
               { label: t("admin.profileFieldCountry"),     count: profileStats.with_country },
-              { label: t("admin.profileFieldTimezone"),    count: profileStats.with_timezone },
-              { label: t("admin.profileFieldTimeAvail"),   count: profileStats.with_time_availability },
-              { label: t("admin.profileFieldSetup"),       count: profileStats.with_production_setup },
+              { label: t("admin.profileFieldLanguage"),    count: profileStats.with_language },
+              { label: t("admin.profileFieldTimeAvail"),   count: profileStats.with_time },
+              { label: t("admin.profileFieldSetup"),       count: profileStats.with_setup },
             ].sort((a, b) => b.count - a.count);
 
             return (
@@ -1159,7 +1159,7 @@ export default function Admin() {
                       <div className="stat-label">{t("admin.totalProfiles")}</div>
                     </div>
                     <div className="admin-card stat-card">
-                      <div className="stat-value admin-highlight">{profileStats.complete_profiles}</div>
+                      <div className="stat-value admin-highlight">{profileStats.with_display_name}</div>
                       <div className="stat-label">{t("admin.completeProfiles")}</div>
                     </div>
                     <div className="admin-card stat-card">
@@ -1221,28 +1221,28 @@ export default function Admin() {
                 )}
 
                 {/* Time availability + Creator role donuts */}
-                {(profileStats.time_availability_dist.length > 0 || profileStats.creator_role_dist.length > 0) && (
+                {(profileStats.time_dist.length > 0 || profileStats.role_dist.length > 0) && (
                   <div className="admin-two-col">
-                    {profileStats.time_availability_dist.length > 0 && (
+                    {profileStats.time_dist.length > 0 && (
                       <section className="admin-section">
                         <span className="section-label">{t("admin.profileTimeDist")}</span>
                         <div className="admin-card admin-card--chart">
                           <WaitlistDonut
-                            data={profileStats.time_availability_dist}
+                            data={profileStats.time_dist}
                             colors={PLATFORM_COLORS}
-                            total={profileStats.time_availability_dist.reduce((s, d) => s + d.value, 0)}
+                            total={profileStats.time_dist.reduce((s, d) => s + d.value, 0)}
                           />
                         </div>
                       </section>
                     )}
-                    {profileStats.creator_role_dist.length > 0 && (
+                    {profileStats.role_dist.length > 0 && (
                       <section className="admin-section">
                         <span className="section-label">{t("admin.profileRoleDist")}</span>
                         <div className="admin-card admin-card--chart">
                           <WaitlistDonut
-                            data={profileStats.creator_role_dist}
+                            data={profileStats.role_dist}
                             colors={PLATFORM_COLORS}
-                            total={profileStats.creator_role_dist.reduce((s, d) => s + d.value, 0)}
+                            total={profileStats.role_dist.reduce((s, d) => s + d.value, 0)}
                           />
                         </div>
                       </section>
