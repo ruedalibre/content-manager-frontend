@@ -422,7 +422,7 @@ export default function Admin() {
       try {
         setLoadingProfiles(true);
         const { data: { session } } = await supabase.auth.getSession();
-        const res = await fetch(`${base}/admin-profiles-stats`, {
+        const res = await fetch(`${base}/admin-profile-stats`, {
           headers: { Authorization: `Bearer ${session?.access_token}` },
         });
         if (res.ok) setProfileStats(await res.json());
