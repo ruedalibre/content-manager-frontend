@@ -16,17 +16,35 @@ export default function ResetPassword() {
   const [validSession, setValidSession] = useState(false)
 
   useEffect(() => {
-    // Supabase maneja el token del hash automáticamente
-    // Solo verificar que hay sesión activa del reset link
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        setValidSession(true)
-      } else {
-        setError(t("login.errors.resetLinkExpired"))
+    // Supabase procesa el hash automáticamente y emite PASSWORD_RECOVERY
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "PASSWORD_RECOVERY" && session) {
+          setValidSession(true)
+        } else if (event === "SIGNED_IN" && session) {
+          // También válido si ya hay sesión activa del link
+          setValidSession(true)
+        }
       }
+    )
+
+    // Fallback: verificar sesión existente
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) setValidSession(true)
+    })
+
+    // Si tras 3 s no hay sesión válida, mostrar error de link expirado
+    const timeout = setTimeout(() => {
+      setValidSession((prev) => {
+        if (!prev) setError(t("login.errors.resetLinkExpired"))
+        return prev
+      })
+    }, 3000)
+
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(timeout)
     }
-    checkSession()
   }, [])
 
   const handleReset = async (e: React.FormEvent) => {
