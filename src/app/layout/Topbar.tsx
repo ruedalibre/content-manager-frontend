@@ -33,7 +33,12 @@ export default function Topbar({ onMenuClick, context }: Props) {
       <div className="topbar__text">
         <h1 className="topbar__title">{title}</h1>
 
-        {context && <span className="topbar__context">{context}</span>}
+        {context && (
+          <>
+            <span className="topbar__separator" aria-hidden="true">·</span>
+            <span className="topbar__context">{context}</span>
+          </>
+        )}
       </div>
 
     </header>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useOutletContext } from "react-router-dom";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
 import LanguageToggle from "../../components/ui/LanguageToggle.tsx";
 import { supabase } from "../../supabaseClient";
@@ -60,6 +61,16 @@ const SETUP_OPTIONS = ["solo", "small_team", "agency"];
 
 export default function Profile() {
   const { t, i18n } = useTranslation();
+  const { setTopbarContext } = useOutletContext<{
+    setTopbarContext: (v: string | null) => void;
+    isAdmin: boolean;
+  }>();
+
+  useEffect(() => {
+    setTopbarContext(t("profile.subtitle"));
+    return () => setTopbarContext(null);
+  }, [setTopbarContext, t]);
+
   const { profile, updateProfile, updateLanguage } = useUserProfile();
 
   const [email, setEmail] = useState("");
@@ -139,11 +150,6 @@ export default function Profile() {
 
   return (
     <div className="profile-page">
-      <div className="profile-page__header">
-        <h2>{t("profile.title")}</h2>
-        <p>{t("profile.subtitle")}</p>
-      </div>
-
       {/* Completitud */}
       <div className="profile-completion">
         <div className="profile-completion__bar">
