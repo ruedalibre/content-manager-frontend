@@ -94,7 +94,7 @@ type ProfileStats = {
   with_time_availability: number;
   with_production_setup: number;
   language_dist: { name: string; value: number }[];
-  production_setup_dist: { name: string; value: number }[];
+  setup_dist: { name: string; value: number }[];
   time_availability_dist: { name: string; value: number }[];
   creator_role_dist: { name: string; value: number }[];
   country_dist: { name: string; value: number }[];
@@ -1131,7 +1131,7 @@ export default function Admin() {
         <div className="admin-tab-content">
           {loadingProfiles ? (
             <p>{t("admin.loadingProfiles")}</p>
-          ) : !profileStats ? (
+          ) : !profileStats || !profileStats.language_dist ? (
             <p>{t("admin.loading")}</p>
           ) : (() => {
             const total = profileStats.total_profiles;
@@ -1191,7 +1191,7 @@ export default function Admin() {
                 </section>
 
                 {/* Language + Production setup donuts */}
-                {(profileStats.language_dist.length > 0 || profileStats.production_setup_dist.length > 0) && (
+                {(profileStats.language_dist.length > 0 || profileStats.setup_dist.length > 0) && (
                   <div className="admin-two-col">
                     {profileStats.language_dist.length > 0 && (
                       <section className="admin-section">
@@ -1205,14 +1205,14 @@ export default function Admin() {
                         </div>
                       </section>
                     )}
-                    {profileStats.production_setup_dist.length > 0 && (
+                    {profileStats.setup_dist.length > 0 && (
                       <section className="admin-section">
                         <span className="section-label">{t("admin.profileSetupDist")}</span>
                         <div className="admin-card admin-card--chart">
                           <WaitlistDonut
-                            data={profileStats.production_setup_dist}
+                            data={profileStats.setup_dist}
                             colors={PLATFORM_COLORS}
-                            total={profileStats.production_setup_dist.reduce((s, d) => s + d.value, 0)}
+                            total={profileStats.setup_dist.reduce((s, d) => s + d.value, 0)}
                           />
                         </div>
                       </section>
