@@ -199,9 +199,9 @@ export default function Identity() {
   ========================= */
 
   useEffect(() => {
-    setTopbarContext("");
+    setTopbarContext(t("identity.subtitle"));
     return () => setTopbarContext(null);
-  }, [setTopbarContext]);
+  }, [setTopbarContext, t]);
 
   /* =========================
      HELPERS
@@ -228,12 +228,6 @@ export default function Identity() {
 
   return (
     <div className="identity-page">
-      {/* ── HEADER ── */}
-
-      <div className="identity-header">
-        <h2>{t("identity.title")}</h2>
-        <p>{t("identity.subtitle")}</p>
-      </div>
 
       {/* ── ROW 1 — Top ideas + Top topics ── */}
 

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Archive, ChevronRight, Undo2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useOutletContext } from "react-router-dom";
 import {
   useIdeas,
   type Idea,
@@ -44,6 +45,16 @@ type RecipeState = {
 
 export default function Ideas() {
   const { t } = useTranslation();
+  const { setTopbarContext } = useOutletContext<{
+    setTopbarContext: (v: string | null) => void;
+    isAdmin: boolean;
+  }>();
+
+  useEffect(() => {
+    setTopbarContext(t("ideas.subtitle"));
+    return () => setTopbarContext(null);
+  }, [setTopbarContext, t]);
+
   const [activeTab, setActiveTab] = useState<"ideas" | "topics" | "archived">("ideas");
   const [archivedIdeas, setArchivedIdeas] = useState<Idea[]>([]);
   const [archivedCount, setArchivedCount] = useState(0);
@@ -532,10 +543,6 @@ export default function Ideas() {
     <div className="ideas-page">
       {/* PAGE HEADER */}
       <div className="ideas-page__header">
-        <div>
-          <h2 className="ideas-page__title">{t("ideas.title")}</h2>
-          <p className="ideas-page__subtitle">{t("ideas.subtitle")}</p>
-        </div>
         {activeTab === "ideas" ? (
           <button
             className="btn-primary"

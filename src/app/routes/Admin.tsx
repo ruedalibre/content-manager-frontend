@@ -206,7 +206,12 @@ function WaitlistDonut({
 
 export default function Admin() {
   const { t } = useTranslation();
-  const { isAdmin } = useOutletContext<{ setTopbarContext: (ctx: string | null) => void; isAdmin: boolean }>();
+  const { isAdmin, setTopbarContext } = useOutletContext<{ setTopbarContext: (ctx: string | null) => void; isAdmin: boolean }>();
+
+  useEffect(() => {
+    setTopbarContext(t("admin.subtitle"));
+    return () => setTopbarContext(null);
+  }, [setTopbarContext, t]);
   const [activeTab, setActiveTab] = useState<"operations" | "ecosystem" | "waitlist" | "survey" | "profiles">("operations");
 
   const [usersSummary, setUsersSummary] = useState<UsersSummary | null>(null);
@@ -515,13 +520,6 @@ export default function Admin() {
 
   return (
     <div className="admin-page">
-
-      <div className="admin-header">
-        <div>
-          <h2>{t("admin.title")}</h2>
-          <p>{t("admin.subtitle")}</p>
-        </div>
-      </div>
 
       <div className="admin-tabs">
         <button

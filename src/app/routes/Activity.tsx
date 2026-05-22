@@ -151,24 +151,18 @@ export default function Dashboard() {
       <ProfileNudge />
 
       <div className="dashboard__performance">
-        <div className="dashboard__performance-header">
-          <div>
-            <h2>{t("activity.performance")}</h2>
-            <p>{t("activity.activityWithinPeriod")}</p>
-          </div>
-
-          <div className="dashboard__controls">
-            <select
-              value={period}
-              onChange={(e) =>
-                setPeriod(e.target.value as "7d" | "30d" | "90d")
-              }
-            >
-              <option value="7d">{t("activity.last7days")}</option>
-              <option value="30d">{t("activity.last30days")}</option>
-              <option value="90d">{t("activity.last90days")}</option>
-            </select>
-          </div>
+        <div className="dashboard__controls" style={{ display: "flex", justifyContent: "flex-end", marginBottom: "var(--s-4)" }}>
+          <select
+            className="admin-filter"
+            value={period}
+            onChange={(e) =>
+              setPeriod(e.target.value as "7d" | "30d" | "90d")
+            }
+          >
+            <option value="7d">{t("activity.last7days")}</option>
+            <option value="30d">{t("activity.last30days")}</option>
+            <option value="90d">{t("activity.last90days")}</option>
+          </select>
         </div>
 
         <KPISection data={data} growthVisual={growthVisual} />
