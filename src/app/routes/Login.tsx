@@ -5,7 +5,7 @@ import { supabase } from "../../supabaseClient"
 import LanguageToggle from "../../components/ui/LanguageToggle"
 import "./Login.scss"
 
-type Mode = "signin" | "register"
+type Mode = "signin" | "register" | "forgot"
 
 export default function Login() {
   const navigate = useNavigate()
@@ -139,6 +139,26 @@ export default function Login() {
     }
   }
 
+  /* FORGOT PASSWORD */
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+
+    if (error) {
+      setError(t("login.errors.resetFailed"))
+      setLoading(false)
+      return
+    }
+
+    setSuccess(t("login.resetEmailSent"))
+    setLoading(false)
+  }
+
   return (
     <div className="login-page">
 
@@ -202,36 +222,46 @@ export default function Login() {
             <h1 className="login-title">
               {mode === "signin"
                 ? t("login.welcomeBack")
-                : t("login.welcomeNew")}
+                : mode === "register"
+                  ? t("login.welcomeNew")
+                  : t("login.forgotTitle")}
             </h1>
             <p className="login-subtitle">
               {mode === "signin"
                 ? t("login.welcomeBackSub")
-                : t("login.welcomeNewSub")}
+                : mode === "register"
+                  ? t("login.welcomeNewSub")
+                  : t("login.forgotSub")}
             </p>
           </div>
 
-          {/* MODE TOGGLE */}
-          <div className="login-toggle">
-            <button
-              type="button"
-              className={`login-toggle__btn${mode === "signin" ? " login-toggle__btn--active" : ""}`}
-              onClick={() => switchMode("signin")}
-            >
-              {t("login.signIn")}
-            </button>
-            <button
-              type="button"
-              className={`login-toggle__btn${mode === "register" ? " login-toggle__btn--active" : ""}`}
-              onClick={() => switchMode("register")}
-            >
-              {t("login.createAccount")}
-            </button>
-          </div>
+          {/* MODE TOGGLE — hidden in forgot mode */}
+          {mode !== "forgot" && (
+            <div className="login-toggle">
+              <button
+                type="button"
+                className={`login-toggle__btn${mode === "signin" ? " login-toggle__btn--active" : ""}`}
+                onClick={() => switchMode("signin")}
+              >
+                {t("login.signIn")}
+              </button>
+              <button
+                type="button"
+                className={`login-toggle__btn${mode === "register" ? " login-toggle__btn--active" : ""}`}
+                onClick={() => switchMode("register")}
+              >
+                {t("login.createAccount")}
+              </button>
+            </div>
+          )}
 
           {/* FORM */}
           <form
-            onSubmit={mode === "signin" ? handleSignIn : handleRegister}
+            onSubmit={
+              mode === "signin" ? handleSignIn :
+              mode === "register" ? handleRegister :
+              handleForgotPassword
+            }
             className="login-form"
           >
             <div className="login-form__field">
@@ -246,14 +276,25 @@ export default function Login() {
               />
             </div>
 
-            <div className="login-form__field">
-              <label className="login-form__label">
-                {t("login.passwordPlaceholder")}
-              </label>
+            <div className="login-form__field" style={{ display: mode === "forgot" ? "none" : undefined }}>
+              <div className="login-form__field-header">
+                <label className="login-form__label">
+                  {t("login.passwordPlaceholder")}
+                </label>
+                {mode === "signin" && (
+                  <button
+                    type="button"
+                    className="login-form__forgot"
+                    onClick={() => switchMode("forgot")}
+                  >
+                    {t("login.forgotPassword")}
+                  </button>
+                )}
+              </div>
               <input
                 type="password"
                 value={password}
-                required
+                required={mode !== "forgot"}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
@@ -287,11 +328,25 @@ export default function Login() {
               {loading
                 ? mode === "signin"
                   ? t("login.signingIn")
-                  : t("login.creatingAccount")
+                  : mode === "register"
+                    ? t("login.creatingAccount")
+                    : t("login.sendingReset")
                 : mode === "signin"
                   ? t("login.signIn")
-                  : t("login.createAccount")}
+                  : mode === "register"
+                    ? t("login.createAccount")
+                    : t("login.sendReset")}
             </button>
+
+            {mode === "forgot" && (
+              <button
+                type="button"
+                className="login-form__back-link"
+                onClick={() => switchMode("signin")}
+              >
+                ← {t("login.backToSignIn")}
+              </button>
+            )}
           </form>
 
           {/* FOOTER */}

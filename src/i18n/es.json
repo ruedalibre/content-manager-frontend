@@ -93,13 +93,28 @@
     "taglineSub": "Una plataforma para quienes prefieren expandir su capacidad creativa antes que seguir una tendencia.",
     "accountCreated": "Cuenta creada. Inicia sesión para comenzar.",
     "quote": "Lo opuesto a un algoritmo es un punto de vista.",
+    "forgotPassword":   "¿Olvidaste tu contraseña?",
+    "forgotTitle":      "Recuperar contraseña",
+    "forgotSub":        "Te enviaremos un link para restablecer tu contraseña",
+    "sendReset":        "Enviar link de recuperación",
+    "sendingReset":     "Enviando...",
+    "resetEmailSent":   "Revisa tu correo — te enviamos el link de recuperación",
+    "backToSignIn":     "Volver al inicio de sesión",
+    "resetTitle":       "Nueva contraseña",
+    "resetSub":         "Elige una contraseña nueva para tu cuenta",
+    "newPassword":      "Nueva contraseña",
+    "updatePassword":   "Actualizar contraseña",
+    "updatingPassword": "Actualizando...",
+    "passwordUpdated":  "Contraseña actualizada — redirigiendo...",
     "errors": {
       "invalidCredentials": "Correo o contraseña incorrectos.",
       "passwordMismatch": "Las contraseñas no coinciden.",
       "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
       "notInvited": "Este correo no ha sido invitado aún. Únete a la lista de espera en content-intel.app",
       "pendingInvite": "Tu correo está en la lista de espera pero aún no ha sido invitado. Te notificaremos cuando tu acceso esté listo.",
-      "generic": "Algo salió mal. Intenta de nuevo."
+      "generic": "Algo salió mal. Intenta de nuevo.",
+      "resetFailed": "No pudimos procesar la solicitud. Intenta de nuevo.",
+      "resetLinkExpired": "El link expiró o no es válido. Solicita uno nuevo."
     }
   },
   "ideas": {

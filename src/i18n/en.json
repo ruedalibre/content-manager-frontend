@@ -93,13 +93,28 @@
     "taglineSub": "A platform for those who'd rather expand their creative capacity than follow a trend.",
     "accountCreated": "Account created. Sign in to get started.",
     "quote": "The opposite of an algorithm is a point of view.",
+    "forgotPassword":   "Forgot your password?",
+    "forgotTitle":      "Reset your password",
+    "forgotSub":        "We'll send you a link to reset your password",
+    "sendReset":        "Send reset link",
+    "sendingReset":     "Sending...",
+    "resetEmailSent":   "Check your email — we sent you a reset link",
+    "backToSignIn":     "Back to sign in",
+    "resetTitle":       "New password",
+    "resetSub":         "Choose a new password for your account",
+    "newPassword":      "New password",
+    "updatePassword":   "Update password",
+    "updatingPassword": "Updating...",
+    "passwordUpdated":  "Password updated — redirecting...",
     "errors": {
       "invalidCredentials": "Invalid email or password.",
       "passwordMismatch": "Passwords don't match.",
       "passwordTooShort": "Password must be at least 8 characters.",
       "notInvited": "This email hasn't been invited yet. Join the waitlist at content-intel.app",
       "pendingInvite": "Your email is on the waitlist but hasn't been invited yet. We'll notify you when your access is ready.",
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "resetFailed": "We couldn't process your request. Please try again.",
+      "resetLinkExpired": "The link has expired or is invalid. Request a new one."
     }
   },
   "ideas": {

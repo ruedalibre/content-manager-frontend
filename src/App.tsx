@@ -5,6 +5,7 @@ import Contents from "./app/routes/Contents.tsx";
 import Ideas from "./app/routes/Ideas.tsx";
 import Admin from "./app/routes/Admin.tsx";
 import Login from "./app/routes/Login.tsx";
+import ResetPassword from "./app/routes/ResetPassword.tsx";
 import Terms from "./app/routes/Terms.tsx";
 import Privacy from "./app/routes/Privacy.tsx";
 import AuthGuard from "./auth/AuthGuard.tsx";
@@ -67,6 +68,7 @@ export default function App() {
       {/* Rutas públicas */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Login />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
 

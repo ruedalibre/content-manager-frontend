@@ -386,3 +386,41 @@
     padding: var(--s-7) var(--s-5) var(--s-6);
   }
 }
+
+/* =========================
+   FORGOT PASSWORD
+========================= */
+
+.login-form__field-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--s-2);
+}
+
+.login-form__forgot {
+  font-size: var(--fs-12);
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover { color: var(--text); }
+}
+
+.login-form__back-link {
+  display: block;
+  text-align: center;
+  font-size: var(--fs-13);
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--s-2) 0;
+  margin-top: var(--s-2);
+
+  &:hover { color: var(--text); }
+}
