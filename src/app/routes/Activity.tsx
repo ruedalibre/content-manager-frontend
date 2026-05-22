@@ -151,7 +151,7 @@ export default function Dashboard() {
       <ProfileNudge />
 
       <div className="dashboard__performance">
-        <div className="dashboard__controls" style={{ display: "flex", justifyContent: "flex-end", marginBottom: "var(--s-4)" }}>
+        <div className="dashboard__controls" style={{ display: "flex", justifyContent: "flex-end" }}>
           <select
             className="admin-filter"
             value={period}
