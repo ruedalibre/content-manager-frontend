@@ -19,9 +19,10 @@ import BriefList from "../../features/ideas/components/BriefList.tsx";
 import RecipePanel from "../../features/ideas/components/RecipePanel.tsx";
 import EditIdeaModal from "../../features/ideas/components/EditIdeaModal.tsx";
 import StatusBadge from "../../features/ideas/components/StatusBadge.tsx";
-import { downloadBrief } from "../../utils/downloadBrief";
+import { downloadBrief } from "../../utils/downloadBrief.ts";
 import { supabase } from "../../supabaseClient.ts";
 import "./Ideas.scss";
+import { useSubscription } from "../../features/subscription/hooks/useSubscription.ts";
 
 type IdeaForContent = {
   id: string;
@@ -107,6 +108,10 @@ export default function Ideas() {
     message: string;
     onConfirm: () => void;
   } | null>(null);
+  
+  const { plan, isCreator, isFree } = useSubscription();
+  console.log("Subscription:", { plan, isCreator, isFree });
+
 
   const {
     ideas,
