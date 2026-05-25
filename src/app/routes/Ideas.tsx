@@ -21,6 +21,8 @@ import EditIdeaModal from "../../features/ideas/components/EditIdeaModal.tsx";
 import StatusBadge from "../../features/ideas/components/StatusBadge.tsx";
 import { downloadBrief } from "../../utils/downloadBrief.ts";
 import { supabase } from "../../supabaseClient.ts";
+import { useSubscription } from "../../features/subscription/hooks/useSubscription";
+import UpgradePrompt from "../../components/ui/UpgradePrompt";
 import "./Ideas.scss";
 
 type IdeaForContent = {
@@ -144,6 +146,7 @@ export default function Ideas() {
 
   const { platforms } = usePlatforms();
   const { loadFormats } = useFormats();
+  const { canCreateBriefs, isFree, trialActive } = useSubscription();
 
   const toggleSystemTopic = (id: string) => {
     setOpenSystemTopics((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -685,6 +688,15 @@ export default function Ideas() {
             </div>
           </div>
 
+          {/* Upgrade prompt — visible solo en free post-trial */}
+          {isFree && !trialActive && (
+            <UpgradePrompt
+              title={t("upgrade.briefsTitle")}
+              description={t("upgrade.briefsDesc")}
+              compact
+            />
+          )}
+
           {loading && (
             <p className="ideas-loading">{t("ideas.loadingIdeas")}</p>
           )}
@@ -961,20 +973,31 @@ export default function Ideas() {
                                   ? t("ideas.noContentsYet")
                                   : `${contentCount} ${contentCount === 1 ? t("ideas.content") : t("ideas.contents")}`}
                               </span>
-                              <button
-                                className={`btn-generate ${state.generating ? "btn-generate--loading" : ""}`}
-                                onClick={() => handleGenerateRecipe(idea)}
-                                disabled={
-                                  state.generating ||
-                                  !state.platform_id ||
-                                  !state.format
-                                }
-                                type="button"
-                              >
-                                {state.generating
-                                  ? t("recipe.generating")
-                                  : t("recipe.generate")}
-                              </button>
+                              {canCreateBriefs ? (
+                                <button
+                                  className={`btn-generate ${state.generating ? "btn-generate--loading" : ""}`}
+                                  onClick={() => handleGenerateRecipe(idea)}
+                                  disabled={
+                                    state.generating ||
+                                    !state.platform_id ||
+                                    !state.format
+                                  }
+                                  type="button"
+                                >
+                                  {state.generating
+                                    ? t("recipe.generating")
+                                    : t("recipe.generate")}
+                                </button>
+                              ) : (
+                                <button
+                                  className="btn-generate btn-generate--locked"
+                                  type="button"
+                                  disabled
+                                  title={t("upgrade.briefsLocked")}
+                                >
+                                  ✦ {t("recipe.generate")}
+                                </button>
+                              )}
                             </div>
                           </>
                         )}

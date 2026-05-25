@@ -644,5 +644,15 @@
       "action_core": "Considera construir una serie de contenido recurrente alrededor de este tema.",
       "action_diverse": "Enfócate en identificar un foco temático más fuerte."
     }
+  },
+  "upgrade": {
+    "cta": "Obtener Creator",
+    "briefsTitle": "Genera briefs con IA",
+    "briefsDesc": "Los briefs están disponibles en el plan Creator. Tu trial de 14 días incluye acceso completo.",
+    "briefsLocked": "Disponible en plan Creator",
+    "insightsTitle": "Insights con inteligencia artificial",
+    "insightsDesc": "Descubre patrones ocultos en tu contenido con análisis IA. Disponible en el plan Creator.",
+    "reportTitle": "Informe creativo completo",
+    "reportDesc": "Un análisis profundo de tu identidad como creador, generado por IA. Disponible en el plan Creator."
   }
 }

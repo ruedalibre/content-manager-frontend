@@ -8,6 +8,8 @@ import { useIdentityAI } from "../../features/insights/hooks/useIdentityAI.ts";
 import { useCreativeInsights } from "../../features/insights/hooks/useCreativeInsights.ts";
 import { useCreativeReport } from "../../features/insights/hooks/useCreativeReport";
 import { downloadReport } from "../../utils/downloadReport";
+import { useSubscription } from "../../features/subscription/hooks/useSubscription.ts";
+import UpgradePrompt from "../../components/ui/UpgradePrompt.tsx";
 
 import { type AnalyticsInsight } from "../../features/insights/types/insights.types.ts";
 
@@ -112,6 +114,7 @@ function Collapsible({
 
 export default function Identity() {
   const { setTopbarContext } = useOutletContext<OutletContext>();
+  const { canUseAI, isFree, trialActive } = useSubscription();
 
   const { dna, loading: dnaLoading } = useContentDNA();
   const { insights: analyticsInsights } = useAnalyticsInsights("30d");
@@ -353,75 +356,94 @@ export default function Identity() {
         </div>
       </div>
 
-      {/* ── STANDOUT INSIGHTS — siempre visible ── */}
+      {/* ── STANDOUT INSIGHTS — gated por plan ── */}
 
-      {(aiLoading || (aiResult?.standout_insights?.length ?? 0) > 0) && (
-        <section className="identity-section">
-          <span className="section-label">
-            {t("identity.standoutInsights")}
-          </span>
-          <div className="identity-highlights">
-            {aiLoading ? (
-              <>
-                <div className="identity-highlight-card identity-highlight-card--skeleton" />
-                <div className="identity-highlight-card identity-highlight-card--skeleton" />
-              </>
-            ) : (
-              <>
-                {aiResult?.standout_insights.slice(0, 2).map((insight, i) => (
-                  <div key={i} className="identity-highlight-card">
-                    <span className="identity-highlight-card__title">
-                      {insight.title}
-                    </span>
-                    <p>{insight.text}</p>
-                  </div>
-                ))}
-                {getInsight("content_production") && (
-                  <div className="identity-highlight-card">
-                    <p>
-                      {t(
-                        getInsight("content_production")!.insight_key,
-                        getInsight("content_production")!.insight_data ?? {},
-                      )}{" "}
-                      {t(getInsight("content_production")!.strategy_key)}
-                    </p>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </section>
-      )}
+      <section className="identity-section">
+        <span className="section-label">
+          {t("identity.standoutInsights")}
+        </span>
+        {canUseAI ? (
+          (aiLoading || (aiResult?.standout_insights?.length ?? 0) > 0) && (
+            <div className="identity-highlights">
+              {aiLoading ? (
+                <>
+                  <div className="identity-highlight-card identity-highlight-card--skeleton" />
+                  <div className="identity-highlight-card identity-highlight-card--skeleton" />
+                </>
+              ) : (
+                <>
+                  {aiResult?.standout_insights.slice(0, 2).map((insight, i) => (
+                    <div key={i} className="identity-highlight-card">
+                      <span className="identity-highlight-card__title">
+                        {insight.title}
+                      </span>
+                      <p>{insight.text}</p>
+                    </div>
+                  ))}
+                  {getInsight("content_production") && (
+                    <div className="identity-highlight-card">
+                      <p>
+                        {t(
+                          getInsight("content_production")!.insight_key,
+                          getInsight("content_production")!.insight_data ?? {},
+                        )}{" "}
+                        {t(getInsight("content_production")!.strategy_key)}
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          )
+        ) : (
+          isFree && !trialActive && (
+            <UpgradePrompt
+              title={t("upgrade.insightsTitle")}
+              description={t("upgrade.insightsDesc")}
+            />
+          )
+        )}
+      </section>
 
-      {/* ── CREATIVE STYLE — siempre visible ── */}
+      {/* ── CREATIVE STYLE — gated por plan ── */}
 
-      {(aiLoading || (aiResult?.creative_style_tags?.length ?? 0) > 0) && (
-        <section className="identity-section">
-          <span className="section-label">{t("identity.creativeStyle")}</span>
-          <div className="identity-tags">
-            {aiLoading ? (
-              <>
-                {[80, 110, 95, 130, 75].map((w, i) => (
+      <section className="identity-section">
+        <span className="section-label">{t("identity.creativeStyle")}</span>
+        {canUseAI ? (
+          (aiLoading || (aiResult?.creative_style_tags?.length ?? 0) > 0) && (
+            <div className="identity-tags">
+              {aiLoading ? (
+                <>
+                  {[80, 110, 95, 130, 75].map((w, i) => (
+                    <span
+                      key={i}
+                      className="identity-tag identity-tag--skeleton"
+                      style={{ width: w }}
+                    />
+                  ))}
+                </>
+              ) : (
+                aiResult?.creative_style_tags.map((item, i) => (
                   <span
                     key={i}
-                    className="identity-tag identity-tag--skeleton"
-                    style={{ width: w }}
-                  />
-                ))}
-              </>
-            ) : (
-              aiResult?.creative_style_tags.map((item, i) => (
-                <span
-                  key={i}
-                  className={`identity-tag ${item.active ? "identity-tag--active" : ""}`}
-                >
-                  {item.tag}
-                </span>
-              ))
-            )}
-          </div>
-        </section>
-      )}
+                    className={`identity-tag ${item.active ? "identity-tag--active" : ""}`}
+                  >
+                    {item.tag}
+                  </span>
+                ))
+              )}
+            </div>
+          )
+        ) : (
+          isFree && !trialActive && (
+            <div className="identity-tags identity-tags--locked" aria-hidden="true">
+              {["···", "·····", "····", "······", "···"].map((dots, i) => (
+                <span key={i} className="identity-tag identity-tag--locked">{dots}</span>
+              ))}
+            </div>
+          )
+        )}
+      </section>
 
       {/* ── WORTH REFLECTING ON — colapsable ── */}
 
@@ -432,7 +454,13 @@ export default function Identity() {
         isOpen={openSections.reflecting}
         onToggle={() => toggleSection("reflecting")}
       >
-        {creativeInsightsLoading ? (
+        {!canUseAI && isFree && !trialActive ? (
+          <UpgradePrompt
+            title={t("upgrade.insightsTitle")}
+            description={t("upgrade.insightsDesc")}
+            compact
+          />
+        ) : creativeInsightsLoading ? (
           <>
             <div className="identity-insight-card identity-insight-card--skeleton" />
             <div className="identity-insight-card identity-insight-card--skeleton" />
@@ -466,7 +494,12 @@ export default function Identity() {
         isOpen={openSections.deep}
         onToggle={() => toggleSection("deep")}
       >
-        {reportLoading ? (
+        {!canUseAI && isFree && !trialActive ? (
+          <UpgradePrompt
+            title={t("upgrade.reportTitle")}
+            description={t("upgrade.reportDesc")}
+          />
+        ) : reportLoading ? (
           <div className="identity-report-loading">
             <p>{t("common.loading")}</p>
           </div>
