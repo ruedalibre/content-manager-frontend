@@ -644,5 +644,15 @@
       "action_core": "Consider building a recurring content series around this topic.",
       "action_diverse": "Focus on identifying a stronger thematic focus."
     }
+  },
+  "upgrade": {
+    "cta": "Get Creator",
+    "briefsTitle": "Generate AI briefs",
+    "briefsDesc": "Briefs are available on the Creator plan. Your 14-day trial includes full access.",
+    "briefsLocked": "Available on Creator plan",
+    "insightsTitle": "AI-powered insights",
+    "insightsDesc": "Discover hidden patterns in your content with AI analysis. Available on the Creator plan.",
+    "reportTitle": "Full creative report",
+    "reportDesc": "A deep AI-generated analysis of your identity as a creator. Available on the Creator plan."
   }
 }

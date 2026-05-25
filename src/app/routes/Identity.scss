@@ -256,6 +256,13 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-2);
+
+  &--locked {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.4;
+  }
 }
 
 .identity-tag {
@@ -279,6 +286,12 @@
     border: none;
     animation: identity-pulse 1.5s ease-in-out infinite;
     border-radius: var(--r-pill);
+  }
+
+  &--locked {
+    background: var(--bg-muted);
+    color: var(--text-faint);
+    letter-spacing: 0.2em;
   }
 }
 
