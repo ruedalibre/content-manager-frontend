@@ -22,7 +22,8 @@
     "error": "Something went wrong. Please try again.",
     "noData": "No data yet",
     "addToIdeas": "Add to ideas library",
-    "editTopics": "Edit topics"
+    "editTopics": "Edit topics",
+    "close": "Close"
   },
   "nav": {
     "ideas": "Ideas & Topics",
@@ -654,5 +655,38 @@
     "insightsDesc": "Discover hidden patterns in your content with AI analysis. Available on the Creator plan.",
     "reportTitle": "Full creative report",
     "reportDesc": "A deep AI-generated analysis of your identity as a creator. Available on the Creator plan."
+  },
+  "pricing": {
+    "title": "Choose your plan",
+    "subtitle": "Start free — upgrade when you're ready",
+    "free": "Free",
+    "freeSub": "Forever",
+    "creatorMonthly": "Creator · Monthly",
+    "creatorAnnual": "Creator · Annual",
+    "perMonth": "/ mo",
+    "perYear": "/ year",
+    "monthlySub": "Cancel anytime",
+    "annualSaving": "Save $65 vs monthly",
+    "launchPrice": "Launch price",
+    "flexible": "Flexible",
+    "recommended": "Recommended",
+    "currentPlan": "Current plan",
+    "trialCta": "Start 14-day free trial",
+    "includes": "Includes",
+    "everythingFree": "Everything in Free, plus",
+    "footer": "No credit card for trial · Cancel anytime · Prices in USD",
+    "feature": {
+      "ideas10": "Up to 10 ideas",
+      "ideasUnlimited": "Unlimited ideas",
+      "contentsUnlimited": "Unlimited contents",
+      "dashboard": "Activity dashboard",
+      "briefsTrial": "3 briefs during trial",
+      "briefsUnlimited": "Unlimited AI briefs",
+      "dnaBasic": "Basic DNA without AI",
+      "dnaFull": "Full DNA + AI",
+      "insightsAI": "AI insights",
+      "report": "Creative report",
+      "ideaGenerator": "Idea generator"
+    }
   }
 }
