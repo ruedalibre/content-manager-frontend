@@ -1,11 +1,13 @@
 import { useTranslation } from "react-i18next";
 import { usePricingModal } from "../context/PricingModalContext";
+import { useCheckout } from "../hooks/useCheckout";
 import { X }  from "lucide-react";
 import "./PricingModal.scss";
 
 export default function PricingModal() {
   const { t } = useTranslation();
   const { isOpen, close } = usePricingModal();
+  const { startCheckout, loading, error } = useCheckout();
 
   if (!isOpen) return null;
 
@@ -101,8 +103,13 @@ export default function PricingModal() {
             <div className="pricing-plan__sub">
               <span>{t("pricing.monthlySub")}</span>
             </div>
-            <button className="pricing-plan__cta pricing-plan__cta--primary" type="button">
-              {t("pricing.trialCta")}
+            <button
+              className="pricing-plan__cta pricing-plan__cta--primary"
+              type="button"
+              disabled={loading}
+              onClick={() => startCheckout("monthly")}
+            >
+              {loading ? t("common.loading") : t("pricing.trialCta")}
             </button>
             <p className="pricing-plan__features-label">{t("pricing.everythingFree")}</p>
             <ul className="pricing-plan__features">
@@ -157,8 +164,13 @@ export default function PricingModal() {
               <span className="pricing-plan__sub--saving">{t("pricing.annualSaving")}</span>
               <span className="pricing-plan__sub--launch">{t("pricing.launchPrice")}</span>
             </div>
-            <button className="pricing-plan__cta pricing-plan__cta--accent" type="button">
-              {t("pricing.trialCta")}
+            <button
+              className="pricing-plan__cta pricing-plan__cta--accent"
+              type="button"
+              disabled={loading}
+              onClick={() => startCheckout("annual_launch")}
+            >
+              {loading ? t("common.loading") : t("pricing.trialCta")}
             </button>
             <p className="pricing-plan__features-label">{t("pricing.everythingFree")}</p>
             <ul className="pricing-plan__features">
@@ -198,6 +210,12 @@ export default function PricingModal() {
           </div>
 
         </div>
+
+        {error && (
+          <p style={{ fontSize: "11px", color: "var(--danger)", textAlign: "center", marginTop: "8px", padding: "0 var(--s-6)" }}>
+            {error}
+          </p>
+        )}
 
         {/* Footer */}
         <div className="pricing-modal__footer">

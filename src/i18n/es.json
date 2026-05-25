@@ -656,6 +656,10 @@
     "reportTitle": "Informe creativo completo",
     "reportDesc": "Un análisis profundo de tu identidad como creador, generado por IA. Disponible en el plan Creator."
   },
+  "checkout": {
+    "successMessage": "¡Bienvenido al plan Creator! Tu suscripción está activa.",
+    "cancelledMessage": "Proceso de pago cancelado. Puedes suscribirte cuando quieras."
+  },
   "pricing": {
     "title": "Elige tu plan",
     "subtitle": "Empieza gratis — actualiza cuando lo necesites",
