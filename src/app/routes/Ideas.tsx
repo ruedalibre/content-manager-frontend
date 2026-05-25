@@ -22,7 +22,6 @@ import StatusBadge from "../../features/ideas/components/StatusBadge.tsx";
 import { downloadBrief } from "../../utils/downloadBrief.ts";
 import { supabase } from "../../supabaseClient.ts";
 import "./Ideas.scss";
-import { useSubscription } from "../../features/subscription/hooks/useSubscription.ts";
 
 type IdeaForContent = {
   id: string;
@@ -56,11 +55,15 @@ export default function Ideas() {
     return () => setTopbarContext(null);
   }, [setTopbarContext, t]);
 
-  const [activeTab, setActiveTab] = useState<"ideas" | "topics" | "archived">("ideas");
+  const [activeTab, setActiveTab] = useState<"ideas" | "topics" | "archived">(
+    "ideas",
+  );
   const [archivedIdeas, setArchivedIdeas] = useState<Idea[]>([]);
   const [archivedCount, setArchivedCount] = useState(0);
   const [loadingArchived, setLoadingArchived] = useState(false);
-  const [expandedArchived, setExpandedArchived] = useState<Set<string>>(new Set());
+  const [expandedArchived, setExpandedArchived] = useState<Set<string>>(
+    new Set(),
+  );
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "manual" | "generated">("all");
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -108,10 +111,6 @@ export default function Ideas() {
     message: string;
     onConfirm: () => void;
   } | null>(null);
-  
-  const { plan, isCreator, isFree } = useSubscription();
-  console.log("Subscription:", { plan, isCreator, isFree });
-
 
   const {
     ideas,
@@ -186,20 +185,25 @@ export default function Ideas() {
           .filter((s) => s.status !== "discarded")
           .sort(
             (a, b) =>
-              new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+              new Date(b.created_at).getTime() -
+              new Date(a.created_at).getTime(),
           )[0];
 
         if (!latest) {
           // Sin sesiones activas — inicializar vacío
           updated[idea.id] = {
-            platform_id: "", format: "", content_role: "",
-            generating: false, error: null,
+            platform_id: "",
+            format: "",
+            content_role: "",
+            generating: false,
+            error: null,
           };
           return;
         }
 
         const isToday =
-          new Date(latest.created_at).toDateString() === new Date().toDateString();
+          new Date(latest.created_at).toDateString() ===
+          new Date().toDateString();
 
         // Si la última sesión es de hoy → dejar campos vacíos (ya generó hoy)
         // Si es anterior → pre-llenar para conveniencia
@@ -411,7 +415,11 @@ export default function Ideas() {
       const selectedTopics = topics
         .filter((t) => selectedTopicIds.includes(t.id))
         .map((t) => ({ id: t.id, name: t.name }));
-      await updateIdeaTopics(editingIdeaTopics, selectedTopicIds, selectedTopics);
+      await updateIdeaTopics(
+        editingIdeaTopics,
+        selectedTopicIds,
+        selectedTopics,
+      );
       setEditingIdeaTopics(null);
     } catch {
       setActionError(t("common.failedUpdate"));
@@ -518,7 +526,9 @@ export default function Ideas() {
   useEffect(() => {
     const fetchArchivedCount = async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
         if (!user) return;
 
         const { data: userRecord } = await supabase
@@ -782,7 +792,9 @@ export default function Ideas() {
                                 disabled={editSaving || !editTitle.trim()}
                                 type="button"
                               >
-                                {editSaving ? t("common.saving") : t("common.save")}
+                                {editSaving
+                                  ? t("common.saving")
+                                  : t("common.save")}
                               </button>
                             </div>
                           </div>
@@ -972,9 +984,12 @@ export default function Ideas() {
                       <BriefList
                         sessions={idea.sessions ?? []}
                         generating={state.generating}
-                        onOpenSession={(session) => setExpandedSession({ session, idea })}
+                        onOpenSession={(session) =>
+                          setExpandedSession({ session, idea })
+                        }
                         platformName={(platformId) =>
-                          platforms.find((p) => p.id === platformId)?.name ?? "—"
+                          platforms.find((p) => p.id === platformId)?.name ??
+                          "—"
                         }
                       />
                     </div>
@@ -1108,7 +1123,9 @@ export default function Ideas() {
                                           disabled={savingTopic}
                                           type="button"
                                         >
-                                          {savingTopic ? t("common.saving") : t("common.save")}
+                                          {savingTopic
+                                            ? t("common.saving")
+                                            : t("common.save")}
                                         </button>
                                       </div>
                                     </div>
@@ -1202,8 +1219,10 @@ export default function Ideas() {
                           <span className="cs-topic__stats">
                             {topic.ideas.length} {t("ideas.ideasCount")} ·{" "}
                             {topic.ideas.reduce(
-                              (s, i) => s + i.contents.length, 0
-                            )} {t("ideas.contents")}
+                              (s, i) => s + i.contents.length,
+                              0,
+                            )}{" "}
+                            {t("ideas.contents")}
                           </span>
                         </div>
 
@@ -1289,8 +1308,9 @@ export default function Ideas() {
             <div className="archived-list">
               {archivedIdeas.map((idea) => {
                 const isExpanded = expandedArchived.has(idea.id);
-                const activeSessions = (idea.sessions ?? [])
-                  .filter((s) => s.status !== "discarded");
+                const activeSessions = (idea.sessions ?? []).filter(
+                  (s) => s.status !== "discarded",
+                );
 
                 return (
                   <div key={idea.id} className="archived-item">
@@ -1299,7 +1319,11 @@ export default function Ideas() {
                       onClick={() =>
                         setExpandedArchived((prev) => {
                           const next = new Set(prev);
-                          next.has(idea.id) ? next.delete(idea.id) : next.add(idea.id);
+                          if (next.has(idea.id)) {
+                            next.delete(idea.id);
+                          } else {
+                            next.add(idea.id);
+                          }
                           return next;
                         })
                       }
@@ -1334,7 +1358,9 @@ export default function Ideas() {
                                 closeConfirm();
                                 try {
                                   await restoreIdea(idea.id);
-                                  setArchivedCount((prev) => Math.max(0, prev - 1));
+                                  setArchivedCount((prev) =>
+                                    Math.max(0, prev - 1),
+                                  );
                                   setArchivedIdeas((prev) =>
                                     prev.filter((i) => i.id !== idea.id),
                                   );
@@ -1361,8 +1387,9 @@ export default function Ideas() {
                         ) : (
                           activeSessions.map((session) => {
                             const platform =
-                              platforms.find((p) => p.id === session.platform_id)
-                                ?.name ?? "—";
+                              platforms.find(
+                                (p) => p.id === session.platform_id,
+                              )?.name ?? "—";
                             const format = t(`formats.${session.format}`, {
                               defaultValue: session.format,
                             });
@@ -1372,12 +1399,20 @@ export default function Ideas() {
                                 })
                               : null;
                             return (
-                              <div key={session.id} className="archived-brief-row">
+                              <div
+                                key={session.id}
+                                className="archived-brief-row"
+                              >
                                 <div className="archived-brief-row__dot" />
                                 <span className="archived-brief-row__combo">
-                                  {[platform, format, role].filter(Boolean).join(" · ")}
+                                  {[platform, format, role]
+                                    .filter(Boolean)
+                                    .join(" · ")}
                                 </span>
-                                <span className="archived-brief-row__dots" aria-hidden="true" />
+                                <span
+                                  className="archived-brief-row__dots"
+                                  aria-hidden="true"
+                                />
                                 <StatusBadge status={session.status} />
                               </div>
                             );

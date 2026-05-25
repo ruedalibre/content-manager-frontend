@@ -24,7 +24,7 @@ type RecipePanelProps = {
   onApprove: () => void;
   onDiscard: () => void;
   onCreateContent: () => void;
-  onDownload: () => void;
+  onDownload: () => void | Promise<void>;
   saveFeedback: (
     sessionId: string,
     feedback: Record<string, number>,
