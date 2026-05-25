@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { usePricingModal } from "../../features/subscription/context/PricingModalContext";
+import { usePricingModal } from "../../features/subscription/context/PricingModalContext.tsx";
 import "./UpgradePrompt.scss";
 
 type Props = {
