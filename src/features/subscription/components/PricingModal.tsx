@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { usePricingModal } from "../context/PricingModalContext";
+import { X }  from "lucide-react";
 import "./PricingModal.scss";
 
 export default function PricingModal() {
@@ -31,7 +32,7 @@ export default function PricingModal() {
             type="button"
             aria-label={t("common.close")}
           >
-            <i className="ti ti-x" aria-hidden="true" />
+            <X size={16} aria-hidden={true} />
           </button>
         </div>
 
