@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { usePricingModal } from "../../features/subscription/context/PricingModalContext";
 import "./UpgradePrompt.scss";
 
 type Props = {
@@ -9,6 +10,7 @@ type Props = {
 
 export default function UpgradePrompt({ title, description, compact = false }: Props) {
   const { t } = useTranslation();
+  const { open } = usePricingModal();
 
   return (
     <div className={`upgrade-prompt ${compact ? "upgrade-prompt--compact" : ""}`}>
@@ -20,10 +22,7 @@ export default function UpgradePrompt({ title, description, compact = false }: P
       <button
         className="upgrade-prompt__cta btn-primary"
         type="button"
-        onClick={() => {
-          // Por ahora scroll al top — en el paso 3 navegará a /pricing
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        }}
+        onClick={open}
       >
         {t("upgrade.cta")}
       </button>
