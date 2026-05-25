@@ -28,6 +28,7 @@ type OutletContext = {
 
 export default function Dashboard() {
   const [period, setPeriod] = useState<"7d" | "30d" | "90d">("30d");
+  const [checkoutStatus, setCheckoutStatus] = useState<"success" | "cancelled" | null>(null);
 
   const {
     data,
@@ -44,6 +45,19 @@ export default function Dashboard() {
   const { t } = useTranslation();
   const { setTopbarContext } = useOutletContext<OutletContext>();
   const navigate = useNavigate();
+
+  /* =========================
+     CHECKOUT RETURN
+  ========================= */
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const status = params.get("checkout");
+    if (status === "success" || status === "cancelled") {
+      setCheckoutStatus(status as "success" | "cancelled");
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
 
   /* =========================
      MICRO CONTEXT
@@ -164,6 +178,33 @@ export default function Dashboard() {
             <option value="90d">{t("activity.last90days")}</option>
           </select>
         </div>
+
+        {checkoutStatus === "success" && (
+          <div style={{
+            padding: "12px 16px",
+            background: "var(--success-soft)",
+            border: "1px solid rgba(74,138,110,0.2)",
+            borderRadius: "var(--r-3)",
+            fontSize: "var(--fs-13)",
+            color: "var(--success)",
+            marginBottom: "var(--s-4)",
+          }}>
+            🎉 {t("checkout.successMessage")}
+          </div>
+        )}
+        {checkoutStatus === "cancelled" && (
+          <div style={{
+            padding: "12px 16px",
+            background: "var(--bg-muted)",
+            border: "1px solid var(--border)",
+            borderRadius: "var(--r-3)",
+            fontSize: "var(--fs-13)",
+            color: "var(--text-secondary)",
+            marginBottom: "var(--s-4)",
+          }}>
+            {t("checkout.cancelledMessage")}
+          </div>
+        )}
 
         <KPISection data={data} growthVisual={growthVisual} />
 

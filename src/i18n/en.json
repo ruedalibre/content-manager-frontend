@@ -656,6 +656,10 @@
     "reportTitle": "Full creative report",
     "reportDesc": "A deep AI-generated analysis of your identity as a creator. Available on the Creator plan."
   },
+  "checkout": {
+    "successMessage": "Welcome to the Creator plan! Your subscription is now active.",
+    "cancelledMessage": "Payment process cancelled. You can subscribe whenever you're ready."
+  },
   "pricing": {
     "title": "Choose your plan",
     "subtitle": "Start free — upgrade when you're ready",
