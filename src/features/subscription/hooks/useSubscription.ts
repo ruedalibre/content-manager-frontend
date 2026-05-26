@@ -62,9 +62,9 @@ export function useSubscription() {
   }, []);
 
   // Helpers de feature gating
-  const canUseAI = subscription.is_creator;
-  const canCreateBriefs = subscription.is_creator;
-  
+  const canUseAI = subscription.is_creator || subscription.trial_active;
+  const canCreateBriefs = subscription.is_creator || subscription.trial_active;
+
   return {
     subscription,
     loading,
