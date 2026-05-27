@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useOutletContext } from "react-router-dom";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
+import { useSubscription } from "../../features/subscription/hooks/useSubscription";
+import { useCheckout } from "../../features/subscription/hooks/useCheckout";
+import { usePricingModal } from "../../features/subscription/context/PricingModalContext";
 import LanguageToggle from "../../components/ui/LanguageToggle.tsx";
 import { supabase } from "../../supabaseClient";
 import "./Profile.scss";
@@ -26,6 +29,9 @@ export default function Profile() {
   }, [setTopbarContext, t]);
 
   const { profile, updateProfile, updateLanguage } = useUserProfile();
+  const { isCreator, trialActive, trialEndsAt } = useSubscription();
+  const { openPortal, loading: portalLoading } = useCheckout();
+  const { open: openPricing } = usePricingModal();
 
   const [email, setEmail] = useState("");
   const [saving, setSaving] = useState(false);
@@ -133,6 +139,58 @@ export default function Profile() {
                 : "—"}
             </span>
           </div>
+        </div>
+      </section>
+
+      {/* Sección: Plan y facturación */}
+      <section className="profile-section">
+        <span className="section-label">{t("profile.billingSection")}</span>
+        <div className="profile-card">
+
+          {/* Plan actual */}
+          <div className="profile-field profile-field--readonly">
+            <span className="profile-field__label">{t("profile.currentPlan")}</span>
+            <div className="profile-field__plan">
+              <span className={`profile-plan-badge ${isCreator ? "profile-plan-badge--creator" : "profile-plan-badge--free"}`}>
+                {isCreator ? "Creator" : "Free"}
+              </span>
+              {trialActive && trialEndsAt && (
+                <span className="profile-plan-trial">
+                  {t("profile.trialEnds", {
+                    date: new Date(trialEndsAt).toLocaleDateString(),
+                  })}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {/* Acción según plan */}
+          <div className="profile-field profile-field--readonly">
+            <span className="profile-field__label">
+              {isCreator ? t("profile.manageSubscription") : t("profile.upgradeLabel")}
+            </span>
+            <div>
+              {isCreator ? (
+                <button
+                  className="btn-secondary"
+                  type="button"
+                  onClick={openPortal}
+                  disabled={portalLoading}
+                >
+                  {portalLoading ? t("common.loading") : t("profile.manageSubscriptionCta")}
+                </button>
+              ) : (
+                <button
+                  className="btn-primary"
+                  type="button"
+                  onClick={openPricing}
+                >
+                  {t("profile.upgradeCta")}
+                </button>
+              )}
+            </div>
+          </div>
+
         </div>
       </section>
 
