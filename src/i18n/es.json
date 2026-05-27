@@ -69,7 +69,14 @@
       "analyst": "Analista",
       "coach": "Coach",
       "artist": "Artista"
-    }
+    },
+    "billingSection": "Plan y facturación",
+    "currentPlan": "Plan actual",
+    "trialEnds": "Trial hasta el {{date}}",
+    "manageSubscription": "Suscripción",
+    "manageSubscriptionCta": "Gestionar suscripción",
+    "upgradeLabel": "Actualizar plan",
+    "upgradeCta": "Obtener Creator"
   },
   "footer": {
     "terms": "Términos de Servicio",
