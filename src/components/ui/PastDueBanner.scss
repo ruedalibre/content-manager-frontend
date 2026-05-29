@@ -1,0 +1,52 @@
+.past-due-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  padding: var(--s-3) var(--s-5);
+  background: var(--danger-soft, #fef2f2);
+  border-bottom: 1px solid rgba(220, 38, 38, 0.15);
+
+  &__content {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    flex: 1;
+  }
+
+  &__icon {
+    font-size: var(--fs-16);
+    flex-shrink: 0;
+  }
+
+  &__text {
+    font-size: var(--fs-13);
+    color: var(--danger, #dc2626);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  &__cta {
+    font-size: var(--fs-12);
+    font-weight: 500;
+    font-family: var(--font-sans);
+    padding: 5px 14px;
+    border-radius: var(--r-3);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+    background: none;
+    color: var(--danger, #dc2626);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background var(--transition-fast);
+
+    &:hover {
+      background: rgba(220, 38, 38, 0.06);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}

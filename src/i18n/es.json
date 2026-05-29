@@ -101,19 +101,19 @@
     "taglineSub": "Una plataforma para quienes prefieren expandir su capacidad creativa antes que seguir una tendencia.",
     "accountCreated": "Cuenta creada. Inicia sesión para comenzar.",
     "quote": "Lo opuesto a un algoritmo es un punto de vista.",
-    "forgotPassword":   "¿Olvidaste tu contraseña?",
-    "forgotTitle":      "Recuperar contraseña",
-    "forgotSub":        "Te enviaremos un link para restablecer tu contraseña",
-    "sendReset":        "Enviar link de recuperación",
-    "sendingReset":     "Enviando...",
-    "resetEmailSent":   "Revisa tu correo — te enviamos el link de recuperación",
-    "backToSignIn":     "Volver al inicio de sesión",
-    "resetTitle":       "Nueva contraseña",
-    "resetSub":         "Elige una contraseña nueva para tu cuenta",
-    "newPassword":      "Nueva contraseña",
-    "updatePassword":   "Actualizar contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "forgotTitle": "Recuperar contraseña",
+    "forgotSub": "Te enviaremos un link para restablecer tu contraseña",
+    "sendReset": "Enviar link de recuperación",
+    "sendingReset": "Enviando...",
+    "resetEmailSent": "Revisa tu correo — te enviamos el link de recuperación",
+    "backToSignIn": "Volver al inicio de sesión",
+    "resetTitle": "Nueva contraseña",
+    "resetSub": "Elige una contraseña nueva para tu cuenta",
+    "newPassword": "Nueva contraseña",
+    "updatePassword": "Actualizar contraseña",
     "updatingPassword": "Actualizando...",
-    "passwordUpdated":  "Contraseña actualizada — redirigiendo...",
+    "passwordUpdated": "Contraseña actualizada — redirigiendo...",
     "errors": {
       "invalidCredentials": "Correo o contraseña incorrectos.",
       "passwordMismatch": "Las contraseñas no coinciden.",
@@ -414,9 +414,18 @@
       "time_availability": {
         "question": "¿Cuánto tiempo dedicas habitualmente a crear contenido cada semana?",
         "options": {
-          "less_than_2h": { "label": "Menos de 2 horas", "desc": "Creo cuando puedo" },
-          "2_to_5h": { "label": "Entre 2 y 5 horas", "desc": "Tengo momentos definidos" },
-          "more_than_5h": { "label": "Más de 5 horas", "desc": "Es una actividad central en mi semana" },
+          "less_than_2h": {
+            "label": "Menos de 2 horas",
+            "desc": "Creo cuando puedo"
+          },
+          "2_to_5h": {
+            "label": "Entre 2 y 5 horas",
+            "desc": "Tengo momentos definidos"
+          },
+          "more_than_5h": {
+            "label": "Más de 5 horas",
+            "desc": "Es una actividad central en mi semana"
+          },
           "variable": { "label": "Variable", "desc": "No tengo un ritmo fijo" }
         }
       },
@@ -424,18 +433,39 @@
         "question": "¿Cómo describes tu proceso de producción actual?",
         "options": {
           "solo": { "label": "Trabajo solo", "desc": "Hago todo yo mismo" },
-          "occasional_help": { "label": "Ayuda ocasional", "desc": "Alguien me apoya cuando puede" },
-          "small_team": { "label": "Equipo pequeño", "desc": "Hay roles definidos" },
-          "agency": { "label": "Agencia o equipo externo", "desc": "Trabajo con apoyo profesional" }
+          "occasional_help": {
+            "label": "Ayuda ocasional",
+            "desc": "Alguien me apoya cuando puede"
+          },
+          "small_team": {
+            "label": "Equipo pequeño",
+            "desc": "Hay roles definidos"
+          },
+          "agency": {
+            "label": "Agencia o equipo externo",
+            "desc": "Trabajo con apoyo profesional"
+          }
         }
       },
       "idea_sources": {
         "question": "¿De dónde vienen principalmente tus ideas para crear contenido?",
         "options": {
-          "content_consumption": { "label": "De lo que leo, veo o escucho", "desc": "Me nutro de contenido de otros" },
-          "personal_experience": { "label": "De mi experiencia personal", "desc": "Mi vivencia es mi materia prima" },
-          "community": { "label": "De conversaciones con mi audiencia", "desc": "Mi comunidad me inspira" },
-          "trends": { "label": "De tendencias en redes sociales", "desc": "Respondo a lo que está pasando" }
+          "content_consumption": {
+            "label": "De lo que leo, veo o escucho",
+            "desc": "Me nutro de contenido de otros"
+          },
+          "personal_experience": {
+            "label": "De mi experiencia personal",
+            "desc": "Mi vivencia es mi materia prima"
+          },
+          "community": {
+            "label": "De conversaciones con mi audiencia",
+            "desc": "Mi comunidad me inspira"
+          },
+          "trends": {
+            "label": "De tendencias en redes sociales",
+            "desc": "Respondo a lo que está pasando"
+          }
         }
       },
       "referents": {
@@ -666,6 +696,11 @@
   "checkout": {
     "successMessage": "¡Bienvenido al plan Creator! Tu suscripción está activa.",
     "cancelledMessage": "Proceso de pago cancelado. Puedes suscribirte cuando quieras."
+  },
+
+  "billing": {
+    "pastDueMessage": "Tu último pago falló. Actualiza tu método de pago para mantener el acceso al plan Creator.",
+    "pastDueCta": "Actualizar método de pago"
   },
   "pricing": {
     "title": "Elige tu plan",

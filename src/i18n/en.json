@@ -667,6 +667,11 @@
     "successMessage": "Welcome to the Creator plan! Your subscription is now active.",
     "cancelledMessage": "Payment process cancelled. You can subscribe whenever you're ready."
   },
+
+  "billing": {
+  "pastDueMessage": "Tu último pago falló. Actualiza tu método de pago para mantener el acceso al plan Creator.",
+  "pastDueCta": "Actualizar método de pago"
+},
   "pricing": {
     "title": "Choose your plan",
     "subtitle": "Start free — upgrade when you're ready",
