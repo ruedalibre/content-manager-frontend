@@ -63,10 +63,13 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       setLoading(true);
       setError(null);
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
+      const session = await getSession();
+      if (!session) {
+        setLoading(false);
+        return;
+      }
+
+      const user = session.user;
 
       const { data: userRecord } = await supabase
         .from("users")
@@ -93,8 +96,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
         return;
       }
 
-      const session = await getSession();
-      const headers = { Authorization: `Bearer ${session?.access_token}` };
+      const headers = { Authorization: `Bearer ${session.access_token}` };
 
       // Cargar conteos, topics y sesiones en paralelo
       const [countsRes, sessionsRes, ...topicsResponses] = await Promise.all([
@@ -485,10 +487,10 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
   const loadArchivedIdeas = async (): Promise<Idea[]> => {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return [];
+      const session = await getSession();
+      if (!session) return [];
+
+      const user = session.user;
 
       const { data: userRecord } = await supabase
         .from("users")
@@ -507,8 +509,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
       if (error || !data) return [];
 
-      const session = await getSession();
-      const headers = { Authorization: `Bearer ${session?.access_token}` };
+      const headers = { Authorization: `Bearer ${session.access_token}` };
 
       const sessionsRes = await fetch(`${base}/me-creative-sessions`, {
         headers,
