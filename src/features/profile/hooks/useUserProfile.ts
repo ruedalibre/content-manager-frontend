@@ -61,8 +61,13 @@ export function useUserProfile() {
       setError(null);
 
       const session = await getSession();
+      if (!session) {
+        setLoading(false);
+        return;
+      }
+
       const res = await fetch(`${base}/me-user-profile`, {
-        headers: { Authorization: `Bearer ${session?.access_token}` },
+        headers: { Authorization: `Bearer ${session.access_token}` },
       });
 
       if (!res.ok) throw new Error("Failed to load profile");
