@@ -9,6 +9,7 @@ import WelcomeScreen from "../../features/profile/components/WelcomeScreen.tsx";
 import TourInvitation from "../../features/profile/components/TourInvitation.tsx";
 import GuidedTour from "../../features/profile/components/GuidedTour.tsx";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile.ts";
+import PastDueBanner from "../../components/ui/PastDueBanner";
 
 export default function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -93,6 +94,8 @@ export default function AppLayout() {
           onMenuClick={() => setIsSidebarOpen(true)}
           context={topbarContext}
         />
+
+        <PastDueBanner />
 
         <main className="app-layout__main">
           <Outlet context={{ setTopbarContext, isAdmin }} />
