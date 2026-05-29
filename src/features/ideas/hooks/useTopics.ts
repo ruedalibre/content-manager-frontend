@@ -27,9 +27,13 @@ export function useTopics() {
       setLoading(true);
       setError(null);
       const session = await getSession();
+      if (!session) {
+        setLoading(false);
+        return;
+      }
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-topics`,
-        { headers: { Authorization: `Bearer ${session?.access_token}` } },
+        { headers: { Authorization: `Bearer ${session.access_token}` } },
       );
       if (!res.ok) throw new Error("Failed to load topics");
       const data = await res.json();
