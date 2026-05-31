@@ -83,6 +83,21 @@ export default function Profile() {
       if (form.preferred_language !== profile?.preferred_language) {
         await updateLanguage(form.preferred_language as "en" | "es");
         i18n.changeLanguage(form.preferred_language);
+
+        // Invalidar caché de IA para que Identity regenere en la próxima visita
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          void (async () => {
+            try {
+              await supabase
+                .from("identity_insights_cache")
+                .update({ user_lang: `stale_${form.preferred_language}` })
+                .eq("user_id", session.user.id);
+            } catch {
+              // silent — best effort
+            }
+          })();
+        }
       }
       await updateProfile({
         display_name:      form.display_name || null,
