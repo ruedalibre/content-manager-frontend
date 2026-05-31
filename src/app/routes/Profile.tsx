@@ -87,12 +87,16 @@ export default function Profile() {
         // Invalidar caché de IA para que Identity regenere en la próxima visita
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
-          supabase
-            .from("identity_insights_cache")
-            .update({ user_lang: `stale_${form.preferred_language}` })
-            .eq("user_id", session.user.id)
-            .then(() => {})
-            .catch(() => {});
+          void (async () => {
+            try {
+              await supabase
+                .from("identity_insights_cache")
+                .update({ user_lang: `stale_${form.preferred_language}` })
+                .eq("user_id", session.user.id);
+            } catch {
+              // silent — best effort
+            }
+          })();
         }
       }
       await updateProfile({
