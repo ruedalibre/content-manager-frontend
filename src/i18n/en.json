@@ -138,7 +138,7 @@
     "noIdeas": "No ideas yet. Create your first one above.",
     "noTopicsMatch": "No topics match your search.",
     "noTopics": "No topics yet. Add your first one above.",
-    "generated": "Generated",
+    "generated": "Suggested",
     "manual": "Manual",
     "contents": "contents",
     "content": "content",
@@ -212,7 +212,7 @@
     "createFromCombination": "Create from Combination",
     "titlePlaceholder": "Title",
     "descriptionPlaceholder": "Add some context or additional details (optional)",
-    "locationPlaceholder": "Location",
+    "locationPlaceholder": "Location (e.g. phone, laptop, hard drive, Google Drive...)",
     "noContents": "No contents yet",
     "addIdea": "Add idea",
     "creating": "Creating...",
@@ -384,7 +384,7 @@
   "status": {
     "generated": "Draft",
     "approved": "Approved",
-    "converted": "Converted",
+    "converted": "In production",
     "implemented": "Implemented",
     "discarded": "Discarded",
     "draft": "Draft",
@@ -669,8 +669,8 @@
   },
 
   "billing": {
-  "pastDueMessage": "Tu último pago falló. Actualiza tu método de pago para mantener el acceso al plan Creator.",
-  "pastDueCta": "Actualizar método de pago"
+  "pastDueMessage": "Your last payment failed. Update your payment method to keep access to the Creator plan.",
+  "pastDueCta": "Update payment method"
 },
   "pricing": {
     "title": "Choose your plan",
