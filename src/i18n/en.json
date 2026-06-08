@@ -183,7 +183,8 @@
     "confirmArchiveIdea": "Archive idea",
     "confirmArchiveIdeaMessage": "The idea and its briefs will move to the Archived tab. You can restore it at any time.",
     "confirmRestore": "Restore idea",
-    "confirmRestoreMessage": "The idea will return to your active ideas list."
+    "confirmRestoreMessage": "The idea will return to your active ideas list.",
+    "editIdeaTitle": "Edit idea"
   },
   "formats": {
     "image": "Image",

@@ -183,7 +183,8 @@
     "confirmArchiveIdea": "Archivar idea",
     "confirmArchiveIdeaMessage": "La idea y sus briefs se moverán a la pestaña Archivadas. Podrás restaurarla en cualquier momento.",
     "confirmRestore": "Restaurar idea",
-    "confirmRestoreMessage": "La idea volverá a aparecer en tu lista activa de ideas."
+    "confirmRestoreMessage": "La idea volverá a aparecer en tu lista activa de ideas.",
+    "editIdeaTitle": "Editar idea"
   },
   "formats": {
     "image": "Imagen",
