@@ -1,4 +1,5 @@
 import { type Idea } from "../hooks/useIdeas.ts";
+import { useTranslation } from "react-i18next";
 
 type EditIdeaModalProps = {
   idea: Idea;
@@ -22,10 +23,11 @@ export default function EditIdeaModal({
   onSave,
   onCancel,
 }: EditIdeaModalProps) {
+  const { t } = useTranslation();
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h3>Edit Idea</h3>
+        <h3>{t("ideas.editIdeaTitle")}</h3>
         <input
           value={editTitle}
           onChange={(e) => onTitleChange(e.target.value)}
