@@ -89,15 +89,6 @@ export default function Ideas() {
   const [savingTopic, setSavingTopic] = useState(false);
   const [topicSearch, setTopicSearch] = useState("");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
-  const [expandedLetters, setExpandedLetters] = useState<
-    Record<string, boolean>
-  >({});
-  const [openSystemTopics, setOpenSystemTopics] = useState<
-    Record<string, boolean>
-  >({});
-  const [openSystemIdeas, setOpenSystemIdeas] = useState<
-    Record<string, boolean>
-  >({});
   const [actionError, setActionError] = useState<string | null>(null);
   const [recipeState, setRecipeState] = useState<RecipeState>({});
   const [expandedSession, setExpandedSession] = useState<{
@@ -142,37 +133,11 @@ export default function Ideas() {
     archiveTopic,
   } = useTopics();
 
-  const { topics: systemTopics, loading: contentSystemLoading } =
-    useContentSystem();
+  const { topics: systemTopics } = useContentSystem();
 
   const { platforms } = usePlatforms();
   const { loadFormats } = useFormats();
   const { canCreateBriefs, isFree, trialActive } = useSubscription();
-
-  const toggleSystemTopic = (id: string) => {
-    setOpenSystemTopics((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const toggleSystemIdea = (id: string) => {
-    setOpenSystemIdeas((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const toggleExpandLetter = (letter: string) => {
-    setExpandedLetters((prev) => ({ ...prev, [letter]: !prev[letter] }));
-  };
-
-  const chunkIntoColumns = (
-    items: typeof topics,
-    maxPerCol: number,
-    maxCols: number,
-  ) => {
-    const columns: (typeof topics)[] = [];
-    for (let i = 0; i < items.length; i += maxPerCol) {
-      if (columns.length >= maxCols) break;
-      columns.push(items.slice(i, i + maxPerCol));
-    }
-    return columns;
-  };
 
   useEffect(() => {
     if (!ideas.length) return;
@@ -272,16 +237,6 @@ export default function Ideas() {
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([letter, items]) => ({ letter, items }));
   })();
-
-  const filteredSystemTopics = systemTopics.filter((t) => {
-    if (topicSearch) {
-      return t.name.toLowerCase().includes(topicSearch.toLowerCase());
-    }
-    if (selectedLetter) {
-      return normalizeFirstLetter(t.name) === selectedLetter;
-    }
-    return true;
-  });
 
   const getRecipeStateForIdea = (ideaId: string) =>
     recipeState[ideaId] ?? {
