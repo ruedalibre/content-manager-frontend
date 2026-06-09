@@ -49,8 +49,12 @@ function InsightExpander({
       <button
         className="identity-insight-toggle"
         onClick={() => onToggle(code)}
+        type="button"
       >
         {expanded[code] ? t("identity.hideInsight") : t("identity.seeInsight")}
+        <span className={`identity-insight-toggle__arrow${expanded[code] ? " identity-insight-toggle__arrow--open" : ""}`}>
+          ▾
+        </span>
       </button>
 
       {expanded[code] && (
