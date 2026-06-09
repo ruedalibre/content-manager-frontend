@@ -184,7 +184,8 @@
     "confirmArchiveIdeaMessage": "La idea y sus briefs se moverán a la pestaña Archivadas. Podrás restaurarla en cualquier momento.",
     "confirmRestore": "Restaurar idea",
     "confirmRestoreMessage": "La idea volverá a aparecer en tu lista activa de ideas.",
-    "editIdeaTitle": "Editar idea"
+    "editIdeaTitle": "Editar idea",
+    "generateWithoutTopicsConfirm": "¿Seguro quieres continuar sin agregar temas? Los temas ayudan a la IA a generar un brief más preciso."
   },
   "formats": {
     "image": "Imagen",
@@ -256,7 +257,7 @@
     "undoDelete": "Deshacer",
     "restoring": "Restaurando...",
     "contentUpdated": "Contenido actualizado exitosamente",
-    "contentCreated": "Contenido creado exitosamente",
+    "contentCreated": "Contenido agregado a tu cola de producción",
     "addToLibrary": "Agregar a biblioteca de ideas",
     "addToLibrarySubtitle": "Crea una idea a partir de este contenido. Puedes editar el título para hacerlo más conceptual.",
     "saveIdea": "Guardar idea",
