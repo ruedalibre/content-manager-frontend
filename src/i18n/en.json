@@ -186,7 +186,9 @@
     "confirmRestoreMessage": "The idea will return to your active ideas list.",
     "editIdeaTitle": "Edit idea",
     "generateWithoutTopicsTitle": "No topics assigned",
-    "generateWithoutTopicsConfirm": "Are you sure you want to continue without adding topics? Topics help the AI generate a more precise brief."
+    "generateWithoutTopicsConfirm": "Are you sure you want to continue without adding topics? Topics help the AI generate a more precise brief.",
+    "topicsCount": "topics",
+    "noIdeasLinkedToTopic": "This topic has no ideas linked yet."
   },
   "formats": {
     "image": "Image",
