@@ -23,6 +23,28 @@ body {
 }
 
 /* =========================
+   GLOBAL SCROLLBAR
+========================= */
+
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--r-pill);
+
+  &:hover {
+    background: var(--text-faint);
+  }
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* =========================
    GLOBAL BUTTONS
 ========================= */
 

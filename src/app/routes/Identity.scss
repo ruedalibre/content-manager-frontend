@@ -317,17 +317,33 @@
 }
 
 .identity-insight-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
   font-size: var(--fs-12);
-  font-weight: 600;
+  font-weight: 500;
   color: var(--accent);
-  background: none;
-  border: none;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-ring);
+  border-radius: var(--r-pill);
+  padding: 4px 12px;
   cursor: pointer;
-  padding: 0;
   font-family: var(--font-sans);
+  transition: all var(--transition-fast);
 
   &:hover {
-    color: var(--text);
+    background: var(--accent-soft-hover);
+    border-color: var(--accent);
+  }
+
+  &__arrow {
+    font-size: var(--fs-10);
+    transition: transform var(--transition-fast);
+    display: inline-block;
+
+    &--open {
+      transform: rotate(180deg);
+    }
   }
 }
 

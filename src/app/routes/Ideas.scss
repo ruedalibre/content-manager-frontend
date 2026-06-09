@@ -325,6 +325,20 @@
     display: flex;
     flex-wrap: wrap;
     gap: var(--s-1);
+    max-height: 120px;
+    overflow-y: auto;
+    padding-right: var(--s-1);
+
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--border-strong);
+      border-radius: var(--r-pill);
+    }
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
   }
 
   &__topic-actions {
