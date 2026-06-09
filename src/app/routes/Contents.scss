@@ -64,7 +64,7 @@
   flex-wrap: wrap;
   align-items: center;
 
-  @media (max-width: 1400px) {
+  @media (max-width: 768px) {
     flex-direction: column;
     align-items: stretch;
 
@@ -95,7 +95,7 @@
 }
 
 .contents-filters__select {
-  min-width: 140px;
+  min-width: 110px;
   padding: var(--s-2) var(--s-3);
   border-radius: var(--r-3);
   border: 1px solid var(--border);
@@ -271,6 +271,7 @@
 .contents-pagination {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--s-1);
 
   button {

@@ -1057,6 +1057,18 @@ export default function Ideas() {
               }}
               className="ideas-search"
             />
+            {(topicSearch || selectedLetter) && (
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => {
+                  setTopicSearch("");
+                  setSelectedLetter(null);
+                }}
+              >
+                {t("contents.clearFilters")}
+              </button>
+            )}
             <div className="topics-alphabet">
               {ALL_LETTERS.map((letter) => (
                 <button
