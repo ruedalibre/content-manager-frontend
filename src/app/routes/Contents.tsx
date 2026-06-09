@@ -677,7 +677,11 @@ export default function Contents() {
 
               {!loading &&
                 contents.map((item) => (
-                  <tr key={item.id}>
+                  <tr
+                    key={item.id}
+                    onClick={() => handleEdit(item)}
+                    style={{ cursor: "pointer" }}
+                  >
                     <td className="col-title">
                       <div className="content-title">
                         <strong>{item.title}</strong>
@@ -751,7 +755,8 @@ export default function Contents() {
                       {!item.has_ideas && (
                         <button
                           className="btn-add-idea"
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setAddIdeaContent(item);
                             setAddIdeaTitle(item.title);
                             setAddIdeaDescription(item.description ?? "");
@@ -768,14 +773,14 @@ export default function Contents() {
                     <td className="actions-cell">
                       <button type="button"
                         className="btn-link"
-                        onClick={() => handleEdit(item)}
+                        onClick={(e) => { e.stopPropagation(); handleEdit(item); }}
                       >
                         {t("contents.edit")}
                       </button>
 
                       <button type="button"
                         className="btn-link btn-link--danger"
-                        onClick={() => handleDeleteClick(item)}
+                        onClick={(e) => { e.stopPropagation(); handleDeleteClick(item); }}
                       >
                         {t("contents.delete")}
                       </button>

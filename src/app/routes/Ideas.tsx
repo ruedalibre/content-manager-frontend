@@ -315,6 +315,13 @@ export default function Ideas() {
       updateRecipeState(idea.id, { error: t("ideas.selectPlatformError") });
       return;
     }
+
+    // Advertencia si no hay temas — no bloquea, solo confirma
+    if (!idea.topics || idea.topics.length === 0) {
+      const confirmed = window.confirm(t("ideas.generateWithoutTopicsConfirm"));
+      if (!confirmed) return;
+    }
+
     updateRecipeState(idea.id, { generating: true, error: null });
     try {
       const result = await generateRecipe({
