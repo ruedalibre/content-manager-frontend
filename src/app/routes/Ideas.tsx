@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Archive, ChevronRight, Undo2 } from "lucide-react";
+import { Archive, ChevronRight, Undo2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useOutletContext } from "react-router-dom";
 import {
@@ -89,15 +89,6 @@ export default function Ideas() {
   const [savingTopic, setSavingTopic] = useState(false);
   const [topicSearch, setTopicSearch] = useState("");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
-  const [expandedLetters, setExpandedLetters] = useState<
-    Record<string, boolean>
-  >({});
-  const [openSystemTopics, setOpenSystemTopics] = useState<
-    Record<string, boolean>
-  >({});
-  const [openSystemIdeas, setOpenSystemIdeas] = useState<
-    Record<string, boolean>
-  >({});
   const [actionError, setActionError] = useState<string | null>(null);
   const [recipeState, setRecipeState] = useState<RecipeState>({});
   const [expandedSession, setExpandedSession] = useState<{
@@ -113,6 +104,7 @@ export default function Ideas() {
     message: string;
     onConfirm: () => void;
   } | null>(null);
+  const [systemModalTopic, setSystemModalTopic] = useState<typeof systemTopics[0] | null>(null);
 
   const {
     ideas,
@@ -141,37 +133,11 @@ export default function Ideas() {
     archiveTopic,
   } = useTopics();
 
-  const { topics: systemTopics, loading: contentSystemLoading } =
-    useContentSystem();
+  const { topics: systemTopics } = useContentSystem();
 
   const { platforms } = usePlatforms();
   const { loadFormats } = useFormats();
   const { canCreateBriefs, isFree, trialActive } = useSubscription();
-
-  const toggleSystemTopic = (id: string) => {
-    setOpenSystemTopics((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const toggleSystemIdea = (id: string) => {
-    setOpenSystemIdeas((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
-  const toggleExpandLetter = (letter: string) => {
-    setExpandedLetters((prev) => ({ ...prev, [letter]: !prev[letter] }));
-  };
-
-  const chunkIntoColumns = (
-    items: typeof topics,
-    maxPerCol: number,
-    maxCols: number,
-  ) => {
-    const columns: (typeof topics)[] = [];
-    for (let i = 0; i < items.length; i += maxPerCol) {
-      if (columns.length >= maxCols) break;
-      columns.push(items.slice(i, i + maxPerCol));
-    }
-    return columns;
-  };
 
   useEffect(() => {
     if (!ideas.length) return;
@@ -271,16 +237,6 @@ export default function Ideas() {
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([letter, items]) => ({ letter, items }));
   })();
-
-  const filteredSystemTopics = systemTopics.filter((t) => {
-    if (topicSearch) {
-      return t.name.toLowerCase().includes(topicSearch.toLowerCase());
-    }
-    if (selectedLetter) {
-      return normalizeFirstLetter(t.name) === selectedLetter;
-    }
-    return true;
-  });
 
   const getRecipeStateForIdea = (ideaId: string) =>
     recipeState[ideaId] ?? {
@@ -1045,18 +1001,22 @@ export default function Ideas() {
       {/* ========================= TOPICS TAB ========================= */}
       {activeTab === "topics" && (
         <div className="ideas-tab-content">
-          {/* TOOLBAR CON SEARCH Y FILTRO ALFABÉTICO */}
+
+          {/* TOOLBAR */}
           <div className="topics-toolbar">
-            <input
-              type="text"
-              placeholder={t("ideas.searchTopics")}
-              value={topicSearch}
-              onChange={(e) => {
-                setTopicSearch(e.target.value);
-                setSelectedLetter(null);
-              }}
-              className="ideas-search"
-            />
+            <div className="topics-search-wrap">
+              <i className="ti ti-search topics-search-wrap__icon" aria-hidden="true" />
+              <input
+                type="text"
+                placeholder={t("ideas.searchTopics")}
+                value={topicSearch}
+                onChange={(e) => {
+                  setTopicSearch(e.target.value);
+                  setSelectedLetter(null);
+                }}
+                className="topics-search-wrap__input"
+              />
+            </div>
             {(topicSearch || selectedLetter) && (
               <button
                 type="button"
@@ -1069,281 +1029,129 @@ export default function Ideas() {
                 {t("contents.clearFilters")}
               </button>
             )}
-            <div className="topics-alphabet">
-              {ALL_LETTERS.map((letter) => (
+            <span className="topics-count">
+              {topics.length} {t("ideas.topicsCount")}
+            </span>
+          </div>
+
+          {/* ALPHABET */}
+          <div className="topics-alphabet">
+            {ALL_LETTERS.map((letter) => {
+              const hasTopics = lettersWithTopics.has(letter);
+              return (
                 <button
                   key={letter}
-                  className={`topics-alphabet__btn${selectedLetter === letter ? " topics-alphabet__btn--active" : ""}${!lettersWithTopics.has(letter) ? " topics-alphabet__btn--disabled" : ""}`}
+                  type="button"
+                  className={`topics-alphabet__btn ${selectedLetter === letter ? "topics-alphabet__btn--active" : ""} ${hasTopics ? "topics-alphabet__btn--has" : "topics-alphabet__btn--empty"}`}
                   onClick={() => {
-                    if (!lettersWithTopics.has(letter)) return;
-                    setSelectedLetter(
-                      selectedLetter === letter ? null : letter,
-                    );
+                    if (!hasTopics) return;
+                    setSelectedLetter(selectedLetter === letter ? null : letter);
                     setTopicSearch("");
                   }}
-                  type="button"
-                  disabled={!lettersWithTopics.has(letter)}
+                  disabled={!hasTopics}
                 >
                   {letter}
                 </button>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
-          {topicsLoading && (
-            <p className="ideas-loading">{t("common.loading")}</p>
-          )}
+          {topicsLoading && <p className="ideas-loading">{t("common.loading")}</p>}
 
           {!topicsLoading && (
             <>
-              {/* LISTA ALFABÉTICA */}
               {filteredTopicGroups.length === 0 ? (
                 <div className="ideas-empty">
-                  <span>
-                    {topics.length === 0
-                      ? t("ideas.noTopics")
-                      : t("ideas.noTopicsMatch")}
-                  </span>
+                  <span>{topics.length === 0 ? t("ideas.noTopics") : t("ideas.noTopicsMatch")}</span>
                 </div>
               ) : (
                 <div className="topics-alpha-list">
-                  {filteredTopicGroups.map(({ letter, items }) => {
-                    const MAX_COLS = 4;
-                    const MAX_PER_COL = 5;
-                    const MAX_VISIBLE = MAX_COLS * MAX_PER_COL;
-                    const isExpanded = expandedLetters[letter];
-                    const hasMore = items.length > MAX_VISIBLE;
-                    const visibleItems = isExpanded
-                      ? items
-                      : items.slice(0, MAX_VISIBLE);
-                    const itemsPerCol = isExpanded
-                      ? Math.ceil(items.length / MAX_COLS)
-                      : MAX_PER_COL;
-                    const columns = chunkIntoColumns(
-                      visibleItems,
-                      itemsPerCol,
-                      MAX_COLS,
-                    );
+                  {filteredTopicGroups.map(({ letter, items }) => (
+                    <div key={letter} className="topics-alpha-group">
 
-                    return (
-                      <div key={letter} className="topics-alpha-group">
-                        <div className="topics-alpha-group__header">
-                          <span className="topics-alpha-group__letter">
-                            {letter}
-                          </span>
-                          {hasMore && (
-                            <button
-                              type="button"
-                              className="topics-alpha-group__more"
-                              onClick={() => toggleExpandLetter(letter)}
-                            >
-                              {isExpanded
-                                ? t("ideas.seeLess")
-                                : `+${items.length - MAX_VISIBLE} ${t("ideas.seeMore")}`}
-                            </button>
-                          )}
-                        </div>
-
-                        <div className="topics-alpha-group__columns">
-                          {columns.map((col, colIndex) => (
-                            <div
-                              key={colIndex}
-                              className="topics-alpha-group__col"
-                            >
-                              {col.map((topic) => (
-                                <div key={topic.id} className="topic-list-item">
-                                  {editingTopic?.id === topic.id ? (
-                                    <div className="topic-list-item__edit">
-                                      <input
-                                        value={editTopicName}
-                                        onChange={(e) =>
-                                          setEditTopicName(e.target.value)
-                                        }
-                                        maxLength={50}
-                                        autoFocus
-                                      />
-                                      <div className="topic-list-item__edit-actions">
-                                        <button
-                                          className="btn-secondary"
-                                          onClick={() => setEditingTopic(null)}
-                                          type="button"
-                                        >
-                                          {t("common.cancel")}
-                                        </button>
-                                        <button
-                                          className="btn-primary"
-                                          onClick={handleEditTopicSave}
-                                          disabled={savingTopic}
-                                          type="button"
-                                        >
-                                          {savingTopic
-                                            ? t("common.saving")
-                                            : t("common.save")}
-                                        </button>
-                                      </div>
-                                    </div>
-                                  ) : (
-                                    <>
-                                      <span className="topic-list-item__name">
-                                        {topic.name}
-                                      </span>
-                                      <div className="topic-list-item__controls">
-                                        <button
-                                          className="btn-icon"
-                                          onClick={() => {
-                                            setEditingTopic(topic);
-                                            setEditTopicName(topic.name);
-                                          }}
-                                          type="button"
-                                          title={t("common.edit")}
-                                        >
-                                          ✏️
-                                        </button>
-                                        <button
-                                          className="btn-icon btn-icon--danger"
-                                          onClick={() =>
-                                            handleArchiveTopic(topic.id)
-                                          }
-                                          type="button"
-                                          title={t("common.archive")}
-                                        >
-                                          🗄️
-                                        </button>
-                                      </div>
-                                    </>
-                                  )}
-                                </div>
-                              ))}
-                            </div>
-                          ))}
-                        </div>
+                      {/* Header de letra */}
+                      <div className="topics-alpha-group__header">
+                        <span className="topics-alpha-group__letter">{letter}</span>
+                        <span className="topics-alpha-group__count">
+                          {items.length} {t("ideas.topicsCount")}
+                        </span>
                       </div>
-                    );
-                  })}
+
+                      {/* Grid 4 columnas */}
+                      <div className="topics-alpha-group__grid">
+                        {items.map((topic) => (
+                          <div key={topic.id} className="topic-list-item">
+                            {editingTopic?.id === topic.id ? (
+                              <div className="topic-list-item__edit">
+                                <input
+                                  value={editTopicName}
+                                  onChange={(e) => setEditTopicName(e.target.value)}
+                                  maxLength={50}
+                                  autoFocus
+                                />
+                                <div className="topic-list-item__edit-actions">
+                                  <button
+                                    className="btn-secondary"
+                                    onClick={() => setEditingTopic(null)}
+                                    type="button"
+                                  >
+                                    {t("common.cancel")}
+                                  </button>
+                                  <button
+                                    className="btn-primary"
+                                    onClick={handleEditTopicSave}
+                                    disabled={savingTopic}
+                                    type="button"
+                                  >
+                                    {savingTopic ? t("common.saving") : t("common.save")}
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                {/* Nombre clickeable → abre modal sistema */}
+                                <button
+                                  type="button"
+                                  className="topic-list-item__name topic-list-item__name--clickable"
+                                  onClick={() => {
+                                    const systemTopic = systemTopics.find((s) => s.id === topic.id);
+                                    setSystemModalTopic(systemTopic ?? { id: topic.id, name: topic.name, ideas: [] });
+                                  }}
+                                >
+                                  <span className="topic-list-item__dot" />
+                                  {topic.name}
+                                </button>
+                                <div className="topic-list-item__controls">
+                                  <button
+                                    className="btn-icon"
+                                    onClick={() => { setEditingTopic(topic); setEditTopicName(topic.name); }}
+                                    type="button"
+                                    title={t("common.edit")}
+                                  >
+                                    ✏️
+                                  </button>
+                                  <button
+                                    className="btn-icon btn-icon--danger"
+                                    onClick={() => handleArchiveTopic(topic.id)}
+                                    type="button"
+                                    title={t("common.archive")}
+                                  >
+                                    🗄️
+                                  </button>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                    </div>
+                  ))}
                 </div>
               )}
-
-              {/* CONTENT SYSTEM VIEW */}
-              <div className="content-system">
-                <div className="content-system__header">
-                  <span className="section-label">
-                    {t("ideas.contentSystem")}
-                  </span>
-                  <p className="content-system__subtitle">
-                    {t("ideas.contentSystemSubtitle")}
-                  </p>
-                  <div className="content-system__legend">
-                    <span className="content-system__legend-item">
-                      <span className="content-system__legend-dot content-system__legend-dot--topic" />
-                      {t("ideas.topic")}
-                    </span>
-                    <span className="content-system__legend-item">
-                      <span className="content-system__legend-dot content-system__legend-dot--idea" />
-                      {t("ideas.idea")}
-                    </span>
-                    <span className="content-system__legend-item">
-                      <span className="content-system__legend-dot content-system__legend-dot--content" />
-                      {t("ideas.content")}
-                    </span>
-                  </div>
-                </div>
-
-                {contentSystemLoading ? (
-                  <p className="ideas-loading">Loading...</p>
-                ) : filteredSystemTopics.length === 0 ? (
-                  <p className="ideas-empty">
-                    <span>{t("ideas.linkIdeasToTopics")}</span>
-                  </p>
-                ) : (
-                  <div className="cs-tree">
-                    {filteredSystemTopics.map((topic) => (
-                      <div key={topic.id} className="cs-topic">
-                        <div
-                          className="cs-topic__header"
-                          onClick={() => toggleSystemTopic(topic.id)}
-                        >
-                          <span
-                            className={`cs-chevron ${openSystemTopics[topic.id] ? "cs-chevron--open" : ""}`}
-                          >
-                            ▶
-                          </span>
-                          <div className="cs-topic__dot" />
-                          <span className="cs-topic__name">{topic.name}</span>
-                          <span className="cs-topic__stats">
-                            {topic.ideas.length} {t("ideas.ideasCount")} ·{" "}
-                            {topic.ideas.reduce(
-                              (s, i) => s + i.contents.length,
-                              0,
-                            )}{" "}
-                            {t("ideas.contents")}
-                          </span>
-                        </div>
-
-                        {openSystemTopics[topic.id] && (
-                          <div className="cs-ideas">
-                            {topic.ideas.map((idea) => (
-                              <div key={idea.id} className="cs-idea">
-                                <div
-                                  className="cs-idea__header"
-                                  onClick={() => toggleSystemIdea(idea.id)}
-                                >
-                                  <span
-                                    className={`cs-chevron ${openSystemIdeas[idea.id] ? "cs-chevron--open" : ""}`}
-                                  >
-                                    ▶
-                                  </span>
-                                  <div className="cs-idea__dot" />
-                                  <span className="cs-idea__name">
-                                    {idea.title}
-                                  </span>
-                                  <span className="cs-idea__count">
-                                    {idea.contents.length}{" "}
-                                    {idea.contents.length === 1
-                                      ? t("ideas.content")
-                                      : t("ideas.contents")}
-                                  </span>
-                                </div>
-
-                                {openSystemIdeas[idea.id] && (
-                                  <div className="cs-contents">
-                                    {idea.contents.length === 0 ? (
-                                      <div className="cs-content">
-                                        <span className="cs-content__empty">
-                                          {t("ideas.noContentsYet")}
-                                        </span>
-                                      </div>
-                                    ) : (
-                                      idea.contents.map((content) => (
-                                        <div
-                                          key={content.id}
-                                          className="cs-content"
-                                        >
-                                          <div className="cs-content__dot" />
-                                          <span className="cs-content__title">
-                                            {content.title}
-                                          </span>
-                                          <span className="cs-content__platform">
-                                            {content.platform}
-                                          </span>
-                                          <span className="cs-content__format">
-                                            {content.format}
-                                          </span>
-                                        </div>
-                                      ))
-                                    )}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
             </>
           )}
+
         </div>
       )}
 
@@ -1569,6 +1377,81 @@ export default function Ideas() {
           onSave={handleEditSave}
           onCancel={() => setEditingIdea(null)}
         />
+      )}
+
+      {/* TOPIC SYSTEM MODAL */}
+      {systemModalTopic && (
+        <div className="modal-overlay" onClick={() => setSystemModalTopic(null)}>
+          <div
+            className="modal modal--topic-system"
+            onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+          >
+            <div className="topic-system-modal__header">
+              <div>
+                <p className="topic-system-modal__eyebrow">
+                  {t("ideas.contentSystem")}
+                </p>
+                <h3>{systemModalTopic.name}</h3>
+              </div>
+              <button
+                className="btn-icon"
+                onClick={() => setSystemModalTopic(null)}
+                type="button"
+                aria-label={t("common.close")}
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {systemModalTopic.ideas.length === 0 ? (
+              <p className="topic-system-modal__empty">
+                {t("ideas.noIdeasLinkedToTopic")}
+              </p>
+            ) : (
+              <div className="topic-system-modal__tree">
+                {systemModalTopic.ideas.map((idea) => (
+                  <div key={idea.id} className="topic-system-modal__idea">
+                    <span className="topic-system-modal__idea-dot" />
+                    <div className="topic-system-modal__idea-body">
+                      <p className="topic-system-modal__idea-name">{idea.title}</p>
+                      {idea.contents.length === 0 ? (
+                        <p className="topic-system-modal__no-contents">
+                          {t("ideas.noContentsYet")}
+                        </p>
+                      ) : (
+                        <div className="topic-system-modal__contents">
+                          {idea.contents.map((content) => (
+                            <div key={content.id} className="topic-system-modal__content">
+                              <span className="topic-system-modal__content-dot" />
+                              <span className="topic-system-modal__content-title">
+                                {content.title}
+                              </span>
+                              <span className="topic-system-modal__content-meta">
+                                {content.platform} · {t(`formats.${content.format}`, { defaultValue: content.format })}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="modal-actions">
+              <button
+                className="btn-secondary"
+                onClick={() => setSystemModalTopic(null)}
+                type="button"
+              >
+                {t("common.close")}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* CONFIRM MODAL */}
