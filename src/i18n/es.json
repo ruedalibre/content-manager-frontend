@@ -185,6 +185,7 @@
     "confirmRestore": "Restaurar idea",
     "confirmRestoreMessage": "La idea volverá a aparecer en tu lista activa de ideas.",
     "editIdeaTitle": "Editar idea",
+    "generateWithoutTopicsTitle": "Sin temas asignados",
     "generateWithoutTopicsConfirm": "¿Seguro quieres continuar sin agregar temas? Los temas ayudan a la IA a generar un brief más preciso."
   },
   "formats": {

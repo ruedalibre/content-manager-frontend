@@ -316,45 +316,56 @@ export default function Ideas() {
       return;
     }
 
-    // Advertencia si no hay temas — no bloquea, solo confirma
-    if (!idea.topics || idea.topics.length === 0) {
-      const confirmed = window.confirm(t("ideas.generateWithoutTopicsConfirm"));
-      if (!confirmed) return;
-    }
-
-    updateRecipeState(idea.id, { generating: true, error: null });
-    try {
-      const result = await generateRecipe({
-        idea_id: idea.id,
-        topic_ids: idea.topics?.map((t) => t.id) ?? [],
-        platform_id: state.platform_id,
-        format: state.format,
-        content_role: state.content_role,
-      });
-      if (result.duplicate) {
+    const doGenerate = async () => {
+      updateRecipeState(idea.id, { generating: true, error: null });
+      try {
+        const result = await generateRecipe({
+          idea_id: idea.id,
+          topic_ids: idea.topics?.map((t) => t.id) ?? [],
+          platform_id: state.platform_id,
+          format: state.format,
+          content_role: state.content_role,
+        });
+        if (result.duplicate) {
+          updateRecipeState(idea.id, {
+            generating: false,
+            error: t("recipe.duplicateCombination"),
+          });
+          return;
+        }
+        // Limpiar solo la combinación — los temas pertenecen a la idea, no al brief
         updateRecipeState(idea.id, {
           generating: false,
-          error: t("recipe.duplicateCombination"),
+          platform_id: "",
+          format: "",
+          content_role: "",
         });
-        return;
+        // Abrir el modal con el brief recién generado
+        if (result.session) {
+          setExpandedSession({ session: result.session, idea });
+        }
+      } catch (err) {
+        updateRecipeState(idea.id, {
+          generating: false,
+          error: err instanceof Error ? err.message : "Failed to generate recipe",
+        });
       }
-      // Limpiar solo la combinación — los temas pertenecen a la idea, no al brief
-      updateRecipeState(idea.id, {
-        generating: false,
-        platform_id: "",
-        format: "",
-        content_role: "",
-      });
-      // Abrir el modal con el brief recién generado
-      if (result.session) {
-        setExpandedSession({ session: result.session, idea });
-      }
-    } catch (err) {
-      updateRecipeState(idea.id, {
-        generating: false,
-        error: err instanceof Error ? err.message : "Failed to generate recipe",
-      });
+    };
+
+    // Advertencia si no hay temas — usa el ConfirmModal del sistema, no window.confirm
+    if (!idea.topics || idea.topics.length === 0) {
+      openConfirm(
+        t("ideas.generateWithoutTopicsTitle"),
+        t("ideas.generateWithoutTopicsConfirm"),
+        async () => {
+          closeConfirm();
+          await doGenerate();
+        },
+      );
+      return;
     }
+
+    await doGenerate();
   };
 
   const openConfirm = (
