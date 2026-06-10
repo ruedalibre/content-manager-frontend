@@ -10,7 +10,7 @@ import StatusBadge from "./StatusBadge.tsx";
 
 const EMOJIS = ["😞", "😕", "😐", "🙂", "😄"];
 const ASPECTS = ["angle", "hook", "tone", "structure"] as const;
-const MAX_REGEN = 20;
+const MAX_REGEN = 10;
 
 type RecipePanelProps = {
   session: CreativeSession;
