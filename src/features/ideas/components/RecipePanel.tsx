@@ -460,65 +460,66 @@ export default function RecipePanel({
 
           {/* ACTIONS */}
           <div className="recipe-panel__actions">
-            <button className="btn-secondary" onClick={onDownload} type="button">
-              {t("recipe.downloadBrief")}
-            </button>
-            <button className="btn-secondary" onClick={handleCopyBrief} type="button">
-              {copied ? t("recipe.briefCopied") : t("recipe.copyBrief")}
-            </button>
-            <button className="btn-secondary" onClick={onDiscard} type="button">
-              {t("recipe.discard")}
-            </button>
+            <div className="recipe-panel__actions-row">
+              <button className="btn-secondary" onClick={onDownload} type="button">
+                {t("recipe.downloadBrief")}
+              </button>
+              <button className="btn-secondary" onClick={handleCopyBrief} type="button">
+                {copied ? t("recipe.briefCopied") : t("recipe.copyBrief")}
+              </button>
+              <button className="btn-secondary" onClick={onDiscard} type="button">
+                {t("recipe.discard")}
+              </button>
 
-            {/* Guardar progreso — visible si hay cambios sin guardar */}
-            {isDirty && (
+              {/* Guardar progreso — visible si hay cambios sin guardar */}
+              {isDirty && (
+                <button
+                  className="btn-secondary"
+                  onClick={handleSaveProgress}
+                  disabled={savingProgress}
+                  type="button"
+                >
+                  {savingProgress ? t("recipe.saving") : t("recipe.saveProgress")}
+                </button>
+              )}
+
+              {/* Crear contenido — solo si aprobado */}
               <button
-                className="btn-secondary"
-                onClick={handleSaveProgress}
-                disabled={savingProgress}
+                className="btn-primary"
+                onClick={onCreateContent}
+                disabled={!canCreateContent}
+                title={!canCreateContent ? t("recipe.createContentLockedHint") : undefined}
                 type="button"
               >
-                {savingProgress ? t("recipe.saving") : t("recipe.saveProgress")}
+                {t("recipe.createContent")}
               </button>
-            )}
 
-            {/* Crear contenido — solo si aprobado */}
-            <button
-              className="btn-primary"
-              onClick={onCreateContent}
-              disabled={!canCreateContent}
-              title={!canCreateContent ? t("recipe.createContentLockedHint") : undefined}
-              type="button"
-            >
-              {t("recipe.createContent")} →
-            </button>
-
-            {/* Aprobar — requiere todas las calificaciones ≥4 */}
-            {!approved ? (
-              <div className="recipe-panel__approve-wrap">
+              {/* Aprobar */}
+              {!approved ? (
                 <button
                   className="btn-primary"
                   onClick={handleApprove}
                   disabled={!canApprove}
-                  title={!canApprove ? getApprovalHint() ?? undefined : undefined}
                   type="button"
                 >
                   {saving ? t("recipe.saving") : t("recipe.approve")}
                 </button>
-                {getApprovalHint() && (
-                  <span className="recipe-panel__approval-hint">
-                    {getApprovalHint()}
-                  </span>
-                )}
-              </div>
-            ) : (
-              <button
-                className="btn-primary btn-primary--approved"
-                disabled
-                type="button"
-              >
-                {t("recipe.approved")}
-              </button>
+              ) : (
+                <button
+                  className="btn-primary btn-primary--approved"
+                  disabled
+                  type="button"
+                >
+                  {t("recipe.approved")}
+                </button>
+              )}
+            </div>
+
+            {/* Hint de aprobación — debajo de la fila, alineado a la derecha */}
+            {!approved && getApprovalHint() && (
+              <span className="recipe-panel__approval-hint">
+                {getApprovalHint()}
+              </span>
             )}
           </div>
 
