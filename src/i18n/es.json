@@ -384,7 +384,17 @@
     "comboPlatform": "Plataforma",
     "briefs": "Briefs",
     "briefSingular": "brief",
-    "briefPlural": "briefs"
+    "briefPlural": "briefs",
+    "saveProgress": "Guardar progreso",
+    "approvalHintRate": "Califica las {{total}} secciones para aprobar ({{rated}} de {{total}})",
+    "approvalHintImprove": "Mejora las secciones con calificación baja para aprobar",
+    "createContentLockedHint": "Aprueba el brief primero para crear contenido",
+    "regenLimitReached": "Alcanzaste el límite de {{max}} regeneraciones para esta sección",
+    "discardAndNew": "Descartar y generar nuevo",
+    "unsavedTitle": "¿Salir sin guardar?",
+    "unsavedMessage": "Tienes calificaciones sin guardar. Si cierras ahora las perderás.",
+    "unsavedKeepEditing": "Seguir editando",
+    "unsavedClose": "Salir sin guardar"
   },
   "status": {
     "generated": "Borrador",
