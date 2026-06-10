@@ -384,7 +384,17 @@
     "comboPlatform": "Platform",
     "briefs": "Briefs",
     "briefSingular": "brief",
-    "briefPlural": "briefs"
+    "briefPlural": "briefs",
+    "saveProgress": "Save progress",
+    "approvalHintRate": "Rate all {{total}} sections to approve ({{rated}} of {{total}})",
+    "approvalHintImprove": "Improve low-rated sections to approve",
+    "createContentLockedHint": "Approve the brief first to create content",
+    "regenLimitReached": "You reached the limit of {{max}} regenerations for this section",
+    "discardAndNew": "Discard and generate new",
+    "unsavedTitle": "Exit without saving?",
+    "unsavedMessage": "You have unsaved ratings. If you close now they will be lost.",
+    "unsavedKeepEditing": "Keep editing",
+    "unsavedClose": "Exit without saving"
   },
   "status": {
     "generated": "Draft",

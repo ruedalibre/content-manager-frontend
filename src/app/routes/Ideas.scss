@@ -1874,3 +1874,45 @@
     }
   }
 }
+
+/* =========================
+   RECIPE PANEL — REGEN UX
+========================= */
+
+// Contador de regeneraciones
+.recipe-panel__regen-count {
+  font-size: var(--fs-11);
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+}
+
+// Límite alcanzado
+.recipe-panel__regen-limit {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex-wrap: wrap;
+
+  span {
+    font-size: var(--fs-12);
+    color: var(--warning);
+    font-style: italic;
+  }
+}
+
+// Hint de aprobación
+.recipe-panel__approval-hint {
+  font-size: var(--fs-11);
+  color: var(--text-faint);
+  font-style: italic;
+  display: block;
+  margin-top: 4px;
+  text-align: right;
+}
+
+// Wrap del botón aprobar con hint
+.recipe-panel__approve-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
