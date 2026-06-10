@@ -888,12 +888,18 @@
 
   &__actions {
     display: flex;
-    gap: var(--s-3);
-    justify-content: flex-end;
-    align-items: flex-end;
+    flex-direction: column;
+    gap: var(--s-2);
     padding: var(--s-4) var(--s-6);
     border-top: 1px solid var(--border);
     flex-shrink: 0;
+  }
+
+  &__actions-row {
+    display: flex;
+    gap: var(--s-3);
+    justify-content: flex-end;
+    align-items: stretch;
 
     .btn-primary,
     .btn-secondary {
@@ -1891,6 +1897,7 @@
   font-size: var(--fs-10);
   color: var(--text-faint);
   font-family: var(--font-mono);
+  margin-left: var(--s-2);
 }
 
 // Límite alcanzado
@@ -1907,21 +1914,16 @@
   }
 }
 
-// Hint de aprobación
+// Hint de aprobación — aparece debajo de la fila de botones
 .recipe-panel__approval-hint {
-  font-size: var(--fs-10);
-  color: var(--text-faint);
+  font-size: var(--fs-11);
+  color: var(--warning);
+  background: var(--warning-soft);
   font-style: italic;
   display: block;
-  margin-top: 4px;
   text-align: right;
-  max-width: 180px;
+  align-self: flex-end;
+  padding: 3px var(--s-3);
+  border-radius: var(--r-2);
   line-height: var(--lh-snug);
-}
-
-// Wrap del botón aprobar con hint
-.recipe-panel__approve-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
 }
