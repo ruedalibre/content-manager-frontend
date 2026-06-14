@@ -192,3 +192,136 @@
     display: none;
   }
 }
+
+/* =========================
+   TOUR TOOLTIP — anclado al nav item
+========================= */
+
+.sidebar__nav-item-wrap {
+  position: relative;
+
+  a {
+    width: 100%;
+  }
+}
+
+.tour-tooltip {
+  position: absolute;
+  left: calc(100% + 16px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 300px;
+  z-index: 1300;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--r-5);
+  padding: var(--s-5);
+  box-shadow: var(--shadow-xl);
+  animation: tourSlideIn 0.2s ease forwards;
+  pointer-events: auto;
+
+  // Flecha hacia el sidebar
+  &::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 8px;
+    height: 8px;
+    background: var(--bg-elevated);
+    border-left: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--s-3);
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+  }
+
+  &__count {
+    font-size: var(--fs-12);
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+  }
+
+  &__title {
+    font-family: var(--font-display);
+    font-size: var(--fs-20);
+    font-weight: 500;
+    font-style: italic;
+    margin-bottom: var(--s-2);
+    color: var(--text);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  &__desc {
+    font-size: var(--fs-13);
+    color: var(--text-muted);
+    line-height: var(--lh-normal);
+    margin-bottom: var(--s-4);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--s-4);
+  }
+
+  &__skip {
+    font-size: var(--fs-12);
+    color: var(--text-faint);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    transition: color var(--transition-fast);
+
+    &:hover {
+      color: var(--text-muted);
+    }
+  }
+
+  &__next {
+    font-size: var(--fs-13);
+    padding: var(--s-1) var(--s-4);
+  }
+
+  &__dots {
+    display: flex;
+    justify-content: center;
+    gap: var(--s-1);
+  }
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    transition: background var(--transition-fast);
+
+    &--active {
+      background: var(--accent);
+    }
+  }
+}
+
+@keyframes tourSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50%) translateX(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-50%) translateX(0);
+  }
+}
