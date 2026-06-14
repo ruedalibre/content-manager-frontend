@@ -706,7 +706,7 @@ export default function Contents() {
                     </td>
 
                     <td>{item.platform_name}</td>
-                    <td>{item.format}</td>
+                    <td>{t(`formats.${item.format}`, { defaultValue: item.format })}</td>
                     <td>
                       {item.content_role ? (
                         <span className={`role role--${item.content_role}`}>
