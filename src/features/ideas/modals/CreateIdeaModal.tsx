@@ -222,7 +222,7 @@ export default function CreateIdeaModal({
             placeholder={t("contents.descriptionPlaceholder")}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            maxLength={500}
+            maxLength={2500}
             rows={3}
             style={{ resize: "vertical", minHeight: "72px", maxHeight: "120px" }}
           />
@@ -233,7 +233,7 @@ export default function CreateIdeaModal({
             textAlign: "right",
             marginTop: "4px"
           }}>
-            {description.length}/500
+            {description.length}/2500
           </span>
 
           {/* ACTIONS */}
