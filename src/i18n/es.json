@@ -399,7 +399,7 @@
   "status": {
     "generated": "Borrador",
     "approved": "Aprobada",
-    "converted": "En producción",
+    "converted": "Guardado como contenido",
     "implemented": "Implementada",
     "discarded": "Descartada",
     "draft": "Borrador",

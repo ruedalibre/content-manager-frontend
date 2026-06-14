@@ -399,7 +399,7 @@
   "status": {
     "generated": "Draft",
     "approved": "Approved",
-    "converted": "In production",
+    "converted": "Saved as content",
     "implemented": "Implemented",
     "discarded": "Discarded",
     "draft": "Draft",
