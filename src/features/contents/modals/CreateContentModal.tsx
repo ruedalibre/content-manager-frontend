@@ -414,6 +414,9 @@ export default function CreateContentModal({
 
         <form onSubmit={handleSubmit}>
           {/* TITLE */}
+          <label htmlFor="title" className="modal__label">
+            {t("contents.titleLabel")}
+          </label>
           <input
             name="title"
             placeholder={t("contents.titlePlaceholder")}
@@ -423,9 +426,12 @@ export default function CreateContentModal({
           />
 
           {/* DESCRIPTION */}
+          <label htmlFor="description" className="modal__label">
+            {t("contents.contextLabel")}
+          </label>
           <textarea
             name="description"
-            placeholder={t("contents.descriptionPlaceholder")}
+            placeholder={t("contents.contextPlaceholder")}
             value={form.description}
             onChange={handleChange}
             maxLength={500}
