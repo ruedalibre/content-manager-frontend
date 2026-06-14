@@ -205,9 +205,9 @@ export default function CreateIdeaModal({
           )}
 
           {/* TITLE */}
-
+          <label htmlFor="idea-title">{t("ideas.titleLabel")}</label>
           <input
-            placeholder={t("ideas.ideaTitlePlaceholder")}
+            placeholder={t("ideas.titlePlaceholder")}
             value={title}
             onChange={(e) => {
               setTitle(e.target.value);
@@ -217,9 +217,9 @@ export default function CreateIdeaModal({
           />
 
           {/* DESCRIPTION */}
-
+          <label htmlFor="idea-context">{t("ideas.contextLabel")}</label>
           <textarea
-            placeholder={t("contents.descriptionPlaceholder")}
+            placeholder={t("ideas.contextPlaceholder")}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             maxLength={2500}
