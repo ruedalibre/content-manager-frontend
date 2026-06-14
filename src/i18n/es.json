@@ -161,7 +161,7 @@
     "titleLabel": "Título de la idea",
     "titlePlaceholder": "ej. \"Cómo elegí mi nicho sin seguir tendencias\"",
     "contextLabel": "Contexto",
-    "contextPlaceholder": "Aquí puedes especificar los detalles requeridos: tono, referencias, formato, público, instrucciones para la IA...",
+    "contextPlaceholder": "Aquí puedes especificar los detalles requeridos: tono, referencias, estilo, público, instrucciones para la IA...",
     "useIdea": "Usar idea",
     "failedUpdate": "Error al actualizar la idea. Intenta de nuevo.",
     "failedDelete": "Error al eliminar la idea. Intenta de nuevo.",
@@ -207,7 +207,7 @@
     "inspirational": "Inspiracional",
     "personal": "Personal",
     "promotional": "Promocional",
-    "curated": "Curado",
+    "curated": "Recomendado",
     "sales": "Comercial"
   },
   "contents": {

@@ -161,7 +161,7 @@
     "titleLabel": "Idea title",
     "titlePlaceholder": "e.g. \"How I Chose My Niche Without Following Trends\"",
     "contextLabel": "Context",
-    "contextPlaceholder": "Here you can specify the required details: tone, references, format, audience, instructions for the AI...",
+    "contextPlaceholder": "Here you can specify the required details: tone, references, style, audience, instructions for the AI...",
     "useIdea": "Use idea",
     "failedUpdate": "Failed to update idea. Please try again.",
     "failedDelete": "Failed to delete idea. Please try again.",
