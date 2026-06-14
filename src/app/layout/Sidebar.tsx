@@ -10,10 +10,22 @@ type Props = {
   isAdmin: boolean;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
+  tourStep: number | null;
+  onTourAction: (action: 'next' | 'skip') => void;
 };
 
-export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapsed, onToggleCollapse }: Props) {
+const TOUR_NAV = [
+  { key: 'ideas',    to: '/ideas',    icon: <Lightbulb size={18} />, tourIndex: 0 },
+  { key: 'contents', to: '/contents', icon: <FileText size={18} />,  tourIndex: 1 },
+  { key: 'identity', to: '/identity', icon: <Sparkles size={18} />,  tourIndex: 2 },
+  { key: 'activity', to: '/activity', icon: <BarChart3 size={18} />, tourIndex: 3 },
+] as const;
+
+const TOTAL_STEPS = TOUR_NAV.length;
+
+export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapsed, onToggleCollapse, tourStep, onTourAction }: Props) {
   const { t } = useTranslation();
+  const isLast = tourStep === TOTAL_STEPS - 1;
 
   return (
     <>
@@ -21,23 +33,17 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
 
       <aside className={`sidebar${isOpen ? " sidebar--open" : ""}${isCollapsed ? " sidebar--collapsed" : ""}`}>
         {/* MOBILE HEADER */}
-
         <div className="sidebar__header sidebar__header--mobile">
           <h2>Content Intelligence Platform</h2>
-
-          <button type="button" onClick={onClose}>
-            <X size={20} />
-          </button>
+          <button type="button" onClick={onClose}><X size={20} /></button>
         </div>
 
         {/* TITLE */}
-
         {!isCollapsed && (
           <h2 className="sidebar__title">Content Intelligence Platform</h2>
         )}
 
-        {/* COLLAPSE BUTTON (desktop only) */}
-
+        {/* COLLAPSE BUTTON */}
         <button
           type="button"
           className="sidebar__collapse-btn"
@@ -48,35 +54,64 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
         </button>
 
         {/* NAVIGATION */}
-
         <nav className="sidebar__nav">
-          <NavLink to="/ideas" onClick={onClose}>
-            <Lightbulb size={18} />
-            {!isCollapsed && <span>{t("nav.ideas")}</span>}
-          </NavLink>
+          {/* TOUR NAV ITEMS — con tooltip anclado */}
+          {TOUR_NAV.map((item) => (
+            <div key={item.key} className="sidebar__nav-item-wrap">
+              <NavLink to={item.to} onClick={onClose}>
+                {item.icon}
+                {!isCollapsed && <span>{t(`nav.${item.key}`)}</span>}
+              </NavLink>
+              {tourStep === item.tourIndex && (
+                <div className="tour-tooltip" role="dialog" aria-modal="true">
+                  <div className="tour-tooltip__header">
+                    <span className="tour-tooltip__icon">{item.icon}</span>
+                    <span className="tour-tooltip__count">
+                      {item.tourIndex + 1} {t('tour.of')} {TOTAL_STEPS}
+                    </span>
+                  </div>
+                  <h3 className="tour-tooltip__title">
+                    {t(`tour.steps.${item.key}.title`)}
+                  </h3>
+                  <p className="tour-tooltip__desc">
+                    {t(`tour.steps.${item.key}.description`)}
+                  </p>
+                  <div className="tour-tooltip__actions">
+                    <button
+                      className="tour-tooltip__skip"
+                      onClick={() => onTourAction('skip')}
+                      type="button"
+                    >
+                      {t('tour.skipTour')}
+                    </button>
+                    <button
+                      className="btn-primary tour-tooltip__next"
+                      onClick={() => onTourAction('next')}
+                      type="button"
+                    >
+                      {isLast ? t('tour.done') : t('tour.next')}
+                    </button>
+                  </div>
+                  <div className="tour-tooltip__dots">
+                    {TOUR_NAV.map((_, i) => (
+                      <span
+                        key={i}
+                        className={`tour-tooltip__dot${i === tourStep ? ' tour-tooltip__dot--active' : ''}`}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
 
-          <NavLink to="/contents" onClick={onClose}>
-            <FileText size={18} />
-            {!isCollapsed && <span>{t("nav.contents")}</span>}
-          </NavLink>
-
-          <NavLink to="/identity" onClick={onClose}>
-            <Sparkles size={18} />
-            {!isCollapsed && <span>{t("nav.identity")}</span>}
-          </NavLink>
-
-          <NavLink to="/activity" onClick={onClose}>
-            <BarChart3 size={18} />
-            {!isCollapsed && <span>{t("nav.activity")}</span>}
-          </NavLink>
-
-            <NavLink to="/profile" onClick={onClose}>
+          {/* PROFILE — sin tour, sin wrapper */}
+          <NavLink to="/profile" onClick={onClose}>
             <User size={18} />
             {!isCollapsed && <span>{t("nav.profile")}</span>}
           </NavLink>
 
           {/* ADMIN */}
-
           {isAdmin && (
             <NavLink to="/admin" onClick={onClose}>
               <Shield size={18} />
@@ -86,7 +121,6 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
         </nav>
 
         {/* LOGOUT */}
-
         <button type="button" className="sidebar__logout" onClick={onLogout}>
           <LogOut size={16} />
           {!isCollapsed && <span>{t("nav.logout")}</span>}

@@ -7,7 +7,6 @@ import "./AppLayout.scss";
 import Footer from "./Footer.tsx";
 import WelcomeScreen from "../../features/profile/components/WelcomeScreen.tsx";
 import TourInvitation from "../../features/profile/components/TourInvitation.tsx";
-import GuidedTour from "../../features/profile/components/GuidedTour.tsx";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile.ts";
 import PastDueBanner from "../../components/ui/PastDueBanner";
 
@@ -18,6 +17,7 @@ export default function AppLayout() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [showTourInvite, setShowTourInvite] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  const [tourStep, setTourStep] = useState(0);
 
   useEffect(() => {
     const checkAdmin = async () => {
@@ -76,6 +76,17 @@ export default function AppLayout() {
     await updateTourStatus('completed');
   };
 
+  const handleTourAction = (action: 'next' | 'skip') => {
+    const TOTAL = 4;
+    if (action === 'skip' || tourStep >= TOTAL - 1) {
+      setShowTour(false);
+      setTourStep(0);
+      handleTourComplete();
+    } else {
+      setTourStep(prev => prev + 1);
+    }
+  };
+
   const showWelcome = !profileLoading && (isFirstSession || needsOnboarding);
 
   return (
@@ -87,6 +98,8 @@ export default function AppLayout() {
         isAdmin={isAdmin}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={() => setIsSidebarCollapsed(prev => !prev)}
+        tourStep={showTour ? tourStep : null}
+        onTourAction={handleTourAction}
       />
 
       <div className={`app-layout__content${isSidebarCollapsed ? " app-layout__content--expanded" : ""}`}>
@@ -119,9 +132,7 @@ export default function AppLayout() {
         />
       )}
 
-      {showTour && (
-        <GuidedTour onComplete={handleTourComplete} />
-      )}
+
     </div>
   );
 }
