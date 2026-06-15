@@ -517,6 +517,10 @@
       "activity": {
         "title": "Actividad",
         "description": "Rastrea tu ritmo de publicación, tendencias de crecimiento y consistencia en el tiempo."
+      },
+      "profile": {
+        "title": "Mi perfil",
+        "description": "Configura tu rol, idioma, zona horaria y referentes creativos. Cuanto más completo, más precisos son tus insights."
       }
     },
     "skipTour": "Saltar tour",

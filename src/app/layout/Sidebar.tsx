@@ -19,6 +19,7 @@ const TOUR_NAV = [
   { key: 'contents', to: '/contents', icon: <FileText size={18} />,  tourIndex: 1 },
   { key: 'identity', to: '/identity', icon: <Sparkles size={18} />,  tourIndex: 2 },
   { key: 'activity', to: '/activity', icon: <BarChart3 size={18} />, tourIndex: 3 },
+  { key: 'profile',  to: '/profile',  icon: <User size={18} />,      tourIndex: 4 },
 ] as const;
 
 const TOTAL_STEPS = TOUR_NAV.length;
@@ -57,7 +58,10 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
         <nav className="sidebar__nav">
           {/* TOUR NAV ITEMS — con tooltip anclado */}
           {TOUR_NAV.map((item) => (
-            <div key={item.key} className="sidebar__nav-item-wrap">
+            <div
+              key={item.key}
+              className={`sidebar__nav-item-wrap${tourStep === item.tourIndex ? ' sidebar__nav-item-wrap--highlighted' : ''}`}
+            >
               <NavLink to={item.to} onClick={onClose}>
                 {item.icon}
                 {!isCollapsed && <span>{t(`nav.${item.key}`)}</span>}
@@ -104,12 +108,6 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
               )}
             </div>
           ))}
-
-          {/* PROFILE — sin tour, sin wrapper */}
-          <NavLink to="/profile" onClick={onClose}>
-            <User size={18} />
-            {!isCollapsed && <span>{t("nav.profile")}</span>}
-          </NavLink>
 
           {/* ADMIN */}
           {isAdmin && (
