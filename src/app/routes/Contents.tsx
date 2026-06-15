@@ -4,6 +4,7 @@ import { useOutletContext } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
 import { supabase } from "../../supabaseClient.ts";
+import StepsGuide from "../../components/ui/StepsGuide";
 import "./Contents.scss";
 
 /* =========================
@@ -471,9 +472,12 @@ export default function Contents() {
     <>
       <div className="contents-page">
         <div className="contents-page__header">
-          <button className="btn-primary" onClick={handleCreate}>
-            {t("contents.newContent")}
-          </button>
+          <div className="contents-top-bar">
+            <button className="btn-primary" onClick={handleCreate}>
+              {t("contents.newContent")}
+            </button>
+            <StepsGuide namespace="contents" />
+          </div>
         </div>
 
         {/* FILTERS */}

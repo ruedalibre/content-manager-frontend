@@ -280,7 +280,15 @@
     "selectPlatform": "Seleccionar plataforma",
     "topicsLabel": "Temas",
     "reusable": "Reutilizable",
-    "usingCombination": "Usando combinación de la idea"
+    "usingCombination": "Usando combinación de la idea",
+    "stepsGuide": {
+      "step1_bold": "Agrega contenidos",
+      "step1_rest": " que ya publicaste",
+      "step2_bold": "Convierte un contenido en idea",
+      "step2_rest": " para desarrollarlo en otros formatos y plataformas",
+      "step3_bold": "Usa los filtros",
+      "step3_rest": " para encontrar fácilmente tus contenidos"
+    }
   },
   "identity": {
     "title": "Identidad del Creador",
