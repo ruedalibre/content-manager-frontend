@@ -7,6 +7,7 @@ import {
   type IdeaTopic,
 } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
+import Tooltip from "../../../components/ui/Tooltip";
 
 const EMOJIS = ["😞", "😕", "😐", "🙂", "😄"];
 const ASPECTS = ["angle", "hook", "tone", "structure"] as const;
@@ -54,14 +55,6 @@ export default function RecipePanel({
   platformName,
 }: RecipePanelProps) {
   const { t } = useTranslation();
-
-  const TOOLTIPS = [
-    t("recipe.ratings.1"),
-    t("recipe.ratings.2"),
-    t("recipe.ratings.3"),
-    t("recipe.ratings.4"),
-    t("recipe.ratings.5"),
-  ];
 
   const [feedback, setFeedback] = useState<Record<string, number>>(
     session.feedback ?? {},
@@ -276,15 +269,15 @@ export default function RecipePanel({
           <span className="recipe-panel__aspect-label">{label}</span>
           <div className="recipe-panel__rating">
             {EMOJIS.map((emoji, i) => (
-              <button
-                key={i}
-                type="button"
-                className={`rating-emoji ${rating === i + 1 ? "rating-emoji--active" : ""}`}
-                onClick={() => handleRate(aspectKey, i + 1)}
-                title={TOOLTIPS[i]}
-              >
-                {emoji}
-              </button>
+              <Tooltip key={i} text={t(`recipe.ratings.${i + 1}`)}>
+                <button
+                  type="button"
+                  className={`rating-emoji ${rating === i + 1 ? "rating-emoji--active" : ""}`}
+                  onClick={() => handleRate(aspectKey, i + 1)}
+                >
+                  {emoji}
+                </button>
+              </Tooltip>
             ))}
           </div>
         </div>
@@ -326,9 +319,11 @@ export default function RecipePanel({
                     ? t("recipe.tryAgainGenerating")
                     : t("recipe.tryAgain")}
                 </button>
-                <span className="recipe-panel__regen-count">
-                  {regenCount}/{MAX_REGEN}
-                </span>
+                <Tooltip text={t('recipe.tooltipRegenCounter', { max: MAX_REGEN })}>
+                  <span className="recipe-panel__regen-count">
+                    {regenCount}/{MAX_REGEN}
+                  </span>
+                </Tooltip>
               </>
             )}
           </div>
@@ -361,18 +356,13 @@ export default function RecipePanel({
      APPROVAL HINT
   ========================= */
 
-  const getApprovalHint = () => {
-    const rated = ASPECTS.filter((k) => (feedback[k] ?? 0) > 0).length;
+  const getApproveTooltip = (): string | null => {
+    if (approved) return null;
+    const rated = ASPECTS.filter(k => (feedback[k] ?? 0) > 0).length;
     const total = ASPECTS.length;
-    const goodRated = ASPECTS.filter((k) => (feedback[k] ?? 0) >= 4).length;
-
-    if (rated < total) {
-      return t("recipe.approvalHintRate", { rated, total });
-    }
-    if (goodRated < total) {
-      return t("recipe.approvalHintImprove");
-    }
-    return null;
+    if (rated < total) return t('recipe.tooltipApproveRate');
+    if (!allAspectsApproved) return t('recipe.tooltipApproveImprove');
+    return t('recipe.tooltipApproveReady');
   };
 
   /* =========================
@@ -496,14 +486,22 @@ export default function RecipePanel({
 
               {/* Aprobar */}
               {!approved ? (
-                <button
-                  className="btn-primary"
-                  onClick={handleApprove}
-                  disabled={!canApprove}
-                  type="button"
-                >
-                  {saving ? t("recipe.saving") : t("recipe.approve")}
-                </button>
+                (() => {
+                  const approveTooltip = getApproveTooltip();
+                  const btn = (
+                    <button
+                      className="btn-primary"
+                      onClick={handleApprove}
+                      disabled={!canApprove}
+                      type="button"
+                    >
+                      {saving ? t("recipe.saving") : t("recipe.approve")}
+                    </button>
+                  );
+                  return approveTooltip ? (
+                    <Tooltip text={approveTooltip}>{btn}</Tooltip>
+                  ) : btn;
+                })()
               ) : (
                 <button
                   className="btn-primary btn-primary--approved"
@@ -514,13 +512,6 @@ export default function RecipePanel({
                 </button>
               )}
             </div>
-
-            {/* Hint de aprobación — debajo de la fila, alineado a la derecha */}
-            {!approved && getApprovalHint() && (
-              <span className="recipe-panel__approval-hint">
-                {getApprovalHint()}
-              </span>
-            )}
           </div>
 
         </div>
