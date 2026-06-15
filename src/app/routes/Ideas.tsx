@@ -23,6 +23,7 @@ import { downloadBrief } from "../../utils/downloadBrief.ts";
 import { supabase } from "../../supabaseClient.ts";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription";
 import UpgradePrompt from "../../components/ui/UpgradePrompt";
+import Tooltip from "../../components/ui/Tooltip";
 import "./Ideas.scss";
 
 type IdeaForContent = {
@@ -706,13 +707,19 @@ export default function Ideas() {
                       {/* IDEA CARD */}
                       <div className="idea-card">
                         <div className="idea-card__header">
-                          <span
-                            className={`badge ${isGenerated ? "badge--generated" : "badge--manual"}`}
-                          >
-                            {isGenerated
-                              ? t("ideas.generated")
-                              : t("ideas.manual")}
-                          </span>
+                          {isGenerated ? (
+                            <Tooltip text={t('ideas.tooltipBadgeSugerida')} position="top-left">
+                              <span className="badge badge--generated">
+                                {t("ideas.generated")}
+                              </span>
+                            </Tooltip>
+                          ) : (
+                            <Tooltip text={t('ideas.tooltipBadgeManual')} position="top-left">
+                              <span className="badge badge--manual">
+                                {t("ideas.manual")}
+                              </span>
+                            </Tooltip>
+                          )}
                           {!isEditingThis && (
                             <div className="idea-card__controls">
                               <button

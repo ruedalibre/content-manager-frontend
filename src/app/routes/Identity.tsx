@@ -10,6 +10,7 @@ import { useCreativeReport } from "../../features/insights/hooks/useCreativeRepo
 import { downloadReport } from "../../utils/downloadReport";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription.ts";
 import UpgradePrompt from "../../components/ui/UpgradePrompt.tsx";
+import Tooltip from "../../components/ui/Tooltip";
 
 import { type AnalyticsInsight } from "../../features/insights/types/insights.types.ts";
 
@@ -46,16 +47,18 @@ function InsightExpander({
 
   return (
     <div className="identity-insight-expander">
-      <button
-        className="identity-insight-toggle"
-        onClick={() => onToggle(code)}
-        type="button"
-      >
-        {expanded[code] ? t("identity.hideInsight") : t("identity.seeInsight")}
-        <span className={`identity-insight-toggle__arrow${expanded[code] ? " identity-insight-toggle__arrow--open" : ""}`}>
-          ▾
-        </span>
-      </button>
+      <Tooltip text={t('insights.tooltipInsightCard')}>
+        <button
+          className="identity-insight-toggle"
+          onClick={() => onToggle(code)}
+          type="button"
+        >
+          {expanded[code] ? t("identity.hideInsight") : t("identity.seeInsight")}
+          <span className={`identity-insight-toggle__arrow${expanded[code] ? " identity-insight-toggle__arrow--open" : ""}`}>
+            ▾
+          </span>
+        </button>
+      </Tooltip>
 
       {expanded[code] && (
         <div className="identity-insight-body">
