@@ -77,7 +77,7 @@ export default function AppLayout() {
   };
 
   const handleTourAction = (action: 'next' | 'skip') => {
-    const TOTAL = 4;
+    const TOTAL = 5;
     if (action === 'skip' || tourStep >= TOTAL - 1) {
       setShowTour(false);
       setTourStep(0);
@@ -132,7 +132,9 @@ export default function AppLayout() {
         />
       )}
 
-
+      {showTour && (
+        <div className="tour-backdrop" aria-hidden="true" />
+      )}
     </div>
   );
 }

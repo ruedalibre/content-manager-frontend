@@ -487,6 +487,10 @@
       "activity": {
         "title": "Activity",
         "description": "Track your publishing rhythm, growth trends and consistency over time."
+      },
+      "profile": {
+        "title": "My profile",
+        "description": "Set your role, language, timezone, and creative references. The more complete it is, the more accurate your insights."
       }
     },
     "skipTour": "Skip tour",

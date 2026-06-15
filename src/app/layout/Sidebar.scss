@@ -146,6 +146,8 @@
     flex-shrink: 0;
     width: 260px;
     transition: width var(--transition-base);
+    isolation: isolate;
+    z-index: 1250;
   }
 
   .sidebar-overlay {
@@ -202,6 +204,13 @@
 
   a {
     width: 100%;
+  }
+
+  &--highlighted {
+    border-radius: var(--r-3);
+    background: rgba(196, 120, 89, 0.12);
+    outline: 1.5px solid var(--accent);
+    outline-offset: 0px;
   }
 }
 
