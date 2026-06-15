@@ -140,8 +140,6 @@
     "noTopics": "No topics yet. Add your first one above.",
     "generated": "Suggested",
     "manual": "Manual",
-    "tooltipBadgeSugerida": "Idea generated from your topics and previous content",
-    "tooltipBadgeManual": "Idea created directly by you",
     "contents": "contents",
     "content": "content",
     "topic": "Topic",
@@ -400,11 +398,7 @@
     "unsavedTitle": "Exit without saving?",
     "unsavedMessage": "You have unsaved ratings. If you close now they will be lost.",
     "unsavedKeepEditing": "Keep editing",
-    "unsavedClose": "Exit without saving",
-    "tooltipApproveRate": "Rate all sections to approve the brief",
-    "tooltipApproveImprove": "Improve the low-rated sections to approve",
-    "tooltipApproveReady": "Approve the brief to create your content",
-    "tooltipRegenCounter": "You can regenerate this section up to {{max}} times"
+    "unsavedClose": "Exit without saving"
   },
   "status": {
     "generated": "Draft",
@@ -680,8 +674,7 @@
       "diverse": "Your topics are relatively diversified.",
       "action_core": "Consider building a recurring content series around this topic.",
       "action_diverse": "Focus on identifying a stronger thematic focus."
-    },
-    "tooltipInsightCard": "Strategic recommendation based on your content"
+    }
   },
   "upgrade": {
     "cta": "Get Creator",

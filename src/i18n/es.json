@@ -140,8 +140,6 @@
     "noTopics": "Sin temas aún. Agrega el primero arriba.",
     "generated": "Sugerida",
     "manual": "Manual",
-    "tooltipBadgeSugerida": "Idea generada a partir de tus temas y contenidos anteriores",
-    "tooltipBadgeManual": "Idea creada por ti directamente",
     "contents": "contenidos",
     "content": "contenido",
     "topic": "Tema",
@@ -400,11 +398,7 @@
     "unsavedTitle": "¿Salir sin guardar?",
     "unsavedMessage": "Tienes calificaciones sin guardar. Si cierras ahora las perderás.",
     "unsavedKeepEditing": "Seguir editando",
-    "unsavedClose": "Salir sin guardar",
-    "tooltipApproveRate": "Califica todas las secciones para aprobar el brief",
-    "tooltipApproveImprove": "Mejora las secciones con calificación baja para aprobar",
-    "tooltipApproveReady": "Aprueba el brief para poder crear el contenido",
-    "tooltipRegenCounter": "Puedes regenerar esta sección hasta {{max}} veces"
+    "unsavedClose": "Salir sin guardar"
   },
   "status": {
     "generated": "Borrador",
@@ -710,8 +704,7 @@
       "diverse": "Tus temas están relativamente diversificados.",
       "action_core": "Considera construir una serie de contenido recurrente alrededor de este tema.",
       "action_diverse": "Enfócate en identificar un foco temático más fuerte."
-    },
-    "tooltipInsightCard": "Recomendación estratégica basada en tus contenidos"
+    }
   },
   "upgrade": {
     "cta": "Obtener Creator",
