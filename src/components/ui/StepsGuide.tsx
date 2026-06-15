@@ -1,14 +1,19 @@
 import { useTranslation } from "react-i18next";
 import "./StepsGuide.scss";
 
-const STEPS = [
-  { n: 1, boldKey: "ideas.stepsGuide.step1_bold", restKey: "ideas.stepsGuide.step1_rest" },
-  { n: 2, boldKey: "ideas.stepsGuide.step2_bold", restKey: "ideas.stepsGuide.step2_rest" },
-  { n: 3, boldKey: "ideas.stepsGuide.step3_bold", restKey: "ideas.stepsGuide.step3_rest" },
-] as const;
+type Props = {
+  namespace?: string;
+};
 
-export default function StepsGuide() {
+export default function StepsGuide({ namespace = "ideas" }: Props) {
   const { t } = useTranslation();
+
+  const STEPS = [
+    { n: 1, boldKey: `${namespace}.stepsGuide.step1_bold`, restKey: `${namespace}.stepsGuide.step1_rest` },
+    { n: 2, boldKey: `${namespace}.stepsGuide.step2_bold`, restKey: `${namespace}.stepsGuide.step2_rest` },
+    { n: 3, boldKey: `${namespace}.stepsGuide.step3_bold`, restKey: `${namespace}.stepsGuide.step3_rest` },
+  ] as const;
+
   return (
     <div className="steps-guide">
       {STEPS.map((step, i) => (

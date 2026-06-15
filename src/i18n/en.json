@@ -280,7 +280,15 @@
     "selectPlatform": "Select platform",
     "topicsLabel": "Topics",
     "reusable": "Reusable",
-    "usingCombination": "Using combination from idea"
+    "usingCombination": "Using combination from idea",
+    "stepsGuide": {
+      "step1_bold": "Add content",
+      "step1_rest": " you've already published",
+      "step2_bold": "Turn content into an idea",
+      "step2_rest": " to develop it across other formats and platforms",
+      "step3_bold": "Use the filters",
+      "step3_rest": " to find your content quickly"
+    }
   },
   "identity": {
     "title": "Creator Identity",
