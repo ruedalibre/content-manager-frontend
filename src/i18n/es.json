@@ -190,7 +190,15 @@
     "generateWithoutTopicsTitle": "Sin temas asignados",
     "generateWithoutTopicsConfirm": "¿Seguro quieres continuar sin agregar temas? Los temas ayudan a la IA a generar un brief más preciso.",
     "topicsCount": "temas",
-    "noIdeasLinkedToTopic": "Este tema aún no tiene ideas vinculadas."
+    "noIdeasLinkedToTopic": "Este tema aún no tiene ideas vinculadas.",
+    "stepsGuide": {
+      "step1_bold": "Crea una idea",
+      "step1_rest": " y agrégale temas",
+      "step2_bold": "Elige plataforma",
+      "step2_rest": ", formato y rol",
+      "step3_bold": "Genera el brief",
+      "step3_rest": ", califica cada sección y apruébalo"
+    }
   },
   "formats": {
     "image": "Imagen",

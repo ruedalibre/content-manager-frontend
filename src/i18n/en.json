@@ -190,7 +190,15 @@
     "generateWithoutTopicsTitle": "No topics assigned",
     "generateWithoutTopicsConfirm": "Are you sure you want to continue without adding topics? Topics help the AI generate a more precise brief.",
     "topicsCount": "topics",
-    "noIdeasLinkedToTopic": "This topic has no ideas linked yet."
+    "noIdeasLinkedToTopic": "This topic has no ideas linked yet.",
+    "stepsGuide": {
+      "step1_bold": "Create an idea",
+      "step1_rest": " and add topics",
+      "step2_bold": "Choose platform",
+      "step2_rest": ", format and role",
+      "step3_bold": "Generate the brief",
+      "step3_rest": ", rate each section and approve it"
+    }
   },
   "formats": {
     "image": "Image",

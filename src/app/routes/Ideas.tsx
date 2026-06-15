@@ -23,6 +23,7 @@ import { downloadBrief } from "../../utils/downloadBrief.ts";
 import { supabase } from "../../supabaseClient.ts";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription";
 import UpgradePrompt from "../../components/ui/UpgradePrompt";
+import StepsGuide from "../../components/ui/StepsGuide";
 import "./Ideas.scss";
 
 type IdeaForContent = {
@@ -536,13 +537,16 @@ export default function Ideas() {
       {/* PAGE HEADER */}
       <div className="ideas-page__header">
         {activeTab === "ideas" ? (
-          <button
-            className="btn-primary"
-            onClick={() => setShowIdeaModal(true)}
-            type="button"
-          >
-            {t("ideas.newIdea")}
-          </button>
+          <div className="ideas-top-bar">
+            <button
+              className="btn-primary"
+              onClick={() => setShowIdeaModal(true)}
+              type="button"
+            >
+              {t("ideas.newIdea")}
+            </button>
+            <StepsGuide />
+          </div>
         ) : activeTab === "topics" ? (
           <div className="topic-create-inline">
             <div className="topic-create-inline__field">
