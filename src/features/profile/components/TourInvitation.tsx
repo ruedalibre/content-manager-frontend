@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next";
-import { createPortal } from "react-dom";
 import "./TourInvitation.scss";
 
 type Props = {
@@ -10,43 +9,39 @@ type Props = {
 
 export default function TourInvitation({ onStart, onLater, onDismiss }: Props) {
   const { t } = useTranslation();
-  return createPortal(
-    <div className="tour-invitation">
-      <div className="tour-invitation__card">
-        <span className="tour-invitation__icon">👋</span>
-        <div className="tour-invitation__content">
-          <p className="tour-invitation__title">
-            {t("tour.invitation.title")}
-          </p>
-          <p className="tour-invitation__subtitle">
-            {t("tour.invitation.subtitle")}
-          </p>
-        </div>
-        <div className="tour-invitation__actions">
-          <button
-            className="btn-primary tour-invitation__btn"
-            onClick={onStart}
-            type="button"
-          >
-            {t("tour.invitation.showMe")}
-          </button>
-          <button
-            className="tour-invitation__link"
-            onClick={onLater}
-            type="button"
-          >
-            {t("tour.invitation.later")}
-          </button>
-          <button
-            className="tour-invitation__link tour-invitation__link--muted"
-            onClick={onDismiss}
-            type="button"
-          >
-            {t("tour.invitation.dontShowAgain")}
-          </button>
-        </div>
+  return (
+    <div className="tour-invitation-overlay" aria-modal="true" role="dialog">
+      <div className="tour-invitation">
+        <span className="tour-invitation__emoji" aria-hidden="true">👋</span>
+        <h2 className="tour-invitation__title">
+          {t("tour.invitation.title")}
+        </h2>
+        <p className="tour-invitation__subtitle">
+          {t("tour.invitation.subtitle")}
+        </p>
+        <button
+          className="btn-primary tour-invitation__cta"
+          onClick={onStart}
+          type="button"
+        >
+          {t("tour.invitation.showMe")}
+        </button>
+        <button
+          className="btn-secondary tour-invitation__later"
+          onClick={onLater}
+          type="button"
+        >
+          {t("tour.invitation.later")}
+        </button>
+        <hr className="tour-invitation__divider" />
+        <button
+          className="tour-invitation__dismiss"
+          onClick={onDismiss}
+          type="button"
+        >
+          {t("tour.invitation.dontShowAgain")}
+        </button>
       </div>
-    </div>,
-    document.body
+    </div>
   );
 }
