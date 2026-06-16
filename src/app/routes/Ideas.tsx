@@ -575,6 +575,18 @@ export default function Ideas() {
             >
               {creatingTopic ? t("common.loading") : t("ideas.addTopic")}
             </button>
+            <div className="topic-create-inline__search">
+              <input
+                type="text"
+                placeholder={t("ideas.searchTopicsPlaceholder")}
+                value={topicSearch}
+                onChange={(e) => {
+                  setTopicSearch(e.target.value);
+                  setSelectedLetter(null);
+                }}
+                className="topic-create-inline__input"
+              />
+            </div>
           </div>
         ) : null}
       </div>
@@ -1008,19 +1020,6 @@ export default function Ideas() {
 
           {/* TOOLBAR */}
           <div className="topics-toolbar">
-            <div className="topics-search-wrap">
-              <i className="ti ti-search topics-search-wrap__icon" aria-hidden="true" />
-              <input
-                type="text"
-                placeholder={t("ideas.searchTopics")}
-                value={topicSearch}
-                onChange={(e) => {
-                  setTopicSearch(e.target.value);
-                  setSelectedLetter(null);
-                }}
-                className="topics-search-wrap__input"
-              />
-            </div>
             {(topicSearch || selectedLetter) && (
               <button
                 type="button"

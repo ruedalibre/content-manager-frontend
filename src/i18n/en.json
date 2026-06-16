@@ -132,6 +132,7 @@
     "tabTopics": "Topics",
     "searchIdeas": "Search ideas...",
     "searchTopics": "Search topics...",
+    "searchTopicsPlaceholder": "Search topic... e.g. fashion, hiking",
     "newIdea": "+ New Idea",
     "addTopic": "+ Add",
     "topicPlaceholder": "Topic name",
