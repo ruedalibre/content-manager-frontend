@@ -132,6 +132,7 @@
     "tabTopics": "Temas",
     "searchIdeas": "Buscar ideas...",
     "searchTopics": "Buscar temas...",
+    "searchTopicsPlaceholder": "Buscar tema... ej. moda, alpinismo",
     "newIdea": "+ Nueva idea",
     "addTopic": "+ Agregar",
     "topicPlaceholder": "Nombre del tema",
