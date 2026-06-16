@@ -586,6 +586,18 @@ export default function Ideas() {
                 }}
                 className="topic-create-inline__input"
               />
+              {(topicSearch || selectedLetter) && (
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => {
+                    setTopicSearch("");
+                    setSelectedLetter(null);
+                  }}
+                >
+                  {t("contents.clearFilters")}
+                </button>
+              )}
             </div>
           </div>
         ) : null}
@@ -1018,26 +1030,7 @@ export default function Ideas() {
       {activeTab === "topics" && (
         <div className="ideas-tab-content">
 
-          {/* TOOLBAR */}
-          <div className="topics-toolbar">
-            {(topicSearch || selectedLetter) && (
-              <button
-                type="button"
-                className="btn-secondary"
-                onClick={() => {
-                  setTopicSearch("");
-                  setSelectedLetter(null);
-                }}
-              >
-                {t("contents.clearFilters")}
-              </button>
-            )}
-            <span className="topics-count">
-              {topics.length} {t("ideas.topicsCount")}
-            </span>
-          </div>
-
-          {/* ALPHABET */}
+          {/* ALPHABET + COUNT */}
           <div className="topics-alphabet">
             {ALL_LETTERS.map((letter) => {
               const hasTopics = lettersWithTopics.has(letter);
@@ -1057,6 +1050,9 @@ export default function Ideas() {
                 </button>
               );
             })}
+            <span className="topics-count">
+              {topics.length} {t("ideas.topicsCount")}
+            </span>
           </div>
 
           {topicsLoading && <p className="ideas-loading">{t("common.loading")}</p>}
