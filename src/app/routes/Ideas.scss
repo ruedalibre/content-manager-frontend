@@ -78,6 +78,9 @@
   }
 
   &__search {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
     flex: 1;
     min-width: 200px;
   }
@@ -1320,19 +1323,11 @@
    TOPICS TOOLBAR & ALPHABET
 ========================= */
 
-// ── Topics toolbar ──
-.topics-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-  margin-bottom: var(--s-3);
-}
-
-
 .topics-count {
   font-size: var(--fs-12);
   color: var(--text-faint);
   margin-left: auto;
+  align-self: center;
 }
 
 // ── Alphabet ──
