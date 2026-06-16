@@ -285,16 +285,9 @@ export default function Contents() {
   ========================= */
 
   useEffect(() => {
-    if (!loading) {
-      setTopbarContext(
-        total === 0 ? t("contents.noContents") : `${total} ${t("contents.total")}`,
-      );
-    }
-
-    return () => {
-      setTopbarContext(null);
-    };
-  }, [loading, total, setTopbarContext]);
+    setTopbarContext(t("contents.subtitle"));
+    return () => setTopbarContext(null);
+  }, [setTopbarContext, t]);
 
   /* =========================
      CREATE / EDIT
