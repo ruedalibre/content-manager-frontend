@@ -438,6 +438,7 @@
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
+  z-index: 1100;
   background: var(--text);
   color: var(--bg-canvas);
   padding: var(--s-3) var(--s-5);
