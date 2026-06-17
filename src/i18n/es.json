@@ -268,6 +268,8 @@
     "pageOf": "de",
     "deleteModalTitle": "Eliminar contenido",
     "deleteModalBody": "Esto eliminará permanentemente",
+    "deleteModalTitleWithSession": "Borrar contenido",
+    "deleteModalBodyWithSession": "Si borras este contenido, el brief que lo originó volverá a estar disponible para crear el contenido de nuevo.",
     "deleting": "Eliminando...",
     "contentDeleted": "Contenido eliminado.",
     "undoDelete": "Deshacer",

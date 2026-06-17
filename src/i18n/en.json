@@ -268,6 +268,8 @@
     "pageOf": "of",
     "deleteModalTitle": "Delete content",
     "deleteModalBody": "This will permanently remove",
+    "deleteModalTitleWithSession": "Delete content",
+    "deleteModalBodyWithSession": "If you delete this content, the brief that originated it will become available again to recreate the content.",
     "deleting": "Deleting...",
     "contentDeleted": "Content deleted.",
     "undoDelete": "Undo",

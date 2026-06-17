@@ -23,6 +23,7 @@ type ContentItem = {
   location: string | null;
   is_reusable: boolean;
   has_ideas: boolean;
+  has_session: boolean;
   created_at: string;
   published_at: string | null;
   archived_at: string | null;
@@ -911,11 +912,21 @@ export default function Contents() {
         {isDeleteModalOpen && contentToDelete && (
           <div className="delete-modal-overlay">
             <div className="delete-modal">
-              <h3>{t("contents.deleteModalTitle")}</h3>
+              <h3>
+                {contentToDelete.has_session
+                  ? t("contents.deleteModalTitleWithSession")
+                  : t("contents.deleteModalTitle")}
+              </h3>
 
               <p>
-                {t("contents.deleteModalBody")}{" "}
-                <strong>{contentToDelete.title}</strong>
+                {contentToDelete.has_session
+                  ? t("contents.deleteModalBodyWithSession")
+                  : (
+                    <>
+                      {t("contents.deleteModalBody")}{" "}
+                      <strong>{contentToDelete.title}</strong>
+                    </>
+                  )}
               </p>
 
               <div className="delete-modal__actions">
