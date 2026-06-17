@@ -70,8 +70,16 @@ export default function RecipePanel({
   );
   const [saving, setSaving] = useState(false);
   const [savingProgress, setSavingProgress] = useState(false);
-  const [approved, setApproved] = useState(session.status === "reviewed");
+  const [approved, setApproved] = useState(
+    session.status === "reviewed" || session.status === "executed",
+  );
   const [isDirty, setIsDirty] = useState(false);
+  const [alreadyConverted, setAlreadyConverted] = useState(
+    session.status === "executed",
+  );
+  const [convertedContentId, setConvertedContentId] = useState<string | null>(
+    session.content_id,
+  );
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
 
   // Regeneration counters per aspect
@@ -281,9 +289,10 @@ export default function RecipePanel({
               <button
                 key={i}
                 type="button"
-                className={`rating-emoji ${rating === i + 1 ? "rating-emoji--active" : ""}`}
-                onClick={() => handleRate(aspectKey, i + 1)}
-                title={TOOLTIPS[i]}
+                className={`rating-emoji ${rating === i + 1 ? "rating-emoji--active" : ""} ${approved ? "rating-emoji--locked" : ""}`}
+                onClick={() => !approved && handleRate(aspectKey, i + 1)}
+                disabled={approved}
+                title={approved ? undefined : TOOLTIPS[i]}
               >
                 {emoji}
               </button>
@@ -485,19 +494,31 @@ export default function RecipePanel({
                 </button>
               )}
 
-              {/* Crear contenido — solo si aprobado */}
-              <button
-                className="btn-primary"
-                onClick={async () => {
-                  const contentId = await onCreateContent();
-                  onViewContent?.(contentId);
-                }}
-                disabled={!canCreateContent}
-                title={!canCreateContent ? t("recipe.createContentLockedHint") : undefined}
-                type="button"
-              >
-                {t("recipe.createContent")}
-              </button>
+              {/* Crear contenido / Ver contenido */}
+              {alreadyConverted ? (
+                <button
+                  className="btn-primary"
+                  onClick={() => convertedContentId && onViewContent?.(convertedContentId)}
+                  type="button"
+                >
+                  {t("recipe.viewContent")}
+                </button>
+              ) : (
+                <button
+                  className="btn-primary"
+                  onClick={async () => {
+                    const contentId = await onCreateContent();
+                    setAlreadyConverted(true);
+                    setConvertedContentId(contentId);
+                    onViewContent?.(contentId);
+                  }}
+                  disabled={!canCreateContent}
+                  title={!canCreateContent ? t("recipe.createContentLockedHint") : undefined}
+                  type="button"
+                >
+                  {t("recipe.createContent")}
+                </button>
+              )}
 
               {/* Aprobar */}
               {!approved ? (
