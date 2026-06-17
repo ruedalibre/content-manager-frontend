@@ -5,7 +5,6 @@ import { useOutletContext, useNavigate } from "react-router-dom";
 import {
   useIdeas,
   type Idea,
-  type IdeaTopic,
   type CreativeSession,
 } from "../../features/ideas/hooks/useIdeas.ts";
 import { useTopics, type Topic } from "../../features/ideas/hooks/useTopics.ts";
