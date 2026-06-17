@@ -111,6 +111,7 @@ export default function Ideas() {
     regenerateAspect,
     updateRecipeAspect,
     markAsDownloaded,
+    duplicateIdea,
   } = useIdeas(filter);
 
   const {
@@ -342,6 +343,14 @@ export default function Ideas() {
       setEditError(t("common.failedUpdate"));
     } finally {
       setEditSaving(false);
+    }
+  };
+
+  const handleDuplicateIdea = async (idea: Idea) => {
+    try {
+      await duplicateIdea(idea);
+    } catch {
+      setActionError(t("common.failedCreate"));
     }
   };
 
@@ -779,6 +788,14 @@ export default function Ideas() {
                                 type="button"
                               >
                                 ✏️
+                              </button>
+                              <button
+                                className="btn-icon"
+                                onClick={() => handleDuplicateIdea(idea)}
+                                title={t("ideas.duplicate")}
+                                type="button"
+                              >
+                                ⧉
                               </button>
                               <button
                                 className="btn-icon"
