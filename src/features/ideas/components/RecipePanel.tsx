@@ -21,8 +21,14 @@ type RecipePanelProps = {
   onCreateContent: () => Promise<string>;
   onViewContent?: (contentId: string) => void;
   onDownload: () => void | Promise<void>;
-  saveFeedback: (sessionId: string, feedback: Record<string, number>) => Promise<void>;
-  updateSessionStatus: (sessionId: string, status: CreativeSession["status"]) => Promise<void>;
+  saveFeedback: (
+    sessionId: string,
+    feedback: Record<string, number>,
+  ) => Promise<void>;
+  updateSessionStatus: (
+    sessionId: string,
+    status: CreativeSession["status"],
+  ) => Promise<void>;
   regenerateAspect: (params: {
     session_id: string;
     aspect: "angle" | "hook" | "tone" | "structure";
@@ -35,7 +41,10 @@ type RecipePanelProps = {
     platform: string;
     format: string;
   }) => Promise<{ alternative: string | string[] }>;
-  updateRecipeAspect: (sessionId: string, recipe: CreativeSession["recipe"]) => Promise<void>;
+  updateRecipeAspect: (
+    sessionId: string,
+    recipe: CreativeSession["recipe"],
+  ) => Promise<void>;
   ideaTopics: IdeaTopic[];
   platformName: string;
 };
@@ -87,8 +96,12 @@ export default function RecipePanel({
   // Regeneration counters per aspect
   const [regenCounts, setRegenCounts] = useState<Record<string, number>>({});
 
-  const [alternatives, setAlternatives] = useState<Record<string, (string | string[])[]>>({});
-  const [currentValues, setCurrentValues] = useState<Record<string, string>>({});
+  const [alternatives, setAlternatives] = useState<
+    Record<string, (string | string[])[]>
+  >({});
+  const [currentValues, setCurrentValues] = useState<Record<string, string>>(
+    {},
+  );
   const [regenerating, setRegenerating] = useState<Record<string, boolean>>({});
   const [copied, setCopied] = useState(false);
 
@@ -97,9 +110,7 @@ export default function RecipePanel({
   ========================= */
 
   // All 4 aspects rated "bien" (4) or "excelente" (5)
-  const allAspectsApproved = ASPECTS.every(
-    (key) => (feedback[key] ?? 0) >= 4,
-  );
+  const allAspectsApproved = ASPECTS.every((key) => (feedback[key] ?? 0) >= 4);
 
   // Can approve: all aspects rated ≥4 and not already approved
   const canApprove = allAspectsApproved && !saving;
@@ -178,7 +189,9 @@ export default function RecipePanel({
         aspect: aspectKey as "angle" | "hook" | "tone" | "structure",
         rating: feedback[aspectKey] ?? 1,
         current_value:
-          typeof currentVal === "string" ? currentVal : JSON.stringify(currentVal),
+          typeof currentVal === "string"
+            ? currentVal
+            : JSON.stringify(currentVal),
         previous_alternatives: prevAlts.map((a) =>
           typeof a === "string" ? a : JSON.stringify(a),
         ),
@@ -189,11 +202,15 @@ export default function RecipePanel({
         format: session.format,
       });
 
-      let alternativeValue: string | string[] = result.alternative as string | string[];
+      let alternativeValue: string | string[] = result.alternative as
+        | string
+        | string[];
 
       if (aspectKey === "structure" && typeof result.alternative === "string") {
         try {
-          const clean = (result.alternative as string).replace(/```json|```/g, "").trim();
+          const clean = (result.alternative as string)
+            .replace(/```json|```/g, "")
+            .trim();
           alternativeValue = JSON.parse(clean);
         } catch {
           alternativeValue = (result.alternative as string)
@@ -216,10 +233,18 @@ export default function RecipePanel({
     }
   };
 
-  const handleChooseAlternative = async (aspectKey: string, altIndex: number) => {
+  const handleChooseAlternative = async (
+    aspectKey: string,
+    altIndex: number,
+  ) => {
     const chosen = alternatives[aspectKey][altIndex];
     setCurrentValues((prev) => ({ ...prev, [aspectKey]: chosen as string }));
     setAlternatives((prev) => ({ ...prev, [aspectKey]: [] }));
+
+    // Setear calificación a 4 automáticamente al elegir alternativa
+    setFeedback((prev) => ({ ...prev, [aspectKey]: 4 }));
+    setIsDirty(true);
+
     const updatedRecipe = { ...session.recipe, [aspectKey]: chosen };
     await updateRecipeAspect(session.id, updatedRecipe);
   };
@@ -237,16 +262,26 @@ export default function RecipePanel({
       ``,
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
       ``,
-      `ANGLE`, ``, session.recipe.angle, ``,
+      `ANGLE`,
+      ``,
+      session.recipe.angle,
+      ``,
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
       ``,
-      `HOOK`, ``, session.recipe.hook, ``,
+      `HOOK`,
+      ``,
+      session.recipe.hook,
+      ``,
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
       ``,
-      `TONE`, ``, session.recipe.tone, ``,
+      `TONE`,
+      ``,
+      session.recipe.tone,
+      ``,
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
       ``,
-      `STRUCTURE`, ``,
+      `STRUCTURE`,
+      ``,
       ...session.recipe.structure.map((s, i) => `${i + 1}. ${s}`),
       ``,
     ];
@@ -274,7 +309,11 @@ export default function RecipePanel({
      ASPECT RENDERER
   ========================= */
 
-  const renderAspect = (aspectKey: string, label: string, isStructure = false) => {
+  const renderAspect = (
+    aspectKey: string,
+    label: string,
+    isStructure = false,
+  ) => {
     const rawValue = session.recipe[aspectKey as keyof typeof session.recipe];
     const displayValue = currentValues[aspectKey] ?? rawValue;
     const rating = feedback[aspectKey] ?? 0;
@@ -305,7 +344,9 @@ export default function RecipePanel({
         {isStructure ? (
           <ol className="recipe-panel__structure">
             {(Array.isArray(displayValue) ? displayValue : [displayValue]).map(
-              (step, i) => <li key={i}>{step as string}</li>,
+              (step, i) => (
+                <li key={i}>{step as string}</li>
+              ),
             )}
           </ol>
         ) : (
@@ -352,7 +393,9 @@ export default function RecipePanel({
           <div key={altIndex} className="recipe-panel__alternative">
             {Array.isArray(alt) ? (
               <ol className="recipe-panel__alternative-structure">
-                {(alt as string[]).map((step, si) => <li key={si}>{step}</li>)}
+                {(alt as string[]).map((step, si) => (
+                  <li key={si}>{step}</li>
+                ))}
               </ol>
             ) : (
               <p className="recipe-panel__alternative-text">{alt}</p>
@@ -396,7 +439,6 @@ export default function RecipePanel({
     <>
       <div className="recipe-panel-overlay" onClick={handleClose}>
         <div className="recipe-panel" onClick={(e) => e.stopPropagation()}>
-
           {/* HEADER */}
           <div className="recipe-panel__header">
             <div>
@@ -417,38 +459,58 @@ export default function RecipePanel({
           <div className="recipe-panel__body">
             {/* LEFT — COMBINATION */}
             <div className="recipe-panel__combination">
-              <h4 className="recipe-panel__section-title">{t("recipe.combination")}</h4>
+              <h4 className="recipe-panel__section-title">
+                {t("recipe.combination")}
+              </h4>
               <div className="recipe-panel__combo-item">
-                <span className="recipe-panel__combo-label">{t("recipe.comboIdea")}</span>
+                <span className="recipe-panel__combo-label">
+                  {t("recipe.comboIdea")}
+                </span>
                 <span className="recipe-panel__combo-value">{idea.title}</span>
               </div>
               {idea.topics && idea.topics.length > 0 && (
                 <div className="recipe-panel__combo-item">
-                  <span className="recipe-panel__combo-label">{t("recipe.comboTopics")}</span>
+                  <span className="recipe-panel__combo-label">
+                    {t("recipe.comboTopics")}
+                  </span>
                   <div className="recipe-panel__combo-chips">
                     {idea.topics.map((t) => (
-                      <span key={t.id} className="topic-chip topic-chip--small">{t.name}</span>
+                      <span key={t.id} className="topic-chip topic-chip--small">
+                        {t.name}
+                      </span>
                     ))}
                   </div>
                 </div>
               )}
               {platformName && (
                 <div className="recipe-panel__combo-item">
-                  <span className="recipe-panel__combo-label">{t("recipe.comboPlatform")}</span>
-                  <span className="recipe-panel__combo-value">{platformName}</span>
+                  <span className="recipe-panel__combo-label">
+                    {t("recipe.comboPlatform")}
+                  </span>
+                  <span className="recipe-panel__combo-value">
+                    {platformName}
+                  </span>
                 </div>
               )}
               <div className="recipe-panel__combo-item">
-                <span className="recipe-panel__combo-label">{t("recipe.comboFormat")}</span>
+                <span className="recipe-panel__combo-label">
+                  {t("recipe.comboFormat")}
+                </span>
                 <span className="recipe-panel__combo-value">
-                  {t(`formats.${session.format}`, { defaultValue: session.format })}
+                  {t(`formats.${session.format}`, {
+                    defaultValue: session.format,
+                  })}
                 </span>
               </div>
               {session.content_role && (
                 <div className="recipe-panel__combo-item">
-                  <span className="recipe-panel__combo-label">{t("recipe.comboRole")}</span>
+                  <span className="recipe-panel__combo-label">
+                    {t("recipe.comboRole")}
+                  </span>
                   <span className="recipe-panel__combo-value">
-                    {t(`contentRoles.${session.content_role}`, { defaultValue: session.content_role })}
+                    {t(`contentRoles.${session.content_role}`, {
+                      defaultValue: session.content_role,
+                    })}
                   </span>
                 </div>
               )}
@@ -456,31 +518,49 @@ export default function RecipePanel({
 
             {/* RIGHT — RECIPE */}
             <div className="recipe-panel__recipe">
-              <h4 className="recipe-panel__section-title">{t("recipe.brief")}</h4>
+              <h4 className="recipe-panel__section-title">
+                {t("recipe.brief")}
+              </h4>
               {renderAspect("angle", t("recipe.angle"))}
               {renderAspect("hook", t("recipe.hook"))}
               {renderAspect("tone", t("recipe.tone"))}
               {renderAspect("structure", t("recipe.structure"), true)}
               {session.recipe.strategic_note && (
                 <div className="recipe-panel__strategic-note">
-                  <span className="recipe-panel__aspect-label">{t("recipe.strategicNote")}</span>
+                  <span className="recipe-panel__aspect-label">
+                    {t("recipe.strategicNote")}
+                  </span>
                   <p>{session.recipe.strategic_note}</p>
                 </div>
               )}
-              <p className="recipe-panel__disclaimer">{t("recipe.disclaimer")}</p>
+              <p className="recipe-panel__disclaimer">
+                {t("recipe.disclaimer")}
+              </p>
             </div>
           </div>
 
           {/* ACTIONS */}
           <div className="recipe-panel__actions">
             <div className="recipe-panel__actions-row">
-              <button className="btn-secondary" onClick={onDownload} type="button">
+              <button
+                className="btn-secondary"
+                onClick={onDownload}
+                type="button"
+              >
                 {t("recipe.downloadBrief")}
               </button>
-              <button className="btn-secondary" onClick={handleCopyBrief} type="button">
+              <button
+                className="btn-secondary"
+                onClick={handleCopyBrief}
+                type="button"
+              >
                 {copied ? t("recipe.briefCopied") : t("recipe.copyBrief")}
               </button>
-              <button className="btn-secondary" onClick={onDiscard} type="button">
+              <button
+                className="btn-secondary"
+                onClick={onDiscard}
+                type="button"
+              >
                 {t("recipe.discard")}
               </button>
 
@@ -492,7 +572,9 @@ export default function RecipePanel({
                   disabled={savingProgress}
                   type="button"
                 >
-                  {savingProgress ? t("recipe.saving") : t("recipe.saveProgress")}
+                  {savingProgress
+                    ? t("recipe.saving")
+                    : t("recipe.saveProgress")}
                 </button>
               )}
 
@@ -521,7 +603,11 @@ export default function RecipePanel({
                     setTimeout(() => setShowContentToast(false), 3000);
                   }}
                   disabled={!canCreateContent}
-                  title={!canCreateContent ? t("recipe.createContentLockedHint") : undefined}
+                  title={
+                    !canCreateContent
+                      ? t("recipe.createContentLockedHint")
+                      : undefined
+                  }
                   type="button"
                 >
                   {t("recipe.createContent")}
@@ -556,13 +642,15 @@ export default function RecipePanel({
               </span>
             )}
           </div>
-
         </div>
       </div>
 
       {/* UNSAVED WARNING MODAL */}
       {showUnsavedWarning && (
-        <div className="modal-overlay" onClick={() => setShowUnsavedWarning(false)}>
+        <div
+          className="modal-overlay"
+          onClick={() => setShowUnsavedWarning(false)}
+        >
           <div
             className="modal modal--confirm"
             onClick={(e) => e.stopPropagation()}
