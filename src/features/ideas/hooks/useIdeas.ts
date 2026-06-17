@@ -425,6 +425,37 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
      ARCHIVE IDEA
   ========================= */
 
+  const duplicateIdea = async (idea: Idea): Promise<Idea> => {
+    const session = await getSession();
+    const res = await fetch(`${base}/create-idea`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({
+        title: idea.title,
+        description: idea.description ?? null,
+        source: "manual",
+        topic_ids: idea.topics?.map((t) => t.id) ?? [],
+      }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to duplicate idea");
+
+    const newIdea: Idea = {
+      ...data.idea,
+      contents: [{ count: 0 }],
+      topics: idea.topics ?? [],
+      sessions: [],
+    };
+
+    setIdeas((prev) => [newIdea, ...prev]);
+
+    return newIdea;
+  };
+
   const archiveIdea = async (ideaId: string) => {
     const session = await getSession();
     const res = await fetch(`${base}/archive-idea/${ideaId}`, {
@@ -557,5 +588,6 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     regenerateAspect,
     updateRecipeAspect,
     markAsDownloaded,
+    duplicateIdea,
   };
 }
