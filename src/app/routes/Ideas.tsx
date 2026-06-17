@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Archive, ChevronRight, Undo2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useNavigate } from "react-router-dom";
 import {
   useIdeas,
   type Idea,
@@ -12,7 +12,6 @@ import { useTopics, type Topic } from "../../features/ideas/hooks/useTopics.ts";
 import { useContentSystem } from "../../features/ideas/hooks/useContentSystem.ts";
 import { usePlatforms } from "../../features/contents/hooks/usePlatforms.ts";
 import { useFormats } from "../../features/contents/hooks/useFormats.ts";
-import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
 import CreateIdeaModal from "../../features/ideas/modals/CreateIdeaModal.tsx";
 import ConfirmModal from "../../components/ui/ConfirmModal.tsx";
 import BriefList from "../../features/ideas/components/BriefList.tsx";
@@ -26,16 +25,6 @@ import UpgradePrompt from "../../components/ui/UpgradePrompt";
 import StepsGuide from "../../components/ui/StepsGuide";
 import "./Ideas.scss";
 
-type IdeaForContent = {
-  id: string;
-  title: string;
-  description?: string | null;
-  topics?: IdeaTopic[];
-  platform_id?: string;
-  format?: string;
-  content_role?: string;
-};
-
 type RecipeState = {
   [ideaId: string]: {
     platform_id: string;
@@ -48,6 +37,7 @@ type RecipeState = {
 
 export default function Ideas() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { setTopbarContext } = useOutletContext<{
     setTopbarContext: (v: string | null) => void;
     isAdmin: boolean;
@@ -69,8 +59,6 @@ export default function Ideas() {
   );
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"all" | "manual" | "generated">("all");
-  const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedIdea, setSelectedIdea] = useState<IdeaForContent | null>(null);
   const [showIdeaModal, setShowIdeaModal] = useState(false);
   const [editingIdea, setEditingIdea] = useState<Idea | null>(null);
   const [editTitle, setEditTitle] = useState("");
@@ -498,6 +486,47 @@ export default function Ideas() {
         }
       },
     );
+  };
+
+  const createContentFromBrief = async (): Promise<string> => {
+    if (!expandedSession) throw new Error("No session");
+    const { session, idea } = expandedSession;
+    const sessionAuth = await supabase.auth.getSession();
+    const token = sessionAuth.data.session?.access_token;
+    const res = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-content`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title: idea.title,
+          description: idea.description ?? null,
+          platform_id: session.platform_id,
+          format: session.format,
+          status: "draft",
+          content_role: session.content_role ?? null,
+          creative_unit_id: idea.id,
+          entry_channel: "recipe",
+          session_id: session.id,
+        }),
+      }
+    );
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || "Failed to create content");
+    }
+    const data = await res.json();
+    const contentId = data.data.id;
+    await updateSessionStatus(session.id, "executed");
+    refetch();
+    return contentId;
+  };
+
+  const handleViewContent = (_contentId: string) => {
+    navigate("/contents");
   };
 
   // Cargar solo el conteo de archivadas al montar — sin el contenido completo
@@ -1296,28 +1325,13 @@ export default function Ideas() {
           onClose={() => setExpandedSession(null)}
           onApprove={async () => {
             await updateSessionStatus(expandedSession.session.id, "reviewed");
-            setExpandedSession(null);
           }}
           onDiscard={async () => {
             await updateSessionStatus(expandedSession.session.id, "discarded");
-            // BriefList filtra descartados automáticamente al recargar
             setExpandedSession(null);
           }}
-          onCreateContent={async () => {
-            // Marcar la sesión como ejecutada
-            await updateSessionStatus(expandedSession.session.id, "executed");
-            setSelectedIdea({
-              id: expandedSession.idea.id,
-              title: expandedSession.idea.title,
-              description: expandedSession.idea.description,
-              topics: expandedSession.idea.topics ?? [],
-              platform_id: expandedSession.session.platform_id,
-              format: expandedSession.session.format,
-              content_role: expandedSession.session.content_role ?? undefined,
-            });
-            setExpandedSession(null);
-            setShowCreateModal(true);
-          }}
+          onCreateContent={createContentFromBrief}
+          onViewContent={handleViewContent}
           onDownload={async () => {
             downloadBrief(expandedSession.session, {
               title: expandedSession.idea.title,
@@ -1335,19 +1349,6 @@ export default function Ideas() {
             platforms.find((p) => p.id === expandedSession.session.platform_id)
               ?.name ?? ""
           }
-        />
-      )}
-
-      {/* CREATE CONTENT MODAL */}
-      {showCreateModal && (
-        <CreateContentModal
-          isOpen={showCreateModal}
-          idea={selectedIdea}
-          onClose={() => setShowCreateModal(false)}
-          onCreated={() => {
-            refetch();
-            setShowCreateModal(false);
-          }}
         />
       )}
 

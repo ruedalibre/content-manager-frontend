@@ -382,6 +382,7 @@
     "copyBrief": "⎘ Copy",
     "briefCopied": "✓ Copied",
     "createContent": "Create content",
+    "viewContent": "View content",
     "disclaimer": "AI-assisted creative guide. AI-generated outputs may not be eligible for copyright protection. Content Intelligence App does not claim IP rights over this output.",
     "ratings": {
       "1": "Completely off — needs a different approach",

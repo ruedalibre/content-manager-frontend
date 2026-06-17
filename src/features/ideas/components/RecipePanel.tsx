@@ -18,7 +18,8 @@ type RecipePanelProps = {
   onClose: () => void;
   onApprove: () => void;
   onDiscard: () => void;
-  onCreateContent: () => void;
+  onCreateContent: () => Promise<string>;
+  onViewContent?: (contentId: string) => void;
   onDownload: () => void | Promise<void>;
   saveFeedback: (sessionId: string, feedback: Record<string, number>) => Promise<void>;
   updateSessionStatus: (sessionId: string, status: CreativeSession["status"]) => Promise<void>;
@@ -45,6 +46,7 @@ export default function RecipePanel({
   onClose,
   onDiscard,
   onCreateContent,
+  onViewContent,
   onDownload,
   saveFeedback,
   updateSessionStatus,
@@ -486,7 +488,10 @@ export default function RecipePanel({
               {/* Crear contenido — solo si aprobado */}
               <button
                 className="btn-primary"
-                onClick={onCreateContent}
+                onClick={async () => {
+                  const contentId = await onCreateContent();
+                  onViewContent?.(contentId);
+                }}
                 disabled={!canCreateContent}
                 title={!canCreateContent ? t("recipe.createContentLockedHint") : undefined}
                 type="button"
