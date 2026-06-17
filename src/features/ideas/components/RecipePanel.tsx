@@ -510,7 +510,6 @@ export default function RecipePanel({
                     const contentId = await onCreateContent();
                     setAlreadyConverted(true);
                     setConvertedContentId(contentId);
-                    onViewContent?.(contentId);
                   }}
                   disabled={!canCreateContent}
                   title={!canCreateContent ? t("recipe.createContentLockedHint") : undefined}
