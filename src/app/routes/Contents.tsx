@@ -102,6 +102,7 @@ export default function Contents() {
 
   const [searchParams] = useSearchParams();
   const ideaId = searchParams.get("idea");
+  const editId = searchParams.get("edit");
 
   const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
 
@@ -140,6 +141,27 @@ export default function Contents() {
 
     loadIdea();
   }, [ideaId]);
+
+  /* =========================
+     OPEN EDIT FROM ?edit= QUERY PARAM
+  ========================= */
+  useEffect(() => {
+    const loadContentForEdit = async () => {
+      if (!editId) return;
+      const { data } = await supabase
+        .from("contents")
+        .select("id, user_id, title, description, platform_id, format, status, location, is_reusable, published_at, content_role")
+        .eq("id", editId)
+        .eq("is_deleted", false)
+        .single();
+      if (data) {
+        setContentToEdit(data as ContentItem);
+        setSelectedIdea(null);
+        setIsModalOpen(true);
+      }
+    };
+    loadContentForEdit();
+  }, [editId]);
 
   /* =========================
      SEARCH DEBOUNCE

@@ -80,6 +80,7 @@ export default function RecipePanel({
   const [convertedContentId, setConvertedContentId] = useState<string | null>(
     session.content_id,
   );
+  const [navigating, setNavigating] = useState(false);
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
 
   // Regeneration counters per aspect
@@ -497,11 +498,16 @@ export default function RecipePanel({
               {/* Crear contenido / Ver contenido */}
               {alreadyConverted ? (
                 <button
-                  className="btn-primary"
-                  onClick={() => convertedContentId && onViewContent?.(convertedContentId)}
+                  className={`btn-primary${navigating ? " btn-primary--pressed" : ""}`}
+                  onClick={() => {
+                    if (!convertedContentId) return;
+                    setNavigating(true);
+                    onViewContent?.(convertedContentId);
+                  }}
+                  disabled={navigating}
                   type="button"
                 >
-                  {t("recipe.viewContent")}
+                  {navigating ? t("common.loading") : t("recipe.viewContent")}
                 </button>
               ) : (
                 <button
