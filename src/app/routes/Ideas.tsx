@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Archive, ChevronRight, Undo2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useOutletContext, useNavigate } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import {
   useIdeas,
   type Idea,
@@ -11,6 +11,7 @@ import { useTopics, type Topic } from "../../features/ideas/hooks/useTopics.ts";
 import { useContentSystem } from "../../features/ideas/hooks/useContentSystem.ts";
 import { usePlatforms } from "../../features/contents/hooks/usePlatforms.ts";
 import { useFormats } from "../../features/contents/hooks/useFormats.ts";
+import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
 import CreateIdeaModal from "../../features/ideas/modals/CreateIdeaModal.tsx";
 import ConfirmModal from "../../components/ui/ConfirmModal.tsx";
 import BriefList from "../../features/ideas/components/BriefList.tsx";
@@ -24,6 +25,19 @@ import UpgradePrompt from "../../components/ui/UpgradePrompt";
 import StepsGuide from "../../components/ui/StepsGuide";
 import "./Ideas.scss";
 
+type ContentForEdit = {
+  id: string;
+  title: string;
+  description: string | null;
+  platform_id: string;
+  format: string;
+  status: string;
+  location: string | null;
+  is_reusable: boolean;
+  published_at: string | null;
+  content_role?: string | null;
+};
+
 type RecipeState = {
   [ideaId: string]: {
     platform_id: string;
@@ -36,7 +50,6 @@ type RecipeState = {
 
 export default function Ideas() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const { setTopbarContext } = useOutletContext<{
     setTopbarContext: (v: string | null) => void;
     isAdmin: boolean;
@@ -93,6 +106,7 @@ export default function Ideas() {
     onConfirm: () => void;
   } | null>(null);
   const [systemModalTopic, setSystemModalTopic] = useState<typeof systemTopics[0] | null>(null);
+  const [viewingContent, setViewingContent] = useState<ContentForEdit | null>(null);
 
   const {
     ideas,
@@ -524,8 +538,15 @@ export default function Ideas() {
     return contentId;
   };
 
-  const handleViewContent = (_contentId: string) => {
-    navigate("/contents");
+  const handleViewContent = async (contentId: string) => {
+    setExpandedSession(null);
+    const { data } = await supabase
+      .from("contents")
+      .select("id, title, description, platform_id, format, status, location, is_reusable, published_at, content_role")
+      .eq("id", contentId)
+      .eq("is_deleted", false)
+      .single();
+    if (data) setViewingContent(data as ContentForEdit);
   };
 
   // Cargar solo el conteo de archivadas al montar — sin el contenido completo
@@ -1348,6 +1369,19 @@ export default function Ideas() {
             platforms.find((p) => p.id === expandedSession.session.platform_id)
               ?.name ?? ""
           }
+        />
+      )}
+
+      {/* VIEW / EDIT CONTENT FROM BRIEF */}
+      {viewingContent && (
+        <CreateContentModal
+          isOpen={!!viewingContent}
+          contentToEdit={viewingContent}
+          onClose={() => setViewingContent(null)}
+          onCreated={() => {
+            refetch();
+            setViewingContent(null);
+          }}
         />
       )}
 
