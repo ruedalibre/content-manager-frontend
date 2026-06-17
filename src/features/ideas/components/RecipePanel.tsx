@@ -82,6 +82,7 @@ export default function RecipePanel({
   );
   const [navigating, setNavigating] = useState(false);
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
+  const [showContentToast, setShowContentToast] = useState(false);
 
   // Regeneration counters per aspect
   const [regenCounts, setRegenCounts] = useState<Record<string, number>>({});
@@ -516,6 +517,8 @@ export default function RecipePanel({
                     const contentId = await onCreateContent();
                     setAlreadyConverted(true);
                     setConvertedContentId(contentId);
+                    setShowContentToast(true);
+                    setTimeout(() => setShowContentToast(false), 3000);
                   }}
                   disabled={!canCreateContent}
                   title={!canCreateContent ? t("recipe.createContentLockedHint") : undefined}
@@ -583,6 +586,13 @@ export default function RecipePanel({
               </button>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* CONTENT CREATED TOAST */}
+      {showContentToast && (
+        <div className="toast toast--success">
+          <span>✓ {t("contents.contentCreated")}</span>
         </div>
       )}
     </>
