@@ -137,6 +137,8 @@
     "addTopic": "+ Add",
     "topicPlaceholder": "Topic name",
     "noIdeas": "No ideas yet. Create your first one above.",
+    "emptyTitle": "Your creative engine starts here",
+    "emptySubtitle": "Create your first idea, add topics, and generate an AI brief to turn it into content.",
     "noTopicsMatch": "No topics match your search.",
     "noTopics": "No topics yet. Add your first one above.",
     "generated": "Suggested",
