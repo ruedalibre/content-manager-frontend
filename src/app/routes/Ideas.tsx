@@ -749,7 +749,25 @@ export default function Ideas() {
           {/* DUAL GRID */}
           {!loading && (
             <>
-              {filteredIdeas.length === 0 && (
+              {filteredIdeas.length === 0 && search === "" && (
+                <div className="ideas-empty-state">
+                  <div className="ideas-empty-state__icon">✦</div>
+                  <h3 className="ideas-empty-state__title">
+                    {t("ideas.emptyTitle")}
+                  </h3>
+                  <p className="ideas-empty-state__subtitle">
+                    {t("ideas.emptySubtitle")}
+                  </p>
+                  <button
+                    className="btn-primary"
+                    onClick={() => setShowIdeaModal(true)}
+                    type="button"
+                  >
+                    {t("ideas.newIdea")}
+                  </button>
+                </div>
+              )}
+              {filteredIdeas.length === 0 && search !== "" && (
                 <div className="ideas-empty">
                   <span>{t("ideas.noIdeas")}</span>
                 </div>

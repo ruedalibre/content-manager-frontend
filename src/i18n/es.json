@@ -137,6 +137,8 @@
     "addTopic": "+ Agregar",
     "topicPlaceholder": "Nombre del tema",
     "noIdeas": "Sin ideas aún. Crea tu primera idea arriba.",
+    "emptyTitle": "Tu motor creativo empieza aquí",
+    "emptySubtitle": "Crea tu primera idea, agrégale temas y genera un brief con IA para convertirla en contenido.",
     "noTopicsMatch": "Ningún tema coincide con tu búsqueda.",
     "noTopics": "Sin temas aún. Agrega el primero arriba.",
     "generated": "Sugerida",
