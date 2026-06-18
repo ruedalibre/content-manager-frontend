@@ -92,7 +92,9 @@ export default function Ideas() {
     message: string;
     onConfirm: () => void;
   } | null>(null);
-  const [systemModalTopic, setSystemModalTopic] = useState<typeof systemTopics[0] | null>(null);
+  const [systemModalTopic, setSystemModalTopic] = useState<
+    (typeof systemTopics)[0] | null
+  >(null);
 
   const {
     ideas,
@@ -292,7 +294,8 @@ export default function Ideas() {
       } catch (err) {
         updateRecipeState(idea.id, {
           generating: false,
-          error: err instanceof Error ? err.message : "Failed to generate recipe",
+          error:
+            err instanceof Error ? err.message : "Failed to generate recipe",
         });
       }
     };
@@ -351,6 +354,7 @@ export default function Ideas() {
       await duplicateIdea(idea);
     } catch {
       setActionError(t("common.failedCreate"));
+      setTimeout(() => setActionError(null), 3000); // ← auto-limpiar
     }
   };
 
@@ -520,7 +524,7 @@ export default function Ideas() {
           entry_channel: "recipe",
           session_id: session.id,
         }),
-      }
+      },
     );
     if (!res.ok) {
       const err = await res.json();
@@ -1075,7 +1079,6 @@ export default function Ideas() {
       {/* ========================= TOPICS TAB ========================= */}
       {activeTab === "topics" && (
         <div className="ideas-tab-content">
-
           {/* ALPHABET + COUNT */}
           <div className="topics-alphabet">
             {ALL_LETTERS.map((letter) => {
@@ -1087,7 +1090,9 @@ export default function Ideas() {
                   className={`topics-alphabet__btn ${selectedLetter === letter ? "topics-alphabet__btn--active" : ""} ${hasTopics ? "topics-alphabet__btn--has" : "topics-alphabet__btn--empty"}`}
                   onClick={() => {
                     if (!hasTopics) return;
-                    setSelectedLetter(selectedLetter === letter ? null : letter);
+                    setSelectedLetter(
+                      selectedLetter === letter ? null : letter,
+                    );
                     setTopicSearch("");
                   }}
                   disabled={!hasTopics}
@@ -1101,22 +1106,29 @@ export default function Ideas() {
             </span>
           </div>
 
-          {topicsLoading && <p className="ideas-loading">{t("common.loading")}</p>}
+          {topicsLoading && (
+            <p className="ideas-loading">{t("common.loading")}</p>
+          )}
 
           {!topicsLoading && (
             <>
               {filteredTopicGroups.length === 0 ? (
                 <div className="ideas-empty">
-                  <span>{topics.length === 0 ? t("ideas.noTopics") : t("ideas.noTopicsMatch")}</span>
+                  <span>
+                    {topics.length === 0
+                      ? t("ideas.noTopics")
+                      : t("ideas.noTopicsMatch")}
+                  </span>
                 </div>
               ) : (
                 <div className="topics-alpha-list">
                   {filteredTopicGroups.map(({ letter, items }) => (
                     <div key={letter} className="topics-alpha-group">
-
                       {/* Header de letra */}
                       <div className="topics-alpha-group__header">
-                        <span className="topics-alpha-group__letter">{letter}</span>
+                        <span className="topics-alpha-group__letter">
+                          {letter}
+                        </span>
                         <span className="topics-alpha-group__count">
                           {items.length} {t("ideas.topicsCount")}
                         </span>
@@ -1130,7 +1142,9 @@ export default function Ideas() {
                               <div className="topic-list-item__edit">
                                 <input
                                   value={editTopicName}
-                                  onChange={(e) => setEditTopicName(e.target.value)}
+                                  onChange={(e) =>
+                                    setEditTopicName(e.target.value)
+                                  }
                                   maxLength={50}
                                   autoFocus
                                 />
@@ -1148,7 +1162,9 @@ export default function Ideas() {
                                     disabled={savingTopic}
                                     type="button"
                                   >
-                                    {savingTopic ? t("common.saving") : t("common.save")}
+                                    {savingTopic
+                                      ? t("common.saving")
+                                      : t("common.save")}
                                   </button>
                                 </div>
                               </div>
@@ -1159,8 +1175,16 @@ export default function Ideas() {
                                   type="button"
                                   className="topic-list-item__name topic-list-item__name--clickable"
                                   onClick={() => {
-                                    const systemTopic = systemTopics.find((s) => s.id === topic.id);
-                                    setSystemModalTopic(systemTopic ?? { id: topic.id, name: topic.name, ideas: [] });
+                                    const systemTopic = systemTopics.find(
+                                      (s) => s.id === topic.id,
+                                    );
+                                    setSystemModalTopic(
+                                      systemTopic ?? {
+                                        id: topic.id,
+                                        name: topic.name,
+                                        ideas: [],
+                                      },
+                                    );
                                   }}
                                 >
                                   <span className="topic-list-item__dot" />
@@ -1169,7 +1193,10 @@ export default function Ideas() {
                                 <div className="topic-list-item__controls">
                                   <button
                                     className="btn-icon"
-                                    onClick={() => { setEditingTopic(topic); setEditTopicName(topic.name); }}
+                                    onClick={() => {
+                                      setEditingTopic(topic);
+                                      setEditTopicName(topic.name);
+                                    }}
                                     type="button"
                                     title={t("common.edit")}
                                   >
@@ -1189,14 +1216,12 @@ export default function Ideas() {
                           </div>
                         ))}
                       </div>
-
                     </div>
                   ))}
                 </div>
               )}
             </>
           )}
-
         </div>
       )}
 
@@ -1398,7 +1423,10 @@ export default function Ideas() {
 
       {/* TOPIC SYSTEM MODAL */}
       {systemModalTopic && (
-        <div className="modal-overlay" onClick={() => setSystemModalTopic(null)}>
+        <div
+          className="modal-overlay"
+          onClick={() => setSystemModalTopic(null)}
+        >
           <div
             className="modal modal--topic-system"
             onClick={(e) => e.stopPropagation()}
@@ -1432,7 +1460,9 @@ export default function Ideas() {
                   <div key={idea.id} className="topic-system-modal__idea">
                     <span className="topic-system-modal__idea-dot" />
                     <div className="topic-system-modal__idea-body">
-                      <p className="topic-system-modal__idea-name">{idea.title}</p>
+                      <p className="topic-system-modal__idea-name">
+                        {idea.title}
+                      </p>
                       {idea.contents.length === 0 ? (
                         <p className="topic-system-modal__no-contents">
                           {t("ideas.noContentsYet")}
@@ -1440,13 +1470,19 @@ export default function Ideas() {
                       ) : (
                         <div className="topic-system-modal__contents">
                           {idea.contents.map((content) => (
-                            <div key={content.id} className="topic-system-modal__content">
+                            <div
+                              key={content.id}
+                              className="topic-system-modal__content"
+                            >
                               <span className="topic-system-modal__content-dot" />
                               <span className="topic-system-modal__content-title">
                                 {content.title}
                               </span>
                               <span className="topic-system-modal__content-meta">
-                                {content.platform} · {t(`formats.${content.format}`, { defaultValue: content.format })}
+                                {content.platform} ·{" "}
+                                {t(`formats.${content.format}`, {
+                                  defaultValue: content.format,
+                                })}
                               </span>
                             </div>
                           ))}

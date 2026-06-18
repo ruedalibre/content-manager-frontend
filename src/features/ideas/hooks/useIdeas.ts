@@ -434,7 +434,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
         Authorization: `Bearer ${session?.access_token}`,
       },
       body: JSON.stringify({
-        title: idea.title,
+        title: `${idea.title} (copia)`,
         description: idea.description ?? null,
         source: "manual",
         topic_ids: idea.topics?.map((t) => t.id) ?? [],
