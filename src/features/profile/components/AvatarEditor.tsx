@@ -60,7 +60,7 @@ const FACIAL_HAIR_OPTIONS = [
   { value: "none", label: "Ninguno" },
   { value: "beardLight", label: "Barba corta" },
   { value: "beardMedium", label: "Barba media" },
-  { value: "beardMagestic", label: "Barba larga" },
+  { value: "beardMajestic", label: "Barba larga" },
   { value: "moustacheFancy", label: "Bigote fancy" },
   { value: "moustacheMagnum", label: "Bigote magnum" },
 ];
@@ -122,10 +122,16 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
       <div className="avatar-editor__preview">
         <img
           src={avatarUrl}
-          alt="Avatar preview"
+          alt="avatar"
           className="avatar-editor__img"
           width={120}
           height={120}
+          onError={(e) => {
+            e.currentTarget.style.visibility = "hidden";
+          }}
+          onLoad={(e) => {
+            e.currentTarget.style.visibility = "visible";
+          }}
         />
       </div>
 
