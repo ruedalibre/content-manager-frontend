@@ -32,7 +32,8 @@
     "activity": "Activity",
     "profile": "My profile",
     "admin": "Admin",
-    "logout": "Logout"
+    "logout": "Logout",
+    "hello": "Hello"
   },
   "profile": {
     "title": "My profile",
@@ -60,6 +61,16 @@
     "nudgeText": "Takes less than 2 minutes and improves your insights and recipes.",
     "nudgeCta": "Complete profile",
     "nudgeDismiss": "Not now",
+    "avatar": {
+      "skinColor": "Skin color",
+      "top": "Hair",
+      "hairColor": "Hair color",
+      "facialHair": "Facial hair",
+      "facialHairColor": "Facial hair color",
+      "eyes": "Eyes",
+      "mouth": "Mouth",
+      "clothesColor": "Clothes color"
+    },
     "roles": {
       "educator": "Educator",
       "entertainer": "Entertainer",
