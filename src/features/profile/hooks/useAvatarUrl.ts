@@ -4,6 +4,7 @@ export type AvatarConfig = {
   skinColor?: string;
   top?: string;
   hairColor?: string;
+  eyebrows?: string;
   facialHair?: string;
   facialHairColor?: string;
   eyes?: string;
@@ -20,6 +21,7 @@ export function useAvatarUrl(seed: string, config: AvatarConfig = {}): string {
     if (config.skinColor) params.set("skinColor", config.skinColor);
     if (config.top) params.set("top", config.top);
     if (config.hairColor) params.set("hairColor", config.hairColor);
+    if (config.eyebrows) params.set("eyebrows", config.eyebrows);
     if (config.facialHair && config.facialHair !== "none") {
       params.set("facialHair", config.facialHair);
       params.set("facialHairProbability", "100");

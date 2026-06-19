@@ -76,6 +76,19 @@ const EYES_OPTIONS = [
   { value: "side", label: "Lados" },
 ];
 
+const EYEBROWS_OPTIONS = [
+  { value: "default", label: "Normal" },
+  { value: "defaultNatural", label: "Natural" },
+  { value: "raisedExcited", label: "Emocionadas" },
+  { value: "raisedExcitedNatural", label: "Emocionadas natural" },
+  { value: "flatNatural", label: "Planas" },
+  { value: "angryNatural", label: "Enojadas" },
+  { value: "sadConcerned", label: "Triste" },
+  { value: "sadConcernedNatural", label: "Triste natural" },
+  { value: "upDown", label: "Arriba abajo" },
+  { value: "frownNatural", label: "Fruncidas" },
+];
+
 const MOUTH_OPTIONS = [
   { value: "default", label: "Normal" },
   { value: "smile", label: "Sonrisa" },
@@ -207,6 +220,20 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
             onChange={(e) => update("eyes", e.target.value)}
           >
             {EYES_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Cejas */}
+        <div className="avatar-editor__field">
+          <label className="avatar-editor__label">{t("profile.avatar.eyebrows")}</label>
+          <select
+            className="avatar-editor__select"
+            value={config.eyebrows ?? ""}
+            onChange={(e) => update("eyebrows", e.target.value)}
+          >
+            {EYEBROWS_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>{o.label}</option>
             ))}
           </select>
