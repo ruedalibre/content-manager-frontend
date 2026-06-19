@@ -328,6 +328,8 @@
     "hideInsight": "Ocultar insight",
     "disclaimer": "Análisis creativo asistido por IA. Los resultados generados por IA pueden no ser elegibles para protección de derechos de autor. Content Intelligence App no reclama derechos de propiedad intelectual sobre este resultado.",
     "loadingIdentity": "Cargando tu identidad...",
+    "profileNudge": "Tus insights mejoran con un perfil completo. Faltan datos de contexto que la IA usa para personalizarlos.",
+    "profileNudgeCta": "Completar perfil →",
     "generatedOn": "Generado el",
     "generatingHint": "Esto toma unos 10 segundos...",
     "downloadReport": "↓ Descargar informe"
