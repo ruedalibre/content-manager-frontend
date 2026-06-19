@@ -49,8 +49,8 @@
     "country": "País",
     "selectCountry": "Seleccionar país",
     "timezone": "Zona horaria",
-    "creatorRole": "Rol principal",
-    "selectRole": "Seleccionar rol",
+    "creatorRole": "¿Qué tipo de creador te representa mejor?",
+    "selectRole": "Seleccionar tipo de creador",
     "timeAvailability": "Horas semanales dedicadas a crear",
     "productionSetup": "Setup de producción",
     "referents": "Referentes creativos",
@@ -214,7 +214,7 @@
     "reel": "Reel"
   },
   "contentRoles": {
-    "selectRole": "Seleccionar rol (opcional)",
+    "selectRole": "Rol del contenido (opcional)",
     "educational": "Educativo",
     "inspirational": "Inspiracional",
     "personal": "Personal",

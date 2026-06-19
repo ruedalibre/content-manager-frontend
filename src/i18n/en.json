@@ -49,8 +49,8 @@
     "country": "Country",
     "selectCountry": "Select country",
     "timezone": "Timezone",
-    "creatorRole": "Primary role",
-    "selectRole": "Select role",
+    "creatorRole": "What type of creator best represents you?",
+    "selectRole": "Select creator type",
     "timeAvailability": "Weekly hours dedicated to creating",
     "productionSetup": "Production setup",
     "referents": "Creative referents",
@@ -214,7 +214,7 @@
     "reel": "Reel"
   },
   "contentRoles": {
-    "selectRole": "Select role (optional)",
+    "selectRole": "Content role (optional)",
     "educational": "Educational",
     "inspirational": "Inspirational",
     "personal": "Personal",
