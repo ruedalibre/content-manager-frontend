@@ -16,6 +16,7 @@ type ActiveUser = {
   created_at: string;
   total_contents: number;
   last_content_date: string | null;
+  last_sign_in_at: string | null;
 };
 
 type EarlyAccessRequest = {
@@ -666,6 +667,7 @@ export default function Admin() {
                     <th>{t("admin.totalContents")}</th>
                     <th>{t("admin.registered")}</th>
                     <th>{t("admin.lastContent")}</th>
+                    <th>{t("admin.lastLogin")}</th>
                     <th>{t("admin.status")}</th>
                   </tr>
                 </thead>
@@ -680,6 +682,11 @@ export default function Admin() {
                         <td>
                           {user.last_content_date
                             ? new Date(user.last_content_date).toLocaleDateString()
+                            : "—"}
+                        </td>
+                        <td>
+                          {user.last_sign_in_at
+                            ? new Date(user.last_sign_in_at).toLocaleDateString()
                             : "—"}
                         </td>
                         <td>
