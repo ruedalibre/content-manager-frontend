@@ -9,7 +9,8 @@ type Props = {
 };
 
 const SKIN_COLORS = [
-  { value: "ffdbb4", label: "Claro" },
+  { value: "ffdbb4", label: "Muy claro" },
+  { value: "edb98a", label: "Claro" },
   { value: "f8d25c", label: "Dorado" },
   { value: "fd9841", label: "Trigueño" },
   { value: "d08b5b", label: "Moreno" },
@@ -40,20 +41,39 @@ const CLOTHES_COLORS = [
 ];
 
 const TOP_OPTIONS = [
-  { value: "shortHairShortFlat", label: "Corto liso" },
-  { value: "shortHairShortWaved", label: "Corto ondulado" },
-  { value: "shortHairShortCurly", label: "Corto rizado" },
-  { value: "shortHairTheCaesar", label: "César" },
-  { value: "longHairStraight", label: "Largo liso" },
-  { value: "longHairWavy", label: "Largo ondulado" },
-  { value: "longHairBob", label: "Bob" },
-  { value: "longHairCurly", label: "Largo rizado" },
-  { value: "longHairBun", label: "Moño" },
-  { value: "longHairFro", label: "Afro" },
-  { value: "dreads01", label: "Rastas" },
+  { value: "shortFlat", label: "Corto liso" },
+  { value: "shortWaved", label: "Corto ondulado" },
+  { value: "shortCurly", label: "Corto rizado" },
+  { value: "shortRound", label: "Corto redondeado" },
+  { value: "theCaesar", label: "César" },
+  { value: "theCaesarAndSidePart", label: "César con raya" },
+  { value: "sides", label: "Laterales" },
+  { value: "straight01", label: "Liso 1" },
+  { value: "straight02", label: "Liso 2" },
+  { value: "straightAndStrand", label: "Liso con mechón" },
+  { value: "longButNotTooLong", label: "Largo natural" },
+  { value: "curly", label: "Rizado" },
+  { value: "curvy", label: "Ondulado" },
+  { value: "bob", label: "Bob" },
+  { value: "bun", label: "Moño" },
+  { value: "bigHair", label: "Voluminoso" },
+  { value: "fro", label: "Afro" },
+  { value: "froBand", label: "Afro con banda" },
+  { value: "miaWallace", label: "Mia Wallace" },
+  { value: "shavedSides", label: "Lados rapados" },
+  { value: "shaggy", label: "Despeinado" },
+  { value: "shaggyMullet", label: "Mullet" },
+  { value: "frizzle", label: "Encrespado" },
+  { value: "dreads", label: "Rastas" },
+  { value: "dreads01", label: "Rastas 2" },
+  { value: "dreads02", label: "Rastas 3" },
+  { value: "frida", label: "Frida" },
   { value: "hat", label: "Sombrero" },
+  { value: "winterHat1", label: "Gorro invierno" },
+  { value: "winterHat02", label: "Gorro invierno 2" },
+  { value: "winterHat03", label: "Gorro invierno 3" },
+  { value: "winterHat04", label: "Gorro invierno 4" },
   { value: "turban", label: "Turbante" },
-  { value: "eyepatch", label: "Parche" },
 ];
 
 const FACIAL_HAIR_OPTIONS = [
@@ -69,11 +89,15 @@ const EYES_OPTIONS = [
   { value: "default", label: "Normal" },
   { value: "happy", label: "Feliz" },
   { value: "wink", label: "Guiño" },
+  { value: "winkWacky", label: "Guiño loco" },
   { value: "hearts", label: "Corazones" },
   { value: "surprised", label: "Sorprendido" },
-  { value: "close", label: "Cerrados" },
+  { value: "closed", label: "Cerrados" },
   { value: "squint", label: "Entrecerrados" },
   { value: "side", label: "Lados" },
+  { value: "eyeRoll", label: "En blanco" },
+  { value: "cry", label: "Llorando" },
+  { value: "xDizzy", label: "Mareado" },
 ];
 
 const EYEBROWS_OPTIONS = [
@@ -82,11 +106,14 @@ const EYEBROWS_OPTIONS = [
   { value: "raisedExcited", label: "Emocionadas" },
   { value: "raisedExcitedNatural", label: "Emocionadas natural" },
   { value: "flatNatural", label: "Planas" },
-  { value: "angryNatural", label: "Enojadas" },
+  { value: "frownNatural", label: "Fruncidas" },
+  { value: "angry", label: "Enojadas" },
+  { value: "angryNatural", label: "Enojadas natural" },
   { value: "sadConcerned", label: "Triste" },
   { value: "sadConcernedNatural", label: "Triste natural" },
   { value: "upDown", label: "Arriba abajo" },
-  { value: "frownNatural", label: "Fruncidas" },
+  { value: "upDownNatural", label: "Arriba abajo natural" },
+  { value: "unibrowNatural", label: "Ceja única" },
 ];
 
 const MOUTH_OPTIONS = [
@@ -96,7 +123,12 @@ const MOUTH_OPTIONS = [
   { value: "tongue", label: "Lengua" },
   { value: "twinkle", label: "Pícaro" },
   { value: "sad", label: "Triste" },
+  { value: "concerned", label: "Preocupado" },
+  { value: "disbelief", label: "Incrédulo" },
+  { value: "eating", label: "Comiendo" },
+  { value: "grimace", label: "Mueca" },
   { value: "screamOpen", label: "Gritando" },
+  { value: "vomit", label: "..." },
 ];
 
 export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
