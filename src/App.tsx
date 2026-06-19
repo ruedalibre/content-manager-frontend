@@ -33,12 +33,10 @@ async function warmDashboardEndpoints() {
     const base = import.meta.env.VITE_SUPABASE_URL + "/functions/v1/";
 
     const endpoints = [
-      "me-dashboard?period=30d",
-      "me-insights?period=30d",
-      "me-content-growth?period=30d",
-      "me-content-growth-cumulative?period=30d",
-      "me-content-growth-rate?period=30d",
-      "me-activity-heatmap",
+      "me-ideas-counts",
+      "me-creative-sessions",
+      "me-topics",
+      "platforms",
     ];
 
     endpoints.forEach((endpoint) => {
@@ -80,6 +78,7 @@ export default function App() {
           </AuthGuard>
         }
       >
+        <Route index element={<Navigate to="/ideas" replace />} />
         <Route path="/ideas" element={<Ideas />} />
         <Route path="/contents" element={<Contents />} />
         <Route path="/identity" element={<Identity />} />
