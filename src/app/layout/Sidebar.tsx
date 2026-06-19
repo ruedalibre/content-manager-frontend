@@ -50,7 +50,7 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
         {/* TITLE + SALUDO */}
         {!isCollapsed && (
           <>
-            <h2 className="sidebar__title">Creadora</h2>
+            <h2 className="sidebar__title">Content Intelligence Platform</h2>
             <div className="sidebar__user">
               <img
                 src={avatarUrl}
