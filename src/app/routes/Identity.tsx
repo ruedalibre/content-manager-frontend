@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, Link } from "react-router-dom";
 
 import { useContentDNA } from "../../features/insights/hooks/useContentDNA.ts";
 import { useAnalyticsInsights } from "../../features/insights/hooks/useAnalyticsInsights.ts";
@@ -9,6 +9,7 @@ import { useCreativeInsights } from "../../features/insights/hooks/useCreativeIn
 import { useCreativeReport } from "../../features/insights/hooks/useCreativeReport";
 import { downloadReport } from "../../utils/downloadReport";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription.ts";
+import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
 import UpgradePrompt from "../../components/ui/UpgradePrompt.tsx";
 
 import { type AnalyticsInsight } from "../../features/insights/types/insights.types.ts";
@@ -119,6 +120,7 @@ function Collapsible({
 export default function Identity() {
   const { setTopbarContext } = useOutletContext<OutletContext>();
   const { canUseAI, isFree, trialActive } = useSubscription();
+  const { profile } = useUserProfile();
 
   const { dna, loading: dnaLoading } = useContentDNA();
   const { insights: analyticsInsights } = useAnalyticsInsights("30d");
@@ -143,6 +145,14 @@ export default function Identity() {
     reflecting: false,
     deep: false,
   });
+
+  const profileIncomplete =
+    profile !== null && (
+      !profile.time_availability ||
+      !profile.production_setup ||
+      !profile.idea_sources ||
+      profile.idea_sources.length === 0
+    );
 
   const handleCopyReport = async () => {
     if (!report) return;
@@ -235,6 +245,18 @@ export default function Identity() {
 
   return (
     <div className="identity-page">
+
+      {/* ── PROFILE NUDGE ── */}
+      {profileIncomplete && (
+        <div className="identity-profile-nudge">
+          <span className="identity-profile-nudge__text">
+            {t("identity.profileNudge")}
+          </span>
+          <Link to="/profile" className="identity-profile-nudge__link">
+            {t("identity.profileNudgeCta")}
+          </Link>
+        </div>
+      )}
 
       {/* ── ROW 1 — Top ideas + Top topics ── */}
 
