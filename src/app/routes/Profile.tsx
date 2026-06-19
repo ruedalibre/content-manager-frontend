@@ -3,6 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useOutletContext } from "react-router-dom";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription";
+import AvatarEditor from "../../features/profile/components/AvatarEditor";
+import { type AvatarConfig } from "../../features/profile/hooks/useAvatarUrl";
 import { useCheckout } from "../../features/subscription/hooks/useCheckout";
 import { usePricingModal } from "../../features/subscription/context/PricingModalContext";
 import LanguageToggle from "../../components/ui/LanguageToggle.tsx";
@@ -38,6 +40,10 @@ export default function Profile() {
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [avatarConfig, setAvatarConfig] = useState<AvatarConfig>(
+    (profile?.avatar_config as AvatarConfig) ?? {}
+  );
+
   const [form, setForm] = useState({
     display_name:       profile?.display_name ?? "",
     country_code:       profile?.country_code ?? "",
@@ -62,6 +68,7 @@ export default function Profile() {
       production_setup:   profile.production_setup ?? "",
       referents:          profile.referents ?? "",
     });
+    setAvatarConfig((profile.avatar_config as AvatarConfig) ?? {});
   }, [profile]);
 
   useEffect(() => {
@@ -107,6 +114,7 @@ export default function Profile() {
         time_availability: form.time_availability || null,
         production_setup:  form.production_setup || null,
         referents:         form.referents || null,
+        avatar_config:     avatarConfig,
       } as any);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -256,6 +264,18 @@ export default function Profile() {
               ))}
             </select>
           </div>
+        </div>
+      </section>
+
+      {/* Sección: Tu avatar */}
+      <section className="profile-section">
+        <span className="section-label">{t("profile.avatarSection")}</span>
+        <div className="profile-card">
+          <AvatarEditor
+            seed={form.display_name || email || "creator"}
+            initialConfig={avatarConfig}
+            onChange={setAvatarConfig}
+          />
         </div>
       </section>
 

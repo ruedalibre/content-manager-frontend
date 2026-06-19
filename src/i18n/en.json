@@ -61,15 +61,16 @@
     "nudgeText": "Takes less than 2 minutes and improves your insights and recipes.",
     "nudgeCta": "Complete profile",
     "nudgeDismiss": "Not now",
+    "avatarSection": "Your avatar",
     "avatar": {
-      "skinColor": "Skin color",
+      "skinColor": "Skin tone",
       "top": "Hair",
       "hairColor": "Hair color",
       "facialHair": "Facial hair",
       "facialHairColor": "Facial hair color",
       "eyes": "Eyes",
       "mouth": "Mouth",
-      "clothesColor": "Clothes color"
+      "clothesColor": "Clothing color"
     },
     "roles": {
       "educator": "Educator",
