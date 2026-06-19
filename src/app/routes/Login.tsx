@@ -33,7 +33,7 @@ export default function Login() {
       const {
         data: { session },
       } = await supabase.auth.getSession();
-      if (session) navigate("/activity");
+      if (session) navigate("/ideas");
     };
     checkSession();
   }, [navigate]);
@@ -67,7 +67,7 @@ export default function Login() {
       return;
     }
 
-    navigate("/activity");
+    navigate("/ideas");
   };
 
   /* REGISTER */
