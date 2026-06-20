@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Lightbulb, FileText, Sparkles, BarChart3, Shield, User, X, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -28,7 +29,14 @@ const TOTAL_STEPS = TOUR_NAV.length;
 
 export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapsed, onToggleCollapse, tourStep, onTourAction }: Props) {
   const { t } = useTranslation();
-  const { profile } = useUserProfile();
+  const { profile, loadProfile } = useUserProfile();
+
+  useEffect(() => {
+    const handler = () => loadProfile();
+    window.addEventListener("profile-updated", handler);
+    return () => window.removeEventListener("profile-updated", handler);
+  }, [loadProfile]);
+
   const displayName = profile?.display_name ?? null;
   const avatarUrl = useAvatarUrl(
     displayName ?? "creator",
