@@ -33,8 +33,8 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
 
   useEffect(() => {
     const handler = () => loadProfile();
-    window.addEventListener("profile-updated", handler);
-    return () => window.removeEventListener("profile-updated", handler);
+    globalThis.addEventListener("profile-updated", handler);
+    return () => globalThis.removeEventListener("profile-updated", handler);
   }, [loadProfile]);
 
   const displayName = profile?.display_name ?? null;
