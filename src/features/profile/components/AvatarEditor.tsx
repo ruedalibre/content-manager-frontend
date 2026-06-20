@@ -179,265 +179,266 @@ const MOUTH_OPTIONS = [
 
 const AvatarEditor = forwardRef<AvatarEditorHandle, Props>(
   ({ seed, initialConfig }, ref) => {
-  const { t } = useTranslation();
-  const [config, setConfig] = useState<AvatarConfig>(initialConfig);
-  const avatarUrl = useAvatarUrl(seed, config);
+    const { t } = useTranslation();
+    const [config, setConfig] = useState<AvatarConfig>(initialConfig);
+    const avatarUrl = useAvatarUrl(seed, config);
 
-  useImperativeHandle(ref, () => ({
-    getConfig: () => config,
-  }));
+    useImperativeHandle(ref, () => ({
+      getConfig: () => config,
+    }));
 
-  const update = useCallback((key: keyof AvatarConfig, value: string) => {
-    setConfig((prev) => ({ ...prev, [key]: value }));
-  }, []);
+    const update = useCallback((key: keyof AvatarConfig, value: string) => {
+      setConfig((prev) => ({ ...prev, [key]: value }));
+    }, []);
 
-  return (
-    <div className="avatar-editor">
-      {/* Preview */}
-      <div className="avatar-editor__preview">
-        <img
-          key={avatarUrl}
-          src={avatarUrl}
-          alt="avatar"
-          className="avatar-editor__img"
-          width={120}
-          height={120}
-          onError={(e) => {
-            e.currentTarget.style.visibility = "hidden";
-          }}
-          onLoad={(e) => {
-            e.currentTarget.style.visibility = "visible";
-          }}
-        />
-      </div>
-
-      <div className="avatar-editor__controls">
-        {/* Tono de piel */}
-        <div className="avatar-editor__field">
-          <label className="avatar-editor__label">
-            {t("profile.avatar.skinColor")}
-          </label>
-          <div className="avatar-editor__swatches">
-            {SKIN_COLORS.map((c) => (
-              <button
-                key={c.value}
-                type="button"
-                className={`avatar-editor__swatch ${config.skinColor === c.value ? "avatar-editor__swatch--active" : ""}`}
-                style={{ background: `#${c.value}` }}
-                title={c.label}
-                onClick={() => update("skinColor", c.value)}
-              />
-            ))}
-          </div>
+    return (
+      <div className="avatar-editor">
+        {/* Preview */}
+        <div className="avatar-editor__preview">
+          <img
+            key={avatarUrl}
+            src={avatarUrl}
+            alt="avatar"
+            className="avatar-editor__img"
+            width={120}
+            height={120}
+            onError={(e) => {
+              e.currentTarget.style.visibility = "hidden";
+            }}
+            onLoad={(e) => {
+              e.currentTarget.style.visibility = "visible";
+            }}
+          />
         </div>
 
-        {/* Cabello */}
-        <div className="avatar-editor__field">
-          <label className="avatar-editor__label">
-            {t("profile.avatar.top")}
-          </label>
-          <select
-            className="avatar-editor__select"
-            value={config.top ?? ""}
-            onChange={(e) => update("top", e.target.value)}
-          >
-            {TOP_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Color de cabello */}
-        <div className="avatar-editor__field">
-          <label className="avatar-editor__label">
-            {t("profile.avatar.hairColor")}
-          </label>
-          <div className="avatar-editor__swatches">
-            {HAIR_COLORS.map((c) => (
-              <button
-                key={c.value}
-                type="button"
-                className={`avatar-editor__swatch ${config.hairColor === c.value ? "avatar-editor__swatch--active" : ""}`}
-                style={{ background: `#${c.value}` }}
-                title={c.label}
-                onClick={() => update("hairColor", c.value)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Vello facial */}
-        <div className="avatar-editor__field">
-          <label className="avatar-editor__label">
-            {t("profile.avatar.facialHair")}
-          </label>
-          <select
-            className="avatar-editor__select"
-            value={config.facialHair ?? "none"}
-            onChange={(e) => update("facialHair", e.target.value)}
-          >
-            {FACIAL_HAIR_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Color de vello facial — solo si hay vello facial */}
-        {config.facialHair && config.facialHair !== "none" && (
+        <div className="avatar-editor__controls">
+          {/* Tono de piel */}
           <div className="avatar-editor__field">
             <label className="avatar-editor__label">
-              {t("profile.avatar.facialHairColor")}
+              {t("profile.avatar.skinColor")}
             </label>
             <div className="avatar-editor__swatches">
-              {HAIR_COLORS.map((c) => (
+              {SKIN_COLORS.map((c) => (
                 <button
                   key={c.value}
                   type="button"
-                  className={`avatar-editor__swatch ${config.facialHairColor === c.value ? "avatar-editor__swatch--active" : ""}`}
+                  className={`avatar-editor__swatch ${config.skinColor === c.value ? "avatar-editor__swatch--active" : ""}`}
                   style={{ background: `#${c.value}` }}
                   title={c.label}
-                  onClick={() => update("facialHairColor", c.value)}
+                  onClick={() => update("skinColor", c.value)}
                 />
               ))}
             </div>
           </div>
-        )}
-
-        {/* Ojos */}
-        <div className="avatar-editor__field">
-          <label className="avatar-editor__label">
-            {t("profile.avatar.eyes")}
-          </label>
-          <select
-            className="avatar-editor__select"
-            value={config.eyes ?? ""}
-            onChange={(e) => update("eyes", e.target.value)}
-          >
-            {EYES_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Cejas */}
-        <div className="avatar-editor__field">
-          <label className="avatar-editor__label">
-            {t("profile.avatar.eyebrows")}
-          </label>
-          <select
-            className="avatar-editor__select"
-            value={config.eyebrows ?? ""}
-            onChange={(e) => update("eyebrows", e.target.value)}
-          >
-            {EYEBROWS_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Boca */}
-        <div className="avatar-editor__field">
-          <label className="avatar-editor__label">
-            {t("profile.avatar.mouth")}
-          </label>
-          <select
-            className="avatar-editor__select"
-            value={config.mouth ?? ""}
-            onChange={(e) => update("mouth", e.target.value)}
-          >
-            {MOUTH_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Color de ropa */}
-        <div className="avatar-editor__field">
-          <label className="avatar-editor__label">
-            {t("profile.avatar.clothesColor")}
-          </label>
-          <div className="avatar-editor__swatches">
-            {CLOTHES_COLORS.map((c) => (
-              <button
-                key={c.value}
-                type="button"
-                className={`avatar-editor__swatch ${config.clothesColor === c.value ? "avatar-editor__swatch--active" : ""}`}
-                style={{ background: `#${c.value}` }}
-                title={c.label}
-                onClick={() => update("clothesColor", c.value)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Tipo de ropa */}
-        <div className="avatar-editor__field">
-          <label className="avatar-editor__label">
-            {t("profile.avatar.clothes")}
-          </label>
-          <select
-            className="avatar-editor__select"
-            value={config.clothes ?? ""}
-            onChange={(e) => update("clothes", e.target.value)}
-          >
-            {CLOTHES_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* Estampado — solo si es graphicShirt */}
-        {config.clothes === "graphicShirt" && (
+          
+          {/* Cabello */}
           <div className="avatar-editor__field">
             <label className="avatar-editor__label">
-              {t("profile.avatar.clothesGraphic")}
+              {t("profile.avatar.top")}
             </label>
             <select
               className="avatar-editor__select"
-              value={config.clothesGraphic ?? "none"}
-              onChange={(e) => update("clothesGraphic", e.target.value)}
+              value={config.top ?? ""}
+              onChange={(e) => update("top", e.target.value)}
             >
-              {CLOTHES_GRAPHIC_OPTIONS.map((o) => (
+              {TOP_OPTIONS.map((o) => (
                 <option key={o.value} value={o.value}>
                   {o.label}
                 </option>
               ))}
             </select>
           </div>
-        )}
 
-        {/* Accesorios */}
-        <div className="avatar-editor__field">
-          <label className="avatar-editor__label">
-            {t("profile.avatar.accessories")}
-          </label>
-          <select
-            className="avatar-editor__select"
-            value={config.accessories ?? "none"}
-            onChange={(e) => update("accessories", e.target.value)}
-          >
-            {ACCESSORIES_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
+          {/* Color de cabello */}
+          <div className="avatar-editor__field">
+            <label className="avatar-editor__label">
+              {t("profile.avatar.hairColor")}
+            </label>
+            <div className="avatar-editor__swatches">
+              {HAIR_COLORS.map((c) => (
+                <button
+                  key={c.value}
+                  type="button"
+                  className={`avatar-editor__swatch ${config.hairColor === c.value ? "avatar-editor__swatch--active" : ""}`}
+                  style={{ background: `#${c.value}` }}
+                  title={c.label}
+                  onClick={() => update("hairColor", c.value)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Vello facial */}
+          <div className="avatar-editor__field">
+            <label className="avatar-editor__label">
+              {t("profile.avatar.facialHair")}
+            </label>
+            <select
+              className="avatar-editor__select"
+              value={config.facialHair ?? "none"}
+              onChange={(e) => update("facialHair", e.target.value)}
+            >
+              {FACIAL_HAIR_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Color de vello facial — solo si hay vello facial */}
+          {config.facialHair && config.facialHair !== "none" && (
+            <div className="avatar-editor__field">
+              <label className="avatar-editor__label">
+                {t("profile.avatar.facialHairColor")}
+              </label>
+              <div className="avatar-editor__swatches">
+                {HAIR_COLORS.map((c) => (
+                  <button
+                    key={c.value}
+                    type="button"
+                    className={`avatar-editor__swatch ${config.facialHairColor === c.value ? "avatar-editor__swatch--active" : ""}`}
+                    style={{ background: `#${c.value}` }}
+                    title={c.label}
+                    onClick={() => update("facialHairColor", c.value)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Ojos */}
+          <div className="avatar-editor__field">
+            <label className="avatar-editor__label">
+              {t("profile.avatar.eyes")}
+            </label>
+            <select
+              className="avatar-editor__select"
+              value={config.eyes ?? ""}
+              onChange={(e) => update("eyes", e.target.value)}
+            >
+              {EYES_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Cejas */}
+          <div className="avatar-editor__field">
+            <label className="avatar-editor__label">
+              {t("profile.avatar.eyebrows")}
+            </label>
+            <select
+              className="avatar-editor__select"
+              value={config.eyebrows ?? ""}
+              onChange={(e) => update("eyebrows", e.target.value)}
+            >
+              {EYEBROWS_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Boca */}
+          <div className="avatar-editor__field">
+            <label className="avatar-editor__label">
+              {t("profile.avatar.mouth")}
+            </label>
+            <select
+              className="avatar-editor__select"
+              value={config.mouth ?? ""}
+              onChange={(e) => update("mouth", e.target.value)}
+            >
+              {MOUTH_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Color de ropa */}
+          <div className="avatar-editor__field">
+            <label className="avatar-editor__label">
+              {t("profile.avatar.clothesColor")}
+            </label>
+            <div className="avatar-editor__swatches">
+              {CLOTHES_COLORS.map((c) => (
+                <button
+                  key={c.value}
+                  type="button"
+                  className={`avatar-editor__swatch ${config.clothesColor === c.value ? "avatar-editor__swatch--active" : ""}`}
+                  style={{ background: `#${c.value}` }}
+                  title={c.label}
+                  onClick={() => update("clothesColor", c.value)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Tipo de ropa */}
+          <div className="avatar-editor__field">
+            <label className="avatar-editor__label">
+              {t("profile.avatar.clothes")}
+            </label>
+            <select
+              className="avatar-editor__select"
+              value={config.clothes ?? ""}
+              onChange={(e) => update("clothes", e.target.value)}
+            >
+              {CLOTHES_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Estampado — solo si es graphicShirt */}
+          {config.clothes === "graphicShirt" && (
+            <div className="avatar-editor__field">
+              <label className="avatar-editor__label">
+                {t("profile.avatar.clothesGraphic")}
+              </label>
+              <select
+                className="avatar-editor__select"
+                value={config.clothesGraphic ?? "none"}
+                onChange={(e) => update("clothesGraphic", e.target.value)}
+              >
+                {CLOTHES_GRAPHIC_OPTIONS.map((o) => (
+                  <option key={o.value} value={o.value}>
+                    {o.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Accesorios */}
+          <div className="avatar-editor__field">
+            <label className="avatar-editor__label">
+              {t("profile.avatar.accessories")}
+            </label>
+            <select
+              className="avatar-editor__select"
+              value={config.accessories ?? "none"}
+              onChange={(e) => update("accessories", e.target.value)}
+            >
+              {ACCESSORIES_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
-    </div>
-  );
-});
+    );
+  },
+);
 
 export default AvatarEditor;
