@@ -405,7 +405,6 @@ export default function Profile() {
           <span className="section-label">{t("profile.avatarSection")}</span>
           <div className="profile-card">
             <AvatarEditor
-              key={JSON.stringify(avatarConfig)} // ← agregar key
               seed={profile?.display_name || email || "creator"}
               initialConfig={avatarConfig}
               onChange={setAvatarConfig}
