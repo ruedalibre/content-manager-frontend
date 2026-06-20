@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useOutletContext } from "react-router-dom";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription";
-import AvatarEditor from "../../features/profile/components/AvatarEditor";
+import AvatarEditor, { type AvatarEditorHandle } from "../../features/profile/components/AvatarEditor";
 import { type AvatarConfig } from "../../features/profile/hooks/useAvatarUrl";
 import { useCheckout } from "../../features/subscription/hooks/useCheckout";
 import { usePricingModal } from "../../features/subscription/context/PricingModalContext";
@@ -39,11 +39,7 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const profileInitialized = useRef(false);
-
-  const [avatarConfig, setAvatarConfig] = useState<AvatarConfig>(
-    (profile?.avatar_config as AvatarConfig) ?? {},
-  );
+  const avatarEditorRef = useRef<AvatarEditorHandle>(null);
 
   const [form, setForm] = useState({
     display_name: profile?.display_name ?? "",
@@ -69,10 +65,6 @@ export default function Profile() {
       production_setup: profile.production_setup ?? "",
       referents: profile.referents ?? "",
     });
-    if (!profileInitialized.current) {
-      setAvatarConfig((profile.avatar_config as AvatarConfig) ?? {});
-      profileInitialized.current = true;
-    }
   }, [profile]);
 
   useEffect(() => {
@@ -112,6 +104,7 @@ export default function Profile() {
           })();
         }
       }
+      const currentAvatarConfig = avatarEditorRef.current?.getConfig() ?? {};
       await updateProfile({
         display_name: form.display_name || null,
         country_code: form.country_code || null,
@@ -120,7 +113,7 @@ export default function Profile() {
         time_availability: form.time_availability || null,
         production_setup: form.production_setup || null,
         referents: form.referents || null,
-        avatar_config: avatarConfig as Record<string, string>,
+        avatar_config: currentAvatarConfig as Record<string, string>,
       });
       globalThis.dispatchEvent(new CustomEvent("profile-updated"));
       setSaved(true);
@@ -405,9 +398,9 @@ export default function Profile() {
           <span className="section-label">{t("profile.avatarSection")}</span>
           <div className="profile-card">
             <AvatarEditor
+              ref={avatarEditorRef}
               seed={profile?.display_name || email || "creator"}
-              initialConfig={avatarConfig}
-              onChange={setAvatarConfig}
+              initialConfig={(profile?.avatar_config as AvatarConfig) ?? {}}
             />
           </div>
         </section>
