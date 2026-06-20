@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useAvatarUrl, type AvatarConfig } from "../hooks/useAvatarUrl";
 
@@ -172,10 +172,6 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
   const { t } = useTranslation();
   const [config, setConfig] = useState<AvatarConfig>(initialConfig);
   const avatarUrl = useAvatarUrl(seed, config);
-
-  useEffect(() => {
-    setConfig(initialConfig);
-  }, [JSON.stringify(initialConfig)]);
 
   const update = useCallback((key: keyof AvatarConfig, value: string) => {
     setConfig((prev) => {
