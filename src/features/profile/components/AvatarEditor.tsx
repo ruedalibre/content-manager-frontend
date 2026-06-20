@@ -30,14 +30,20 @@ const HAIR_COLORS = [
 ];
 
 const CLOTHES_COLORS = [
-  { value: "364965", label: "Slate" },
-  { value: "c47859", label: "Terracota" },
+  { value: "262e33", label: "Negro" },
+  { value: "65c9ff", label: "Celeste" },
+  { value: "5199e4", label: "Azul" },
+  { value: "25557c", label: "Azul oscuro" },
+  { value: "929598", label: "Gris" },
+  { value: "e6e6e6", label: "Gris claro" },
   { value: "3c4f5c", label: "Petróleo" },
-  { value: "b1e2ff", label: "Celeste" },
+  { value: "b1e2ff", label: "Azul pastel" },
+  { value: "a7ffc4", label: "Verde pastel" },
+  { value: "ffafb9", label: "Rosa" },
+  { value: "ffffb1", label: "Amarillo" },
+  { value: "ff488e", label: "Rosa fuerte" },
   { value: "ff5c5c", label: "Rojo" },
   { value: "ffffff", label: "Blanco" },
-  { value: "262e33", label: "Negro" },
-  { value: "65c9ff", label: "Azul" },
 ];
 
 const CLOTHES_OPTIONS = [
@@ -177,13 +183,16 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
     setConfig(initialConfig);
   }, [JSON.stringify(initialConfig)]);
 
-  const update = useCallback((key: keyof AvatarConfig, value: string) => {
-    setConfig((prev) => {
-      const next = { ...prev, [key]: value };
-      setTimeout(() => onChange(next), 0);
-      return next;
-    });
-  }, [onChange]);
+  const update = useCallback(
+    (key: keyof AvatarConfig, value: string) => {
+      setConfig((prev) => {
+        const next = { ...prev, [key]: value };
+        setTimeout(() => onChange(next), 0);
+        return next;
+      });
+    },
+    [onChange],
+  );
 
   return (
     <div className="avatar-editor">
@@ -207,7 +216,9 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
       <div className="avatar-editor__controls">
         {/* Tono de piel */}
         <div className="avatar-editor__field">
-          <label className="avatar-editor__label">{t("profile.avatar.skinColor")}</label>
+          <label className="avatar-editor__label">
+            {t("profile.avatar.skinColor")}
+          </label>
           <div className="avatar-editor__swatches">
             {SKIN_COLORS.map((c) => (
               <button
@@ -224,21 +235,27 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
 
         {/* Cabello */}
         <div className="avatar-editor__field">
-          <label className="avatar-editor__label">{t("profile.avatar.top")}</label>
+          <label className="avatar-editor__label">
+            {t("profile.avatar.top")}
+          </label>
           <select
             className="avatar-editor__select"
             value={config.top ?? ""}
             onChange={(e) => update("top", e.target.value)}
           >
             {TOP_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Color de cabello */}
         <div className="avatar-editor__field">
-          <label className="avatar-editor__label">{t("profile.avatar.hairColor")}</label>
+          <label className="avatar-editor__label">
+            {t("profile.avatar.hairColor")}
+          </label>
           <div className="avatar-editor__swatches">
             {HAIR_COLORS.map((c) => (
               <button
@@ -255,14 +272,18 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
 
         {/* Vello facial */}
         <div className="avatar-editor__field">
-          <label className="avatar-editor__label">{t("profile.avatar.facialHair")}</label>
+          <label className="avatar-editor__label">
+            {t("profile.avatar.facialHair")}
+          </label>
           <select
             className="avatar-editor__select"
             value={config.facialHair ?? "none"}
             onChange={(e) => update("facialHair", e.target.value)}
           >
             {FACIAL_HAIR_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
             ))}
           </select>
         </div>
@@ -270,7 +291,9 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
         {/* Color de vello facial — solo si hay vello facial */}
         {config.facialHair && config.facialHair !== "none" && (
           <div className="avatar-editor__field">
-            <label className="avatar-editor__label">{t("profile.avatar.facialHairColor")}</label>
+            <label className="avatar-editor__label">
+              {t("profile.avatar.facialHairColor")}
+            </label>
             <div className="avatar-editor__swatches">
               {HAIR_COLORS.map((c) => (
                 <button
@@ -288,49 +311,63 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
 
         {/* Ojos */}
         <div className="avatar-editor__field">
-          <label className="avatar-editor__label">{t("profile.avatar.eyes")}</label>
+          <label className="avatar-editor__label">
+            {t("profile.avatar.eyes")}
+          </label>
           <select
             className="avatar-editor__select"
             value={config.eyes ?? ""}
             onChange={(e) => update("eyes", e.target.value)}
           >
             {EYES_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Cejas */}
         <div className="avatar-editor__field">
-          <label className="avatar-editor__label">{t("profile.avatar.eyebrows")}</label>
+          <label className="avatar-editor__label">
+            {t("profile.avatar.eyebrows")}
+          </label>
           <select
             className="avatar-editor__select"
             value={config.eyebrows ?? ""}
             onChange={(e) => update("eyebrows", e.target.value)}
           >
             {EYEBROWS_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Boca */}
         <div className="avatar-editor__field">
-          <label className="avatar-editor__label">{t("profile.avatar.mouth")}</label>
+          <label className="avatar-editor__label">
+            {t("profile.avatar.mouth")}
+          </label>
           <select
             className="avatar-editor__select"
             value={config.mouth ?? ""}
             onChange={(e) => update("mouth", e.target.value)}
           >
             {MOUTH_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
             ))}
           </select>
         </div>
 
         {/* Color de ropa */}
         <div className="avatar-editor__field">
-          <label className="avatar-editor__label">{t("profile.avatar.clothesColor")}</label>
+          <label className="avatar-editor__label">
+            {t("profile.avatar.clothesColor")}
+          </label>
           <div className="avatar-editor__swatches">
             {CLOTHES_COLORS.map((c) => (
               <button
@@ -347,14 +384,18 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
 
         {/* Tipo de ropa */}
         <div className="avatar-editor__field">
-          <label className="avatar-editor__label">{t("profile.avatar.clothes")}</label>
+          <label className="avatar-editor__label">
+            {t("profile.avatar.clothes")}
+          </label>
           <select
             className="avatar-editor__select"
             value={config.clothes ?? ""}
             onChange={(e) => update("clothes", e.target.value)}
           >
             {CLOTHES_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
             ))}
           </select>
         </div>
@@ -362,14 +403,18 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
         {/* Estampado — solo si es graphicShirt */}
         {config.clothes === "graphicShirt" && (
           <div className="avatar-editor__field">
-            <label className="avatar-editor__label">{t("profile.avatar.clothesGraphic")}</label>
+            <label className="avatar-editor__label">
+              {t("profile.avatar.clothesGraphic")}
+            </label>
             <select
               className="avatar-editor__select"
               value={config.clothesGraphic ?? "none"}
               onChange={(e) => update("clothesGraphic", e.target.value)}
             >
               {CLOTHES_GRAPHIC_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
               ))}
             </select>
           </div>
@@ -377,14 +422,18 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
 
         {/* Accesorios */}
         <div className="avatar-editor__field">
-          <label className="avatar-editor__label">{t("profile.avatar.accessories")}</label>
+          <label className="avatar-editor__label">
+            {t("profile.avatar.accessories")}
+          </label>
           <select
             className="avatar-editor__select"
             value={config.accessories ?? "none"}
             onChange={(e) => update("accessories", e.target.value)}
           >
             {ACCESSORIES_OPTIONS.map((o) => (
-              <option key={o.value} value={o.value}>{o.label}</option>
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
             ))}
           </select>
         </div>
