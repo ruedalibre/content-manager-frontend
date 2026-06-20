@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
 import { Lightbulb, FileText, Sparkles, BarChart3, Shield, User, X, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
-import { useAvatarUrl, type AvatarConfig } from "../../features/profile/hooks/useAvatarUrl";
 import "./Sidebar.scss";
 
 type Props = {
@@ -29,32 +26,6 @@ const TOTAL_STEPS = TOUR_NAV.length;
 
 export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapsed, onToggleCollapse, tourStep, onTourAction }: Props) {
   const { t } = useTranslation();
-  const { profile, loadProfile } = useUserProfile();
-
-  useEffect(() => {
-    const handler = () => loadProfile();
-    globalThis.addEventListener("profile-updated", handler);
-    return () => globalThis.removeEventListener("profile-updated", handler);
-  }, [loadProfile]);
-
-  const displayName = profile?.display_name ?? null;
-  const avatarUrl = useAvatarUrl(
-    displayName ?? "creator",
-    (profile?.avatar_config as AvatarConfig) ?? {}
-  );
-  const [sidebarSvg, setSidebarSvg] = useState<string>("");
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch(avatarUrl)
-      .then((res) => res.text())
-      .then((svg) => {
-        if (!cancelled) setSidebarSvg(svg);
-      })
-      .catch(() => {});
-    return () => { cancelled = true; };
-  }, [avatarUrl]);
-
   const isLast = tourStep === TOTAL_STEPS - 1;
 
   return (
@@ -68,30 +39,9 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
           <button type="button" onClick={onClose}><X size={20} /></button>
         </div>
 
-        {/* TITLE + SALUDO */}
+        {/* TITLE */}
         {!isCollapsed && (
-          <>
-            <h2 className="sidebar__title">Content Intelligence Platform</h2>
-            <div className="sidebar__user">
-              <div
-                className="sidebar__avatar"
-                style={{ width: 32, height: 32, borderRadius: "50%", overflow: "hidden", background: "var(--bg-muted)" }}
-                dangerouslySetInnerHTML={{ __html: sidebarSvg }}
-              />
-              <span className="sidebar__greeting">
-                {displayName ? `${t("nav.hello")}, ${displayName}` : t("nav.hello")}
-              </span>
-            </div>
-          </>
-        )}
-        {isCollapsed && (
-          <div className="sidebar__avatar-collapsed">
-            <div
-              className="sidebar__avatar"
-              style={{ width: 32, height: 32, borderRadius: "50%", overflow: "hidden", background: "var(--bg-muted)" }}
-              dangerouslySetInnerHTML={{ __html: sidebarSvg }}
-            />
-          </div>
+          <h2 className="sidebar__title">Content Intelligence Platform</h2>
         )}
 
         {/* COLLAPSE BUTTON */}
@@ -106,7 +56,6 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
 
         {/* NAVIGATION */}
         <nav className="sidebar__nav">
-          {/* TOUR NAV ITEMS — con tooltip anclado */}
           {TOUR_NAV.map((item) => (
             <div
               key={item.key}
