@@ -179,10 +179,6 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
   const [config, setConfig] = useState<AvatarConfig>(initialConfig);
   const avatarUrl = useAvatarUrl(seed, config);
 
-  useEffect(() => {
-    setConfig(initialConfig);
-  }, [JSON.stringify(initialConfig)]);
-
   const update = useCallback(
     (key: keyof AvatarConfig, value: string) => {
       setConfig((prev) => {

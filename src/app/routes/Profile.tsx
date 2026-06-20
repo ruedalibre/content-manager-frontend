@@ -13,8 +13,8 @@ import "./Profile.scss";
 import {
   COUNTRIES,
   TIMEZONES,
-  CREATOR_ROLES,  
-  TIME_OPTIONS,  
+  CREATOR_ROLES,
+  TIME_OPTIONS,
   SETUP_OPTIONS,
 } from "../../features/profile/constants/profileOptions.ts";
 
@@ -41,32 +41,32 @@ export default function Profile() {
   const [error, setError] = useState<string | null>(null);
 
   const [avatarConfig, setAvatarConfig] = useState<AvatarConfig>(
-    (profile?.avatar_config as AvatarConfig) ?? {}
+    (profile?.avatar_config as AvatarConfig) ?? {},
   );
 
   const [form, setForm] = useState({
-    display_name:       profile?.display_name ?? "",
-    country_code:       profile?.country_code ?? "",
-    timezone:           profile?.timezone ?? "America/Bogota",
-    creator_role:       profile?.creator_role ?? "",
+    display_name: profile?.display_name ?? "",
+    country_code: profile?.country_code ?? "",
+    timezone: profile?.timezone ?? "America/Bogota",
+    creator_role: profile?.creator_role ?? "",
     preferred_language: profile?.preferred_language ?? "en",
-    time_availability:  profile?.time_availability ?? "",
-    production_setup:   profile?.production_setup ?? "",
-    referents:          profile?.referents ?? "",
+    time_availability: profile?.time_availability ?? "",
+    production_setup: profile?.production_setup ?? "",
+    referents: profile?.referents ?? "",
   });
 
   // Sincronizar form cuando el perfil carga
   useEffect(() => {
     if (!profile) return;
     setForm({
-      display_name:       profile.display_name ?? "",
-      country_code:       profile.country_code ?? "",
-      timezone:           profile.timezone ?? "America/Bogota",
-      creator_role:       profile.creator_role ?? "",
+      display_name: profile.display_name ?? "",
+      country_code: profile.country_code ?? "",
+      timezone: profile.timezone ?? "America/Bogota",
+      creator_role: profile.creator_role ?? "",
       preferred_language: profile.preferred_language ?? "en",
-      time_availability:  profile.time_availability ?? "",
-      production_setup:   profile.production_setup ?? "",
-      referents:          profile.referents ?? "",
+      time_availability: profile.time_availability ?? "",
+      production_setup: profile.production_setup ?? "",
+      referents: profile.referents ?? "",
     });
     setAvatarConfig((profile.avatar_config as AvatarConfig) ?? {});
   }, [profile]);
@@ -92,7 +92,9 @@ export default function Profile() {
         i18n.changeLanguage(form.preferred_language);
 
         // Invalidar caché de IA para que Identity regenere en la próxima visita
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         if (session) {
           void (async () => {
             try {
@@ -107,14 +109,14 @@ export default function Profile() {
         }
       }
       await updateProfile({
-        display_name:      form.display_name || null,
-        country_code:      form.country_code || null,
-        timezone:          form.timezone,
-        creator_role:      form.creator_role || null,
+        display_name: form.display_name || null,
+        country_code: form.country_code || null,
+        timezone: form.timezone,
+        creator_role: form.creator_role || null,
         time_availability: form.time_availability || null,
-        production_setup:  form.production_setup || null,
-        referents:         form.referents || null,
-        avatar_config:     avatarConfig,
+        production_setup: form.production_setup || null,
+        referents: form.referents || null,
+        avatar_config: avatarConfig,
       } as any);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -126,8 +128,12 @@ export default function Profile() {
   };
 
   const completedFields = [
-    form.display_name, form.country_code, form.creator_role,
-    form.time_availability, form.production_setup, form.referents,
+    form.display_name,
+    form.country_code,
+    form.creator_role,
+    form.time_availability,
+    form.production_setup,
+    form.referents,
   ].filter(Boolean).length;
   const completionPct = Math.round((completedFields / 6) * 100);
 
@@ -157,7 +163,9 @@ export default function Profile() {
               <span className="profile-field__value">{email || "—"}</span>
             </div>
             <div className="profile-field profile-field--readonly">
-              <span className="profile-field__label">{t("profile.memberSince")}</span>
+              <span className="profile-field__label">
+                {t("profile.memberSince")}
+              </span>
               <span className="profile-field__value">
                 {profile?.created_at
                   ? new Date(profile.created_at).toLocaleDateString()
@@ -171,12 +179,15 @@ export default function Profile() {
         <section className="profile-section">
           <span className="section-label">{t("profile.billingSection")}</span>
           <div className="profile-card">
-
             {/* Plan actual */}
             <div className="profile-field profile-field--readonly">
-              <span className="profile-field__label">{t("profile.currentPlan")}</span>
+              <span className="profile-field__label">
+                {t("profile.currentPlan")}
+              </span>
               <div className="profile-field__plan">
-                <span className={`profile-plan-badge ${isCreator ? "profile-plan-badge--creator" : "profile-plan-badge--free"}`}>
+                <span
+                  className={`profile-plan-badge ${isCreator ? "profile-plan-badge--creator" : "profile-plan-badge--free"}`}
+                >
                   {isCreator ? "Creator" : "Free"}
                 </span>
                 {trialActive && trialEndsAt && (
@@ -192,7 +203,9 @@ export default function Profile() {
             {/* Acción según plan */}
             <div className="profile-field profile-field--readonly">
               <span className="profile-field__label">
-                {isCreator ? t("profile.manageSubscription") : t("profile.upgradeLabel")}
+                {isCreator
+                  ? t("profile.manageSubscription")
+                  : t("profile.upgradeLabel")}
               </span>
               <div>
                 {isCreator ? (
@@ -202,7 +215,9 @@ export default function Profile() {
                     onClick={openPortal}
                     disabled={portalLoading}
                   >
-                    {portalLoading ? t("common.loading") : t("profile.manageSubscriptionCta")}
+                    {portalLoading
+                      ? t("common.loading")
+                      : t("profile.manageSubscriptionCta")}
                   </button>
                 ) : (
                   <button
@@ -215,16 +230,19 @@ export default function Profile() {
                 )}
               </div>
             </div>
-
           </div>
         </section>
 
         {/* Sección: Personalización */}
         <section className="profile-section">
-          <span className="section-label">{t("profile.personalizationSection")}</span>
+          <span className="section-label">
+            {t("profile.personalizationSection")}
+          </span>
           <div className="profile-card">
             <div className="profile-field">
-              <label className="profile-field__label">{t("profile.displayName")}</label>
+              <label className="profile-field__label">
+                {t("profile.displayName")}
+              </label>
               <input
                 name="display_name"
                 value={form.display_name}
@@ -234,13 +252,17 @@ export default function Profile() {
               />
             </div>
             <div className="profile-field">
-              <label className="profile-field__label">{t("profile.language")}</label>
+              <label className="profile-field__label">
+                {t("profile.language")}
+              </label>
               <div className="profile-field__language">
                 <LanguageToggle />
               </div>
             </div>
             <div className="profile-field">
-              <label className="profile-field__label">{t("profile.country")}</label>
+              <label className="profile-field__label">
+                {t("profile.country")}
+              </label>
               <select
                 name="country_code"
                 value={form.country_code}
@@ -249,12 +271,16 @@ export default function Profile() {
               >
                 <option value="">{t("profile.selectCountry")}</option>
                 {COUNTRIES.map((c) => (
-                  <option key={c.code} value={c.code}>{c.name}</option>
+                  <option key={c.code} value={c.code}>
+                    {c.name}
+                  </option>
                 ))}
               </select>
             </div>
             <div className="profile-field">
-              <label className="profile-field__label">{t("profile.timezone")}</label>
+              <label className="profile-field__label">
+                {t("profile.timezone")}
+              </label>
               <select
                 name="timezone"
                 value={form.timezone}
@@ -262,7 +288,9 @@ export default function Profile() {
                 className="profile-field__select"
               >
                 {TIMEZONES.map((tz) => (
-                  <option key={tz.value} value={tz.value}>{tz.label}</option>
+                  <option key={tz.value} value={tz.value}>
+                    {tz.label}
+                  </option>
                 ))}
               </select>
             </div>
@@ -274,7 +302,9 @@ export default function Profile() {
           <span className="section-label">{t("profile.creativeSection")}</span>
           <div className="profile-card">
             <div className="profile-field">
-              <label className="profile-field__label">{t("profile.creatorRole")}</label>
+              <label className="profile-field__label">
+                {t("profile.creatorRole")}
+              </label>
               <select
                 name="creator_role"
                 value={form.creator_role}
@@ -290,7 +320,9 @@ export default function Profile() {
               </select>
             </div>
             <div className="profile-field">
-              <label className="profile-field__label">{t("profile.timeAvailability")}</label>
+              <label className="profile-field__label">
+                {t("profile.timeAvailability")}
+              </label>
               <select
                 name="time_availability"
                 value={form.time_availability}
@@ -300,13 +332,18 @@ export default function Profile() {
                 <option value="">{t("profile.select")}</option>
                 {TIME_OPTIONS.map((o) => (
                   <option key={o} value={o}>
-                    {t(`onboarding.questions.time_availability.options.${o}.label`, { defaultValue: o })}
+                    {t(
+                      `onboarding.questions.time_availability.options.${o}.label`,
+                      { defaultValue: o },
+                    )}
                   </option>
                 ))}
               </select>
             </div>
             <div className="profile-field">
-              <label className="profile-field__label">{t("profile.productionSetup")}</label>
+              <label className="profile-field__label">
+                {t("profile.productionSetup")}
+              </label>
               <select
                 name="production_setup"
                 value={form.production_setup}
@@ -316,13 +353,18 @@ export default function Profile() {
                 <option value="">{t("profile.select")}</option>
                 {SETUP_OPTIONS.map((o) => (
                   <option key={o} value={o}>
-                    {t(`onboarding.questions.production_setup.options.${o}.label`, { defaultValue: o })}
+                    {t(
+                      `onboarding.questions.production_setup.options.${o}.label`,
+                      { defaultValue: o },
+                    )}
                   </option>
                 ))}
               </select>
             </div>
             <div className="profile-field">
-              <label className="profile-field__label">{t("profile.referents")}</label>
+              <label className="profile-field__label">
+                {t("profile.referents")}
+              </label>
               <input
                 name="referents"
                 value={form.referents}
@@ -358,7 +400,7 @@ export default function Profile() {
           <span className="section-label">{t("profile.avatarSection")}</span>
           <div className="profile-card">
             <AvatarEditor
-              key={JSON.stringify(avatarConfig)}
+              key={JSON.stringify(avatarConfig)} // ← agregar key
               seed={form.display_name || email || "creator"}
               initialConfig={avatarConfig}
               onChange={setAvatarConfig}
