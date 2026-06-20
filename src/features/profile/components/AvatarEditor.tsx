@@ -1,4 +1,4 @@
-import { useState, useCallback, useImperativeHandle, forwardRef } from "react";
+import { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAvatarUrl, type AvatarConfig } from "../hooks/useAvatarUrl";
 
@@ -182,10 +182,17 @@ const AvatarEditor = forwardRef<AvatarEditorHandle, Props>(
     const { t } = useTranslation();
     const [config, setConfig] = useState<AvatarConfig>(initialConfig);
     const avatarUrl = useAvatarUrl(seed, config);
+    const imgRef = useRef<HTMLImageElement>(null);
 
     useImperativeHandle(ref, () => ({
       getConfig: () => config,
     }));
+
+    useEffect(() => {
+      if (imgRef.current) {
+        imgRef.current.src = avatarUrl;
+      }
+    }, [avatarUrl]);
 
     const update = useCallback((key: keyof AvatarConfig, value: string) => {
       setConfig((prev) => ({ ...prev, [key]: value }));
@@ -196,18 +203,12 @@ const AvatarEditor = forwardRef<AvatarEditorHandle, Props>(
         {/* Preview */}
         <div className="avatar-editor__preview">
           <img
-            key={avatarUrl}
+            ref={imgRef}
             src={avatarUrl}
             alt="avatar"
             className="avatar-editor__img"
             width={120}
             height={120}
-            onError={(e) => {
-              e.currentTarget.style.visibility = "hidden";
-            }}
-            onLoad={(e) => {
-              e.currentTarget.style.visibility = "visible";
-            }}
           />
         </div>
 
