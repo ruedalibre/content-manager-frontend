@@ -402,7 +402,7 @@ export default function Profile() {
           <div className="profile-card">
             <AvatarEditor
               key={JSON.stringify(avatarConfig)} // ← agregar key
-              seed={form.display_name || email || "creator"}
+              seed={profile?.display_name || email || "creator"}
               initialConfig={avatarConfig}
               onChange={setAvatarConfig}
             />

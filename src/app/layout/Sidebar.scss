@@ -84,9 +84,11 @@
   font-size: var(--fs-13);
   font-weight: 500;
   color: var(--text-on-primary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: var(--lh-snug);overflow-wrap: break-word;
+  word-break: break-word;
+  line-height: var(--lh-snug);
 }
 
 .sidebar__nav {
