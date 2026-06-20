@@ -15,7 +15,7 @@ export type AvatarConfig = {
   accessories?: string;
 };
 
-const BASE = "https://api.dicebear.com/9.x/avataaars/svg";
+const BASE = "https://api.dicebear.com/10.x/avataaars/svg";
 
 export function useAvatarUrl(seed: string, config: AvatarConfig = {}): string {
   return useMemo(() => {
