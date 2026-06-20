@@ -71,7 +71,10 @@
       "eyes": "Eyes",
       "eyebrows": "Eyebrows",
       "mouth": "Mouth",
-      "clothesColor": "Clothing color"
+      "clothesColor": "Clothing color",
+      "clothes": "Clothing style",
+      "clothesGraphic": "Graphic",
+      "accessories": "Accessories"
     },
     "roles": {
       "educator": "Educator",
