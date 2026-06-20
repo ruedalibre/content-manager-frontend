@@ -118,6 +118,7 @@ export default function Profile() {
         referents: form.referents || null,
         avatar_config: avatarConfig,
       } as any);
+      window.dispatchEvent(new CustomEvent("profile-updated"));
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch {
