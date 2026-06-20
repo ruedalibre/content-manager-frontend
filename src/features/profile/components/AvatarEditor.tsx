@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useAvatarUrl, type AvatarConfig } from "../hooks/useAvatarUrl";
 
@@ -177,18 +177,20 @@ const MOUTH_OPTIONS = [
 export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
   const { t } = useTranslation();
   const [config, setConfig] = useState<AvatarConfig>(initialConfig);
+  const [pendingNotify, setPendingNotify] = useState(false);
   const avatarUrl = useAvatarUrl(seed, config);
 
-  const update = useCallback(
-    (key: keyof AvatarConfig, value: string) => {
-      setConfig((prev) => {
-        const next = { ...prev, [key]: value };
-        onChange(next);
-        return next;
-      });
-    },
-    [onChange],
-  );
+  useEffect(() => {
+    if (pendingNotify) {
+      onChange(config);
+      setPendingNotify(false);
+    }
+  }, [config, pendingNotify, onChange]);
+
+  const update = useCallback((key: keyof AvatarConfig, value: string) => {
+    setConfig((prev) => ({ ...prev, [key]: value }));
+    setPendingNotify(true);
+  }, []);
 
   return (
     <div className="avatar-editor">
