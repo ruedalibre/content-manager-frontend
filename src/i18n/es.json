@@ -32,8 +32,7 @@
     "activity": "Actividad",
     "profile": "Mi perfil",
     "admin": "Admin",
-    "logout": "Cerrar sesión",
-    "hello": "Hola"
+    "logout": "Cerrar sesión"
   },
   "profile": {
     "title": "Mi perfil",
@@ -61,21 +60,6 @@
     "nudgeText": "Tarda menos de 2 minutos y mejora tus insights y recetas.",
     "nudgeCta": "Completar perfil",
     "nudgeDismiss": "Ahora no",
-    "avatarSection": "Tu avatar",
-    "avatar": {
-      "skinColor": "Tono de piel",
-      "top": "Cabello",
-      "hairColor": "Color de cabello",
-      "facialHair": "Vello facial",
-      "facialHairColor": "Color de vello facial",
-      "eyes": "Ojos",
-      "eyebrows": "Cejas",
-      "mouth": "Boca",
-      "clothesColor": "Color de ropa",
-      "clothes": "Tipo de ropa",
-      "clothesGraphic": "Estampado",
-      "accessories": "Accesorios"
-    },
     "roles": {
       "educator": "Educador",
       "entertainer": "Entretenimiento",

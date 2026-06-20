@@ -26,7 +26,6 @@ export type UserProfile = {
   timezone: string | null;
   creator_role: string | null;
   profile_nudge_dismissed_at: string | null;
-  avatar_config: Record<string, string> | null;
 };
 
 type OnboardingData = {
