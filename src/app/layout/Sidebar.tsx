@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Lightbulb, FileText, Sparkles, BarChart3, Shield, User, X, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -42,6 +42,19 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
     displayName ?? "creator",
     (profile?.avatar_config as AvatarConfig) ?? {}
   );
+  const [sidebarSvg, setSidebarSvg] = useState<string>("");
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch(avatarUrl)
+      .then((res) => res.text())
+      .then((svg) => {
+        if (!cancelled) setSidebarSvg(svg);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [avatarUrl]);
+
   const isLast = tourStep === TOTAL_STEPS - 1;
 
   return (
@@ -60,12 +73,10 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
           <>
             <h2 className="sidebar__title">Content Intelligence Platform</h2>
             <div className="sidebar__user">
-              <img
-                src={avatarUrl}
-                alt="avatar"
+              <div
                 className="sidebar__avatar"
-                width={32}
-                height={32}
+                style={{ width: 32, height: 32, borderRadius: "50%", overflow: "hidden", background: "var(--bg-muted)" }}
+                dangerouslySetInnerHTML={{ __html: sidebarSvg }}
               />
               <span className="sidebar__greeting">
                 {displayName ? `${t("nav.hello")}, ${displayName}` : t("nav.hello")}
@@ -75,12 +86,10 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
         )}
         {isCollapsed && (
           <div className="sidebar__avatar-collapsed">
-            <img
-              src={avatarUrl}
-              alt="avatar"
+            <div
               className="sidebar__avatar"
-              width={32}
-              height={32}
+              style={{ width: 32, height: 32, borderRadius: "50%", overflow: "hidden", background: "var(--bg-muted)" }}
+              dangerouslySetInnerHTML={{ __html: sidebarSvg }}
             />
           </div>
         )}
