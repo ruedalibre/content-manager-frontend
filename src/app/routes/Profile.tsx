@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useOutletContext } from "react-router-dom";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
@@ -39,7 +39,7 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [profileLoaded, setProfileLoaded] = useState(false);
+  const profileInitialized = useRef(false);
 
   const [avatarConfig, setAvatarConfig] = useState<AvatarConfig>(
     (profile?.avatar_config as AvatarConfig) ?? {},
@@ -69,9 +69,9 @@ export default function Profile() {
       production_setup: profile.production_setup ?? "",
       referents: profile.referents ?? "",
     });
-    if (!profileLoaded) {
+    if (!profileInitialized.current) {
       setAvatarConfig((profile.avatar_config as AvatarConfig) ?? {});
-      setProfileLoaded(true);
+      profileInitialized.current = true;
     }
   }, [profile]);
 
@@ -120,9 +120,9 @@ export default function Profile() {
         time_availability: form.time_availability || null,
         production_setup: form.production_setup || null,
         referents: form.referents || null,
-        avatar_config: avatarConfig,
-      } as any);
-      window.dispatchEvent(new CustomEvent("profile-updated"));
+        avatar_config: avatarConfig as Record<string, string>,
+      });
+      globalThis.dispatchEvent(new CustomEvent("profile-updated"));
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch {
