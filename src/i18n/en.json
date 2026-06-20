@@ -32,7 +32,8 @@
     "activity": "Activity",
     "profile": "My profile",
     "admin": "Admin",
-    "logout": "Logout"
+    "logout": "Logout",
+    "hello": "Hello"
   },
   "profile": {
     "title": "My profile",

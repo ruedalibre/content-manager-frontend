@@ -106,6 +106,7 @@ export default function Profile() {
         production_setup:  form.production_setup || null,
         referents:         form.referents || null,
       } as any);
+      globalThis.dispatchEvent(new CustomEvent("profile-updated"));
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch {
