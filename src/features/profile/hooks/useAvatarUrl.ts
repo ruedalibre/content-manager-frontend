@@ -49,5 +49,19 @@ export function useAvatarUrl(seed: string, config: AvatarConfig = {}): string {
     const url = `${BASE}?${params.toString()}`;
     console.log('DiceBear URL:', url);
     return url;
-  }, [seed, JSON.stringify(config)]);
+  }, [
+    seed,
+    config.skinColor,
+    config.top,
+    config.hairColor,
+    config.eyebrows,
+    config.facialHair,
+    config.facialHairColor,
+    config.eyes,
+    config.mouth,
+    config.clothes,
+    config.clothesColor,
+    config.clothesGraphic,
+    config.accessories,
+  ]);
 }
