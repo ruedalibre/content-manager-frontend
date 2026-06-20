@@ -183,7 +183,7 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
     (key: keyof AvatarConfig, value: string) => {
       setConfig((prev) => {
         const next = { ...prev, [key]: value };
-        setTimeout(() => onChange(next), 0);
+        onChange(next);
         return next;
       });
     },
