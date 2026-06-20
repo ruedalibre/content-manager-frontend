@@ -47,5 +47,5 @@ export function useAvatarUrl(seed: string, config: AvatarConfig = {}): string {
     }
 
     return `${BASE}?${params.toString()}`;
-  }, [seed, config]);
+  }, [seed, JSON.stringify(config)]);
 }
