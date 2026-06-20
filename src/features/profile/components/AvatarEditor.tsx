@@ -190,6 +190,7 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
       {/* Preview */}
       <div className="avatar-editor__preview">
         <img
+          key={avatarUrl}
           src={avatarUrl}
           alt="avatar"
           className="avatar-editor__img"
