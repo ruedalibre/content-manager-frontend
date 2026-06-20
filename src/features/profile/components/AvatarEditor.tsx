@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, useImperativeHandle, forwardRef } from "react";
+import { useState, useCallback, useEffect, useImperativeHandle, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAvatarUrl, type AvatarConfig } from "../hooks/useAvatarUrl";
 
@@ -182,16 +182,21 @@ const AvatarEditor = forwardRef<AvatarEditorHandle, Props>(
     const { t } = useTranslation();
     const [config, setConfig] = useState<AvatarConfig>(initialConfig);
     const avatarUrl = useAvatarUrl(seed, config);
-    const imgRef = useRef<HTMLImageElement>(null);
+    const [svgContent, setSvgContent] = useState<string>("");
 
     useImperativeHandle(ref, () => ({
       getConfig: () => config,
     }));
 
     useEffect(() => {
-      if (imgRef.current) {
-        imgRef.current.src = avatarUrl;
-      }
+      let cancelled = false;
+      fetch(avatarUrl)
+        .then((res) => res.text())
+        .then((svg) => {
+          if (!cancelled) setSvgContent(svg);
+        })
+        .catch(() => {});
+      return () => { cancelled = true; };
     }, [avatarUrl]);
 
     const update = useCallback((key: keyof AvatarConfig, value: string) => {
@@ -202,13 +207,10 @@ const AvatarEditor = forwardRef<AvatarEditorHandle, Props>(
       <div className="avatar-editor">
         {/* Preview */}
         <div className="avatar-editor__preview">
-          <img
-            ref={imgRef}
-            src={avatarUrl}
-            alt="avatar"
+          <div
             className="avatar-editor__img"
-            width={120}
-            height={120}
+            style={{ width: 120, height: 120, borderRadius: "50%", overflow: "hidden", background: "var(--bg-muted)" }}
+            dangerouslySetInnerHTML={{ __html: svgContent }}
           />
         </div>
 
