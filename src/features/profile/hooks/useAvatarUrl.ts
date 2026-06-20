@@ -46,6 +46,8 @@ export function useAvatarUrl(seed: string, config: AvatarConfig = {}): string {
       params.set("accessoriesProbability", "0");
     }
 
-    return `${BASE}?${params.toString()}`;
+    const url = `${BASE}?${params.toString()}`;
+    console.log('DiceBear URL:', url);
+    return url;
   }, [seed, JSON.stringify(config)]);
 }
