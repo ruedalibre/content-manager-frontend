@@ -48,6 +48,15 @@ export default function Footer() {
         >
           {t("footer.privacy")}
         </Link>
+        <span className="footer__separator">·</span>
+        <Link
+          to="/faq"
+          className="footer__legal-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {t("footer.faq")}
+        </Link>
       </div>
     </footer>
   );

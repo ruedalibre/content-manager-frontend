@@ -8,6 +8,7 @@ import Login from "./app/routes/Login.tsx";
 import ResetPassword from "./app/routes/ResetPassword.tsx";
 import Terms from "./app/routes/Terms.tsx";
 import Privacy from "./app/routes/Privacy.tsx";
+import FAQ from "./app/routes/FAQ.tsx";
 import AuthGuard from "./auth/AuthGuard.tsx";
 import { useEffect } from "react";
 import { supabase } from "./supabaseClient.ts";
@@ -69,6 +70,7 @@ export default function App() {
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/faq" element={<FAQ />} />
 
       {/* Rutas privadas */}
       <Route
