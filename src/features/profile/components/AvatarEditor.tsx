@@ -1,11 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useImperativeHandle, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useAvatarUrl, type AvatarConfig } from "../hooks/useAvatarUrl";
+
+export type AvatarEditorHandle = {
+  getConfig: () => AvatarConfig;
+};
 
 type Props = {
   seed: string;
   initialConfig: AvatarConfig;
-  onChange: (config: AvatarConfig) => void;
 };
 
 const SKIN_COLORS = [
@@ -174,22 +177,18 @@ const MOUTH_OPTIONS = [
   { value: "vomit", label: "..." },
 ];
 
-export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
+const AvatarEditor = forwardRef<AvatarEditorHandle, Props>(
+  ({ seed, initialConfig }, ref) => {
   const { t } = useTranslation();
   const [config, setConfig] = useState<AvatarConfig>(initialConfig);
-  const [pendingNotify, setPendingNotify] = useState(false);
   const avatarUrl = useAvatarUrl(seed, config);
 
-  useEffect(() => {
-    if (pendingNotify) {
-      onChange(config);
-      setPendingNotify(false);
-    }
-  }, [config, pendingNotify, onChange]);
+  useImperativeHandle(ref, () => ({
+    getConfig: () => config,
+  }));
 
   const update = useCallback((key: keyof AvatarConfig, value: string) => {
     setConfig((prev) => ({ ...prev, [key]: value }));
-    setPendingNotify(true);
   }, []);
 
   return (
@@ -439,4 +438,6 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
       </div>
     </div>
   );
-}
+});
+
+export default AvatarEditor;
