@@ -40,6 +40,43 @@ const CLOTHES_COLORS = [
   { value: "65c9ff", label: "Azul" },
 ];
 
+const CLOTHES_OPTIONS = [
+  { value: "blazerAndShirt", label: "Blazer y camisa" },
+  { value: "blazerAndSweater", label: "Blazer y suéter" },
+  { value: "collarAndSweater", label: "Cuello y suéter" },
+  { value: "graphicShirt", label: "Camiseta gráfica" },
+  { value: "hoodie", label: "Hoodie" },
+  { value: "overall", label: "Overall" },
+  { value: "shirtCrewNeck", label: "Camiseta redonda" },
+  { value: "shirtScoopNeck", label: "Camiseta escote" },
+  { value: "shirtVNeck", label: "Camiseta V" },
+];
+
+const CLOTHES_GRAPHIC_OPTIONS = [
+  { value: "none", label: "Sin estampado" },
+  { value: "bear", label: "Oso" },
+  { value: "bat", label: "Murciélago" },
+  { value: "deer", label: "Ciervo" },
+  { value: "diamond", label: "Diamante" },
+  { value: "pizza", label: "Pizza" },
+  { value: "resist", label: "Resist" },
+  { value: "skull", label: "Calavera" },
+  { value: "skullOutline", label: "Calavera línea" },
+  { value: "hola", label: "Hola" },
+  { value: "cumbia", label: "Cumbia" },
+];
+
+const ACCESSORIES_OPTIONS = [
+  { value: "none", label: "Ninguno" },
+  { value: "prescription01", label: "Gafas redondas" },
+  { value: "prescription02", label: "Gafas cuadradas" },
+  { value: "round", label: "Gafas retro" },
+  { value: "sunglasses", label: "Gafas de sol" },
+  { value: "wayfarers", label: "Wayfarers" },
+  { value: "kurt", label: "Kurt" },
+  { value: "eyepatch", label: "Parche" },
+];
+
 const TOP_OPTIONS = [
   { value: "shortFlat", label: "Corto liso" },
   { value: "shortWaved", label: "Corto ondulado" },
@@ -306,6 +343,50 @@ export default function AvatarEditor({ seed, initialConfig, onChange }: Props) {
               />
             ))}
           </div>
+        </div>
+
+        {/* Tipo de ropa */}
+        <div className="avatar-editor__field">
+          <label className="avatar-editor__label">{t("profile.avatar.clothes")}</label>
+          <select
+            className="avatar-editor__select"
+            value={config.clothes ?? ""}
+            onChange={(e) => update("clothes", e.target.value)}
+          >
+            {CLOTHES_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Estampado — solo si es graphicShirt */}
+        {config.clothes === "graphicShirt" && (
+          <div className="avatar-editor__field">
+            <label className="avatar-editor__label">{t("profile.avatar.clothesGraphic")}</label>
+            <select
+              className="avatar-editor__select"
+              value={config.clothesGraphic ?? "none"}
+              onChange={(e) => update("clothesGraphic", e.target.value)}
+            >
+              {CLOTHES_GRAPHIC_OPTIONS.map((o) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* Accesorios */}
+        <div className="avatar-editor__field">
+          <label className="avatar-editor__label">{t("profile.avatar.accessories")}</label>
+          <select
+            className="avatar-editor__select"
+            value={config.accessories ?? "none"}
+            onChange={(e) => update("accessories", e.target.value)}
+          >
+            {ACCESSORIES_OPTIONS.map((o) => (
+              <option key={o.value} value={o.value}>{o.label}</option>
+            ))}
+          </select>
         </div>
       </div>
     </div>
