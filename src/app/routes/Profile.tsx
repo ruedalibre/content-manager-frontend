@@ -39,6 +39,7 @@ export default function Profile() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   const [avatarConfig, setAvatarConfig] = useState<AvatarConfig>(
     (profile?.avatar_config as AvatarConfig) ?? {},
@@ -68,7 +69,10 @@ export default function Profile() {
       production_setup: profile.production_setup ?? "",
       referents: profile.referents ?? "",
     });
-    setAvatarConfig((profile.avatar_config as AvatarConfig) ?? {});
+    if (!profileLoaded) {
+      setAvatarConfig((profile.avatar_config as AvatarConfig) ?? {});
+      setProfileLoaded(true);
+    }
   }, [profile]);
 
   useEffect(() => {
