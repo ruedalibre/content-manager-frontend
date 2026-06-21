@@ -53,7 +53,9 @@ function InsightExpander({
         type="button"
       >
         {expanded[code] ? t("identity.hideInsight") : t("identity.seeInsight")}
-        <span className={`identity-insight-toggle__arrow${expanded[code] ? " identity-insight-toggle__arrow--open" : ""}`}>
+        <span
+          className={`identity-insight-toggle__arrow${expanded[code] ? " identity-insight-toggle__arrow--open" : ""}`}
+        >
           ▾
         </span>
       </button>
@@ -147,12 +149,12 @@ export default function Identity() {
   });
 
   const profileIncomplete =
-    profile !== null && (
-      !profile.time_availability ||
+    profile !== null &&
+    (!profile.time_availability ||
       !profile.production_setup ||
-      !profile.idea_sources ||
-      profile.idea_sources.length === 0
-    );
+      !profile.display_name ||
+      !profile.country_code ||
+      !profile.creator_role);
 
   const handleCopyReport = async () => {
     if (!report) return;
@@ -245,7 +247,6 @@ export default function Identity() {
 
   return (
     <div className="identity-page">
-
       {/* ── PROFILE NUDGE ── */}
       {profileIncomplete && (
         <div className="identity-profile-nudge">
@@ -270,7 +271,9 @@ export default function Identity() {
                 <span className="identity-ideas-list__title">{idea.title}</span>
                 <span className="identity-ideas-list__count">
                   {idea.content_count}{" "}
-                  {idea.content_count === 1 ? t("ideas.content") : t("ideas.contents")}
+                  {idea.content_count === 1
+                    ? t("ideas.content")
+                    : t("ideas.contents")}
                 </span>
               </li>
             ))}
@@ -314,7 +317,9 @@ export default function Identity() {
               <span className="identity-stat-card__value">
                 {item.percentage}%
               </span>
-              <span className="identity-stat-card__label">{t(`contentRoles.${item.role}`, { defaultValue: item.role })}</span>
+              <span className="identity-stat-card__label">
+                {t(`contentRoles.${item.role}`, { defaultValue: item.role })}
+              </span>
             </div>
           ))}
         </div>
@@ -385,90 +390,94 @@ export default function Identity() {
       {/* ── STANDOUT INSIGHTS — gated por plan ── */}
 
       <section className="identity-section">
-        <span className="section-label">
-          {t("identity.standoutInsights")}
-        </span>
-        {canUseAI ? (
-          (aiLoading || (aiResult?.standout_insights?.length ?? 0) > 0) && (
-            <div className="identity-highlights">
-              {aiLoading ? (
-                <>
-                  <div className="identity-highlight-card identity-highlight-card--skeleton" />
-                  <div className="identity-highlight-card identity-highlight-card--skeleton" />
-                </>
-              ) : (
-                <>
-                  {aiResult?.standout_insights.slice(0, 2).map((insight, i) => (
-                    <div key={i} className="identity-highlight-card">
-                      <span className="identity-highlight-card__title">
-                        {insight.title}
-                      </span>
-                      <p>{insight.text}</p>
-                    </div>
-                  ))}
-                  {getInsight("content_production") && (
-                    <div className="identity-highlight-card">
-                      <p>
-                        {t(
-                          getInsight("content_production")!.insight_key,
-                          getInsight("content_production")!.insight_data ?? {},
-                        )}{" "}
-                        {t(getInsight("content_production")!.strategy_key)}
-                      </p>
-                    </div>
-                  )}
-                </>
-              )}
-            </div>
-          )
-        ) : (
-          isFree && !trialActive && (
-            <UpgradePrompt
-              title={t("upgrade.insightsTitle")}
-              description={t("upgrade.insightsDesc")}
-            />
-          )
-        )}
+        <span className="section-label">{t("identity.standoutInsights")}</span>
+        {canUseAI
+          ? (aiLoading || (aiResult?.standout_insights?.length ?? 0) > 0) && (
+              <div className="identity-highlights">
+                {aiLoading ? (
+                  <>
+                    <div className="identity-highlight-card identity-highlight-card--skeleton" />
+                    <div className="identity-highlight-card identity-highlight-card--skeleton" />
+                  </>
+                ) : (
+                  <>
+                    {aiResult?.standout_insights
+                      .slice(0, 2)
+                      .map((insight, i) => (
+                        <div key={i} className="identity-highlight-card">
+                          <span className="identity-highlight-card__title">
+                            {insight.title}
+                          </span>
+                          <p>{insight.text}</p>
+                        </div>
+                      ))}
+                    {getInsight("content_production") && (
+                      <div className="identity-highlight-card">
+                        <p>
+                          {t(
+                            getInsight("content_production")!.insight_key,
+                            getInsight("content_production")!.insight_data ??
+                              {},
+                          )}{" "}
+                          {t(getInsight("content_production")!.strategy_key)}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            )
+          : isFree &&
+            !trialActive && (
+              <UpgradePrompt
+                title={t("upgrade.insightsTitle")}
+                description={t("upgrade.insightsDesc")}
+              />
+            )}
       </section>
 
       {/* ── CREATIVE STYLE — gated por plan ── */}
 
       <section className="identity-section">
         <span className="section-label">{t("identity.creativeStyle")}</span>
-        {canUseAI ? (
-          (aiLoading || (aiResult?.creative_style_tags?.length ?? 0) > 0) && (
-            <div className="identity-tags">
-              {aiLoading ? (
-                <>
-                  {[80, 110, 95, 130, 75].map((w, i) => (
+        {canUseAI
+          ? (aiLoading || (aiResult?.creative_style_tags?.length ?? 0) > 0) && (
+              <div className="identity-tags">
+                {aiLoading ? (
+                  <>
+                    {[80, 110, 95, 130, 75].map((w, i) => (
+                      <span
+                        key={i}
+                        className="identity-tag identity-tag--skeleton"
+                        style={{ width: w }}
+                      />
+                    ))}
+                  </>
+                ) : (
+                  aiResult?.creative_style_tags.map((item, i) => (
                     <span
                       key={i}
-                      className="identity-tag identity-tag--skeleton"
-                      style={{ width: w }}
-                    />
-                  ))}
-                </>
-              ) : (
-                aiResult?.creative_style_tags.map((item, i) => (
-                  <span
-                    key={i}
-                    className={`identity-tag ${item.active ? "identity-tag--active" : ""}`}
-                  >
-                    {item.tag}
+                      className={`identity-tag ${item.active ? "identity-tag--active" : ""}`}
+                    >
+                      {item.tag}
+                    </span>
+                  ))
+                )}
+              </div>
+            )
+          : isFree &&
+            !trialActive && (
+              <div
+                className="identity-tags identity-tags--locked"
+                aria-hidden="true"
+              >
+                {["···", "·····", "····", "······", "···"].map((dots, i) => (
+                  <span key={i} className="identity-tag identity-tag--locked">
+                    {dots}
                   </span>
-                ))
-              )}
-            </div>
-          )
-        ) : (
-          isFree && !trialActive && (
-            <div className="identity-tags identity-tags--locked" aria-hidden="true">
-              {["···", "·····", "····", "······", "···"].map((dots, i) => (
-                <span key={i} className="identity-tag identity-tag--locked">{dots}</span>
-              ))}
-            </div>
-          )
-        )}
+                ))}
+              </div>
+            )}
       </section>
 
       {/* ── WORTH REFLECTING ON — colapsable ── */}
@@ -565,7 +574,8 @@ export default function Identity() {
 
             <div className="identity-report__footer">
               <span className="identity-report__date">
-                {t("identity.generatedOn")} {new Date(generatedAt!).toLocaleDateString()}
+                {t("identity.generatedOn")}{" "}
+                {new Date(generatedAt!).toLocaleDateString()}
               </span>
               <div style={{ display: "flex", gap: "8px" }}>
                 <button
