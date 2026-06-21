@@ -234,6 +234,22 @@
   }
 }
 
+.ideas-toggle-all {
+  font-size: var(--fs-12);
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--text);
+  }
+}
+
 /* =========================
    DUAL GRID
 ========================= */
@@ -302,6 +318,56 @@
 
   &:hover &__controls {
     opacity: 1;
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--s-2) var(--s-3) var(--s-1);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--bg-muted);
+    }
+  }
+
+  &__top-left {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+
+  &__chevron {
+    color: var(--text-faint);
+    transition: transform var(--transition-fast);
+    flex-shrink: 0;
+
+    &--open {
+      transform: rotate(90deg);
+    }
+  }
+
+  &__title-row {
+    padding: 0 var(--s-3) var(--s-1);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--bg-muted);
+    }
+  }
+
+  &__meta-row {
+    padding: 0 var(--s-3) var(--s-2) calc(var(--s-3) + 20px);
+  }
+
+  &__body {
+    border-top: 1px solid var(--border-subtle);
+    padding: var(--s-3);
+  }
+
+  &--collapsed &__footer {
+    display: none;
   }
 
   &__title {
