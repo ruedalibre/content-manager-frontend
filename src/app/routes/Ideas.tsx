@@ -729,7 +729,7 @@ export default function Ideas() {
                   const formats = ideaFormats[idea.id] ?? [];
 
                   return (
-                    <div key={idea.id} className="ideas-dual-row">
+                    <div key={idea.id} className={`ideas-dual-row${collapsedIds.has(idea.id) ? " ideas-dual-row--collapsed" : ""}`}>
                       {/* IDEA CARD */}
                       <IdeaCard
                         idea={idea}

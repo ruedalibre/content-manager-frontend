@@ -278,6 +278,14 @@
 
 .ideas-dual-row {
   display: contents;
+
+  &--collapsed {
+    .idea-card,
+    .brief-list-card {
+      height: 145px;
+      overflow: hidden;
+    }
+  }
 }
 
 /* =========================
@@ -370,6 +378,16 @@
     display: none;
   }
 
+  &--collapsed {
+    .idea-card__title {
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
   &__title {
     font-size: var(--fs-15);
     font-weight: 500;
@@ -381,7 +399,7 @@
   &__description {
     font-size: var(--fs-13);
     color: var(--text-muted);
-    margin: 0;
+    margin: 0 0 var(--s-3);
     line-height: var(--lh-normal);
     overflow: hidden;
     display: -webkit-box;
@@ -1849,6 +1867,7 @@
     justify-content: space-between;
     padding: var(--s-2) var(--s-3);
     border-bottom: 1px solid var(--border-subtle);
+    flex-shrink: 0;
   }
 
   &__title {
