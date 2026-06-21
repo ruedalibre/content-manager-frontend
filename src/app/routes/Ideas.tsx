@@ -115,7 +115,6 @@ export default function Ideas() {
   const { platforms } = usePlatforms();
   const { canCreateBriefs, isFree, trialActive } = useSubscription();
   const {
-    recipeState,
     ideaFormats,
     getRecipeStateForIdea,
     updateRecipeState,
