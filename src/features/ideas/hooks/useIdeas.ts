@@ -436,7 +436,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       body: JSON.stringify({
         title: `${idea.title} (copia)`,
         description: idea.description ?? null,
-        source: "manual",
+        source: idea.source ?? "manual",
         topic_ids: idea.topics?.map((t) => t.id) ?? [],
       }),
     });
