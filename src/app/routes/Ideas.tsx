@@ -10,7 +10,7 @@ import {
 import { useTopics, type Topic } from "../../features/ideas/hooks/useTopics.ts";
 import { useContentSystem } from "../../features/ideas/hooks/useContentSystem.ts";
 import { usePlatforms } from "../../features/contents/hooks/usePlatforms.ts";
-import { useFormats } from "../../features/contents/hooks/useFormats.ts";
+import { useIdeaCardState } from "../../features/ideas/hooks/useIdeaCardState.ts";
 import CreateIdeaModal from "../../features/ideas/modals/CreateIdeaModal.tsx";
 import ConfirmModal from "../../components/ui/ConfirmModal.tsx";
 import BriefList from "../../features/ideas/components/BriefList.tsx";
@@ -23,16 +23,6 @@ import { useSubscription } from "../../features/subscription/hooks/useSubscripti
 import UpgradePrompt from "../../components/ui/UpgradePrompt";
 import StepsGuide from "../../components/ui/StepsGuide";
 import "./Ideas.scss";
-
-type RecipeState = {
-  [ideaId: string]: {
-    platform_id: string;
-    format: string;
-    content_role?: string;
-    generating: boolean;
-    error: string | null;
-  };
-};
 
 export default function Ideas() {
   const { t } = useTranslation();
@@ -78,14 +68,10 @@ export default function Ideas() {
   const [topicSearch, setTopicSearch] = useState("");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
-  const [recipeState, setRecipeState] = useState<RecipeState>({});
   const [expandedSession, setExpandedSession] = useState<{
     session: CreativeSession;
     idea: Idea;
   } | null>(null);
-  const [ideaFormats, setIdeaFormats] = useState<{
-    [ideaId: string]: string[];
-  }>({});
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
     title: string;
@@ -127,69 +113,14 @@ export default function Ideas() {
   const { topics: systemTopics } = useContentSystem();
 
   const { platforms } = usePlatforms();
-  const { loadFormats } = useFormats();
   const { canCreateBriefs, isFree, trialActive } = useSubscription();
-
-  useEffect(() => {
-    if (!ideas.length) return;
-
-    setRecipeState((prev) => {
-      const updated = { ...prev };
-      ideas.forEach((idea) => {
-        // Solo inicializar si NO existe ya en el estado local
-        if (updated[idea.id]) return;
-
-        // Buscar la sesión activa más reciente
-        const sessions = idea.sessions ?? [];
-        const latest = sessions
-          .filter((s) => s.status !== "discarded")
-          .sort(
-            (a, b) =>
-              new Date(b.created_at).getTime() -
-              new Date(a.created_at).getTime(),
-          )[0];
-
-        if (!latest) {
-          // Sin sesiones activas — inicializar vacío
-          updated[idea.id] = {
-            platform_id: "",
-            format: "",
-            content_role: "",
-            generating: false,
-            error: null,
-          };
-          return;
-        }
-
-        const isToday =
-          new Date(latest.created_at).toDateString() ===
-          new Date().toDateString();
-
-        // Si la última sesión es de hoy → dejar campos vacíos (ya generó hoy)
-        // Si es anterior → pre-llenar para conveniencia
-        updated[idea.id] = {
-          platform_id: isToday ? "" : (latest.platform_id ?? ""),
-          format: isToday ? "" : (latest.format ?? ""),
-          content_role: isToday ? "" : (latest.content_role ?? ""),
-          generating: false,
-          error: null,
-        };
-      });
-      return updated;
-    });
-  }, [ideas]);
-
-  useEffect(() => {
-    if (!ideas.length) return;
-
-    ideas.forEach(async (idea) => {
-      const state = recipeState[idea.id];
-      if (state?.platform_id && !ideaFormats[idea.id]) {
-        const fmts = await loadFormats(state.platform_id);
-        setIdeaFormats((prev) => ({ ...prev, [idea.id]: fmts ?? [] }));
-      }
-    });
-  }, [recipeState]);
+  const {
+    recipeState,
+    ideaFormats,
+    getRecipeStateForIdea,
+    updateRecipeState,
+    handlePlatformChange,
+  } = useIdeaCardState(ideas);
 
   const normalizeFirstLetter = (str: string): string => {
     return str.normalize("NFD").replace(/[̀-ͯ]/g, "")[0]?.toUpperCase() ?? "#";
@@ -228,33 +159,6 @@ export default function Ideas() {
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([letter, items]) => ({ letter, items }));
   })();
-
-  const getRecipeStateForIdea = (ideaId: string) =>
-    recipeState[ideaId] ?? {
-      platform_id: "",
-      format: "",
-      content_role: "",
-      generating: false,
-      error: null,
-    };
-
-  const updateRecipeState = (
-    ideaId: string,
-    updates: Partial<RecipeState[string]>,
-  ) => {
-    setRecipeState((prev) => ({
-      ...prev,
-      [ideaId]: { ...getRecipeStateForIdea(ideaId), ...updates },
-    }));
-  };
-
-  const handlePlatformChange = async (ideaId: string, platformId: string) => {
-    updateRecipeState(ideaId, { platform_id: platformId, format: "" });
-    if (platformId) {
-      const fmts = await loadFormats(platformId);
-      setIdeaFormats((prev) => ({ ...prev, [ideaId]: fmts ?? [] }));
-    }
-  };
 
   const handleGenerateRecipe = async (idea: Idea) => {
     const state = getRecipeStateForIdea(idea.id);
