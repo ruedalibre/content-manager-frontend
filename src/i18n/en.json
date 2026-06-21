@@ -217,6 +217,8 @@
     "selectPlatformError": "Select platform and format first",
     "withRecipe": "with recipe",
     "implemented": "implemented",
+    "expandAll": "Expand all",
+    "collapseAll": "Collapse all",
     "seeMore": "more",
     "seeLess": "See less ↑",
     "contentSystem": "Content system",

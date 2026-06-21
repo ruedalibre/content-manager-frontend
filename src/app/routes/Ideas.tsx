@@ -69,6 +69,9 @@ export default function Ideas() {
   const [topicSearch, setTopicSearch] = useState("");
   const [selectedLetter, setSelectedLetter] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const COLLAPSE_THRESHOLD = 10;
+  const [collapsedIds, setCollapsedIds] = useState<Set<string>>(new Set());
+  const [allCollapsed, setAllCollapsed] = useState(false);
   const [expandedSession, setExpandedSession] = useState<{
     session: CreativeSession;
     idea: Idea;
@@ -121,6 +124,33 @@ export default function Ideas() {
     updateRecipeState,
     handlePlatformChange,
   } = useIdeaCardState(ideas);
+
+  useEffect(() => {
+    if (!ideas.length) return;
+    if (ideas.length > COLLAPSE_THRESHOLD) {
+      setCollapsedIds(new Set(ideas.map((i) => i.id)));
+      setAllCollapsed(true);
+    }
+  }, [ideas.length]);
+
+  const toggleCollapse = (ideaId: string) => {
+    setCollapsedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(ideaId)) next.delete(ideaId);
+      else next.add(ideaId);
+      return next;
+    });
+  };
+
+  const toggleAllCollapse = () => {
+    if (allCollapsed) {
+      setCollapsedIds(new Set());
+      setAllCollapsed(false);
+    } else {
+      setCollapsedIds(new Set(ideas.map((i) => i.id)));
+      setAllCollapsed(true);
+    }
+  };
 
   const normalizeFirstLetter = (str: string): string => {
     return str.normalize("NFD").replace(/[̀-ͯ]/g, "")[0]?.toUpperCase() ?? "#";
@@ -634,6 +664,13 @@ export default function Ideas() {
                 {t("ideas.implemented")}
               </span>
             </div>
+            <button
+              type="button"
+              className="ideas-toggle-all"
+              onClick={toggleAllCollapse}
+            >
+              {allCollapsed ? t("ideas.expandAll") : t("ideas.collapseAll")}
+            </button>
           </div>
 
           {/* Upgrade prompt — visible solo en free post-trial */}
@@ -725,6 +762,8 @@ export default function Ideas() {
                         onToggleTopic={handleToggleTopic}
                         onSaveTopics={handleSaveIdeaTopics}
                         onCancelTopics={() => setEditingIdeaTopics(null)}
+                        isCollapsed={collapsedIds.has(idea.id)}
+                        onToggleCollapse={() => toggleCollapse(idea.id)}
                       />
 
                       {/* BRIEF LIST */}
