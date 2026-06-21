@@ -1,154 +1,253 @@
-import { useState } from "react";
+import { Archive } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { type Idea } from "../hooks/useIdeas.ts";
+import { type Topic } from "../hooks/useTopics.ts";
+
+type IdeaCardState = {
+  platform_id: string;
+  format: string;
+  content_role?: string;
+  generating: boolean;
+  error: string | null;
+};
+
+type Platform = { id: string; name: string };
 
 type Props = {
-  idea: {
-    id: string;
-    title: string;
-    description?: string | null;
-    source: "manual" | "generated";
-    status?: string;
-  };
-  onUseIdea?: (idea: {
-    id: string;
-    title: string;
-    description?: string | null;
-  }) => void;
-  onUpdate?: (
-    ideaId: string,
-    updates: { title: string; description?: string; status?: string },
-  ) => Promise<void>;
-  onDelete?: (ideaId: string) => Promise<void>;
+  idea: Idea;
+  state: IdeaCardState;
+  formats: string[];
+  platforms: Platform[];
+  topics: Topic[];
+  canCreateBriefs: boolean;
+  isEditing: boolean;
+  isEditingTopics: boolean;
+  editTitle: string;
+  editDescription: string;
+  editError: string | null;
+  editSaving: boolean;
+  selectedTopicIds: string[];
+  onEditOpen: () => void;
+  onEditSave: () => void;
+  onEditCancel: () => void;
+  onEditTitleChange: (v: string) => void;
+  onEditDescriptionChange: (v: string) => void;
+  onDuplicate: () => void;
+  onArchive: () => void;
+  onDelete: () => void;
+  onPlatformChange: (platformId: string) => void;
+  onFormatChange: (format: string) => void;
+  onRoleChange: (role: string) => void;
+  onGenerate: () => void;
+  onOpenTopicSelector: () => void;
+  onToggleTopic: (topicId: string) => void;
+  onSaveTopics: () => void;
+  onCancelTopics: () => void;
+  savingTopics: boolean;
 };
 
 export default function IdeaCard({
   idea,
-  onUseIdea,
-  onUpdate,
+  state,
+  formats,
+  platforms,
+  topics,
+  canCreateBriefs,
+  isEditing,
+  isEditingTopics,
+  editTitle,
+  editDescription,
+  editError,
+  editSaving,
+  selectedTopicIds,
+  onEditOpen,
+  onEditSave,
+  onEditCancel,
+  onEditTitleChange,
+  onEditDescriptionChange,
+  onDuplicate,
+  onArchive,
   onDelete,
+  onPlatformChange,
+  onFormatChange,
+  onRoleChange,
+  onGenerate,
+  onOpenTopicSelector,
+  onToggleTopic,
+  onSaveTopics,
+  onCancelTopics,
+  savingTopics,
 }: Props) {
   const { t } = useTranslation();
   const isGenerated = idea.source === "generated";
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [editTitle, setEditTitle] = useState(idea.title);
-  const [editDescription, setEditDescription] = useState(
-    idea.description ?? "",
-  );
-  const [saving, setSaving] = useState(false);
-  const [deleting, setDeleting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleSave = async () => {
-    if (!editTitle.trim()) return;
-    setSaving(true);
-    setError(null);
-    try {
-      await onUpdate?.(idea.id, {
-        title: editTitle.trim(),
-        description: editDescription.trim() || undefined,
-      });
-      setIsEditing(false);
-    } catch {
-      setError(t("ideas.failedUpdate"));
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm(`Delete idea "${idea.title}"? This cannot be undone.`)) return;
-    setDeleting(true);
-    setError(null);
-    try {
-      await onDelete?.(idea.id);
-    } catch {
-      setError(t("ideas.failedDelete"));
-      setDeleting(false);
-    }
-  };
-
-  const handleCancel = () => {
-    setEditTitle(idea.title);
-    setEditDescription(idea.description ?? "");
-    setError(null);
-    setIsEditing(false);
-  };
+  const contentCount = idea.contents?.[0]?.count ?? 0;
 
   return (
     <div className="idea-card">
       <div className="idea-card__header">
-        <span
-          className={`badge ${
-            isGenerated ? "badge--generated" : "badge--manual"
-          }`}
-        >
+        <span className={`badge ${isGenerated ? "badge--generated" : "badge--manual"}`}>
           {isGenerated ? t("ideas.generated") : t("ideas.manual")}
         </span>
-
         {!isEditing && (
           <div className="idea-card__controls">
-            <button
-              className="btn-icon"
-              onClick={() => setIsEditing(true)}
-              title={t("common.edit")}
-            >
-              ✏️
+            <button className="btn-icon" onClick={onEditOpen} title={t("common.edit")} type="button">✏️</button>
+            <button className="btn-icon" onClick={onDuplicate} title={t("ideas.duplicate")} type="button">⧉</button>
+            <button className="btn-icon" onClick={onArchive} title={t("ideas.archive")} type="button">
+              <Archive size={14} />
             </button>
-            <button
-              className="btn-icon btn-icon--danger"
-              onClick={handleDelete}
-              disabled={deleting}
-              title={t("common.delete")}
-            >
-              {deleting ? "..." : "🗑️"}
-            </button>
+            <button className="btn-icon btn-icon--danger" onClick={onDelete} title={t("common.delete")} type="button">🗑️</button>
           </div>
         )}
       </div>
 
+      {/* EDIT MODE */}
       {isEditing ? (
         <div className="idea-card__edit">
           <input
             value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
+            onChange={(e) => onEditTitleChange(e.target.value)}
             placeholder={t("ideas.ideaTitlePlaceholder")}
             autoFocus
           />
           <textarea
             value={editDescription}
-            onChange={(e) => setEditDescription(e.target.value)}
+            onChange={(e) => onEditDescriptionChange(e.target.value)}
             placeholder={t("ideas.descriptionOptional")}
             rows={2}
           />
-          {error && <p className="idea-card__error">{error}</p>}
+          {editError && <p className="idea-card__error">{editError}</p>}
           <div className="idea-card__edit-actions">
-            <button
-              className="btn-secondary"
-              onClick={handleCancel}
-              disabled={saving}
-            >
-              Cancel
+            <button className="btn-secondary" onClick={onEditCancel} disabled={editSaving} type="button">
+              {t("common.cancel")}
             </button>
-            <button
-              className="btn-primary"
-              onClick={handleSave}
-              disabled={saving || !editTitle.trim()}
-            >
-              {saving ? t("common.saving") : t("common.save")}
+            <button className="btn-primary" onClick={onEditSave} disabled={editSaving || !editTitle.trim()} type="button">
+              {editSaving ? t("common.saving") : t("common.save")}
             </button>
           </div>
         </div>
       ) : (
         <>
-          <h4>{idea.title}</h4>
+          <h4 className="idea-card__title">{idea.title}</h4>
           {idea.description && (
             <p className="idea-card__description">{idea.description}</p>
           )}
-          <div className="idea-card__actions">
-            <button className="btn-secondary" onClick={() => onUseIdea?.(idea)}>
-              {t("ideas.useIdea")}
+
+          {/* TOPICS */}
+          <div className="idea-card__topics">
+            {idea.topics && idea.topics.length > 0 ? (
+              idea.topics.map((topic) => (
+                <span key={topic.id} className="topic-chip topic-chip--small">{topic.name}</span>
+              ))
+            ) : (
+              <span className="idea-card__no-topics">{t("ideas.noTopicsYet")}</span>
+            )}
+            <button
+              className="topic-chip topic-chip--add"
+              onClick={onOpenTopicSelector}
+              type="button"
+              title={t("common.editTopics")}
+            >
+              {isEditingTopics ? "✕" : "＋"}
             </button>
+          </div>
+
+          {/* TOPIC SELECTOR */}
+          {isEditingTopics && (
+            <div className="idea-card__topic-selector">
+              <p className="idea-card__topic-selector-label">{t("ideas.selectTopics")}</p>
+              <div className="idea-card__topic-options">
+                {topics.length === 0 ? (
+                  <p className="idea-card__no-topics">{t("ideas.noTopicsYet")}</p>
+                ) : (
+                  topics.map((topic: Topic) => (
+                    <button
+                      key={topic.id}
+                      type="button"
+                      className={`topic-chip topic-chip--selectable ${selectedTopicIds.includes(topic.id) ? "topic-chip--active" : ""}`}
+                      onClick={() => onToggleTopic(topic.id)}
+                    >
+                      {topic.name}
+                    </button>
+                  ))
+                )}
+              </div>
+              <div className="idea-card__topic-actions">
+                <button className="btn-secondary" onClick={onCancelTopics} type="button">
+                  {t("common.cancel")}
+                </button>
+                <button className="btn-primary" onClick={onSaveTopics} disabled={savingTopics} type="button">
+                  {savingTopics ? t("common.saving") : t("common.save")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* PLATFORM + FORMAT + ROLE */}
+          <div className="idea-card__recipe-controls">
+            <select
+              value={state.platform_id}
+              onChange={(e) => onPlatformChange(e.target.value)}
+              className="idea-card__select"
+            >
+              <option value="">{t("ideas.platformPlaceholder")}</option>
+              {platforms.map((p) => (
+                <option key={p.id} value={p.id}>{p.name}</option>
+              ))}
+            </select>
+            <select
+              value={state.format}
+              onChange={(e) => onFormatChange(e.target.value)}
+              disabled={!state.platform_id}
+              className="idea-card__select"
+            >
+              <option value="">{t("ideas.formatPlaceholder")}</option>
+              {formats.map((f) => (
+                <option key={f} value={f}>{t(`formats.${f}`, { defaultValue: f })}</option>
+              ))}
+            </select>
+            <select
+              value={state.content_role ?? ""}
+              onChange={(e) => onRoleChange(e.target.value)}
+              className="idea-card__select"
+            >
+              <option value="">{t("contentRoles.selectRole")}</option>
+              <option value="educational">{t("contentRoles.educational")}</option>
+              <option value="inspirational">{t("contentRoles.inspirational")}</option>
+              <option value="personal">{t("contentRoles.personal")}</option>
+              <option value="promotional">{t("contentRoles.promotional")}</option>
+              <option value="curated">{t("contentRoles.curated")}</option>
+              <option value="sales">{t("contentRoles.sales")}</option>
+            </select>
+          </div>
+
+          {state.error && <p className="idea-card__error">{state.error}</p>}
+
+          {/* FOOTER */}
+          <div className="idea-card__footer">
+            <span className="idea-card__stats">
+              {contentCount === 0
+                ? t("ideas.noContentsYet")
+                : `${contentCount} ${contentCount === 1 ? t("ideas.content") : t("ideas.contents")}`}
+            </span>
+            {canCreateBriefs ? (
+              <button
+                className={`btn-generate ${state.generating ? "btn-generate--loading" : ""}`}
+                onClick={onGenerate}
+                disabled={state.generating || !state.platform_id || !state.format}
+                type="button"
+              >
+                {state.generating ? t("recipe.generating") : t("recipe.generate")}
+              </button>
+            ) : (
+              <button
+                className="btn-generate btn-generate--locked"
+                type="button"
+                disabled
+                title={t("upgrade.briefsLocked")}
+              >
+                ✦ {t("recipe.generate")}
+              </button>
+            )}
           </div>
         </>
       )}

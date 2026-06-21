@@ -11,6 +11,7 @@ import { useTopics, type Topic } from "../../features/ideas/hooks/useTopics.ts";
 import { useContentSystem } from "../../features/ideas/hooks/useContentSystem.ts";
 import { usePlatforms } from "../../features/contents/hooks/usePlatforms.ts";
 import { useIdeaCardState } from "../../features/ideas/hooks/useIdeaCardState.ts";
+import IdeaCard from "../../features/ideas/components/IdeaCard.tsx";
 import CreateIdeaModal from "../../features/ideas/modals/CreateIdeaModal.tsx";
 import ConfirmModal from "../../components/ui/ConfirmModal.tsx";
 import BriefList from "../../features/ideas/components/BriefList.tsx";
@@ -685,296 +686,46 @@ export default function Ideas() {
 
               <div className="ideas-dual-grid">
                 {filteredIdeas.map((idea) => {
-                  const isGenerated = idea.source === "generated";
                   const isEditingThis = editingIdea?.id === idea.id;
                   const isEditingTopicsThis = editingIdeaTopics === idea.id;
                   const state = getRecipeStateForIdea(idea.id);
-                  const contentCount = idea.contents?.[0]?.count ?? 0;
                   const formats = ideaFormats[idea.id] ?? [];
 
                   return (
                     <div key={idea.id} className="ideas-dual-row">
                       {/* IDEA CARD */}
-                      <div className="idea-card">
-                        <div className="idea-card__header">
-                          <span
-                            className={`badge ${isGenerated ? "badge--generated" : "badge--manual"}`}
-                          >
-                            {isGenerated
-                              ? t("ideas.generated")
-                              : t("ideas.manual")}
-                          </span>
-                          {!isEditingThis && (
-                            <div className="idea-card__controls">
-                              <button
-                                className="btn-icon"
-                                onClick={() => handleEditOpen(idea)}
-                                title={t("common.edit")}
-                                type="button"
-                              >
-                                ✏️
-                              </button>
-                              <button
-                                className="btn-icon"
-                                onClick={() => handleDuplicateIdea(idea)}
-                                title={t("ideas.duplicate")}
-                                type="button"
-                              >
-                                ⧉
-                              </button>
-                              <button
-                                className="btn-icon"
-                                onClick={() => handleArchiveIdea(idea.id)}
-                                title={t("ideas.archive")}
-                                type="button"
-                              >
-                                <Archive size={14} />
-                              </button>
-                              <button
-                                className="btn-icon btn-icon--danger"
-                                onClick={() => handleDeleteIdea(idea.id)}
-                                title={t("common.delete")}
-                                type="button"
-                              >
-                                🗑️
-                              </button>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* EDIT MODE */}
-                        {isEditingThis ? (
-                          <div className="idea-card__edit">
-                            <input
-                              value={editTitle}
-                              onChange={(e) => setEditTitle(e.target.value)}
-                              placeholder={t("ideas.ideaTitlePlaceholder")}
-                              autoFocus
-                            />
-                            <textarea
-                              value={editDescription}
-                              onChange={(e) =>
-                                setEditDescription(e.target.value)
-                              }
-                              placeholder={t("ideas.descriptionOptional")}
-                              rows={2}
-                            />
-                            {editError && (
-                              <p className="idea-card__error">{editError}</p>
-                            )}
-                            <div className="idea-card__edit-actions">
-                              <button
-                                className="btn-secondary"
-                                onClick={() => setEditingIdea(null)}
-                                disabled={editSaving}
-                                type="button"
-                              >
-                                {t("common.cancel")}
-                              </button>
-                              <button
-                                className="btn-primary"
-                                onClick={handleEditSave}
-                                disabled={editSaving || !editTitle.trim()}
-                                type="button"
-                              >
-                                {editSaving
-                                  ? t("common.saving")
-                                  : t("common.save")}
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <>
-                            <h4 className="idea-card__title">{idea.title}</h4>
-                            {idea.description && (
-                              <p className="idea-card__description">
-                                {idea.description}
-                              </p>
-                            )}
-
-                            {/* TOPICS */}
-                            <div className="idea-card__topics">
-                              {idea.topics && idea.topics.length > 0 ? (
-                                idea.topics.map((t) => (
-                                  <span
-                                    key={t.id}
-                                    className="topic-chip topic-chip--small"
-                                  >
-                                    {t.name}
-                                  </span>
-                                ))
-                              ) : (
-                                <span className="idea-card__no-topics">
-                                  {t("ideas.noTopicsYet")}
-                                </span>
-                              )}
-                              <button
-                                className="topic-chip topic-chip--add"
-                                onClick={() => handleOpenTopicSelector(idea)}
-                                type="button"
-                                title={t("common.editTopics")}
-                              >
-                                {isEditingTopicsThis ? "✕" : "＋"}
-                              </button>
-                            </div>
-
-                            {/* TOPIC SELECTOR */}
-                            {isEditingTopicsThis && (
-                              <div className="idea-card__topic-selector">
-                                <p className="idea-card__topic-selector-label">
-                                  {t("ideas.selectTopics")}
-                                </p>
-                                <div className="idea-card__topic-options">
-                                  {topics.length === 0 ? (
-                                    <p className="idea-card__no-topics">
-                                      {t("ideas.noTopicsYet")}
-                                    </p>
-                                  ) : (
-                                    topics.map((t: Topic) => (
-                                      <button
-                                        key={t.id}
-                                        type="button"
-                                        className={`topic-chip topic-chip--selectable ${selectedTopicIds.includes(t.id) ? "topic-chip--active" : ""}`}
-                                        onClick={() => handleToggleTopic(t.id)}
-                                      >
-                                        {t.name}
-                                      </button>
-                                    ))
-                                  )}
-                                </div>
-                                <div className="idea-card__topic-actions">
-                                  <button
-                                    className="btn-secondary"
-                                    onClick={() => setEditingIdeaTopics(null)}
-                                    type="button"
-                                  >
-                                    {t("common.cancel")}
-                                  </button>
-                                  <button
-                                    className="btn-primary"
-                                    onClick={handleSaveIdeaTopics}
-                                    disabled={savingTopics}
-                                    type="button"
-                                  >
-                                    {savingTopics
-                                      ? t("common.saving")
-                                      : t("common.save")}
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* PLATFORM + FORMAT */}
-                            <div className="idea-card__recipe-controls">
-                              <select
-                                value={state.platform_id}
-                                onChange={(e) =>
-                                  handlePlatformChange(idea.id, e.target.value)
-                                }
-                                className="idea-card__select"
-                              >
-                                <option value="">
-                                  {t("ideas.platformPlaceholder")}
-                                </option>
-                                {platforms.map((p) => (
-                                  <option key={p.id} value={p.id}>
-                                    {p.name}
-                                  </option>
-                                ))}
-                              </select>
-                              <select
-                                value={state.format}
-                                onChange={(e) =>
-                                  updateRecipeState(idea.id, {
-                                    format: e.target.value,
-                                  })
-                                }
-                                disabled={!state.platform_id}
-                                className="idea-card__select"
-                              >
-                                <option value="">
-                                  {t("ideas.formatPlaceholder")}
-                                </option>
-                                {formats.map((f) => (
-                                  <option key={f} value={f}>
-                                    {t(`formats.${f}`, { defaultValue: f })}
-                                  </option>
-                                ))}
-                              </select>
-
-                              <select
-                                value={state.content_role ?? ""}
-                                onChange={(e) =>
-                                  updateRecipeState(idea.id, {
-                                    content_role: e.target.value,
-                                  })
-                                }
-                                className="idea-card__select"
-                              >
-                                <option value="">
-                                  {t("contentRoles.selectRole")}
-                                </option>
-                                <option value="educational">
-                                  {t("contentRoles.educational")}
-                                </option>
-                                <option value="inspirational">
-                                  {t("contentRoles.inspirational")}
-                                </option>
-                                <option value="personal">
-                                  {t("contentRoles.personal")}
-                                </option>
-                                <option value="promotional">
-                                  {t("contentRoles.promotional")}
-                                </option>
-                                <option value="curated">
-                                  {t("contentRoles.curated")}
-                                </option>
-                                <option value="sales">
-                                  {t("contentRoles.sales")}
-                                </option>
-                              </select>
-                            </div>
-
-                            {state.error && (
-                              <p className="idea-card__error">{state.error}</p>
-                            )}
-
-                            {/* FOOTER */}
-                            <div className="idea-card__footer">
-                              <span className="idea-card__stats">
-                                {contentCount === 0
-                                  ? t("ideas.noContentsYet")
-                                  : `${contentCount} ${contentCount === 1 ? t("ideas.content") : t("ideas.contents")}`}
-                              </span>
-                              {canCreateBriefs ? (
-                                <button
-                                  className={`btn-generate ${state.generating ? "btn-generate--loading" : ""}`}
-                                  onClick={() => handleGenerateRecipe(idea)}
-                                  disabled={
-                                    state.generating ||
-                                    !state.platform_id ||
-                                    !state.format
-                                  }
-                                  type="button"
-                                >
-                                  {state.generating
-                                    ? t("recipe.generating")
-                                    : t("recipe.generate")}
-                                </button>
-                              ) : (
-                                <button
-                                  className="btn-generate btn-generate--locked"
-                                  type="button"
-                                  disabled
-                                  title={t("upgrade.briefsLocked")}
-                                >
-                                  ✦ {t("recipe.generate")}
-                                </button>
-                              )}
-                            </div>
-                          </>
-                        )}
-                      </div>
+                      <IdeaCard
+                        idea={idea}
+                        state={state}
+                        formats={formats}
+                        platforms={platforms}
+                        topics={topics}
+                        canCreateBriefs={canCreateBriefs}
+                        isEditing={isEditingThis}
+                        isEditingTopics={isEditingTopicsThis}
+                        editTitle={editTitle}
+                        editDescription={editDescription}
+                        editError={editError}
+                        editSaving={editSaving}
+                        selectedTopicIds={selectedTopicIds}
+                        savingTopics={savingTopics}
+                        onEditOpen={() => handleEditOpen(idea)}
+                        onEditSave={handleEditSave}
+                        onEditCancel={() => setEditingIdea(null)}
+                        onEditTitleChange={setEditTitle}
+                        onEditDescriptionChange={setEditDescription}
+                        onDuplicate={() => handleDuplicateIdea(idea)}
+                        onArchive={() => handleArchiveIdea(idea.id)}
+                        onDelete={() => handleDeleteIdea(idea.id)}
+                        onPlatformChange={(platformId) => handlePlatformChange(idea.id, platformId)}
+                        onFormatChange={(format) => updateRecipeState(idea.id, { format })}
+                        onRoleChange={(role) => updateRecipeState(idea.id, { content_role: role })}
+                        onGenerate={() => handleGenerateRecipe(idea)}
+                        onOpenTopicSelector={() => handleOpenTopicSelector(idea)}
+                        onToggleTopic={handleToggleTopic}
+                        onSaveTopics={handleSaveIdeaTopics}
+                        onCancelTopics={() => setEditingIdeaTopics(null)}
+                      />
 
                       {/* BRIEF LIST */}
                       <BriefList
