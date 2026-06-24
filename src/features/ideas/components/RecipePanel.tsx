@@ -7,9 +7,10 @@ import {
   type IdeaTopic,
 } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
+import { getFormatFamily } from "../../../utils/formatFamily.ts";
+import { ASPECTS_BY_FAMILY, type AspectDefinition } from "../../../constants/aspectsByFamily.ts";
 
 const EMOJIS = ["😞", "😕", "😐", "🙂", "😄"];
-const ASPECTS = ["angle", "hook", "tone", "structure"] as const;
 const MAX_REGEN = 10;
 
 type RecipePanelProps = {
@@ -31,7 +32,7 @@ type RecipePanelProps = {
   ) => Promise<void>;
   regenerateAspect: (params: {
     session_id: string;
-    aspect: "angle" | "hook" | "tone" | "structure";
+    aspect: string;
     rating: number;
     current_value: string;
     previous_alternatives: string[];
@@ -47,6 +48,7 @@ type RecipePanelProps = {
   ) => Promise<void>;
   ideaTopics: IdeaTopic[];
   platformName: string;
+  platformSlug: string;
 };
 
 export default function RecipePanel({
@@ -63,6 +65,7 @@ export default function RecipePanel({
   updateRecipeAspect,
   ideaTopics,
   platformName,
+  platformSlug,
 }: RecipePanelProps) {
   const { t } = useTranslation();
 
@@ -73,6 +76,10 @@ export default function RecipePanel({
     t("recipe.ratings.4"),
     t("recipe.ratings.5"),
   ];
+
+  const formatFamily = getFormatFamily(platformSlug, session.format);
+  const aspects: AspectDefinition[] = ASPECTS_BY_FAMILY[formatFamily] ?? ASPECTS_BY_FAMILY.default;
+  const ratedAspects = aspects.filter((a) => a.requiresGoodRating);
 
   const [feedback, setFeedback] = useState<Record<string, number>>(
     session.feedback ?? {},
@@ -110,7 +117,7 @@ export default function RecipePanel({
   ========================= */
 
   // All 4 aspects rated "bien" (4) or "excelente" (5)
-  const allAspectsApproved = ASPECTS.every((key) => (feedback[key] ?? 0) >= 4);
+  const allAspectsApproved = ratedAspects.every((a) => (feedback[a.key] ?? 0) >= 4);
 
   // Can approve: all aspects rated ≥4 and not already approved
   const canApprove = allAspectsApproved && !saving;
@@ -186,7 +193,7 @@ export default function RecipePanel({
 
       const result = await regenerateAspect({
         session_id: session.id,
-        aspect: aspectKey as "angle" | "hook" | "tone" | "structure",
+        aspect: aspectKey as string,
         rating: feedback[aspectKey] ?? 1,
         current_value:
           typeof currentVal === "string"
@@ -312,7 +319,7 @@ export default function RecipePanel({
   const renderAspect = (
     aspectKey: string,
     label: string,
-    isStructure = false,
+    isList = false,
   ) => {
     const rawValue = session.recipe[aspectKey as keyof typeof session.recipe];
     const displayValue = currentValues[aspectKey] ?? rawValue;
@@ -341,7 +348,7 @@ export default function RecipePanel({
           </div>
         </div>
 
-        {isStructure ? (
+        {isList ? (
           <ol className="recipe-panel__structure">
             {(Array.isArray(displayValue) ? displayValue : [displayValue]).map(
               (step, i) => (
@@ -418,9 +425,9 @@ export default function RecipePanel({
   ========================= */
 
   const getApprovalHint = () => {
-    const rated = ASPECTS.filter((k) => (feedback[k] ?? 0) > 0).length;
-    const total = ASPECTS.length;
-    const goodRated = ASPECTS.filter((k) => (feedback[k] ?? 0) >= 4).length;
+    const rated = ratedAspects.filter((a) => (feedback[a.key] ?? 0) > 0).length;
+    const total = ratedAspects.length;
+    const goodRated = ratedAspects.filter((a) => (feedback[a.key] ?? 0) >= 4).length;
 
     if (rated < total) {
       return t("recipe.approvalHintRate", { rated, total });
@@ -521,10 +528,13 @@ export default function RecipePanel({
               <h4 className="recipe-panel__section-title">
                 {t("recipe.brief")}
               </h4>
-              {renderAspect("angle", t("recipe.angle"))}
-              {renderAspect("hook", t("recipe.hook"))}
-              {renderAspect("tone", t("recipe.tone"))}
-              {renderAspect("structure", t("recipe.structure"), true)}
+              {aspects.map((aspect) =>
+                renderAspect(
+                  aspect.key,
+                  t(aspect.labelKey),
+                  aspect.isList,
+                )
+              )}
               {session.recipe.strategic_note && (
                 <div className="recipe-panel__strategic-note">
                   <span className="recipe-panel__aspect-label">

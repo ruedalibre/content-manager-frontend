@@ -1102,6 +1102,10 @@ export default function Ideas() {
             platforms.find((p) => p.id === expandedSession.session.platform_id)
               ?.name ?? ""
           }
+          platformSlug={
+            platforms.find((p) => p.id === expandedSession.session.platform_id)
+              ?.slug ?? ""
+          }
         />
       )}
 
