@@ -335,7 +335,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
   const regenerateAspect = async (params: {
     session_id: string;
-    aspect: "angle" | "hook" | "tone" | "structure";
+    aspect: string;
     rating: number;
     current_value: string;
     previous_alternatives: string[];
