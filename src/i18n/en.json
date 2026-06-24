@@ -166,19 +166,19 @@
     "taglineSub": "A platform for those who'd rather expand their creative capacity than follow a trend.",
     "accountCreated": "Account created. Sign in to get started.",
     "quote": "The opposite of an algorithm is a point of view.",
-    "forgotPassword":   "Forgot your password?",
-    "forgotTitle":      "Reset your password",
-    "forgotSub":        "We'll send you a link to reset your password",
-    "sendReset":        "Send reset link",
-    "sendingReset":     "Sending...",
-    "resetEmailSent":   "Check your email — we sent you a reset link",
-    "backToSignIn":     "Back to sign in",
-    "resetTitle":       "New password",
-    "resetSub":         "Choose a new password for your account",
-    "newPassword":      "New password",
-    "updatePassword":   "Update password",
+    "forgotPassword": "Forgot your password?",
+    "forgotTitle": "Reset your password",
+    "forgotSub": "We'll send you a link to reset your password",
+    "sendReset": "Send reset link",
+    "sendingReset": "Sending...",
+    "resetEmailSent": "Check your email — we sent you a reset link",
+    "backToSignIn": "Back to sign in",
+    "resetTitle": "New password",
+    "resetSub": "Choose a new password for your account",
+    "newPassword": "New password",
+    "updatePassword": "Update password",
     "updatingPassword": "Updating...",
-    "passwordUpdated":  "Password updated — redirecting...",
+    "passwordUpdated": "Password updated — redirecting...",
     "errors": {
       "invalidCredentials": "Invalid email or password.",
       "passwordMismatch": "Passwords don't match.",
@@ -442,6 +442,11 @@
     "hook": "Hook",
     "tone": "Tone",
     "structure": "Structure",
+    "retention": "Retention points",
+    "seo": "SEO note",
+    "argument": "Core argument",
+    "cta": "Call to action",
+    "engagement": "Engagement moments",
     "strategicNote": "Strategic note",
     "generate": "✦ Generate",
     "generating": "Generating...",
@@ -525,28 +530,61 @@
       "time_availability": {
         "question": "How much time do you usually dedicate to creating content each week?",
         "options": {
-          "less_than_2h": { "label": "Less than 2 hours", "desc": "I create when I can" },
-          "2_to_5h": { "label": "Between 2 and 5 hours", "desc": "I have defined moments" },
-          "more_than_5h": { "label": "More than 5 hours", "desc": "It's a central activity in my week" },
-          "variable": { "label": "Variable", "desc": "I don't have a fixed rhythm" }
+          "less_than_2h": {
+            "label": "Less than 2 hours",
+            "desc": "I create when I can"
+          },
+          "2_to_5h": {
+            "label": "Between 2 and 5 hours",
+            "desc": "I have defined moments"
+          },
+          "more_than_5h": {
+            "label": "More than 5 hours",
+            "desc": "It's a central activity in my week"
+          },
+          "variable": {
+            "label": "Variable",
+            "desc": "I don't have a fixed rhythm"
+          }
         }
       },
       "production_setup": {
         "question": "How would you describe your current production process?",
         "options": {
           "solo": { "label": "I work alone", "desc": "I do everything myself" },
-          "occasional_help": { "label": "Occasional help", "desc": "Someone supports me when they can" },
-          "small_team": { "label": "Small team", "desc": "There are defined roles" },
-          "agency": { "label": "Agency or external team", "desc": "I work with professional support" }
+          "occasional_help": {
+            "label": "Occasional help",
+            "desc": "Someone supports me when they can"
+          },
+          "small_team": {
+            "label": "Small team",
+            "desc": "There are defined roles"
+          },
+          "agency": {
+            "label": "Agency or external team",
+            "desc": "I work with professional support"
+          }
         }
       },
       "idea_sources": {
         "question": "Where do your content ideas mainly come from?",
         "options": {
-          "content_consumption": { "label": "From what I read, watch or listen to", "desc": "I draw from others' content" },
-          "personal_experience": { "label": "From my personal experience", "desc": "My life is my raw material" },
-          "community": { "label": "From conversations with my audience", "desc": "My community inspires me" },
-          "trends": { "label": "From social media trends", "desc": "I respond to what's happening" }
+          "content_consumption": {
+            "label": "From what I read, watch or listen to",
+            "desc": "I draw from others' content"
+          },
+          "personal_experience": {
+            "label": "From my personal experience",
+            "desc": "My life is my raw material"
+          },
+          "community": {
+            "label": "From conversations with my audience",
+            "desc": "My community inspires me"
+          },
+          "trends": {
+            "label": "From social media trends",
+            "desc": "I respond to what's happening"
+          }
         }
       },
       "referents": {
@@ -785,9 +823,9 @@
   },
 
   "billing": {
-  "pastDueMessage": "Your last payment failed. Update your payment method to keep access to the Creator plan.",
-  "pastDueCta": "Update payment method"
-},
+    "pastDueMessage": "Your last payment failed. Update your payment method to keep access to the Creator plan.",
+    "pastDueCta": "Update payment method"
+  },
   "pricing": {
     "title": "Choose your plan",
     "subtitle": "Start free — upgrade when you're ready",
