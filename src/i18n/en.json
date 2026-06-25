@@ -179,6 +179,16 @@
     "updatePassword": "Update password",
     "updatingPassword": "Updating...",
     "passwordUpdated": "Password updated — redirecting...",
+    "passwordRequirementsTitle": "Password must have:",
+    "passwordReq8chars": "At least 8 characters",
+    "passwordReqUppercase": "At least one uppercase letter",
+    "passwordReqNumber": "At least one number",
+    "passwordReqSpecial": "At least one special character (!@#$%^&*)",
+    "updatePasswordTitle": "Update your password",
+    "updatePasswordSub": "For security, please set a password that meets our new standards.",
+    "updatePasswordBtn": "Update password",
+    "updatingPasswordBtn": "Updating...",
+    "passwordUpdateSuccess": "Password updated. Redirecting...",
     "errors": {
       "invalidCredentials": "Invalid email or password.",
       "passwordMismatch": "Passwords don't match.",
@@ -187,7 +197,9 @@
       "pendingInvite": "Your email is on the waitlist but hasn't been invited yet. We'll notify you when your access is ready.",
       "generic": "Something went wrong. Please try again.",
       "resetFailed": "We couldn't process your request. Please try again.",
-      "resetLinkExpired": "The link has expired or is invalid. Request a new one."
+      "resetLinkExpired": "The link has expired or is invalid. Request a new one.",
+      "passwordWeak": "Password does not meet security requirements.",
+      "requiresPasswordUpdate": "For security reasons, you must update your password before continuing."
     }
   },
   "ideas": {
