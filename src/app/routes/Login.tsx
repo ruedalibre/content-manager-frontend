@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "../../supabaseClient.ts";
 import LanguageToggle from "../../components/ui/LanguageToggle.tsx";
 import "./Login.scss";
@@ -26,7 +27,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
 
   useEffect(() => {
     const checkSession = async () => {
@@ -272,26 +275,36 @@ export default function Login() {
               className="login-form__field"
               style={{ display: mode === "forgot" ? "none" : undefined }}
             >
-              <div className="login-form__field-header">
-                <label className="login-form__label">
-                  {t("login.passwordPlaceholder")}
-                </label>
-                {mode === "signin" && (
+              <label className="login-form__label">
+                {t("login.passwordPlaceholder")}
+              </label>
+              <div className="login-form__input-wrapper">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  required={mode !== "forgot"}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                {mode !== "forgot" && (
                   <button
                     type="button"
-                    className="login-form__forgot"
-                    onClick={() => switchMode("forgot")}
+                    className="login-form__eye"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    tabIndex={-1}
                   >
-                    {t("login.forgotPassword")}
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
                   </button>
                 )}
               </div>
-              <input
-                type="password"
-                value={password}
-                required={mode !== "forgot"}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              {mode === "signin" && (
+                <button
+                  type="button"
+                  className="login-form__forgot"
+                  onClick={() => switchMode("forgot")}
+                >
+                  {t("login.forgotPassword")}
+                </button>
+              )}
             </div>
 
             {mode === "register" && (
@@ -299,12 +312,22 @@ export default function Login() {
                 <label className="login-form__label">
                   {t("login.confirmPasswordPlaceholder")}
                 </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  required
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
+                <div className="login-form__input-wrapper">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    required
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="login-form__eye"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
               </div>
             )}
 
