@@ -10,6 +10,17 @@ import backgroundImage from "../../assets/login-background.jpg";
 
 type Mode = "signin" | "register" | "forgot";
 
+const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
+
+function getPasswordRequirements(password: string) {
+  return [
+    { key: "passwordReq8chars",   met: password.length >= 8 },
+    { key: "passwordReqUppercase", met: /[A-Z]/.test(password) },
+    { key: "passwordReqNumber",    met: /[0-9]/.test(password) },
+    { key: "passwordReqSpecial",   met: /[!@#$%^&*]/.test(password) },
+  ];
+}
+
 export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -29,6 +40,7 @@ export default function Login() {
   const [success, setSuccess] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
 
 
   useEffect(() => {
@@ -85,8 +97,8 @@ export default function Login() {
       return;
     }
 
-    if (password.length < 8) {
-      setError(t("login.errors.passwordTooShort"));
+    if (!PASSWORD_REGEX.test(password)) {
+      setError(t("login.errors.passwordWeak"));
       setLoading(false);
       return;
     }
@@ -284,6 +296,7 @@ export default function Login() {
                   value={password}
                   required={mode !== "forgot"}
                   onChange={(e) => setPassword(e.target.value)}
+                  onBlur={() => setPasswordTouched(true)}
                 />
                 {mode !== "forgot" && (
                   <button
@@ -304,6 +317,21 @@ export default function Login() {
                 >
                   {t("login.forgotPassword")}
                 </button>
+              )}
+              {mode === "register" && passwordTouched && (
+                <div className="login-form__password-requirements">
+                  <span className="login-form__password-requirements__title">
+                    {t("login.passwordRequirementsTitle")}
+                  </span>
+                  {getPasswordRequirements(password).map((req) => (
+                    <span
+                      key={req.key}
+                      className={`login-form__password-req ${req.met ? "login-form__password-req--met" : ""}`}
+                    >
+                      {req.met ? "✓" : "✗"} {t(`login.${req.key}`)}
+                    </span>
+                  ))}
+                </div>
               )}
             </div>
 

@@ -457,3 +457,36 @@
     color: var(--text);
   }
 }
+
+/* =========================
+   PASSWORD REQUIREMENTS
+========================= */
+
+.login-form__password-requirements {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+  padding: var(--s-2) var(--s-3);
+  background: var(--bg-elevated);
+  border-radius: var(--r-2);
+  border: 1px solid var(--border);
+
+  &__title {
+    font-size: var(--fs-11);
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    margin-bottom: var(--s-1);
+  }
+}
+
+.login-form__password-req {
+  font-size: var(--fs-12);
+  color: var(--danger);
+  transition: color var(--transition-fast);
+
+  &--met {
+    color: var(--success);
+  }
+}
