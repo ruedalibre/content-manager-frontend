@@ -82,6 +82,20 @@ export default function Login() {
       return;
     }
 
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from("user_profiles")
+        .select("requires_password_update")
+        .eq("user_id", user.id)
+        .single();
+
+      if (profile?.requires_password_update) {
+        navigate("/update-password");
+        return;
+      }
+    }
+
     navigate("/ideas");
   };
 
