@@ -227,8 +227,8 @@ export default function CreateIdeaModal({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             maxLength={2500}
-            rows={3}
-            style={{ resize: "vertical", minHeight: "72px", maxHeight: "120px" }}
+            rows={5}
+            style={{ resize: "vertical", minHeight: "112px", maxHeight: "240px" }}
           />
           <span style={{
             fontSize: "11px",

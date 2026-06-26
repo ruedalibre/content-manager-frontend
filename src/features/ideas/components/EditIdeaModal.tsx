@@ -38,7 +38,8 @@ export default function EditIdeaModal({
           value={editDescription}
           onChange={(e) => onDescriptionChange(e.target.value)}
           placeholder={t("ideas.contextPlaceholder")}
-          rows={3}
+          rows={5}
+          style={{ resize: "vertical", minHeight: "112px", maxHeight: "240px" }}
         />
         {editError && <p className="modal__error">{editError}</p>}
         <div className="modal-actions">
