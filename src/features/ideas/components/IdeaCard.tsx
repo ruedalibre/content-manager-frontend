@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Archive, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { type Idea } from "../hooks/useIdeas.ts";
@@ -7,6 +8,9 @@ type IdeaCardState = {
   platform_id: string;
   format: string;
   content_role?: string;
+  content_goal?: string;
+  cta_intent?: string;
+  target_audience?: string;
   generating: boolean;
   error: string | null;
 };
@@ -39,6 +43,9 @@ type Props = {
   onPlatformChange: (platformId: string) => void;
   onFormatChange: (format: string) => void;
   onRoleChange: (role: string) => void;
+  onGoalChange: (goal: string) => void;
+  onCtaIntentChange: (cta: string) => void;
+  onAudienceChange: (audience: string) => void;
   onGenerate: () => void;
   onOpenTopicSelector: () => void;
   onToggleTopic: (topicId: string) => void;
@@ -74,6 +81,9 @@ export default function IdeaCard({
   onPlatformChange,
   onFormatChange,
   onRoleChange,
+  onGoalChange,
+  onCtaIntentChange,
+  onAudienceChange,
   onGenerate,
   onOpenTopicSelector,
   onToggleTopic,
@@ -83,6 +93,7 @@ export default function IdeaCard({
   savingTopics,
 }: Props) {
   const { t } = useTranslation();
+  const [showAdvanced, setShowAdvanced] = useState(false);
   const isGenerated = idea.source === "generated";
   const contentCount = idea.contents?.[0]?.count ?? 0;
 
@@ -212,6 +223,7 @@ export default function IdeaCard({
               )}
 
               {/* PLATFORM + FORMAT + ROLE */}
+              {/* PLATFORM + FORMAT + ROLE */}
               <div className="idea-card__recipe-controls">
                 <select value={state.platform_id} onChange={(e) => onPlatformChange(e.target.value)} className="idea-card__select">
                   <option value="">{t("ideas.platformPlaceholder")}</option>
@@ -236,10 +248,76 @@ export default function IdeaCard({
                 </select>
               </div>
 
+              {/* SECCIÓN AVANZADO */}
+              {showAdvanced && (
+                <div className="idea-card__advanced">
+                  <p className="idea-card__advanced-title">{t("ideas.advanced")}</p>
+                  <div className="idea-card__advanced-grid">
+                    <div className="idea-card__advanced-field">
+                      <label className="idea-card__advanced-label">{t("ideas.contentGoalLabel")}</label>
+                      <select
+                        value={state.content_goal ?? ""}
+                        onChange={(e) => onGoalChange(e.target.value)}
+                        className="idea-card__select"
+                      >
+                        <option value="">{t("ideas.contentGoalEmpty")}</option>
+                        <option value="awareness">{t("ideas.contentGoals.awareness")}</option>
+                        <option value="educate">{t("ideas.contentGoals.educate")}</option>
+                        <option value="authority">{t("ideas.contentGoals.authority")}</option>
+                        <option value="engagement">{t("ideas.contentGoals.engagement")}</option>
+                        <option value="entertain">{t("ideas.contentGoals.entertain")}</option>
+                        <option value="convert">{t("ideas.contentGoals.convert")}</option>
+                      </select>
+                    </div>
+                    <div className="idea-card__advanced-field">
+                      <label className="idea-card__advanced-label">{t("ideas.ctaIntentLabel")}</label>
+                      <select
+                        value={state.cta_intent ?? ""}
+                        onChange={(e) => onCtaIntentChange(e.target.value)}
+                        className="idea-card__select"
+                      >
+                        <option value="">{t("ideas.ctaIntentEmpty")}</option>
+                        <option value="follow">{t("ideas.ctaIntents.follow")}</option>
+                        <option value="comment">{t("ideas.ctaIntents.comment")}</option>
+                        <option value="save">{t("ideas.ctaIntents.save")}</option>
+                        <option value="share">{t("ideas.ctaIntents.share")}</option>
+                        <option value="visit_link">{t("ideas.ctaIntents.visit_link")}</option>
+                        <option value="buy">{t("ideas.ctaIntents.buy")}</option>
+                        <option value="dm">{t("ideas.ctaIntents.dm")}</option>
+                        <option value="none">{t("ideas.ctaIntents.none")}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="idea-card__advanced-field">
+                    <label className="idea-card__advanced-label">{t("ideas.targetAudienceLabel")}</label>
+                    <input
+                      type="text"
+                      value={state.target_audience ?? ""}
+                      onChange={(e) => onAudienceChange(e.target.value)}
+                      placeholder={t("ideas.targetAudiencePlaceholder")}
+                      maxLength={100}
+                      className="idea-card__advanced-input"
+                    />
+                  </div>
+                </div>
+              )}
+
               {state.error && <p className="idea-card__error">{state.error}</p>}
 
               {/* FOOTER */}
               <div className="idea-card__footer">
+                <button
+                  type="button"
+                  className="idea-card__advanced-toggle"
+                  onClick={() => setShowAdvanced((prev) => !prev)}
+                >
+                  <ChevronRight
+                    size={12}
+                    className={`idea-card__advanced-chevron ${showAdvanced ? "idea-card__advanced-chevron--open" : ""}`}
+                    aria-hidden="true"
+                  />
+                  {t("ideas.advanced")}
+                </button>
                 {canCreateBriefs ? (
                   <button
                     className={`btn-generate ${state.generating ? "btn-generate--loading" : ""}`}

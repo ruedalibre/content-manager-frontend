@@ -13,14 +13,10 @@ export type CreativeSession = {
   platform_id: string;
   format: string;
   content_role: string | null;
-  recipe: {
-    angle: string;
-    hook: string;
-    tone: string;
-    structure: string[];
-    reuse_suggestions: string[];
-    strategic_note: string;
-  };
+  content_goal: string | null;
+  cta_intent: string | null;
+  target_audience: string | null;
+  recipe: Record<string, string | string[]>;
   feedback: Record<string, number> | null;
   status: "generated" | "reviewed" | "executed" | "discarded";
   content_id: string | null;
@@ -163,6 +159,9 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     platform_id: string;
     format: string;
     content_role?: string;
+    content_goal?: string;
+    cta_intent?: string;
+    target_audience?: string;
   }): Promise<{
     session_id: string;
     recipe: CreativeSession["recipe"];
