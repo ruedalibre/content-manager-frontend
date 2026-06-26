@@ -31,13 +31,13 @@ export default function EditIdeaModal({
         <input
           value={editTitle}
           onChange={(e) => onTitleChange(e.target.value)}
-          placeholder="Idea title"
+          placeholder={t("ideas.titlePlaceholder")}
           autoFocus
         />
         <textarea
           value={editDescription}
           onChange={(e) => onDescriptionChange(e.target.value)}
-          placeholder="Description (optional)"
+          placeholder={t("ideas.contextPlaceholder")}
           rows={3}
         />
         {editError && <p className="modal__error">{editError}</p>}
@@ -48,7 +48,7 @@ export default function EditIdeaModal({
             disabled={editSaving}
             type="button"
           >
-            Cancel
+            {t("common.cancel")}
           </button>
           <button
             className="btn-primary"
@@ -56,7 +56,7 @@ export default function EditIdeaModal({
             disabled={editSaving || !editTitle.trim()}
             type="button"
           >
-            {editSaving ? "Saving..." : "Save"}
+            {editSaving ? t("common.saving") : t("common.save")}
           </button>
         </div>
       </div>
