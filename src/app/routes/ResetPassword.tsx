@@ -1,8 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "../../supabaseClient";
 import "./Login.scss";
+
+const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
+
+function getPasswordRequirements(password: string) {
+  return [
+    { key: "passwordReq8chars",    met: password.length >= 8 },
+    { key: "passwordReqUppercase", met: /[A-Z]/.test(password) },
+    { key: "passwordReqNumber",    met: /[0-9]/.test(password) },
+    { key: "passwordReqSpecial",   met: /[!@#$%^&*]/.test(password) },
+  ];
+}
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -14,6 +26,9 @@ export default function ResetPassword() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [validSession, setValidSession] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordTouched, setPasswordTouched] = useState(false);
 
   useEffect(() => {
     const processToken = async () => {
@@ -75,9 +90,6 @@ export default function ResetPassword() {
       return;
     }
 
-    // DESPUÉS
-    const PASSWORD_REGEX =
-      /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
     if (!PASSWORD_REGEX.test(password)) {
       setError(t("login.errors.passwordWeak"));
       return;
@@ -174,23 +186,59 @@ export default function ResetPassword() {
                 <label className="login-form__label">
                   {t("login.newPassword")}
                 </label>
-                <input
-                  type="password"
-                  value={password}
-                  required
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="login-form__input-wrapper">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    required
+                    onChange={(e) => setPassword(e.target.value)}
+                    onBlur={() => setPasswordTouched(true)}
+                  />
+                  <button
+                    type="button"
+                    className="login-form__eye"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    tabIndex={-1}
+                  >
+                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
+                {passwordTouched && (
+                  <div className="login-form__password-requirements">
+                    <span className="login-form__password-requirements__title">
+                      {t("login.passwordRequirementsTitle")}
+                    </span>
+                    {getPasswordRequirements(password).map((req) => (
+                      <span
+                        key={req.key}
+                        className={`login-form__password-req ${req.met ? "login-form__password-req--met" : ""}`}
+                      >
+                        {req.met ? "✓" : "✗"} {t(`login.${req.key}`)}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="login-form__field">
                 <label className="login-form__label">
                   {t("login.confirmPasswordPlaceholder")}
                 </label>
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  required
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
+                <div className="login-form__input-wrapper">
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    required
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    className="login-form__eye"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    tabIndex={-1}
+                  >
+                    {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                  </button>
+                </div>
               </div>
 
               {error && <p className="login-error">{error}</p>}
