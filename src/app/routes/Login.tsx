@@ -7,17 +7,17 @@ import LanguageToggle from "../../components/ui/LanguageToggle.tsx";
 import "./Login.scss";
 import backgroundImage from "../../assets/login-background.jpg";
 
-
 type Mode = "signin" | "register" | "forgot";
 
-const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
+const PASSWORD_REGEX =
+  /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
 
 function getPasswordRequirements(password: string) {
   return [
-    { key: "passwordReq8chars",   met: password.length >= 8 },
+    { key: "passwordReq8chars", met: password.length >= 8 },
     { key: "passwordReqUppercase", met: /[A-Z]/.test(password) },
-    { key: "passwordReqNumber",    met: /[0-9]/.test(password) },
-    { key: "passwordReqSpecial",   met: /[!@#$%^&*]/.test(password) },
+    { key: "passwordReqNumber", met: /[0-9]/.test(password) },
+    { key: "passwordReqSpecial", met: /[!@#$%^&*]/.test(password) },
   ];
 }
 
@@ -41,7 +41,6 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
-
 
   useEffect(() => {
     const checkSession = async () => {
@@ -82,7 +81,9 @@ export default function Login() {
       return;
     }
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (user) {
       const { data: profile } = await supabase
         .from("user_profiles")
@@ -179,8 +180,10 @@ export default function Login() {
     setLoading(true);
     setError(null);
 
+    // DESPUÉS
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `${window.location.origin}/reset-password`,
+      captchaToken: undefined,
     });
 
     if (error) {
@@ -367,7 +370,11 @@ export default function Login() {
                     onClick={() => setShowConfirmPassword((prev) => !prev)}
                     tabIndex={-1}
                   >
-                    {showConfirmPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                    {showConfirmPassword ? (
+                      <EyeOff size={15} />
+                    ) : (
+                      <Eye size={15} />
+                    )}
                   </button>
                 </div>
               </div>
