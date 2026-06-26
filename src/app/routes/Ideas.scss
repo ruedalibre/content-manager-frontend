@@ -500,9 +500,10 @@
     }
   }
 
+  // DESPUÉS
   &__footer {
     display: flex;
-    justify-content: right;
+    justify-content: space-between;
     align-items: center;
     padding-top: var(--s-2);
     border-top: 1px solid var(--bg-muted);
@@ -519,7 +520,8 @@
     flex-direction: column;
     gap: var(--s-2);
 
-    input, textarea {
+    input,
+    textarea {
       width: 100%;
       padding: var(--s-2) var(--s-3);
       border: 1px solid var(--border);
@@ -605,8 +607,13 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.6; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
 }
 
 /* =========================
@@ -759,8 +766,14 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* =========================
@@ -780,15 +793,29 @@
     border-radius: 50%;
     animation: dot-bounce 1.4s ease-in-out infinite;
 
-    &:nth-child(1) { animation-delay: 0s; }
-    &:nth-child(2) { animation-delay: 0.2s; }
-    &:nth-child(3) { animation-delay: 0.4s; }
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
   }
 }
 
 @keyframes dot-bounce {
-  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
-  40%           { transform: scale(1);   opacity: 1; }
+  0%,
+  80%,
+  100% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* =========================
@@ -1354,7 +1381,9 @@
   border: none;
   cursor: pointer;
   opacity: 0.4;
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
   padding: 2px 4px;
 
   &:hover {
@@ -1478,7 +1507,9 @@
       border-color: var(--primary);
       color: var(--text-on-primary);
 
-      &:hover { background: var(--primary-hover); }
+      &:hover {
+        background: var(--primary-hover);
+      }
     }
 
     &--empty,
@@ -1532,8 +1563,12 @@
     grid-template-columns: repeat(4, 1fr);
     gap: var(--s-1) var(--s-3);
 
-    @media (max-width: 900px) { grid-template-columns: repeat(3, 1fr); }
-    @media (max-width: 600px) { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 900px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 600px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 }
 
@@ -1594,7 +1629,9 @@
     flex-shrink: 0;
   }
 
-  &:hover &__controls { opacity: 1; }
+  &:hover &__controls {
+    opacity: 1;
+  }
 
   &__edit {
     flex: 1;
@@ -1743,7 +1780,9 @@
     user-select: none;
     transition: background var(--transition-fast);
 
-    &:hover { background: var(--bg-muted); }
+    &:hover {
+      background: var(--bg-muted);
+    }
   }
 
   &__chevron {
@@ -1751,7 +1790,9 @@
     transition: transform 0.15s ease;
     flex-shrink: 0;
 
-    &--open { transform: rotate(90deg); }
+    &--open {
+      transform: rotate(90deg);
+    }
   }
 
   &__title {
@@ -1806,7 +1847,9 @@
   padding: var(--s-2) var(--s-4) var(--s-2) calc(var(--s-4) + 22px);
   border-bottom: 1px solid var(--border-subtle);
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 
   &__dot {
     width: 5px;
@@ -1843,8 +1886,9 @@
   cursor: pointer;
   white-space: nowrap;
   font-family: var(--font-sans);
-  transition: background var(--transition-fast),
-              color var(--transition-fast);
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
 
   &:hover {
     background: var(--bg-muted);
@@ -1907,9 +1951,17 @@
     padding: var(--s-2);
   }
 
-  &__empty-icon  { font-size: 24px; }
-  &__empty-text  { font-size: var(--fs-14); color: var(--text-secondary); }
-  &__hint        { font-size: var(--fs-12); color: var(--text-faint); }
+  &__empty-icon {
+    font-size: 24px;
+  }
+  &__empty-text {
+    font-size: var(--fs-14);
+    color: var(--text-secondary);
+  }
+  &__hint {
+    font-size: var(--fs-12);
+    color: var(--text-faint);
+  }
 
   &__row {
     display: flex;
@@ -1920,7 +1972,9 @@
     min-height: 36px;
     cursor: pointer;
 
-    &:last-child { border-bottom: none; }
+    &:last-child {
+      border-bottom: none;
+    }
 
     &:hover {
       background: var(--bg-muted);
@@ -1971,12 +2025,16 @@
     font-size: 11px;
     color: var(--text-faint);
 
-    i { font-size: 12px; }
+    i {
+      font-size: 12px;
+    }
 
     &--downloaded {
       color: var(--accent);
 
-      i { font-size: 12px; }
+      i {
+        font-size: 12px;
+      }
     }
   }
 }
@@ -2079,10 +2137,10 @@
 .idea-card__advanced {
   display: flex;
   flex-direction: column;
-  gap: var(--s-2);
-  padding: var(--s-3);
-  background: var(--bg-elevated);
-  border-radius: var(--r-3);
+  gap: var(--s-1);
+  padding: var(--s-2);
+  background: var(--bg-muted);
+  border-radius: var(--r-2);
   border: 1px solid var(--border);
 }
 
@@ -2108,21 +2166,27 @@
 }
 
 .idea-card__advanced-label {
-  font-size: var(--fs-11);
-  color: var(--text-muted);
+  font-size: var(--fs-10);
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  font-weight: 500;
 }
 
+// DESPUÉS
 .idea-card__advanced-input {
   width: 100%;
-  padding: var(--s-2) var(--s-3);
-  font-size: var(--fs-13);
+  height: 32px;
+  padding: 0 var(--s-2);
+  font-size: var(--fs-12);
   font-family: var(--font-sans);
   border: 1px solid var(--border);
-  border-radius: var(--r-3);
-  background: var(--bg-canvas);
-  color: var(--text);
+  border-radius: var(--r-2);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
   outline: none;
   box-sizing: border-box;
+  transition: border-color var(--transition-fast);
 
   &:focus {
     border-color: var(--primary);
@@ -2130,6 +2194,7 @@
 
   &::placeholder {
     color: var(--text-faint);
+    font-size: var(--fs-12);
   }
 }
 
