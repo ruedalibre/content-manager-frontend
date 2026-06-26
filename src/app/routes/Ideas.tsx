@@ -206,6 +206,9 @@ export default function Ideas() {
           platform_id: state.platform_id,
           format: state.format,
           content_role: state.content_role,
+          content_goal: state.content_goal || undefined,
+          cta_intent: state.cta_intent || undefined,
+          target_audience: state.target_audience || undefined,
         });
         if (result.duplicate) {
           updateRecipeState(idea.id, {
@@ -454,6 +457,9 @@ export default function Ideas() {
           format: session.format,
           status: "draft",
           content_role: session.content_role ?? null,
+          content_goal: session.content_goal ?? null,
+          cta_intent: session.cta_intent ?? null,
+          target_audience: session.target_audience ?? null,
           creative_unit_id: idea.id,
           entry_channel: "recipe",
           session_id: session.id,
@@ -757,6 +763,9 @@ export default function Ideas() {
                         onPlatformChange={(platformId) => handlePlatformChange(idea.id, platformId)}
                         onFormatChange={(format) => updateRecipeState(idea.id, { format })}
                         onRoleChange={(role) => updateRecipeState(idea.id, { content_role: role })}
+                        onGoalChange={(goal) => updateRecipeState(idea.id, { content_goal: goal })}
+                        onCtaIntentChange={(cta) => updateRecipeState(idea.id, { cta_intent: cta })}
+                        onAudienceChange={(audience) => updateRecipeState(idea.id, { target_audience: audience })}
                         onGenerate={() => handleGenerateRecipe(idea)}
                         onOpenTopicSelector={() => handleOpenTopicSelector(idea)}
                         onToggleTopic={handleToggleTopic}

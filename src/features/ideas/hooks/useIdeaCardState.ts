@@ -6,6 +6,9 @@ type IdeaCardState = {
   platform_id: string;
   format: string;
   content_role?: string;
+  content_goal?: string;
+  cta_intent?: string;
+  target_audience?: string;
   generating: boolean;
   error: string | null;
 };
@@ -39,6 +42,9 @@ export function useIdeaCardState(ideas: Idea[]) {
             platform_id: "",
             format: "",
             content_role: "",
+            content_goal: "",
+            cta_intent: "",
+            target_audience: "",
             generating: false,
             error: null,
           };
@@ -53,6 +59,9 @@ export function useIdeaCardState(ideas: Idea[]) {
           platform_id: isToday ? "" : (latest.platform_id ?? ""),
           format: isToday ? "" : (latest.format ?? ""),
           content_role: isToday ? "" : (latest.content_role ?? ""),
+          content_goal: "",
+          cta_intent: "",
+          target_audience: "",
           generating: false,
           error: null,
         };
@@ -77,6 +86,9 @@ export function useIdeaCardState(ideas: Idea[]) {
       platform_id: "",
       format: "",
       content_role: "",
+      content_goal: "",
+      cta_intent: "",
+      target_audience: "",
       generating: false,
       error: null,
     };
