@@ -7,14 +7,7 @@ import { saveAs } from "file-saver"
 import { trackDownload } from "./apiClient"
 
 type Session = {
-  recipe: {
-    angle: string
-    hook: string
-    tone: string
-    structure: string[]
-    strategic_note?: string
-    reuse_suggestions?: string[]
-  }
+  recipe: Record<string, string | string[]>
   format: string
   content_role: string | null
   created_at: string
@@ -131,7 +124,7 @@ export async function downloadBrief(session: Session, idea: Idea) {
         new Paragraph({
           spacing: { after: 200 },
           children: [new TextRun({
-            text: session.recipe.angle,
+            text: (session.recipe.angle as string) ?? "",
             font: "Arial", size: 22
           })]
         }),
@@ -144,7 +137,7 @@ export async function downloadBrief(session: Session, idea: Idea) {
         new Paragraph({
           spacing: { after: 200 },
           children: [new TextRun({
-            text: session.recipe.hook,
+            text: (session.recipe.hook as string) ?? "",
             font: "Arial", size: 22
           })]
         }),
@@ -157,7 +150,7 @@ export async function downloadBrief(session: Session, idea: Idea) {
         new Paragraph({
           spacing: { after: 200 },
           children: [new TextRun({
-            text: session.recipe.tone,
+            text: (session.recipe.tone as string) ?? "",
             font: "Arial", size: 22
           })]
         }),
@@ -167,7 +160,7 @@ export async function downloadBrief(session: Session, idea: Idea) {
           heading: HeadingLevel.HEADING_2,
           children: [new TextRun({ text: "Structure", font: "Arial" })]
         }),
-        ...session.recipe.structure.map(step =>
+        ...((session.recipe.structure as string[]) ?? []).map(step =>
           new Paragraph({
             numbering: { reference: "structure-list", level: 0 },
             spacing: { after: 80 },
@@ -185,7 +178,7 @@ export async function downloadBrief(session: Session, idea: Idea) {
           new Paragraph({
             spacing: { after: 200 },
             children: [new TextRun({
-              text: session.recipe.strategic_note,
+              text: session.recipe.strategic_note as string,
               font: "Arial", size: 22, italics: true
             })]
           })

@@ -188,7 +188,7 @@ export default function RecipePanel({
     try {
       const currentVal =
         currentValues[aspectKey] ??
-        session.recipe[aspectKey as keyof typeof session.recipe];
+        session.recipe[aspectKey];
       const prevAlts = alternatives[aspectKey] ?? [];
 
       const result = await regenerateAspect({
@@ -271,25 +271,25 @@ export default function RecipePanel({
       ``,
       `ANGLE`,
       ``,
-      session.recipe.angle,
+      (session.recipe.angle as string) ?? "",
       ``,
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
       ``,
       `HOOK`,
       ``,
-      session.recipe.hook,
+      (session.recipe.hook as string) ?? "",
       ``,
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
       ``,
       `TONE`,
       ``,
-      session.recipe.tone,
+      (session.recipe.tone as string) ?? "",
       ``,
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
       ``,
       `STRUCTURE`,
       ``,
-      ...session.recipe.structure.map((s, i) => `${i + 1}. ${s}`),
+      ...((session.recipe.structure as string[]) ?? []).map((s: string, i: number) => `${i + 1}. ${s}`),
       ``,
     ];
     if (session.recipe.strategic_note) {
@@ -297,7 +297,7 @@ export default function RecipePanel({
       lines.push(``);
       lines.push(`STRATEGIC NOTE`);
       lines.push(``);
-      lines.push(session.recipe.strategic_note);
+      lines.push(session.recipe.strategic_note as string);
       lines.push(``);
     }
     lines.push(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
@@ -321,7 +321,7 @@ export default function RecipePanel({
     label: string,
     isList = false,
   ) => {
-    const rawValue = session.recipe[aspectKey as keyof typeof session.recipe];
+    const rawValue = session.recipe[aspectKey];
     const displayValue = currentValues[aspectKey] ?? rawValue;
     const rating = feedback[aspectKey] ?? 0;
     const aspectAlts = alternatives[aspectKey] ?? [];
