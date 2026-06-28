@@ -36,7 +36,7 @@ type RecipePanelProps = {
     rating: number;
     current_value: string;
     previous_alternatives: string[];
-    recipe_context: CreativeSession["recipe"];
+    recipe_context: Record<string, string | string[]>;
     idea_title: string;
     topics: string[];
     platform: string;
@@ -44,7 +44,7 @@ type RecipePanelProps = {
   }) => Promise<{ alternative: string | string[] }>;
   updateRecipeAspect: (
     sessionId: string,
-    recipe: CreativeSession["recipe"],
+    recipe: Record<string, string | string[]>,
   ) => Promise<void>;
   ideaTopics: IdeaTopic[];
   platformName: string;
