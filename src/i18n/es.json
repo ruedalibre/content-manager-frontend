@@ -85,7 +85,7 @@
     "faq": "Preguntas frecuentes"
   },
   "faq": {
-    "pageTitle": "Preguntas frecuentes — Content Intelligence Platform",
+    "pageTitle": "Preguntas frecuentes — Creadora",
     "backToApp": "← Volver a la app",
     "heroLabel": "Soporte",
     "heroTitle": "Preguntas frecuentes",
@@ -148,7 +148,7 @@
     }
   },
   "login": {
-    "title": "Content Intelligence",
+    "title": "Creadora",
     "subtitle": "Tu proceso creativo, sistematizado.",
     "signIn": "Iniciar sesión",
     "createAccount": "Crear cuenta",
@@ -430,7 +430,7 @@
     "reportSubtitle": "Un análisis narrativo de tu identidad creativa, tus mayores oportunidades y hacia dónde se dirige tu trabajo creativo.",
     "seeInsight": "Ver insight",
     "hideInsight": "Ocultar insight",
-    "disclaimer": "Análisis creativo asistido por IA. Los resultados generados por IA pueden no ser elegibles para protección de derechos de autor. Content Intelligence App no reclama derechos de propiedad intelectual sobre este resultado.",
+    "disclaimer": "Análisis creativo asistido por IA. Los resultados generados por IA pueden no ser elegibles para protección de derechos de autor. Creadora no reclama derechos de propiedad intelectual sobre este resultado.",
     "loadingIdentity": "Cargando tu identidad...",
     "profileNudge": "Tus insights mejoran con un perfil completo. Faltan datos de contexto que la IA usa para personalizarlos.",
     "profileNudgeCta": "Completar perfil →",
@@ -499,7 +499,7 @@
     "briefCopied": "✓ Copiado",
     "createContent": "Crear contenido",
     "viewContent": "Ver contenido",
-    "disclaimer": "Guía creativa asistida por IA. Los resultados generados por IA pueden no ser elegibles para protección de derechos de autor. Content Intelligence App no reclama derechos de propiedad intelectual sobre este resultado.",
+    "disclaimer": "Guía creativa asistida por IA. Los resultados generados por IA pueden no ser elegibles para protección de derechos de autor. Creadora no reclama derechos de propiedad intelectual sobre este resultado.",
     "ratings": {
       "1": "Completamente fuera — necesita otro enfoque",
       "2": "No convence — intentar de nuevo",
@@ -545,7 +545,7 @@
     "archived": "Archivado"
   },
   "onboarding": {
-    "welcome": "Bienvenido a Content Intelligence",
+    "welcome": "Bienvenido a Creadora",
     "welcomeSubtitle": "Esta plataforma te ayuda a entender cómo tus ideas evolucionan en sistemas de contenido escalables. Cuanto más la uses, más precisa se vuelve.",
     "step1Title": "Registra tus ideas y topics",
     "step1Desc": "La unidad central no es el post — es la idea.",

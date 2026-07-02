@@ -149,7 +149,7 @@ export default function FAQ() {
       <footer className="legal-footer">
         <div className="legal-footer__inner">
           <p>
-            © {new Date().getFullYear()} Content Intelligence Platform ·{" "}
+            © {new Date().getFullYear()} Creadora ·{" "}
             <Link to="/terms">{t("footer.terms")}</Link> ·{" "}
             <Link to="/privacy">{t("footer.privacy")}</Link>
           </p>

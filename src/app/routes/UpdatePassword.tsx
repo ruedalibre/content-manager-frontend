@@ -79,7 +79,7 @@ export default function UpdatePassword() {
         <div className="login-panel__hero-overlay" />
         <div className="login-panel__brand">
           <span className="login-panel__logo">✦</span>
-          <span className="login-panel__name">Content Intelligence App</span>
+          <span className="login-panel__name">Creadora</span>
         </div>
         <div className="login-panel__copy">
           <h2 className="login-panel__tagline">{t("login.tagline")}</h2>

@@ -69,14 +69,14 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
       <aside className={`sidebar${isOpen ? " sidebar--open" : ""}${isCollapsed ? " sidebar--collapsed" : ""}`}>
         {/* MOBILE HEADER */}
         <div className="sidebar__header sidebar__header--mobile">
-          <h2>Content Intelligence Platform</h2>
+          <h2>Creadora</h2>
           <button type="button" onClick={onClose}><X size={20} /></button>
         </div>
 
         {/* TITLE + SALUDO */}
         {!isCollapsed && (
           <>
-            <h2 className="sidebar__title">Content Intelligence Platform</h2>
+            <h2 className="sidebar__title">Creadora</h2>
             <div className="sidebar__user">
               <div className="sidebar__avatar" style={{ background: avatarColor }}>
                 {initials}

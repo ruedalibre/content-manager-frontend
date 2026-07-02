@@ -71,7 +71,7 @@ export async function downloadReport(
           children: [new TextRun({
             text: `Generated ${new Date(generatedAt).toLocaleDateString('en-US', {
               year: 'numeric', month: 'long', day: 'numeric'
-            })} · Content Intelligence Platform`,
+            })} · Creadora`,
             font: "Arial", size: 18, color: "999999"
           })]
         }),
@@ -132,7 +132,7 @@ export async function downloadReport(
           spacing: { before: 720, after: 80 },
           alignment: AlignmentType.CENTER,
           children: [new TextRun({
-            text: `Content Intelligence App · ${new Date(generatedAt).toLocaleDateString('en-US', {
+            text: `Creadora · ${new Date(generatedAt).toLocaleDateString('en-US', {
               year: 'numeric', month: 'long', day: 'numeric'
             })}`,
             font: "Arial", size: 16, color: "AAAAAA"
@@ -144,7 +144,7 @@ export async function downloadReport(
           children: [new TextRun({
             text: "This report is an AI-assisted creative analysis based on your content patterns. " +
                   "AI-generated outputs may not be eligible for copyright protection. " +
-                  "Content Intelligence App does not claim intellectual property rights over this output. " +
+                  "Creadora does not claim intellectual property rights over this output. " +
                   "For questions about IP rights related to AI-assisted content, consult a legal professional.",
             font: "Arial", size: 14, color: "AAAAAA", italics: true
           })]
