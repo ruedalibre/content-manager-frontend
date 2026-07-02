@@ -892,5 +892,17 @@
       "report": "Informe creativo",
       "ideaGenerator": "Generador de ideas"
     }
+  },
+  "workspace": {
+    "personal": "Personal",
+    "shortLabel": "WS",
+    "switchWorkspace": "Cambiar workspace",
+    "create": "Crear workspace",
+    "createTitle": "Crear nuevo workspace",
+    "namePlaceholder": "Nombre del workspace",
+    "descriptionPlaceholder": "Descripción (opcional)",
+    "creating": "Creando...",
+    "createError": "Error al crear el workspace. Intenta de nuevo.",
+    "nameExists": "Ya existe un workspace con ese nombre."
   }
 }

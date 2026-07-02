@@ -3,6 +3,7 @@ import { Lightbulb, FileText, Sparkles, BarChart3, Shield, User, X, ChevronLeft,
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
+import WorkspaceSelector from "./WorkspaceSelector";
 import "./Sidebar.scss";
 
 type Props = {
@@ -93,6 +94,9 @@ export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapse
             </div>
           </div>
         )}
+
+        {/* WORKSPACE SELECTOR */}
+        <WorkspaceSelector isCollapsed={isCollapsed} />
 
         {/* COLLAPSE BUTTON */}
         <button
