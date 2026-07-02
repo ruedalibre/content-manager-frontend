@@ -41,24 +41,61 @@ export default function WorkspaceSelector({ isCollapsed }: Props) {
 
   const label = currentWorkspace?.is_personal
     ? t("workspace.personal")
-    : currentWorkspace?.name ?? "";
+    : (currentWorkspace?.name ?? "");
 
   if (isCollapsed) {
     return (
-      <div className="workspace-selector workspace-selector--collapsed" ref={ref}>
+      <div
+        className="workspace-selector workspace-selector--collapsed"
+        ref={ref}
+      >
+        <div className="workspace-selector__inner">
+          <button
+            type="button"
+            className="workspace-selector__badge"
+            onClick={() => setIsOpen((v) => !v)}
+            title={label}
+            aria-label={t("workspace.switchWorkspace")}
+          >
+            <Folder size={16} />
+          </button>
+
+          {isOpen && (
+            <div className="workspace-selector__dropdown workspace-selector__dropdown--collapsed">
+              <WorkspaceList
+                workspaces={workspaces}
+                currentId={currentWorkspace?.id}
+                onSelect={handleSelect}
+                t={t}
+              />
+            </div>
+          )}
+        </div>
+        <span className="workspace-selector__label-mini">
+          {t("workspace.shortLabel")}
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="workspace-selector" ref={ref}>
+      <div className="workspace-selector__inner">
         <button
           type="button"
-          className="workspace-selector__badge"
+          className="workspace-selector__trigger"
           onClick={() => setIsOpen((v) => !v)}
-          title={label}
-          aria-label={t("workspace.switchWorkspace")}
         >
           <Folder size={16} />
+          <span className="workspace-selector__name">{label}</span>
+          <ChevronDown
+            size={14}
+            className={`workspace-selector__chevron${isOpen ? " workspace-selector__chevron--open" : ""}`}
+          />
         </button>
-        <span className="workspace-selector__label-mini">{t("workspace.shortLabel")}</span>
 
         {isOpen && (
-          <div className="workspace-selector__dropdown workspace-selector__dropdown--collapsed">
+          <div className="workspace-selector__dropdown">
             <WorkspaceList
               workspaces={workspaces}
               currentId={currentWorkspace?.id}
@@ -68,34 +105,6 @@ export default function WorkspaceSelector({ isCollapsed }: Props) {
           </div>
         )}
       </div>
-    );
-  }
-
-  return (
-    <div className="workspace-selector" ref={ref}>
-      <button
-        type="button"
-        className="workspace-selector__trigger"
-        onClick={() => setIsOpen((v) => !v)}
-      >
-        <Folder size={16} />
-        <span className="workspace-selector__name">{label}</span>
-        <ChevronDown
-          size={14}
-          className={`workspace-selector__chevron${isOpen ? " workspace-selector__chevron--open" : ""}`}
-        />
-      </button>
-
-      {isOpen && (
-        <div className="workspace-selector__dropdown">
-          <WorkspaceList
-            workspaces={workspaces}
-            currentId={currentWorkspace?.id}
-            onSelect={handleSelect}
-            t={t}
-          />
-        </div>
-      )}
     </div>
   );
 }
