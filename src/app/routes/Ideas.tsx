@@ -23,6 +23,7 @@ import { supabase } from "../../supabaseClient.ts";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription";
 import UpgradePrompt from "../../components/ui/UpgradePrompt";
 import StepsGuide from "../../components/ui/StepsGuide";
+import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.ts";
 import "./Ideas.scss";
 
 export default function Ideas() {
@@ -114,6 +115,8 @@ export default function Ideas() {
     archiveTopic,
   } = useTopics();
 
+  const { currentWorkspaceId } = useWorkspace();
+
   const { topics: systemTopics } = useContentSystem();
 
   const { platforms } = usePlatforms();
@@ -191,6 +194,10 @@ export default function Ideas() {
   })();
 
   const handleGenerateRecipe = async (idea: Idea) => {
+    if (!currentWorkspaceId) {
+      updateRecipeState(idea.id, { error: t("common.error") });
+      return;
+    }
     const state = getRecipeStateForIdea(idea.id);
     if (!state.platform_id || !state.format) {
       updateRecipeState(idea.id, { error: t("ideas.selectPlatformError") });
@@ -209,6 +216,7 @@ export default function Ideas() {
           content_goal: state.content_goal || undefined,
           cta_intent: state.cta_intent || undefined,
           target_audience: state.target_audience || undefined,
+          workspace_id: currentWorkspaceId ?? "",
         });
         if (result.duplicate) {
           updateRecipeState(idea.id, {
@@ -439,6 +447,8 @@ export default function Ideas() {
 
   const createContentFromBrief = async (): Promise<string> => {
     if (!expandedSession) throw new Error("No session");
+    if (!currentWorkspaceId) throw new Error("Workspace not loaded yet");
+
     const { session, idea } = expandedSession;
     const sessionAuth = await supabase.auth.getSession();
     const token = sessionAuth.data.session?.access_token;
@@ -463,6 +473,7 @@ export default function Ideas() {
           creative_unit_id: idea.id,
           entry_channel: "recipe",
           session_id: session.id,
+          workspace_id: currentWorkspaceId,
         }),
       },
     );
@@ -735,7 +746,10 @@ export default function Ideas() {
                   const formats = ideaFormats[idea.id] ?? [];
 
                   return (
-                    <div key={idea.id} className={`ideas-dual-row${collapsedIds.has(idea.id) ? " ideas-dual-row--collapsed" : ""}`}>
+                    <div
+                      key={idea.id}
+                      className={`ideas-dual-row${collapsedIds.has(idea.id) ? " ideas-dual-row--collapsed" : ""}`}
+                    >
                       {/* IDEA CARD */}
                       <IdeaCard
                         idea={idea}
@@ -760,14 +774,30 @@ export default function Ideas() {
                         onDuplicate={() => handleDuplicateIdea(idea)}
                         onArchive={() => handleArchiveIdea(idea.id)}
                         onDelete={() => handleDeleteIdea(idea.id)}
-                        onPlatformChange={(platformId) => handlePlatformChange(idea.id, platformId)}
-                        onFormatChange={(format) => updateRecipeState(idea.id, { format })}
-                        onRoleChange={(role) => updateRecipeState(idea.id, { content_role: role })}
-                        onGoalChange={(goal) => updateRecipeState(idea.id, { content_goal: goal })}
-                        onCtaIntentChange={(cta) => updateRecipeState(idea.id, { cta_intent: cta })}
-                        onAudienceChange={(audience) => updateRecipeState(idea.id, { target_audience: audience })}
+                        onPlatformChange={(platformId) =>
+                          handlePlatformChange(idea.id, platformId)
+                        }
+                        onFormatChange={(format) =>
+                          updateRecipeState(idea.id, { format })
+                        }
+                        onRoleChange={(role) =>
+                          updateRecipeState(idea.id, { content_role: role })
+                        }
+                        onGoalChange={(goal) =>
+                          updateRecipeState(idea.id, { content_goal: goal })
+                        }
+                        onCtaIntentChange={(cta) =>
+                          updateRecipeState(idea.id, { cta_intent: cta })
+                        }
+                        onAudienceChange={(audience) =>
+                          updateRecipeState(idea.id, {
+                            target_audience: audience,
+                          })
+                        }
                         onGenerate={() => handleGenerateRecipe(idea)}
-                        onOpenTopicSelector={() => handleOpenTopicSelector(idea)}
+                        onOpenTopicSelector={() =>
+                          handleOpenTopicSelector(idea)
+                        }
                         onToggleTopic={handleToggleTopic}
                         onSaveTopics={handleSaveIdeaTopics}
                         onCancelTopics={() => setEditingIdeaTopics(null)}

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import "./CreateContentModal.scss";
 import { supabase } from "../../../supabaseClient.ts";
 import { useTopics } from "../../ideas/hooks/useTopics.ts";
+import { useWorkspace } from "../../workspace/hooks/useWorkspace.ts";
 
 /* =========================
    TYPES
@@ -116,6 +117,7 @@ export default function CreateContentModal({
   idea,
 }: Props) {
   const { t } = useTranslation();
+  const { currentWorkspaceId } = useWorkspace();
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -315,6 +317,10 @@ export default function CreateContentModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!currentWorkspaceId) {
+      setSubmitError(t("common.error"));
+      return;
+    }
     setLoading(true);
 
     try {
@@ -338,6 +344,7 @@ export default function CreateContentModal({
               ? form.published_at || new Date().toISOString()
               : null,
           creative_unit_id: idea?.id ?? null,
+          workspace_id: currentWorkspaceId,
         }),
       });
 
@@ -436,15 +443,21 @@ export default function CreateContentModal({
             onChange={handleChange}
             maxLength={500}
             rows={3}
-            style={{ resize: "vertical", minHeight: "72px", maxHeight: "120px" }}
+            style={{
+              resize: "vertical",
+              minHeight: "72px",
+              maxHeight: "120px",
+            }}
           />
-          <span style={{
-            fontSize: "11px",
-            color: "var(--color-text-tertiary)",
-            display: "block",
-            textAlign: "right",
-            marginTop: "4px"
-          }}>
+          <span
+            style={{
+              fontSize: "11px",
+              color: "var(--color-text-tertiary)",
+              display: "block",
+              textAlign: "right",
+              marginTop: "4px",
+            }}
+          >
             {(form.description ?? "").length}/500
           </span>
 
@@ -503,7 +516,9 @@ export default function CreateContentModal({
           >
             <option value="">{t("contentRoles.selectRole")}</option>
             <option value="educational">{t("contentRoles.educational")}</option>
-            <option value="inspirational">{t("contentRoles.inspirational")}</option>
+            <option value="inspirational">
+              {t("contentRoles.inspirational")}
+            </option>
             <option value="personal">{t("contentRoles.personal")}</option>
             <option value="promotional">{t("contentRoles.promotional")}</option>
             <option value="curated">{t("contentRoles.curated")}</option>

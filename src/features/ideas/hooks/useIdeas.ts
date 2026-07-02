@@ -79,7 +79,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
         .from("creative_units")
         .select("id, title, description, source, created_at, archived_at")
         .eq("tenant_id", userRecord.tenant_id)
-        .is("archived_at", null)           // excluir archivadas de la vista principal
+        .is("archived_at", null) // excluir archivadas de la vista principal
         .order("created_at", { ascending: false });
 
       if (filter === "manual") query = query.eq("source", "manual");
@@ -162,6 +162,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     content_goal?: string;
     cta_intent?: string;
     target_audience?: string;
+    workspace_id: string;
   }): Promise<{
     session_id: string;
     recipe: CreativeSession["recipe"];
@@ -227,9 +228,9 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       prev.map((idea) => ({
         ...idea,
         sessions: idea.sessions?.map((s) =>
-          s.id !== sessionId ? s : { ...s, status }
+          s.id !== sessionId ? s : { ...s, status },
         ),
-      }))
+      })),
     );
   };
 
@@ -259,9 +260,9 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       prev.map((idea) => ({
         ...idea,
         sessions: idea.sessions?.map((s) =>
-          s.id !== sessionId ? s : { ...s, feedback }
+          s.id !== sessionId ? s : { ...s, feedback },
         ),
-      }))
+      })),
     );
   };
 
@@ -294,8 +295,8 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
               ...idea,
               title: updates.title,
               description: updates.description ?? idea.description,
-            }
-      )
+            },
+      ),
     );
   };
 
@@ -323,8 +324,8 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
     }
     setIdeas((prev) =>
       prev.map((idea) =>
-        idea.id !== ideaId ? idea : { ...idea, topics: topicObjects }
-      )
+        idea.id !== ideaId ? idea : { ...idea, topics: topicObjects },
+      ),
     );
   };
 
@@ -383,9 +384,9 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       prev.map((idea) => ({
         ...idea,
         sessions: idea.sessions?.map((s) =>
-          s.id !== sessionId ? s : { ...s, recipe }
+          s.id !== sessionId ? s : { ...s, recipe },
         ),
-      }))
+      })),
     );
   };
 
@@ -400,9 +401,9 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
       prev.map((idea) => ({
         ...idea,
         sessions: idea.sessions?.map((s) =>
-          s.id !== sessionId ? s : { ...s, downloaded_at: downloadedAt }
+          s.id !== sessionId ? s : { ...s, downloaded_at: downloadedAt },
         ),
-      }))
+      })),
     );
     // Persistir en BD (best-effort, no bloquea la UI)
     try {
