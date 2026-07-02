@@ -907,5 +907,17 @@
       "report": "Creative report",
       "ideaGenerator": "Idea generator"
     }
+  },
+  "workspace": {
+    "personal": "Personal",
+    "shortLabel": "WS",
+    "switchWorkspace": "Switch workspace",
+    "create": "Create workspace",
+    "createTitle": "Create new workspace",
+    "namePlaceholder": "Workspace name",
+    "descriptionPlaceholder": "Description (optional)",
+    "creating": "Creating...",
+    "createError": "Failed to create workspace. Please try again.",
+    "nameExists": "A workspace with this name already exists."
   }
 }
