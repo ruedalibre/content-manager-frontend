@@ -23,7 +23,7 @@ Loop central: Ideas → Contenido → Patrones → Insights → Estrategia → N
 **Frontend Landing**
 - React + TypeScript + Vite + SCSS modular
 - lucide-react + react-i18next
-- Desplegada en producción: https://content-intel.app
+- Desplegada en producción: https://usecreadora.com
 
 **Backend**
 - Supabase (PostgreSQL + RLS + Edge Functions en Deno/TypeScript)

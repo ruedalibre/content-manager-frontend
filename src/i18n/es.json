@@ -144,7 +144,7 @@
       "trial": "Sí. Los nuevos usuarios tienen 14 días de prueba gratuita del plan Creator sin necesidad de ingresar datos de pago.",
       "cancel": "Sí. Puedes gestionar tu suscripción — incluyendo la cancelación — desde la sección Mi Perfil en cualquier momento.",
       "training": "No. Tus ideas, briefs y contenidos son tuyos. No los usamos para entrenar modelos de inteligencia artificial ni los compartimos con terceros. Los datos se procesan únicamente para generarte respuestas dentro de la plataforma.",
-      "security": "Sí. Toda la información se almacena con cifrado en tránsito y en reposo, con políticas de acceso estrictas. Puedes solicitar la eliminación de tu cuenta y todos tus datos en cualquier momento escribiéndonos a andres@content-intel.app."
+      "security": "Sí. Toda la información se almacena con cifrado en tránsito y en reposo, con políticas de acceso estrictas. Puedes solicitar la eliminación de tu cuenta y todos tus datos en cualquier momento escribiéndonos a hello@usecreadora.com."
     }
   },
   "login": {
@@ -195,7 +195,7 @@
       "passwordMismatch": "Las contraseñas no coinciden.",
       "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
       "passwordWeak": "La contraseña no cumple los requisitos mínimos de seguridad.",
-      "notInvited": "Este correo no ha sido invitado aún. Únete a la lista de espera en content-intel.app",
+      "notInvited": "Este correo no ha sido invitado aún. Únete a la lista de espera en usecreadora.com",
       "pendingInvite": "Tu correo está en la lista de espera pero aún no ha sido invitado. Te notificaremos cuando tu acceso esté listo.",
       "generic": "Algo salió mal. Intenta de nuevo.",
       "resetFailed": "No pudimos procesar la solicitud. Intenta de nuevo.",

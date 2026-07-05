@@ -144,7 +144,7 @@
       "trial": "Yes. New users get a 14-day free trial of the Creator plan with no payment information required.",
       "cancel": "Yes. You can manage your subscription — including cancellation — from the My Profile section at any time.",
       "training": "No. Your ideas, briefs, and contents are yours. We don't use them to train AI models or share them with third parties. Data is processed solely to generate responses for you within the platform.",
-      "security": "Yes. All information is stored with encryption in transit and at rest, with strict access policies. You can request the deletion of your account and all your data at any time by writing to andres@content-intel.app."
+      "security": "Yes. All information is stored with encryption in transit and at rest, with strict access policies. You can request the deletion of your account and all your data at any time by writing to hello@usecreadora.com."
     }
   },
   "login": {
@@ -157,7 +157,7 @@
     "confirmPasswordPlaceholder": "Confirm password",
     "signingIn": "Signing in...",
     "creatingAccount": "Creating account...",
-    "backToLanding": "← Back to content-intel.app",
+    "backToLanding": "← Back to usecreadora.com",
     "welcomeBack": "Welcome back.",
     "welcomeBackSub": "Pick up where you left off.",
     "welcomeNew": "Welcome.",
@@ -205,7 +205,7 @@
       "passwordMismatch": "Passwords don't match.",
       "passwordTooShort": "Password must be at least 8 characters.",
       "passwordWeak": "Password does not meet the minimum security requirements.",
-      "notInvited": "This email hasn't been invited yet. Join the waitlist at content-intel.app",
+      "notInvited": "This email hasn't been invited yet. Join the waitlist at usecreadora.com",
       "pendingInvite": "Your email is on the waitlist but hasn't been invited yet. We'll notify you when your access is ready.",
       "generic": "Something went wrong. Please try again.",
       "resetFailed": "We couldn't process your request. Please try again.",

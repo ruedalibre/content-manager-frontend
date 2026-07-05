@@ -414,7 +414,7 @@ export default function Login() {
 
           {/* FOOTER */}
           <div className="login-footer">
-            <a href="https://content-intel.app" className="login-back">
+            <a href="https://usecreadora.com" className="login-back">
               {t("login.backToLanding")}
             </a>
             <LanguageToggle />

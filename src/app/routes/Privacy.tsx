@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import "./Legal.scss";
 
-const CONTACT_EMAIL = "andres@content-intel.app";
-const WEBSITE = "content-intel.app";
+const CONTACT_EMAIL = "hello@usecreadora.com";
+const WEBSITE = "usecreadora.com";
 
 const Privacy = () => {
   const { t } = useTranslation("privacy");
