@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Folder, ChevronDown, Check } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useWorkspace } from "../../features/workspace/hooks/useWorkspace";
+import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.tsx";
 import "./WorkspaceSelector.scss";
 
 type Props = {

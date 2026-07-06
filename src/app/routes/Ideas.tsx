@@ -23,7 +23,7 @@ import { supabase } from "../../supabaseClient.ts";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription";
 import UpgradePrompt from "../../components/ui/UpgradePrompt";
 import StepsGuide from "../../components/ui/StepsGuide";
-import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.ts";
+import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.tsx";
 import "./Ideas.scss";
 
 export default function Ideas() {

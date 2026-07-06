@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import "./CreateContentModal.scss";
 import { supabase } from "../../../supabaseClient.ts";
 import { useTopics } from "../../ideas/hooks/useTopics.ts";
-import { useWorkspace } from "../../workspace/hooks/useWorkspace.ts";
+import { useWorkspace } from "../../workspace/hooks/useWorkspace.tsx";
 
 /* =========================
    TYPES

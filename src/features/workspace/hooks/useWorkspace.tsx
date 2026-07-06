@@ -1,5 +1,11 @@
-// src/features/workspace/hooks/useWorkspace.ts
-import { useEffect, useState, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+  type ReactNode,
+} from "react";
 import { supabase } from "../../../supabaseClient";
 
 export type Workspace = {
@@ -11,7 +17,20 @@ export type Workspace = {
   created_at: string;
 };
 
-export function useWorkspace() {
+type WorkspaceContextValue = {
+  workspaces: Workspace[];
+  currentWorkspace: Workspace | null;
+  currentWorkspaceId: string | null;
+  loading: boolean;
+  error: string | null;
+  loadWorkspaces: () => Promise<void>;
+  switchWorkspace: (workspaceId: string) => Promise<void>;
+  createWorkspace: (name: string, description?: string) => Promise<void>;
+};
+
+const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
+
+export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,7 +73,7 @@ export function useWorkspace() {
 
   const switchWorkspace = async (workspaceId: string) => {
     const previous = currentWorkspaceId;
-    setCurrentWorkspaceId(workspaceId); // optimistic
+    setCurrentWorkspaceId(workspaceId); // optimistic — ahora visible para TODOS los consumidores del Context
 
     try {
       const session = await getSession();
@@ -68,8 +87,6 @@ export function useWorkspace() {
       });
 
       if (!res.ok) throw new Error("Failed to switch workspace");
-
-      globalThis.dispatchEvent(new CustomEvent("workspace-switched", { detail: { workspaceId } }));
     } catch (err) {
       console.error("Switch workspace error:", err);
       setCurrentWorkspaceId(previous); // rollback
@@ -102,14 +119,28 @@ export function useWorkspace() {
     loadWorkspaces();
   }, [loadWorkspaces]);
 
-  return {
-    workspaces,
-    currentWorkspace,
-    currentWorkspaceId,
-    loading,
-    error,
-    loadWorkspaces,
-    switchWorkspace,
-    createWorkspace,
-  };
+  return (
+    <WorkspaceContext.Provider
+      value={{
+        workspaces,
+        currentWorkspace,
+        currentWorkspaceId,
+        loading,
+        error,
+        loadWorkspaces,
+        switchWorkspace,
+        createWorkspace,
+      }}
+    >
+      {children}
+    </WorkspaceContext.Provider>
+  );
+}
+
+export function useWorkspace() {
+  const ctx = useContext(WorkspaceContext);
+  if (!ctx) {
+    throw new Error("useWorkspace must be used within a WorkspaceProvider");
+  }
+  return ctx;
 }
