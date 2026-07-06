@@ -36,7 +36,7 @@ export type Idea = {
   sessions?: CreativeSession[];
 };
 
-export function useIdeas(filter: "all" | "manual" | "generated") {
+export function useIdeas(filter: "all" | "manual" | "generated", workspaceId: string | null) {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,6 +55,11 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
   ========================= */
 
   const loadIdeas = async () => {
+    if (!workspaceId) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
@@ -65,21 +70,11 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
         return;
       }
 
-      const user = session.user;
-
-      const { data: userRecord } = await supabase
-        .from("users")
-        .select("tenant_id")
-        .eq("id", user.id)
-        .single();
-
-      if (!userRecord) return;
-
       let query = supabase
         .from("creative_units")
         .select("id, title, description, source, created_at, archived_at")
-        .eq("tenant_id", userRecord.tenant_id)
-        .is("archived_at", null) // excluir archivadas de la vista principal
+        .eq("workspace_id", workspaceId)
+        .is("archived_at", null)
         .order("created_at", { ascending: false });
 
       if (filter === "manual") query = query.eq("source", "manual");
@@ -94,12 +89,11 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
       const headers = { Authorization: `Bearer ${session.access_token}` };
 
-      // Cargar conteos, topics y sesiones en paralelo
       const [countsRes, sessionsRes, ...topicsResponses] = await Promise.all([
-        fetch(`${base}/me-ideas-counts`, { headers }),
-        fetch(`${base}/me-creative-sessions`, { headers }),
+        fetch(`${base}/me-ideas-counts?workspace_id=${workspaceId}`, { headers }),
+        fetch(`${base}/me-creative-sessions?workspace_id=${workspaceId}`, { headers }),
         ...(data ?? []).map((idea) =>
-          fetch(`${base}/me-idea-topics?idea_id=${idea.id}`, { headers }),
+          fetch(`${base}/me-idea-topics?idea_id=${idea.id}&workspace_id=${workspaceId}`, { headers }),
         ),
       ]);
 
@@ -517,24 +511,16 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
   ========================= */
 
   const loadArchivedIdeas = async (): Promise<Idea[]> => {
+    if (!workspaceId) return [];
+
     try {
       const session = await getSession();
       if (!session) return [];
 
-      const user = session.user;
-
-      const { data: userRecord } = await supabase
-        .from("users")
-        .select("tenant_id")
-        .eq("id", user.id)
-        .single();
-
-      if (!userRecord) return [];
-
       const { data, error } = await supabase
         .from("creative_units")
         .select("id, title, description, source, created_at, archived_at")
-        .eq("tenant_id", userRecord.tenant_id)
+        .eq("workspace_id", workspaceId)
         .not("archived_at", "is", null)
         .order("archived_at", { ascending: false });
 
@@ -542,7 +528,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
       const headers = { Authorization: `Bearer ${session.access_token}` };
 
-      const sessionsRes = await fetch(`${base}/me-creative-sessions`, {
+      const sessionsRes = await fetch(`${base}/me-creative-sessions?workspace_id=${workspaceId}`, {
         headers,
       });
       const sessionsData: CreativeSession[] = sessionsRes.ok
@@ -569,7 +555,7 @@ export function useIdeas(filter: "all" | "manual" | "generated") {
 
   useEffect(() => {
     loadIdeas();
-  }, [filter]);
+  }, [filter, workspaceId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return {
     ideas,
