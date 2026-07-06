@@ -87,6 +87,8 @@ export default function Ideas() {
     (typeof systemTopics)[0] | null
   >(null);
 
+  const { currentWorkspaceId } = useWorkspace();
+
   const {
     ideas,
     loading,
@@ -105,7 +107,7 @@ export default function Ideas() {
     updateRecipeAspect,
     markAsDownloaded,
     duplicateIdea,
-  } = useIdeas(filter);
+  } = useIdeas(filter, currentWorkspaceId);
 
   const {
     topics,
@@ -114,8 +116,6 @@ export default function Ideas() {
     updateTopic,
     archiveTopic,
   } = useTopics();
-
-  const { currentWorkspaceId } = useWorkspace();
 
   const { topics: systemTopics } = useContentSystem();
 
