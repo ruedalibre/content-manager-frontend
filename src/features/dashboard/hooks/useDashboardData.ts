@@ -16,7 +16,10 @@ import { type AnalyticsInsight } from "../../insights/types/insights.types.ts";
    HOOK
 ========================= */
 
-export function useDashboardData(period: "7d" | "30d" | "90d") {
+export function useDashboardData(
+  period: "7d" | "30d" | "90d",
+  workspaceId: string | null,
+) {
   const [data, setData] = useState<DashboardData | null>(null);
 
   const [platformData, setPlatformData] = useState<PlatformData[]>([]);
@@ -32,6 +35,11 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!workspaceId) {
+      setLoading(false);
+      return;
+    }
+
     const fetchDashboard = async () => {
       try {
         setLoading(true);
@@ -58,30 +66,30 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
           insightsRes,
         ] = await Promise.all([
           fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-dashboard?period=${period}`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-dashboard?period=${period}&workspace_id=${workspaceId}`,
             { headers },
           ),
 
           fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-by-platform?period=${period}`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-by-platform?period=${period}&workspace_id=${workspaceId}`,
             { headers },
           ),
 
           fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-activity-heatmap`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-activity-heatmap?workspace_id=${workspaceId}`,
             { headers },
           ),
 
           fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-growth?period=${period}`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-growth?period=${period}&workspace_id=${workspaceId}`,
             { headers },
           ),
           fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-growth-cumulative?period=${period}`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-growth-cumulative?period=${period}&workspace_id=${workspaceId}`,
             { headers },
           ),
           fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-growth-rate?period=${period}`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-growth-rate?period=${period}&workspace_id=${workspaceId}`,
             { headers },
           ),
 
@@ -123,7 +131,7 @@ export function useDashboardData(period: "7d" | "30d" | "90d") {
     };
 
     fetchDashboard();
-  }, [period]);
+  }, [period, workspaceId]);
 
   return {
     data,

@@ -11,6 +11,7 @@ import DashboardConsistencySection from "../../features/dashboard/components/Das
 import { getGrowthVisual } from "../../utils/growthRate.ts";
 
 import { useOutletContext, useNavigate } from "react-router-dom";
+import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.tsx";
 
 import "./Activity.scss";
 
@@ -28,7 +29,10 @@ type OutletContext = {
 
 export default function Dashboard() {
   const [period, setPeriod] = useState<"7d" | "30d" | "90d">("30d");
-  const [checkoutStatus, setCheckoutStatus] = useState<"success" | "cancelled" | null>(null);
+  const [checkoutStatus, setCheckoutStatus] = useState<
+    "success" | "cancelled" | null
+  >(null);
+  const { currentWorkspaceId } = useWorkspace();
 
   const {
     data,
@@ -38,7 +42,7 @@ export default function Dashboard() {
     growthRateData,
     heatmapData,
     loading,
-  } = useDashboardData(period);
+  } = useDashboardData(period, currentWorkspaceId);
 
   const growthVisual = getGrowthVisual(growthRateData);
 
@@ -54,6 +58,7 @@ export default function Dashboard() {
     const params = new URLSearchParams(window.location.search);
     const status = params.get("checkout");
     if (status === "success" || status === "cancelled") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCheckoutStatus(status as "success" | "cancelled");
       window.history.replaceState({}, "", window.location.pathname);
     }
@@ -102,19 +107,31 @@ export default function Dashboard() {
 
     return (
       <div className="dashboard-empty">
-        <span className="dashboard-empty__badge">{t("activity.noActivity")}</span>
+        <span className="dashboard-empty__badge">
+          {t("activity.noActivity")}
+        </span>
         <div className="dashboard-empty__icon">
           <Calendar size={42} strokeWidth={1.5} />
         </div>
-        <h2>{t("activity.noContentInPeriod", { period: labels[period].toLowerCase() })}</h2>
-        <p>
-          {t("activity.noContentInPeriodDesc")}
-        </p>
+        <h2>
+          {t("activity.noContentInPeriod", {
+            period: labels[period].toLowerCase(),
+          })}
+        </h2>
+        <p>{t("activity.noContentInPeriodDesc")}</p>
         <div className="dashboard-empty__actions">
-          <button type="button" className="btn-secondary" onClick={() => setPeriod("90d")}>
+          <button
+            type="button"
+            className="btn-secondary"
+            onClick={() => setPeriod("90d")}
+          >
             {t("activity.viewLast90")}
           </button>
-          <button type="button" className="btn-primary" onClick={() => navigate("/contents")}>
+          <button
+            type="button"
+            className="btn-primary"
+            onClick={() => navigate("/contents")}
+          >
             {t("activity.goToContents")}
           </button>
         </div>
@@ -129,7 +146,9 @@ export default function Dashboard() {
   if (data.total_contents === 0) {
     return (
       <div className="dashboard-empty">
-        <span className="dashboard-empty__badge">{t("activity.noDataYet")}</span>
+        <span className="dashboard-empty__badge">
+          {t("activity.noDataYet")}
+        </span>
 
         <div className="dashboard-empty__icon">
           <BarChart3 size={42} strokeWidth={1.5} />
@@ -165,13 +184,14 @@ export default function Dashboard() {
       <ProfileNudge />
 
       <div className="dashboard__performance">
-        <div className="dashboard__controls" style={{ display: "flex", justifyContent: "flex-end" }}>
+        <div
+          className="dashboard__controls"
+          style={{ display: "flex", justifyContent: "flex-end" }}
+        >
           <select
             className="admin-filter"
             value={period}
-            onChange={(e) =>
-              setPeriod(e.target.value as "7d" | "30d" | "90d")
-            }
+            onChange={(e) => setPeriod(e.target.value as "7d" | "30d" | "90d")}
           >
             <option value="7d">{t("activity.last7days")}</option>
             <option value="30d">{t("activity.last30days")}</option>
@@ -180,28 +200,32 @@ export default function Dashboard() {
         </div>
 
         {checkoutStatus === "success" && (
-          <div style={{
-            padding: "12px 16px",
-            background: "var(--success-soft)",
-            border: "1px solid rgba(74,138,110,0.2)",
-            borderRadius: "var(--r-3)",
-            fontSize: "var(--fs-13)",
-            color: "var(--success)",
-            marginBottom: "var(--s-4)",
-          }}>
+          <div
+            style={{
+              padding: "12px 16px",
+              background: "var(--success-soft)",
+              border: "1px solid rgba(74,138,110,0.2)",
+              borderRadius: "var(--r-3)",
+              fontSize: "var(--fs-13)",
+              color: "var(--success)",
+              marginBottom: "var(--s-4)",
+            }}
+          >
             🎉 {t("checkout.successMessage")}
           </div>
         )}
         {checkoutStatus === "cancelled" && (
-          <div style={{
-            padding: "12px 16px",
-            background: "var(--bg-muted)",
-            border: "1px solid var(--border)",
-            borderRadius: "var(--r-3)",
-            fontSize: "var(--fs-13)",
-            color: "var(--text-secondary)",
-            marginBottom: "var(--s-4)",
-          }}>
+          <div
+            style={{
+              padding: "12px 16px",
+              background: "var(--bg-muted)",
+              border: "1px solid var(--border)",
+              borderRadius: "var(--r-3)",
+              fontSize: "var(--fs-13)",
+              color: "var(--text-secondary)",
+              marginBottom: "var(--s-4)",
+            }}
+          >
             {t("checkout.cancelledMessage")}
           </div>
         )}
