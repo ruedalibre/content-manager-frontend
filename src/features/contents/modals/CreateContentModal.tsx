@@ -218,10 +218,11 @@ export default function CreateContentModal({
 
       // Cargar topics e ideas actuales del contenido
       const loadAssociations = async () => {
+        if (!currentWorkspaceId) return;
         try {
           const session = await getSession();
           const res = await fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-associations?content_id=${contentToEdit.id}`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-content-associations?content_id=${contentToEdit.id}&workspace_id=${currentWorkspaceId}`,
             { headers: getHeaders(session) },
           );
           if (res.ok) {
@@ -238,7 +239,7 @@ export default function CreateContentModal({
     } else {
       resetForm();
     }
-  }, [contentToEdit]);
+  }, [contentToEdit, currentWorkspaceId]);
 
   /* =========================
      PREFILL FROM IDEA
@@ -317,10 +318,12 @@ export default function CreateContentModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!currentWorkspaceId) {
       setSubmitError(t("common.error"));
       return;
     }
+
     setLoading(true);
 
     try {
@@ -365,7 +368,10 @@ export default function CreateContentModal({
           {
             method: "PUT",
             headers,
-            body: JSON.stringify({ topic_ids: selectedTopicIds }),
+            body: JSON.stringify({
+              topic_ids: selectedTopicIds,
+              workspace_id: currentWorkspaceId,
+            }),
           },
         );
 
@@ -376,7 +382,10 @@ export default function CreateContentModal({
             {
               method: "PUT",
               headers,
-              body: JSON.stringify({ idea_ids: [idea.id] }),
+              body: JSON.stringify({
+                idea_ids: [idea.id],
+                workspace_id: currentWorkspaceId,
+              }),
             },
           );
         }
@@ -525,7 +534,6 @@ export default function CreateContentModal({
             <option value="sales">{t("contentRoles.sales")}</option>
           </select>
 
-          {/* TOPICS */}
           {/* TOPICS */}
           {topics.length > 0 && (
             <div className="modal__topics">

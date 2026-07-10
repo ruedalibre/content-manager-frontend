@@ -5,6 +5,7 @@ import { useSearchParams } from "react-router-dom";
 import CreateContentModal from "../../features/contents/modals/CreateContentModal.tsx";
 import { supabase } from "../../supabaseClient.ts";
 import StepsGuide from "../../components/ui/StepsGuide";
+import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.tsx";
 import "./Contents.scss";
 
 /* =========================
@@ -59,6 +60,8 @@ export default function Contents() {
   const [loading, setLoading] = useState(true);
   const { setTopbarContext } = useOutletContext<OutletContext>();
 
+  const { currentWorkspaceId } = useWorkspace();
+
   const [platformOptions, setPlatformOptions] = useState<Platform[]>([]);
 
   const [search, setSearch] = useState("");
@@ -75,7 +78,9 @@ export default function Contents() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contentToEdit, setContentToEdit] = useState<ContentItem | null>(null);
 
-  const [addIdeaContent, setAddIdeaContent] = useState<ContentItem | null>(null);
+  const [addIdeaContent, setAddIdeaContent] = useState<ContentItem | null>(
+    null,
+  );
   const [addIdeaTitle, setAddIdeaTitle] = useState("");
   const [addIdeaDescription, setAddIdeaDescription] = useState("");
   const [addIdeaSaving, setAddIdeaSaving] = useState(false);
@@ -122,12 +127,13 @@ export default function Contents() {
   ========================= */
   useEffect(() => {
     const loadIdea = async () => {
-      if (!ideaId) return;
+      if (!ideaId || !currentWorkspaceId) return;
 
       const { data, error } = await supabase
         .from("creative_units")
         .select("*")
         .eq("id", ideaId)
+        .eq("workspace_id", currentWorkspaceId)
         .single();
 
       if (error) {
@@ -141,18 +147,21 @@ export default function Contents() {
     };
 
     loadIdea();
-  }, [ideaId]);
+  }, [ideaId, currentWorkspaceId]);
 
   /* =========================
      OPEN EDIT FROM ?edit= QUERY PARAM
   ========================= */
   useEffect(() => {
     const loadContentForEdit = async () => {
-      if (!editId) return;
+      if (!editId || !currentWorkspaceId) return;
       const { data } = await supabase
         .from("contents")
-        .select("id, user_id, title, description, platform_id, format, status, location, is_reusable, published_at, content_role")
+        .select(
+          "id, user_id, title, description, platform_id, format, status, location, is_reusable, published_at, content_role",
+        )
         .eq("id", editId)
+        .eq("workspace_id", currentWorkspaceId)
         .eq("is_deleted", false)
         .single();
       if (data) {
@@ -162,7 +171,7 @@ export default function Contents() {
       }
     };
     loadContentForEdit();
-  }, [editId]);
+  }, [editId, currentWorkspaceId]);
 
   /* =========================
      SEARCH DEBOUNCE
@@ -181,6 +190,11 @@ export default function Contents() {
   ========================= */
 
   const fetchContents = async () => {
+    if (!currentWorkspaceId) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setTopbarContext(t("common.loading"));
@@ -193,7 +207,7 @@ export default function Contents() {
         Authorization: `Bearer ${session?.access_token}`,
       };
 
-      let url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-history?page=${page}&limit=${limit}`;
+      let url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-contents-history?page=${page}&limit=${limit}&workspace_id=${currentWorkspaceId}`;
 
       if (debouncedSearch)
         url += `&search=${encodeURIComponent(debouncedSearch)}`;
@@ -229,6 +243,7 @@ export default function Contents() {
     statusFilter,
     roleFilter,
     topicFilter,
+    currentWorkspaceId,
   ]);
 
   /* =========================
@@ -264,6 +279,7 @@ export default function Contents() {
 
   /* =========================
      FETCH TOPICS
+     (sin cambios — Topics sigue siendo tenant-wide hasta Phase 3.6)
   ========================= */
   useEffect(() => {
     const loadTopics = async () => {
@@ -275,7 +291,7 @@ export default function Contents() {
           `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-topics`,
           { headers: { Authorization: `Bearer ${session?.access_token}` } },
         );
-        const data = await res.json();
+        const data: { id: string; name: string }[] = await res.json();
         setTopicOptions(data ?? []);
       } catch (err) {
         console.error("Topics fetch error:", err);
@@ -338,7 +354,7 @@ export default function Contents() {
   };
 
   const handleConfirmDelete = async () => {
-    if (!contentToDelete) return;
+    if (!contentToDelete || !currentWorkspaceId) return;
 
     try {
       setIsDeleting(true);
@@ -352,7 +368,7 @@ export default function Contents() {
       };
 
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-content/${contentToDelete.id}`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-content/${contentToDelete.id}?workspace_id=${currentWorkspaceId}`,
         { method: "DELETE", headers },
       );
 
@@ -395,7 +411,7 @@ export default function Contents() {
   ========================= */
 
   const handleUndo = async () => {
-    if (!lastDeleted) return;
+    if (!lastDeleted || !currentWorkspaceId) return;
 
     try {
       setIsRestoring(true);
@@ -411,7 +427,7 @@ export default function Contents() {
       };
 
       const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/restore-content/${lastDeleted.id}`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/restore-content/${lastDeleted.id}?workspace_id=${currentWorkspaceId}`,
         { method: "POST", headers },
       );
 
@@ -437,11 +453,13 @@ export default function Contents() {
   ========================= */
 
   const handleAddToIdeasLibrary = async () => {
-    if (!addIdeaContent || !addIdeaTitle.trim()) return;
+    if (!addIdeaContent || !addIdeaTitle.trim() || !currentWorkspaceId) return;
     setAddIdeaSaving(true);
     setAddIdeaError(null);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       const res = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/create-idea-from-content`,
         {
@@ -454,16 +472,19 @@ export default function Contents() {
             content_id: addIdeaContent.id,
             title: addIdeaTitle.trim(),
             description: addIdeaDescription.trim() || undefined,
+            workspace_id: currentWorkspaceId,
           }),
-        }
+        },
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to create idea");
 
       // Actualizar el item en la lista local sin recargar
-      setContents(prev => prev.map(c =>
-        c.id === addIdeaContent.id ? { ...c, has_ideas: true } : c
-      ));
+      setContents((prev) =>
+        prev.map((c) =>
+          c.id === addIdeaContent.id ? { ...c, has_ideas: true } : c,
+        ),
+      );
 
       setAddIdeaContent(null);
       setAddIdeaTitle("");
@@ -471,7 +492,7 @@ export default function Contents() {
       showSuccess(t("contents.saveIdea"));
     } catch (err) {
       setAddIdeaError(
-        err instanceof Error ? err.message : "Failed to create idea"
+        err instanceof Error ? err.message : "Failed to create idea",
       );
     } finally {
       setAddIdeaSaving(false);
@@ -489,7 +510,7 @@ export default function Contents() {
       <div className="contents-page">
         <div className="contents-page__header">
           <div className="contents-top-bar">
-            <button className="btn-primary" onClick={handleCreate}>
+            <button type="button" className="btn-primary" onClick={handleCreate}>
               {t("contents.newContent")}
             </button>
             <StepsGuide namespace="contents" />
@@ -554,7 +575,9 @@ export default function Contents() {
           >
             <option value="">{t("contents.allRoles")}</option>
             <option value="educational">{t("contentRoles.educational")}</option>
-            <option value="inspirational">{t("contentRoles.inspirational")}</option>
+            <option value="inspirational">
+              {t("contentRoles.inspirational")}
+            </option>
             <option value="personal">{t("contentRoles.personal")}</option>
             <option value="promotional">{t("contentRoles.promotional")}</option>
             <option value="curated">{t("contentRoles.curated")}</option>
@@ -570,9 +593,9 @@ export default function Contents() {
             }}
           >
             <option value="">{t("contents.allTopics")}</option>
-            {topicOptions.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
+            {topicOptions.map((topic) => (
+              <option key={topic.id} value={topic.id}>
+                {topic.name}
               </option>
             ))}
           </select>
@@ -630,7 +653,9 @@ export default function Contents() {
               }}
               className="pagination__input"
             />
-            <span className="pagination__of">{t("contents.pageOf")} {totalPages || 1}</span>
+            <span className="pagination__of">
+              {t("contents.pageOf")} {totalPages || 1}
+            </span>
           </span>
           <button
             type="button"
@@ -715,7 +740,7 @@ export default function Contents() {
                               fontSize: "12px",
                               color: "var(--color-text-secondary)",
                               lineHeight: "1.4",
-                              maxWidth: "300px"
+                              maxWidth: "300px",
                             }}
                             title={item.description}
                           >
@@ -726,11 +751,17 @@ export default function Contents() {
                     </td>
 
                     <td>{item.platform_name}</td>
-                    <td>{t(`formats.${item.format}`, { defaultValue: item.format })}</td>
+                    <td>
+                      {t(`formats.${item.format}`, {
+                        defaultValue: item.format,
+                      })}
+                    </td>
                     <td>
                       {item.content_role ? (
                         <span className={`role role--${item.content_role}`}>
-                          {t(`contentRoles.${item.content_role}`, { defaultValue: item.content_role })}
+                          {t(`contentRoles.${item.content_role}`, {
+                            defaultValue: item.content_role,
+                          })}
                         </span>
                       ) : (
                         <span className="role role--none">—</span>
@@ -751,24 +782,36 @@ export default function Contents() {
 
                     <td>
                       <span className={`status ${item.status}`}>
-                        {t(`status.${item.status}`, { defaultValue: item.status })}
+                        {t(`status.${item.status}`, {
+                          defaultValue: item.status,
+                        })}
                       </span>
                     </td>
 
-                    <td>{item.is_reusable ? t("contents.reusableYes") : t("contents.reusableNo")}</td>
-
-                    <td className="col-date">{new Date(item.created_at).toLocaleDateString()}</td>
-
-                    <td className="col-date">
-                      {item.published_at
-                        ? new Date(item.published_at).toLocaleDateString()
-                        : <span className="no-topics">—</span>}
+                    <td>
+                      {item.is_reusable
+                        ? t("contents.reusableYes")
+                        : t("contents.reusableNo")}
                     </td>
 
                     <td className="col-date">
-                      {item.archived_at
-                        ? new Date(item.archived_at).toLocaleDateString()
-                        : <span className="no-topics">—</span>}
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </td>
+
+                    <td className="col-date">
+                      {item.published_at ? (
+                        new Date(item.published_at).toLocaleDateString()
+                      ) : (
+                        <span className="no-topics">—</span>
+                      )}
+                    </td>
+
+                    <td className="col-date">
+                      {item.archived_at ? (
+                        new Date(item.archived_at).toLocaleDateString()
+                      ) : (
+                        <span className="no-topics">—</span>
+                      )}
                     </td>
 
                     <td>
@@ -791,16 +834,24 @@ export default function Contents() {
                     </td>
 
                     <td className="actions-cell">
-                      <button type="button"
+                      <button
+                        type="button"
                         className="btn-link"
-                        onClick={(e) => { e.stopPropagation(); handleEdit(item); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEdit(item);
+                        }}
                       >
                         {t("contents.edit")}
                       </button>
 
-                      <button type="button"
+                      <button
+                        type="button"
                         className="btn-link btn-link--danger"
-                        onClick={(e) => { e.stopPropagation(); handleDeleteClick(item); }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteClick(item);
+                        }}
                       >
                         {t("contents.delete")}
                       </button>
@@ -813,11 +864,10 @@ export default function Contents() {
 
         {/* PAGINATION */}
 
-        {/* PAGINATION */}
-
         <div className="contents-pagination">
           {/* Primera página */}
           <button
+            type="button"
             disabled={page === 1}
             onClick={() => setPage(1)}
             title={t("contents.firstPage")}
@@ -827,6 +877,7 @@ export default function Contents() {
 
           {/* Retroceder 5 páginas */}
           <button
+            type="button"
             disabled={page <= 5}
             onClick={() => setPage((prev) => Math.max(prev - 5, 1))}
             title={t("contents.back5")}
@@ -836,6 +887,7 @@ export default function Contents() {
 
           {/* Página anterior */}
           <button
+            type="button"
             disabled={page === 1}
             onClick={() => setPage((prev) => prev - 1)}
             title={t("contents.prevPage")}
@@ -858,11 +910,14 @@ export default function Contents() {
               }}
               className="pagination__input"
             />
-            <span>{t("contents.pageOf")} {totalPages || 1}</span>
+            <span>
+              {t("contents.pageOf")} {totalPages || 1}
+            </span>
           </span>
 
           {/* Página siguiente */}
           <button
+            type="button"
             disabled={page >= totalPages}
             onClick={() => setPage((prev) => prev + 1)}
             title={t("contents.nextPage")}
@@ -872,6 +927,7 @@ export default function Contents() {
 
           {/* Avanzar 5 páginas */}
           <button
+            type="button"
             disabled={page > totalPages - 5}
             onClick={() => setPage((prev) => Math.min(prev + 5, totalPages))}
             title={t("contents.forward5")}
@@ -881,6 +937,7 @@ export default function Contents() {
 
           {/* Última página */}
           <button
+            type="button"
             disabled={page === totalPages}
             onClick={() => setPage(totalPages)}
             title={t("contents.lastPage")}
@@ -919,18 +976,19 @@ export default function Contents() {
               </h3>
 
               <p>
-                {contentToDelete.has_session
-                  ? t("contents.deleteModalBodyWithSession")
-                  : (
-                    <>
-                      {t("contents.deleteModalBody")}{" "}
-                      <strong>{contentToDelete.title}</strong>
-                    </>
-                  )}
+                {contentToDelete.has_session ? (
+                  t("contents.deleteModalBodyWithSession")
+                ) : (
+                  <>
+                    {t("contents.deleteModalBody")}{" "}
+                    <strong>{contentToDelete.title}</strong>
+                  </>
+                )}
               </p>
 
               <div className="delete-modal__actions">
                 <button
+                  type="button"
                   className="btn-link"
                   onClick={() => {
                     setIsDeleteModalOpen(false);
@@ -964,6 +1022,7 @@ export default function Contents() {
             <span>{t("contents.contentDeleted")}</span>
 
             <button
+              type="button"
               className="toast__undo"
               onClick={handleUndo}
               disabled={isRestoring}
@@ -993,9 +1052,7 @@ export default function Contents() {
                 placeholder={t("ideas.descriptionOptional")}
                 rows={2}
               />
-              {addIdeaError && (
-                <p className="modal__error">{addIdeaError}</p>
-              )}
+              {addIdeaError && <p className="modal__error">{addIdeaError}</p>}
               <div className="modal-actions">
                 <button
                   className="btn-secondary"
@@ -1016,7 +1073,9 @@ export default function Contents() {
                   disabled={addIdeaSaving || !addIdeaTitle.trim()}
                   type="button"
                 >
-                  {addIdeaSaving ? t("contents.savingIdea") : t("contents.saveIdea")}
+                  {addIdeaSaving
+                    ? t("contents.savingIdea")
+                    : t("contents.saveIdea")}
                 </button>
               </div>
             </div>
