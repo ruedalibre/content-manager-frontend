@@ -186,7 +186,6 @@
     "passwordReqSpecial": "Al menos un carácter especial (!@#$%^&*)",
     "resetTitle": "Nueva contraseña",
     "resetSub": "Elige una contraseña nueva para tu cuenta",
-    "newPassword": "Nueva contraseña",
     "updatePassword": "Actualizar contraseña",
     "updatingPassword": "Actualizando...",
     "passwordUpdated": "Contraseña actualizada — redirigiendo...",
