@@ -35,8 +35,6 @@ async function warmDashboardEndpoints() {
     const base = import.meta.env.VITE_SUPABASE_URL + "/functions/v1/";
 
     const endpoints = [
-      "me-ideas-counts",
-      "me-creative-sessions",
       "me-topics",
       "platforms",
     ];
