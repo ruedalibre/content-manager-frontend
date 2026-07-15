@@ -94,7 +94,7 @@ export function useDashboardData(
           ),
 
           fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-insights?period=${period}`,
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/me-insights?period=${period}&workspace_id=${workspaceId}`,
             { headers },
           ),
         ]);

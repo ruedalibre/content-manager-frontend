@@ -117,7 +117,7 @@ export default function Ideas() {
     archiveTopic,
   } = useTopics();
 
-  const { topics: systemTopics } = useContentSystem();
+  const { topics: systemTopics } = useContentSystem(currentWorkspaceId);
 
   const { platforms } = usePlatforms();
   const { canCreateBriefs, isFree, trialActive } = useSubscription();
