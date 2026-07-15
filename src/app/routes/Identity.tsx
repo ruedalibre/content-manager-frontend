@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useOutletContext, Link } from "react-router-dom";
-
+import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.tsx";
 import { useContentDNA } from "../../features/insights/hooks/useContentDNA.ts";
 import { useAnalyticsInsights } from "../../features/insights/hooks/useAnalyticsInsights.ts";
 import { useIdentityAI } from "../../features/insights/hooks/useIdentityAI.ts";
@@ -123,12 +123,12 @@ export default function Identity() {
   const { setTopbarContext } = useOutletContext<OutletContext>();
   const { canUseAI, isFree, trialActive } = useSubscription();
   const { profile } = useUserProfile();
-
-  const { dna, loading: dnaLoading } = useContentDNA();
-  const { insights: analyticsInsights } = useAnalyticsInsights("30d");
-  const { result: aiResult, loading: aiLoading } = useIdentityAI(dna);
-  const { insights: creativeInsights, loading: creativeInsightsLoading } =
-    useCreativeInsights();
+  const { currentWorkspaceId } = useWorkspace();
+  const { dna, loading: dnaLoading } = useContentDNA(currentWorkspaceId);
+const { insights: analyticsInsights } = useAnalyticsInsights("30d", currentWorkspaceId);
+const { result: aiResult, loading: aiLoading } = useIdentityAI(dna);
+const { insights: creativeInsights, loading: creativeInsightsLoading } =
+  useCreativeInsights(currentWorkspaceId);
   const {
     report,
     generatedAt,
