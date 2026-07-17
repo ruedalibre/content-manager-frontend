@@ -125,10 +125,13 @@ export default function Identity() {
   const { profile } = useUserProfile();
   const { currentWorkspaceId } = useWorkspace();
   const { dna, loading: dnaLoading } = useContentDNA(currentWorkspaceId);
-const { insights: analyticsInsights } = useAnalyticsInsights("30d", currentWorkspaceId);
-const { result: aiResult, loading: aiLoading } = useIdentityAI(dna);
-const { insights: creativeInsights, loading: creativeInsightsLoading } =
-  useCreativeInsights(currentWorkspaceId);
+  const { insights: analyticsInsights } = useAnalyticsInsights(
+    "30d",
+    currentWorkspaceId,
+  );
+  const { result: aiResult, loading: aiLoading } = useIdentityAI(dna, currentWorkspaceId);
+  const { insights: creativeInsights, loading: creativeInsightsLoading } =
+    useCreativeInsights(currentWorkspaceId);
   const {
     report,
     generatedAt,
@@ -136,7 +139,7 @@ const { insights: creativeInsights, loading: creativeInsightsLoading } =
     generating,
     error: reportError,
     generateReport,
-  } = useCreativeReport();
+  } = useCreativeReport(currentWorkspaceId);
 
   const { t } = useTranslation();
   const [reportCopied, setReportCopied] = useState(false);

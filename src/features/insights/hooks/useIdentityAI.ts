@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import { type ContentDNA, type StandoutInsight, type CreativeStyleTag } from "../types/insights.types.ts";
+import {
+  type ContentDNA,
+  type StandoutInsight,
+  type CreativeStyleTag,
+} from "../types/insights.types.ts";
 import { apiFetch } from "../../../utils/apiClient";
 
 type IdentityAIResult = {
@@ -7,13 +11,16 @@ type IdentityAIResult = {
   creative_style_tags: CreativeStyleTag[];
 };
 
-export function useIdentityAI(dna: ContentDNA | null) {
+export function useIdentityAI(
+  dna: ContentDNA | null,
+  workspaceId: string | null,
+) {
   const [result, setResult] = useState<IdentityAIResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!dna) return;
+    if (!dna || !workspaceId) return;
     if (!dna.primary_topic && !dna.publishing_rhythm) return;
 
     const fetch_insights = async () => {
@@ -23,7 +30,7 @@ export function useIdentityAI(dna: ContentDNA | null) {
 
         const res = await apiFetch("me-identity-insights", {
           method: "POST",
-          body: JSON.stringify({ dna }),
+          body: JSON.stringify({ dna, workspace_id: workspaceId }),
         });
 
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -38,7 +45,7 @@ export function useIdentityAI(dna: ContentDNA | null) {
     };
 
     fetch_insights();
-  }, [dna?.primary_topic]);
+  }, [dna?.primary_topic, workspaceId]);
 
   return { result, loading, error };
 }
