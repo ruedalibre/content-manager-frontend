@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "../../../supabaseClient";
+import { useWorkspace } from "../../workspace/hooks/useWorkspace.tsx";
 import "./CreateIdeaModal.scss";
 
 /* =========================
@@ -31,6 +32,7 @@ export default function CreateIdeaModal({
   ideaToEdit,
 }: Props) {
   const { t } = useTranslation();
+  const { currentWorkspaceId } = useWorkspace();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -47,14 +49,16 @@ export default function CreateIdeaModal({
   ========================= */
 
   useEffect(() => {
-    if (isOpen && !isEditMode) {
+    if (isOpen && !isEditMode && currentWorkspaceId) {
       const loadSuggestions = async () => {
         try {
           setLoadingSuggestions(true);
-          const { data: { session } } = await supabase.auth.getSession();
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
           const res = await fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-ideas`,
-            { headers: { Authorization: `Bearer ${session?.access_token}` } }
+            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-ideas?workspace_id=${currentWorkspaceId}`,
+            { headers: { Authorization: `Bearer ${session?.access_token}` } },
           );
           if (!res.ok) return;
           const data = await res.json();
@@ -69,7 +73,7 @@ export default function CreateIdeaModal({
     }
 
     if (!isOpen) setSuggestions([]);
-  }, [isOpen, isEditMode]);
+  }, [isOpen, isEditMode, currentWorkspaceId]);
 
   /* =========================
      PREFILL EDIT MODE
@@ -102,6 +106,11 @@ export default function CreateIdeaModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!isEditMode && !currentWorkspaceId) {
+      setSubmitError(t("common.error"));
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -127,6 +136,7 @@ export default function CreateIdeaModal({
           title,
           description,
           source: selectedSuggestion ? "generated" : "manual",
+          workspace_id: currentWorkspaceId,
         }),
       });
 
@@ -163,11 +173,13 @@ export default function CreateIdeaModal({
   return (
     <div className="modal-overlay">
       <div className="modal">
-        <h3>{isEditMode ? `${t("common.edit")} Idea` : `${t("common.create")} Idea`}</h3>
+        <h3>
+          {isEditMode
+            ? `${t("common.edit")} Idea`
+            : `${t("common.create")} Idea`}
+        </h3>
 
         <form onSubmit={handleSubmit}>
-          {/* SUGGESTIONS (create mode only) */}
-
           {!isEditMode && (
             <div className="create-idea-modal__suggestions">
               {loadingSuggestions ? (
@@ -204,7 +216,6 @@ export default function CreateIdeaModal({
             </div>
           )}
 
-          {/* TITLE */}
           <label htmlFor="idea-title" className="modal__label">
             {t("ideas.titleLabel")}
           </label>
@@ -218,7 +229,6 @@ export default function CreateIdeaModal({
             required
           />
 
-          {/* DESCRIPTION */}
           <label htmlFor="idea-context" className="modal__label">
             {t("ideas.contextLabel")}
           </label>
@@ -228,23 +238,25 @@ export default function CreateIdeaModal({
             onChange={(e) => setDescription(e.target.value)}
             maxLength={2500}
             rows={5}
-            style={{ resize: "vertical", minHeight: "112px", maxHeight: "240px" }}
+            style={{
+              resize: "vertical",
+              minHeight: "112px",
+              maxHeight: "240px",
+            }}
           />
-          <span style={{
-            fontSize: "11px",
-            color: "var(--color-text-tertiary)",
-            display: "block",
-            textAlign: "right",
-            marginTop: "4px"
-          }}>
+          <span
+            style={{
+              fontSize: "11px",
+              color: "var(--color-text-tertiary)",
+              display: "block",
+              textAlign: "right",
+              marginTop: "4px",
+            }}
+          >
             {description.length}/2500
           </span>
 
-          {/* ACTIONS */}
-
-          {submitError && (
-            <p className="modal__error">{submitError}</p>
-          )}
+          {submitError && <p className="modal__error">{submitError}</p>}
 
           <div className="modal-actions">
             <button
