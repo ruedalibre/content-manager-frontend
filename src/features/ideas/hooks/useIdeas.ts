@@ -36,7 +36,10 @@ export type Idea = {
   sessions?: CreativeSession[];
 };
 
-export function useIdeas(filter: "all" | "manual" | "generated", workspaceId: string | null) {
+export function useIdeas(
+  filter: "all" | "manual" | "generated",
+  workspaceId: string | null,
+) {
   const [ideas, setIdeas] = useState<Idea[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -90,10 +93,17 @@ export function useIdeas(filter: "all" | "manual" | "generated", workspaceId: st
       const headers = { Authorization: `Bearer ${session.access_token}` };
 
       const [countsRes, sessionsRes, ...topicsResponses] = await Promise.all([
-        fetch(`${base}/me-ideas-counts?workspace_id=${workspaceId}`, { headers }),
-        fetch(`${base}/me-creative-sessions?workspace_id=${workspaceId}`, { headers }),
+        fetch(`${base}/me-ideas-counts?workspace_id=${workspaceId}`, {
+          headers,
+        }),
+        fetch(`${base}/me-creative-sessions?workspace_id=${workspaceId}`, {
+          headers,
+        }),
         ...(data ?? []).map((idea) =>
-          fetch(`${base}/me-idea-topics?idea_id=${idea.id}&workspace_id=${workspaceId}`, { headers }),
+          fetch(
+            `${base}/me-idea-topics?idea_id=${idea.id}&workspace_id=${workspaceId}`,
+            { headers },
+          ),
         ),
       ]);
 
@@ -420,6 +430,8 @@ export function useIdeas(filter: "all" | "manual" | "generated", workspaceId: st
   ========================= */
 
   const duplicateIdea = async (idea: Idea): Promise<Idea> => {
+    if (!workspaceId) throw new Error("Workspace not loaded yet");
+
     const session = await getSession();
     const res = await fetch(`${base}/create-idea`, {
       method: "POST",
@@ -432,6 +444,7 @@ export function useIdeas(filter: "all" | "manual" | "generated", workspaceId: st
         description: idea.description ?? null,
         source: idea.source ?? "manual",
         topic_ids: idea.topics?.map((t) => t.id) ?? [],
+        workspace_id: workspaceId,
       }),
     });
 
@@ -528,9 +541,12 @@ export function useIdeas(filter: "all" | "manual" | "generated", workspaceId: st
 
       const headers = { Authorization: `Bearer ${session.access_token}` };
 
-      const sessionsRes = await fetch(`${base}/me-creative-sessions?workspace_id=${workspaceId}`, {
-        headers,
-      });
+      const sessionsRes = await fetch(
+        `${base}/me-creative-sessions?workspace_id=${workspaceId}`,
+        {
+          headers,
+        },
+      );
       const sessionsData: CreativeSession[] = sessionsRes.ok
         ? await sessionsRes.json()
         : [];
