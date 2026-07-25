@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from "react";
-import { Folder, ChevronDown, Check } from "lucide-react";
+import { Folder, ChevronDown, Check, Plus, Lock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.tsx";
+import { useSubscription } from "../../features/subscription/hooks/useSubscription.ts";
+import CreateWorkspaceModal from "../../features/workspace/modals/CreateWorkspaceModal.tsx";
 import "./WorkspaceSelector.scss";
 
 type Props = {
@@ -11,7 +13,9 @@ type Props = {
 export default function WorkspaceSelector({ isCollapsed }: Props) {
   const { t } = useTranslation();
   const { workspaces, currentWorkspace, switchWorkspace } = useWorkspace();
+  const { canCreateWorkspace } = useSubscription();
   const [isOpen, setIsOpen] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,6 +41,11 @@ export default function WorkspaceSelector({ isCollapsed }: Props) {
     }
   };
 
+  const handleOpenCreateModal = () => {
+    setIsOpen(false);
+    setShowCreateModal(true);
+  };
+
   if (workspaces.length === 0) return null;
 
   const label = currentWorkspace?.is_personal
@@ -45,67 +54,89 @@ export default function WorkspaceSelector({ isCollapsed }: Props) {
 
   if (isCollapsed) {
     return (
-      <div
-        className="workspace-selector workspace-selector--collapsed"
-        ref={ref}
-      >
+      <>
+        <div
+          className="workspace-selector workspace-selector--collapsed"
+          ref={ref}
+        >
+          <div className="workspace-selector__inner">
+            <button
+              type="button"
+              className="workspace-selector__badge"
+              onClick={() => setIsOpen((v) => !v)}
+              title={label}
+              aria-label={t("workspace.switchWorkspace")}
+            >
+              <Folder size={16} />
+            </button>
+
+            {isOpen && (
+              <div className="workspace-selector__dropdown workspace-selector__dropdown--collapsed">
+                <WorkspaceList
+                  workspaces={workspaces}
+                  currentId={currentWorkspace?.id}
+                  onSelect={handleSelect}
+                  onCreateClick={handleOpenCreateModal}
+                  canCreate={canCreateWorkspace}
+                  t={t}
+                />
+              </div>
+            )}
+          </div>
+          <span className="workspace-selector__label-mini">
+            {t("workspace.shortLabel")}
+          </span>
+        </div>
+
+        {showCreateModal && (
+          <CreateWorkspaceModal
+            isOpen={showCreateModal}
+            onClose={() => setShowCreateModal(false)}
+          />
+        )}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="workspace-selector" ref={ref}>
         <div className="workspace-selector__inner">
           <button
             type="button"
-            className="workspace-selector__badge"
+            className="workspace-selector__trigger"
             onClick={() => setIsOpen((v) => !v)}
-            title={label}
-            aria-label={t("workspace.switchWorkspace")}
           >
             <Folder size={16} />
+            <span className="workspace-selector__name">{label}</span>
+            <ChevronDown
+              size={14}
+              className={`workspace-selector__chevron${isOpen ? " workspace-selector__chevron--open" : ""}`}
+            />
           </button>
 
           {isOpen && (
-            <div className="workspace-selector__dropdown workspace-selector__dropdown--collapsed">
+            <div className="workspace-selector__dropdown">
               <WorkspaceList
                 workspaces={workspaces}
                 currentId={currentWorkspace?.id}
                 onSelect={handleSelect}
+                onCreateClick={handleOpenCreateModal}
+                canCreate={canCreateWorkspace}
                 t={t}
               />
             </div>
           )}
         </div>
-        <span className="workspace-selector__label-mini">
-          {t("workspace.shortLabel")}
-        </span>
       </div>
-    );
-  }
 
-  return (
-    <div className="workspace-selector" ref={ref}>
-      <div className="workspace-selector__inner">
-        <button
-          type="button"
-          className="workspace-selector__trigger"
-          onClick={() => setIsOpen((v) => !v)}
-        >
-          <Folder size={16} />
-          <span className="workspace-selector__name">{label}</span>
-          <ChevronDown
-            size={14}
-            className={`workspace-selector__chevron${isOpen ? " workspace-selector__chevron--open" : ""}`}
-          />
-        </button>
-
-        {isOpen && (
-          <div className="workspace-selector__dropdown">
-            <WorkspaceList
-              workspaces={workspaces}
-              currentId={currentWorkspace?.id}
-              onSelect={handleSelect}
-              t={t}
-            />
-          </div>
-        )}
-      </div>
-    </div>
+      {showCreateModal && (
+        <CreateWorkspaceModal
+          isOpen={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+        />
+      )}
+    </>
   );
 }
 
@@ -113,11 +144,15 @@ function WorkspaceList({
   workspaces,
   currentId,
   onSelect,
+  onCreateClick,
+  canCreate,
   t,
 }: {
   workspaces: ReturnType<typeof useWorkspace>["workspaces"];
   currentId?: string;
   onSelect: (id: string) => void;
+  onCreateClick: () => void;
+  canCreate: boolean;
   t: (key: string) => string;
 }) {
   return (
@@ -137,13 +172,16 @@ function WorkspaceList({
         </button>
       ))}
 
-      {/* Acto 2 — descomentar para activar creación de workspace
       <div className="workspace-selector__divider" />
-      <button type="button" className="workspace-selector__create">
-        <Plus size={16} />
+
+      <button
+        type="button"
+        className="workspace-selector__create"
+        onClick={onCreateClick}
+      >
+        {canCreate ? <Plus size={16} /> : <Lock size={14} />}
         <span>{t("workspace.create")}</span>
       </button>
-      */}
     </div>
   );
 }

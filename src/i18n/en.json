@@ -916,6 +916,10 @@
     "descriptionPlaceholder": "Description (optional)",
     "creating": "Creating...",
     "createError": "Failed to create workspace. Please try again.",
-    "nameExists": "A workspace with this name already exists."
+    "nameExists": "A workspace with this name already exists.",
+    "nameLabel": "Nombre",
+    "descriptionLabel": "Descripción",
+    "upgradeTitle": "Crea workspaces adicionales",
+    "upgradeDesc": "Organiza tu trabajo por cliente, marca o proyecto. Disponible en el plan Creator."
   }
 }

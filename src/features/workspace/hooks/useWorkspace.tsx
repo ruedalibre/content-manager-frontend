@@ -25,21 +25,34 @@ type WorkspaceContextValue = {
   error: string | null;
   loadWorkspaces: () => Promise<void>;
   switchWorkspace: (workspaceId: string) => Promise<void>;
-  createWorkspace: (name: string, description?: string) => Promise<void>;
+  createWorkspace: (
+    name: string,
+    description?: string,
+  ) => Promise<{
+    id: string;
+    name: string;
+    description: string | null;
+    is_personal: boolean;
+    created_at: string;
+  }>;
 };
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
-  const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(null);
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState<string | null>(
+    null,
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const base = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
   const getSession = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     return session;
   };
 
@@ -110,10 +123,16 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
       throw new Error(body.error || "Failed to create workspace");
     }
 
+    const { workspace } = await res.json();
+
     await loadWorkspaces();
+    await switchWorkspace(workspace.id);
+
+    return workspace;
   };
 
-  const currentWorkspace = workspaces.find((w) => w.id === currentWorkspaceId) ?? null;
+  const currentWorkspace =
+    workspaces.find((w) => w.id === currentWorkspaceId) ?? null;
 
   useEffect(() => {
     loadWorkspaces();

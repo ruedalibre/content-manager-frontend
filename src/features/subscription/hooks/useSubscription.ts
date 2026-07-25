@@ -64,6 +64,7 @@ export function useSubscription() {
   // Helpers de feature gating
   const canUseAI = subscription.is_creator || subscription.trial_active;
   const canCreateBriefs = subscription.is_creator || subscription.trial_active;
+  const canCreateWorkspace = subscription.is_creator;
 
   return {
     subscription,
@@ -75,5 +76,6 @@ export function useSubscription() {
     trialEndsAt: subscription.trial_ends_at,
     canUseAI,
     canCreateBriefs,
+    canCreateWorkspace,
   };
 }
