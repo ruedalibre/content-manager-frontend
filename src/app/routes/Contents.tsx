@@ -796,7 +796,17 @@ export default function Contents() {
 
                     <td className="col-date">
                       {item.published_at ? (
-                        new Date(item.published_at).toLocaleDateString()
+                        (() => {
+                          const [year, month, day] = item.published_at
+                            .split("T")[0]
+                            .split("-")
+                            .map(Number);
+                          return new Date(
+                            year,
+                            month - 1,
+                            day,
+                          ).toLocaleDateString();
+                        })()
                       ) : (
                         <span className="no-topics">—</span>
                       )}
