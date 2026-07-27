@@ -211,7 +211,7 @@ export default function CreateContentModal({
         location: contentToEdit.location ?? "",
         is_reusable: contentToEdit.is_reusable,
         published_at: contentToEdit.published_at
-          ? contentToEdit.published_at.slice(0, 16)
+          ? contentToEdit.published_at.slice(0, 10)
           : "",
         content_role: contentToEdit.content_role ?? "",
       });
@@ -345,7 +345,7 @@ export default function CreateContentModal({
           ...form,
           published_at:
             form.status === "published"
-              ? form.published_at || new Date().toISOString()
+              ? form.published_at || new Date().toISOString().split("T")[0]
               : null,
           creative_unit_id: idea?.id ?? null,
           workspace_id: currentWorkspaceId,
@@ -511,7 +511,7 @@ export default function CreateContentModal({
 
           {form.status === "published" && (
             <input
-              type="datetime-local"
+              type="date"
               name="published_at"
               value={form.published_at}
               onChange={handleChange}
