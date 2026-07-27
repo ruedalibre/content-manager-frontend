@@ -22,7 +22,6 @@ type ContentItem = {
   format: string;
   status: string;
   location: string | null;
-  is_reusable: boolean;
   has_ideas: boolean;
   has_session: boolean;
   created_at: string;
@@ -158,7 +157,7 @@ export default function Contents() {
       const { data } = await supabase
         .from("contents")
         .select(
-          "id, user_id, title, description, platform_id, format, status, location, is_reusable, published_at, content_role",
+          "id, user_id, title, description, platform_id, format, status, location, published_at, content_role",
         )
         .eq("id", editId)
         .eq("workspace_id", currentWorkspaceId)
@@ -510,7 +509,11 @@ export default function Contents() {
       <div className="contents-page">
         <div className="contents-page__header">
           <div className="contents-top-bar">
-            <button type="button" className="btn-primary" onClick={handleCreate}>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={handleCreate}
+            >
               {t("contents.newContent")}
             </button>
             <StepsGuide namespace="contents" />
@@ -695,7 +698,6 @@ export default function Contents() {
                 <th>{t("contents.colRole")}</th>
                 <th className="col-topics">{t("contents.colTopics")}</th>
                 <th>{t("contents.colStatus")}</th>
-                <th>{t("contents.colReusable")}</th>
                 <th className="col-date">{t("contents.colCreated")}</th>
                 <th className="col-date">{t("contents.colPublished")}</th>
                 <th className="col-date">{t("contents.colArchived")}</th>
@@ -786,12 +788,6 @@ export default function Contents() {
                           defaultValue: item.status,
                         })}
                       </span>
-                    </td>
-
-                    <td>
-                      {item.is_reusable
-                        ? t("contents.reusableYes")
-                        : t("contents.reusableNo")}
                     </td>
 
                     <td className="col-date">

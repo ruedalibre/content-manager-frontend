@@ -18,7 +18,6 @@ type ContentItem = {
   format: string;
   status: string;
   location: string | null;
-  is_reusable: boolean;
   published_at: string | null;
   content_role?: string | null;
 };
@@ -126,7 +125,6 @@ export default function CreateContentModal({
     format: "",
     status: "draft",
     location: "",
-    is_reusable: false,
     published_at: "",
     content_role: "",
   });
@@ -209,7 +207,6 @@ export default function CreateContentModal({
         format: contentToEdit.format,
         status: contentToEdit.status,
         location: contentToEdit.location ?? "",
-        is_reusable: contentToEdit.is_reusable,
         published_at: contentToEdit.published_at
           ? contentToEdit.published_at.slice(0, 10)
           : "",
@@ -274,7 +271,6 @@ export default function CreateContentModal({
       format: "",
       status: "draft",
       location: "",
-      is_reusable: false,
       published_at: "",
       content_role: "",
     });
@@ -578,17 +574,6 @@ export default function CreateContentModal({
             value={form.location}
             onChange={handleChange}
           />
-
-          {/* REUSABLE */}
-          <label className="checkbox">
-            <input
-              type="checkbox"
-              name="is_reusable"
-              checked={form.is_reusable}
-              onChange={handleChange}
-            />
-            {t("contents.reusable")}
-          </label>
 
           {submitError && <p className="modal__error">{submitError}</p>}
 

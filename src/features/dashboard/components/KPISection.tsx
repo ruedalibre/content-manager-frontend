@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 type DashboardData = {
   total_contents: number;
   platforms_used: number;
-  reusable_contents?: number;
 };
 
 type Props = {
@@ -21,22 +20,27 @@ export default function KPISection({ data, growthVisual }: Props) {
     <section className="dashboard__kpis">
       <div className="kpi-card">
         <span>{t("activity.totalContents")}</span>
-        <h3 style={{ fontFamily: "var(--font-mono)", fontSize: "var(--fs-40)", fontWeight: 500 }}>
+        <h3
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "var(--fs-40)",
+            fontWeight: 500,
+          }}
+        >
           {data.total_contents}
         </h3>
       </div>
 
       <div className="kpi-card">
         <span>{t("activity.platformsUsed")}</span>
-        <h3 style={{ fontFamily: "var(--font-mono)", fontSize: "var(--fs-40)", fontWeight: 500 }}>
+        <h3
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "var(--fs-40)",
+            fontWeight: 500,
+          }}
+        >
           {data.platforms_used}
-        </h3>
-      </div>
-
-      <div className="kpi-card">
-        <span>{t("activity.reusable")}</span>
-        <h3 style={{ fontFamily: "var(--font-mono)", fontSize: "var(--fs-40)", fontWeight: 500 }}>
-          {data.reusable_contents ?? 0}
         </h3>
       </div>
 
