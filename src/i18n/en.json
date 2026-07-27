@@ -256,6 +256,8 @@
       "entertain": "Entertain",
       "convert": "Convert"
     },
+    "readyToUse": "Ready to use",
+    "readyToUseHint": "AI will write the final text for each section, ready to publish.",
     "ctaIntents": {
       "follow": "Follow / subscribe",
       "comment": "Comment",

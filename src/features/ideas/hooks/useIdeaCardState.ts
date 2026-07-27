@@ -9,6 +9,7 @@ type IdeaCardState = {
   content_goal?: string;
   cta_intent?: string;
   target_audience?: string;
+  ready_to_use: boolean;
   generating: boolean;
   error: string | null;
 };
@@ -30,44 +31,21 @@ export function useIdeaCardState(ideas: Idea[]) {
       ideas.forEach((idea) => {
         if (updated[idea.id]) return;
 
-        const sessions = idea.sessions ?? [];
-        const latest = sessions
-          .filter((s) => s.status !== "discarded")
-          .sort((a, b) =>
-            new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-          )[0];
-
-        if (!latest) {
-          updated[idea.id] = {
-            platform_id: "",
-            format: "",
-            content_role: "",
-            content_goal: "",
-            cta_intent: "",
-            target_audience: "",
-            generating: false,
-            error: null,
-          };
-          return;
-        }
-
-        const isToday =
-          new Date(latest.created_at).toDateString() ===
-          new Date().toDateString();
-
         updated[idea.id] = {
-          platform_id: isToday ? "" : (latest.platform_id ?? ""),
-          format: isToday ? "" : (latest.format ?? ""),
-          content_role: isToday ? "" : (latest.content_role ?? ""),
+          platform_id: "",
+          format: "",
+          content_role: "",
           content_goal: "",
           cta_intent: "",
           target_audience: "",
+          ready_to_use: false,
           generating: false,
           error: null,
         };
       });
       return updated;
     });
+    // eslint-disable-next-line react-hooks/set-state-in-effect
   }, [ideas]);
 
   useEffect(() => {
@@ -89,6 +67,7 @@ export function useIdeaCardState(ideas: Idea[]) {
       content_goal: "",
       cta_intent: "",
       target_audience: "",
+      ready_to_use: false,
       generating: false,
       error: null,
     };

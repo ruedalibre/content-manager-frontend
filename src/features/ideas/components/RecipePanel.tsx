@@ -8,7 +8,10 @@ import {
 } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
 import { getFormatFamily } from "../../../utils/formatFamily.ts";
-import { ASPECTS_BY_FAMILY, type AspectDefinition } from "../../../constants/aspectsByFamily.ts";
+import {
+  ASPECTS_BY_FAMILY,
+  type AspectDefinition,
+} from "../../../constants/aspectsByFamily.ts";
 
 const EMOJIS = ["😞", "😕", "😐", "🙂", "😄"];
 const MAX_REGEN = 10;
@@ -78,7 +81,8 @@ export default function RecipePanel({
   ];
 
   const formatFamily = getFormatFamily(platformSlug, session.format);
-  const aspects: AspectDefinition[] = ASPECTS_BY_FAMILY[formatFamily] ?? ASPECTS_BY_FAMILY.default;
+  const aspects: AspectDefinition[] =
+    ASPECTS_BY_FAMILY[formatFamily] ?? ASPECTS_BY_FAMILY.default;
   const ratedAspects = aspects.filter((a) => a.requiresGoodRating);
 
   const [feedback, setFeedback] = useState<Record<string, number>>(
@@ -117,7 +121,9 @@ export default function RecipePanel({
   ========================= */
 
   // All 4 aspects rated "bien" (4) or "excelente" (5)
-  const allAspectsApproved = ratedAspects.every((a) => (feedback[a.key] ?? 0) >= 4);
+  const allAspectsApproved = ratedAspects.every(
+    (a) => (feedback[a.key] ?? 0) >= 4,
+  );
 
   // Can approve: all aspects rated ≥4 and not already approved
   const canApprove = allAspectsApproved && !saving;
@@ -186,9 +192,7 @@ export default function RecipePanel({
 
     setRegenerating((prev) => ({ ...prev, [aspectKey]: true }));
     try {
-      const currentVal =
-        currentValues[aspectKey] ??
-        session.recipe[aspectKey];
+      const currentVal = currentValues[aspectKey] ?? session.recipe[aspectKey];
       const prevAlts = alternatives[aspectKey] ?? [];
 
       const result = await regenerateAspect({
@@ -258,6 +262,19 @@ export default function RecipePanel({
 
   const handleCopyBrief = async () => {
     if (!session?.recipe) return;
+
+    const LABEL_MAP: Record<string, string> = {
+      angle: "Angle",
+      hook: "Hook",
+      tone: "Tone",
+      structure: "Structure",
+      argument: "Argument",
+      cta: "Call to action",
+      retention: "Retention",
+      engagement: "Engagement",
+      seo: "SEO",
+    };
+
     const lines: string[] = [
       `CONTENT BRIEF`,
       `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
@@ -267,31 +284,28 @@ export default function RecipePanel({
       `Format: ${session.format}`,
       ...(session.content_role ? [`Role: ${session.content_role}`] : []),
       ``,
-      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-      ``,
-      `ANGLE`,
-      ``,
-      (session.recipe.angle as string) ?? "",
-      ``,
-      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-      ``,
-      `HOOK`,
-      ``,
-      (session.recipe.hook as string) ?? "",
-      ``,
-      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-      ``,
-      `TONE`,
-      ``,
-      (session.recipe.tone as string) ?? "",
-      ``,
-      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
-      ``,
-      `STRUCTURE`,
-      ``,
-      ...((session.recipe.structure as string[]) ?? []).map((s: string, i: number) => `${i + 1}. ${s}`),
-      ``,
     ];
+
+    aspects.forEach((aspect) => {
+      const value = session.recipe[aspect.key];
+      if (value === undefined || value === null) return;
+
+      const label = LABEL_MAP[aspect.key] ?? aspect.key;
+
+      lines.push(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
+      lines.push(``);
+      lines.push(label.toUpperCase());
+      lines.push(``);
+
+      if (aspect.isList) {
+        const items = Array.isArray(value) ? value : [value as string];
+        items.forEach((step, i) => lines.push(`${i + 1}. ${step as string}`));
+      } else {
+        lines.push(value as string);
+      }
+      lines.push(``);
+    });
+
     if (session.recipe.strategic_note) {
       lines.push(`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`);
       lines.push(``);
@@ -316,11 +330,7 @@ export default function RecipePanel({
      ASPECT RENDERER
   ========================= */
 
-  const renderAspect = (
-    aspectKey: string,
-    label: string,
-    isList = false,
-  ) => {
+  const renderAspect = (aspectKey: string, label: string, isList = false) => {
     const rawValue = session.recipe[aspectKey];
     const displayValue = currentValues[aspectKey] ?? rawValue;
     const rating = feedback[aspectKey] ?? 0;
@@ -427,7 +437,9 @@ export default function RecipePanel({
   const getApprovalHint = () => {
     const rated = ratedAspects.filter((a) => (feedback[a.key] ?? 0) > 0).length;
     const total = ratedAspects.length;
-    const goodRated = ratedAspects.filter((a) => (feedback[a.key] ?? 0) >= 4).length;
+    const goodRated = ratedAspects.filter(
+      (a) => (feedback[a.key] ?? 0) >= 4,
+    ).length;
 
     if (rated < total) {
       return t("recipe.approvalHintRate", { rated, total });
@@ -529,11 +541,7 @@ export default function RecipePanel({
                 {t("recipe.brief")}
               </h4>
               {aspects.map((aspect) =>
-                renderAspect(
-                  aspect.key,
-                  t(aspect.labelKey),
-                  aspect.isList,
-                )
+                renderAspect(aspect.key, t(aspect.labelKey), aspect.isList),
               )}
               {session.recipe.strategic_note && (
                 <div className="recipe-panel__strategic-note">

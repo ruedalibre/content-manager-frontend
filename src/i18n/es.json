@@ -245,6 +245,8 @@
       "entertain": "Entretener",
       "convert": "Convertir"
     },
+    "readyToUse": "Listo para usar",
+    "readyToUseHint": "La IA redactará el texto final de cada sección, listo para publicar.",
     "ctaIntents": {
       "follow": "Seguir / suscribirse",
       "comment": "Comentar",

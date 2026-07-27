@@ -11,6 +11,7 @@ type IdeaCardState = {
   content_goal?: string;
   cta_intent?: string;
   target_audience?: string;
+  ready_to_use: boolean;
   generating: boolean;
   error: string | null;
 };
@@ -46,6 +47,7 @@ type Props = {
   onGoalChange: (goal: string) => void;
   onCtaIntentChange: (cta: string) => void;
   onAudienceChange: (audience: string) => void;
+  onReadyToUseChange: (ready: boolean) => void;
   onGenerate: () => void;
   onOpenTopicSelector: () => void;
   onToggleTopic: (topicId: string) => void;
@@ -84,6 +86,7 @@ export default function IdeaCard({
   onGoalChange,
   onCtaIntentChange,
   onAudienceChange,
+  onReadyToUseChange,
   onGenerate,
   onOpenTopicSelector,
   onToggleTopic,
@@ -99,7 +102,6 @@ export default function IdeaCard({
 
   return (
     <div className={`idea-card ${isCollapsed ? "idea-card--collapsed" : ""}`}>
-
       {/* FILA SUPERIOR: chevron + badge + controles */}
       <div className="idea-card__top" onClick={onToggleCollapse}>
         <div className="idea-card__top-left">
@@ -108,18 +110,49 @@ export default function IdeaCard({
             className={`idea-card__chevron ${!isCollapsed ? "idea-card__chevron--open" : ""}`}
             aria-hidden="true"
           />
-          <span className={`badge ${isGenerated ? "badge--generated" : "badge--manual"}`}>
+          <span
+            className={`badge ${isGenerated ? "badge--generated" : "badge--manual"}`}
+          >
             {isGenerated ? t("ideas.generated") : t("ideas.manual")}
           </span>
         </div>
         {!isEditing && (
-          <div className="idea-card__controls" onClick={(e) => e.stopPropagation()}>
-            <button className="btn-icon" onClick={onEditOpen} title={t("common.edit")} type="button">✏️</button>
-            <button className="btn-icon" onClick={onDuplicate} title={t("ideas.duplicate")} type="button">⧉</button>
-            <button className="btn-icon" onClick={onArchive} title={t("ideas.archive")} type="button">
+          <div
+            className="idea-card__controls"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="btn-icon"
+              onClick={onEditOpen}
+              title={t("common.edit")}
+              type="button"
+            >
+              ✏️
+            </button>
+            <button
+              className="btn-icon"
+              onClick={onDuplicate}
+              title={t("ideas.duplicate")}
+              type="button"
+            >
+              ⧉
+            </button>
+            <button
+              className="btn-icon"
+              onClick={onArchive}
+              title={t("ideas.archive")}
+              type="button"
+            >
               <Archive size={14} />
             </button>
-            <button className="btn-icon btn-icon--danger" onClick={onDelete} title={t("common.delete")} type="button">🗑️</button>
+            <button
+              className="btn-icon btn-icon--danger"
+              onClick={onDelete}
+              title={t("common.delete")}
+              type="button"
+            >
+              🗑️
+            </button>
           </div>
         )}
       </div>
@@ -158,10 +191,20 @@ export default function IdeaCard({
               />
               {editError && <p className="idea-card__error">{editError}</p>}
               <div className="idea-card__edit-actions">
-                <button className="btn-secondary" onClick={onEditCancel} disabled={editSaving} type="button">
+                <button
+                  className="btn-secondary"
+                  onClick={onEditCancel}
+                  disabled={editSaving}
+                  type="button"
+                >
                   {t("common.cancel")}
                 </button>
-                <button className="btn-primary" onClick={onEditSave} disabled={editSaving || !editTitle.trim()} type="button">
+                <button
+                  className="btn-primary"
+                  onClick={onEditSave}
+                  disabled={editSaving || !editTitle.trim()}
+                  type="button"
+                >
                   {editSaving ? t("common.saving") : t("common.save")}
                 </button>
               </div>
@@ -176,10 +219,17 @@ export default function IdeaCard({
               <div className="idea-card__topics">
                 {idea.topics && idea.topics.length > 0 ? (
                   idea.topics.map((topic) => (
-                    <span key={topic.id} className="topic-chip topic-chip--small">{topic.name}</span>
+                    <span
+                      key={topic.id}
+                      className="topic-chip topic-chip--small"
+                    >
+                      {topic.name}
+                    </span>
                   ))
                 ) : (
-                  <span className="idea-card__no-topics">{t("ideas.noTopicsYet")}</span>
+                  <span className="idea-card__no-topics">
+                    {t("ideas.noTopicsYet")}
+                  </span>
                 )}
                 <button
                   className="topic-chip topic-chip--add"
@@ -194,10 +244,14 @@ export default function IdeaCard({
               {/* TOPIC SELECTOR */}
               {isEditingTopics && (
                 <div className="idea-card__topic-selector">
-                  <p className="idea-card__topic-selector-label">{t("ideas.selectTopics")}</p>
+                  <p className="idea-card__topic-selector-label">
+                    {t("ideas.selectTopics")}
+                  </p>
                   <div className="idea-card__topic-options">
                     {topics.length === 0 ? (
-                      <p className="idea-card__no-topics">{t("ideas.noTopicsYet")}</p>
+                      <p className="idea-card__no-topics">
+                        {t("ideas.noTopicsYet")}
+                      </p>
                     ) : (
                       topics.map((topic: Topic) => (
                         <button
@@ -212,10 +266,19 @@ export default function IdeaCard({
                     )}
                   </div>
                   <div className="idea-card__topic-actions">
-                    <button className="btn-secondary" onClick={onCancelTopics} type="button">
+                    <button
+                      className="btn-secondary"
+                      onClick={onCancelTopics}
+                      type="button"
+                    >
                       {t("common.cancel")}
                     </button>
-                    <button className="btn-primary" onClick={onSaveTopics} disabled={savingTopics} type="button">
+                    <button
+                      className="btn-primary"
+                      onClick={onSaveTopics}
+                      disabled={savingTopics}
+                      type="button"
+                    >
                       {savingTopics ? t("common.saving") : t("common.save")}
                     </button>
                   </div>
@@ -225,24 +288,47 @@ export default function IdeaCard({
               {/* PLATFORM + FORMAT + ROLE */}
               {/* PLATFORM + FORMAT + ROLE */}
               <div className="idea-card__recipe-controls">
-                <select value={state.platform_id} onChange={(e) => onPlatformChange(e.target.value)} className="idea-card__select">
+                <select
+                  value={state.platform_id}
+                  onChange={(e) => onPlatformChange(e.target.value)}
+                  className="idea-card__select"
+                >
                   <option value="">{t("ideas.platformPlaceholder")}</option>
                   {platforms.map((p) => (
-                    <option key={p.id} value={p.id}>{p.name}</option>
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
                   ))}
                 </select>
-                <select value={state.format} onChange={(e) => onFormatChange(e.target.value)} disabled={!state.platform_id} className="idea-card__select">
+                <select
+                  value={state.format}
+                  onChange={(e) => onFormatChange(e.target.value)}
+                  disabled={!state.platform_id}
+                  className="idea-card__select"
+                >
                   <option value="">{t("ideas.formatPlaceholder")}</option>
                   {formats.map((f) => (
-                    <option key={f} value={f}>{t(`formats.${f}`, { defaultValue: f })}</option>
+                    <option key={f} value={f}>
+                      {t(`formats.${f}`, { defaultValue: f })}
+                    </option>
                   ))}
                 </select>
-                <select value={state.content_role ?? ""} onChange={(e) => onRoleChange(e.target.value)} className="idea-card__select">
+                <select
+                  value={state.content_role ?? ""}
+                  onChange={(e) => onRoleChange(e.target.value)}
+                  className="idea-card__select"
+                >
                   <option value="">{t("contentRoles.selectRole")}</option>
-                  <option value="educational">{t("contentRoles.educational")}</option>
-                  <option value="inspirational">{t("contentRoles.inspirational")}</option>
+                  <option value="educational">
+                    {t("contentRoles.educational")}
+                  </option>
+                  <option value="inspirational">
+                    {t("contentRoles.inspirational")}
+                  </option>
                   <option value="personal">{t("contentRoles.personal")}</option>
-                  <option value="promotional">{t("contentRoles.promotional")}</option>
+                  <option value="promotional">
+                    {t("contentRoles.promotional")}
+                  </option>
                   <option value="curated">{t("contentRoles.curated")}</option>
                   <option value="sales">{t("contentRoles.sales")}</option>
                 </select>
@@ -251,45 +337,77 @@ export default function IdeaCard({
               {/* SECCIÓN AVANZADO */}
               {showAdvanced && (
                 <div className="idea-card__advanced">
-                  <p className="idea-card__advanced-title">{t("ideas.advanced")}</p>
+                  <p className="idea-card__advanced-title">
+                    {t("ideas.advanced")}
+                  </p>
                   <div className="idea-card__advanced-grid">
                     <div className="idea-card__advanced-field">
-                      <label className="idea-card__advanced-label">{t("ideas.contentGoalLabel")}</label>
+                      <label className="idea-card__advanced-label">
+                        {t("ideas.contentGoalLabel")}
+                      </label>
                       <select
                         value={state.content_goal ?? ""}
                         onChange={(e) => onGoalChange(e.target.value)}
                         className="idea-card__select"
                       >
                         <option value="">{t("ideas.contentGoalEmpty")}</option>
-                        <option value="awareness">{t("ideas.contentGoals.awareness")}</option>
-                        <option value="educate">{t("ideas.contentGoals.educate")}</option>
-                        <option value="authority">{t("ideas.contentGoals.authority")}</option>
-                        <option value="engagement">{t("ideas.contentGoals.engagement")}</option>
-                        <option value="entertain">{t("ideas.contentGoals.entertain")}</option>
-                        <option value="convert">{t("ideas.contentGoals.convert")}</option>
+                        <option value="awareness">
+                          {t("ideas.contentGoals.awareness")}
+                        </option>
+                        <option value="educate">
+                          {t("ideas.contentGoals.educate")}
+                        </option>
+                        <option value="authority">
+                          {t("ideas.contentGoals.authority")}
+                        </option>
+                        <option value="engagement">
+                          {t("ideas.contentGoals.engagement")}
+                        </option>
+                        <option value="entertain">
+                          {t("ideas.contentGoals.entertain")}
+                        </option>
+                        <option value="convert">
+                          {t("ideas.contentGoals.convert")}
+                        </option>
                       </select>
                     </div>
                     <div className="idea-card__advanced-field">
-                      <label className="idea-card__advanced-label">{t("ideas.ctaIntentLabel")}</label>
+                      <label className="idea-card__advanced-label">
+                        {t("ideas.ctaIntentLabel")}
+                      </label>
                       <select
                         value={state.cta_intent ?? ""}
                         onChange={(e) => onCtaIntentChange(e.target.value)}
                         className="idea-card__select"
                       >
                         <option value="">{t("ideas.ctaIntentEmpty")}</option>
-                        <option value="follow">{t("ideas.ctaIntents.follow")}</option>
-                        <option value="comment">{t("ideas.ctaIntents.comment")}</option>
-                        <option value="save">{t("ideas.ctaIntents.save")}</option>
-                        <option value="share">{t("ideas.ctaIntents.share")}</option>
-                        <option value="visit_link">{t("ideas.ctaIntents.visit_link")}</option>
+                        <option value="follow">
+                          {t("ideas.ctaIntents.follow")}
+                        </option>
+                        <option value="comment">
+                          {t("ideas.ctaIntents.comment")}
+                        </option>
+                        <option value="save">
+                          {t("ideas.ctaIntents.save")}
+                        </option>
+                        <option value="share">
+                          {t("ideas.ctaIntents.share")}
+                        </option>
+                        <option value="visit_link">
+                          {t("ideas.ctaIntents.visit_link")}
+                        </option>
                         <option value="buy">{t("ideas.ctaIntents.buy")}</option>
                         <option value="dm">{t("ideas.ctaIntents.dm")}</option>
-                        <option value="none">{t("ideas.ctaIntents.none")}</option>
+                        <option value="none">
+                          {t("ideas.ctaIntents.none")}
+                        </option>
                       </select>
                     </div>
                   </div>
                   <div className="idea-card__advanced-field">
-                    <label className="idea-card__advanced-label">{t("ideas.targetAudienceLabel")}</label>
+                    <label className="idea-card__advanced-label">
+                      {t("ideas.targetAudienceLabel")}
+                    </label>
                     <input
                       type="text"
                       value={state.target_audience ?? ""}
@@ -298,6 +416,20 @@ export default function IdeaCard({
                       maxLength={100}
                       className="idea-card__advanced-input"
                     />
+                  </div>
+
+                  <div className="idea-card__advanced-field idea-card__advanced-field--checkbox">
+                    <label className="idea-card__checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={state.ready_to_use ?? false}
+                        onChange={(e) => onReadyToUseChange(e.target.checked)}
+                      />
+                      <span>{t("ideas.readyToUse")}</span>
+                    </label>
+                    <p className="idea-card__checkbox-hint">
+                      {t("ideas.readyToUseHint")}
+                    </p>
                   </div>
                 </div>
               )}
@@ -322,13 +454,22 @@ export default function IdeaCard({
                   <button
                     className={`btn-generate ${state.generating ? "btn-generate--loading" : ""}`}
                     onClick={onGenerate}
-                    disabled={state.generating || !state.platform_id || !state.format}
+                    disabled={
+                      state.generating || !state.platform_id || !state.format
+                    }
                     type="button"
                   >
-                    {state.generating ? t("recipe.generating") : t("recipe.generate")}
+                    {state.generating
+                      ? t("recipe.generating")
+                      : t("recipe.generate")}
                   </button>
                 ) : (
-                  <button className="btn-generate btn-generate--locked" type="button" disabled title={t("upgrade.briefsLocked")}>
+                  <button
+                    className="btn-generate btn-generate--locked"
+                    type="button"
+                    disabled
+                    title={t("upgrade.briefsLocked")}
+                  >
                     ✦ {t("recipe.generate")}
                   </button>
                 )}
