@@ -18,6 +18,7 @@
 ========================= */
 
 .modal {
+  position: relative;
   background: var(--bg-elevated);
   padding: var(--s-6);
   border-radius: var(--r-5);
@@ -57,6 +58,50 @@
 
   &--confirm {
     max-width: 420px;
+  }
+
+  &--content-edit {
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-6) var(--s-6) 0 var(--s-6);
+  flex-shrink: 0;
+
+  h3 {
+    margin: 0;
+  }
+}
+
+.modal__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--s-5) var(--s-6) var(--s-6) var(--s-6);
+
+  > * + * {
+    margin-top: var(--s-5);
+  }
+
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: var(--r-pill);
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
   }
 }
 
@@ -187,6 +232,38 @@
 
   &:hover {
     opacity: 1;
+  }
+}
+
+.modal__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-1);
+  border-radius: var(--r-2);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+
+  &:hover {
+    background: var(--bg-muted);
+    color: var(--text);
+  }
+}
+
+.modal__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--s-3);
+
+  // Los selects/inputs dentro de una fila no necesitan margin-top propio,
+  // el gap del grid ya se encarga del espaciado horizontal
+  select,
+  input {
+    margin-top: 0;
   }
 }
 

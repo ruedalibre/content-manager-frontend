@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import "./CreateContentModal.scss";
 import { supabase } from "../../../supabaseClient.ts";
@@ -399,6 +400,11 @@ export default function CreateContentModal({
     }
   };
 
+  const handleClose = () => {
+    onClose();
+    resetForm();
+  };
+
   if (!isOpen) return null;
 
   /* =========================
@@ -406,201 +412,223 @@ export default function CreateContentModal({
   ========================= */
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
-        <h3>
-          {isEditMode
-            ? t("contents.editContent")
-            : idea
-              ? t("contents.createFromCombination")
-              : t("contents.createContent")}
-        </h3>
-
-        {idea && !isEditMode && (
-          <div className="idea-context">
-            <span className="idea-context__label">
-              {t("contents.usingCombination")}
-            </span>
-            <strong className="idea-context__title">{idea.title}</strong>
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit}>
-          {/* TITLE */}
-          <label htmlFor="title" className="modal__label">
-            {t("contents.titleLabel")}
-          </label>
-          <input
-            name="title"
-            placeholder={t("contents.titlePlaceholder")}
-            value={form.title}
-            onChange={handleChange}
-            required
-          />
-
-          {/* DESCRIPTION */}
-          <label htmlFor="description" className="modal__label">
-            {t("contents.contextLabel")}
-          </label>
-          <textarea
-            name="description"
-            placeholder={t("contents.contextPlaceholder")}
-            value={form.description}
-            onChange={handleChange}
-            maxLength={500}
-            rows={3}
-            style={{
-              resize: "vertical",
-              minHeight: "72px",
-              maxHeight: "120px",
-            }}
-          />
-          <span
-            style={{
-              fontSize: "11px",
-              color: "var(--color-text-tertiary)",
-              display: "block",
-              textAlign: "right",
-              marginTop: "4px",
-            }}
+    <div className="modal-overlay" onClick={handleClose}>
+      <div
+        className="modal modal--content-edit"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="modal__header">
+          <h3>
+            {isEditMode
+              ? t("contents.editContent")
+              : idea
+                ? t("contents.createFromCombination")
+                : t("contents.createContent")}
+          </h3>
+          <button
+            type="button"
+            className="modal__close"
+            onClick={handleClose}
+            aria-label={t("common.close")}
           >
-            {(form.description ?? "").length}/500
-          </span>
+            <X size={18} />
+          </button>
+        </div>
 
-          {/* PLATFORM */}
-          <select
-            name="platform_id"
-            value={form.platform_id}
-            onChange={(e) => handlePlatformChange(e.target.value)}
-            required
-          >
-            <option value="">{t("contents.selectPlatform")}</option>
-            {platforms.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-
-          {/* FORMAT */}
-          <select
-            name="format"
-            value={form.format}
-            onChange={handleChange}
-            disabled={!form.platform_id}
-            required
-          >
-            <option value="">{t("ideas.formatPlaceholder")}</option>
-            {formats.map((f) => (
-              <option key={f} value={f}>
-                {t(`formats.${f}`, { defaultValue: f })}
-              </option>
-            ))}
-          </select>
-
-          {/* STATUS */}
-          <select name="status" value={form.status} onChange={handleChange}>
-            <option value="draft">{t("status.draft")}</option>
-            <option value="published">{t("status.published")}</option>
-            <option value="archived">{t("status.archived")}</option>
-          </select>
-
-          {form.status === "published" && (
-            <input
-              type="date"
-              name="published_at"
-              value={form.published_at}
-              onChange={handleChange}
-            />
-          )}
-
-          {/* CONTENT ROLE */}
-          <select
-            name="content_role"
-            value={form.content_role}
-            onChange={handleChange}
-          >
-            <option value="">{t("contentRoles.selectRole")}</option>
-            <option value="educational">{t("contentRoles.educational")}</option>
-            <option value="inspirational">
-              {t("contentRoles.inspirational")}
-            </option>
-            <option value="personal">{t("contentRoles.personal")}</option>
-            <option value="promotional">{t("contentRoles.promotional")}</option>
-            <option value="curated">{t("contentRoles.curated")}</option>
-            <option value="sales">{t("contentRoles.sales")}</option>
-          </select>
-
-          {/* TOPICS */}
-          {topics.length > 0 && (
-            <div className="modal__topics">
-              <p className="modal__label">{t("contents.topicsLabel")}</p>
-
-              {/* SELECTED CHIPS */}
-              {selectedTopicIds.length > 0 && (
-                <div className="modal__topic-chips">
-                  {selectedTopicIds.map((id) => {
-                    const topic = topics.find((t) => t.id === id);
-                    if (!topic) return null;
-                    return (
-                      <span key={id} className="topic-chip topic-chip--active">
-                        {topic.name}
-                        <button
-                          type="button"
-                          className="topic-chip__remove"
-                          onClick={() => handleToggleTopic(id)}
-                        >
-                          ×
-                        </button>
-                      </span>
-                    );
-                  })}
-                </div>
-              )}
-
-              {/* SEARCH INPUT */}
-              <TopicCombobox
-                topics={topics}
-                selectedIds={selectedTopicIds}
-                onToggle={handleToggleTopic}
-              />
+        <div className="modal__body">
+          {idea && !isEditMode && (
+            <div className="idea-context">
+              <span className="idea-context__label">
+                {t("contents.usingCombination")}
+              </span>
+              <strong className="idea-context__title">{idea.title}</strong>
             </div>
           )}
 
-          {/* LOCATION */}
-          <input
-            name="location"
-            placeholder={t("contents.locationPlaceholder")}
-            value={form.location}
-            onChange={handleChange}
-          />
+          <form onSubmit={handleSubmit}>
+            {/* TITLE */}
+            <label htmlFor="title" className="modal__label">
+              {t("contents.titleLabel")}
+            </label>
+            <input
+              name="title"
+              placeholder={t("contents.titlePlaceholder")}
+              value={form.title}
+              onChange={handleChange}
+              required
+            />
 
-          {submitError && <p className="modal__error">{submitError}</p>}
-
-          <div className="modal-actions">
-            <button
-              type="button"
-              onClick={() => {
-                onClose();
-                resetForm();
+            {/* DESCRIPTION */}
+            <label htmlFor="description" className="modal__label">
+              {t("contents.contextLabel")}
+            </label>
+            <textarea
+              name="description"
+              placeholder={t("contents.contextPlaceholder")}
+              value={form.description}
+              onChange={handleChange}
+              maxLength={500}
+              rows={3}
+              style={{
+                resize: "vertical",
+                minHeight: "72px",
+                maxHeight: "120px",
               }}
-              className="btn-secondary"
+            />
+            <span
+              style={{
+                fontSize: "11px",
+                color: "var(--color-text-tertiary)",
+                display: "block",
+                textAlign: "right",
+                marginTop: "4px",
+              }}
             >
-              {t("common.cancel")}
-            </button>
-            <button type="submit" className="btn-primary" disabled={loading}>
-              {loading
-                ? isEditMode
-                  ? t("contents.updating")
-                  : t("contents.creating")
-                : isEditMode
-                  ? t("common.update")
-                  : idea
-                    ? t("contents.createFromCombination")
-                    : t("common.create")}
-            </button>
-          </div>
-        </form>
+              {(form.description ?? "").length}/500
+            </span>
+
+            {/* PLATFORM + FORMAT */}
+            <div className="modal__row">
+              <select
+                name="platform_id"
+                value={form.platform_id}
+                onChange={(e) => handlePlatformChange(e.target.value)}
+                required
+              >
+                <option value="">{t("contents.selectPlatform")}</option>
+                {platforms.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                name="format"
+                value={form.format}
+                onChange={handleChange}
+                disabled={!form.platform_id}
+                required
+              >
+                <option value="">{t("ideas.formatPlaceholder")}</option>
+                {formats.map((f) => (
+                  <option key={f} value={f}>
+                    {t(`formats.${f}`, { defaultValue: f })}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* STATUS + ROLE */}
+            <div className="modal__row">
+              <select name="status" value={form.status} onChange={handleChange}>
+                <option value="draft">{t("status.draft")}</option>
+                <option value="published">{t("status.published")}</option>
+                <option value="archived">{t("status.archived")}</option>
+              </select>
+
+              <select
+                name="content_role"
+                value={form.content_role}
+                onChange={handleChange}
+              >
+                <option value="">{t("contentRoles.selectRole")}</option>
+                <option value="educational">
+                  {t("contentRoles.educational")}
+                </option>
+                <option value="inspirational">
+                  {t("contentRoles.inspirational")}
+                </option>
+                <option value="personal">{t("contentRoles.personal")}</option>
+                <option value="promotional">
+                  {t("contentRoles.promotional")}
+                </option>
+                <option value="curated">{t("contentRoles.curated")}</option>
+                <option value="sales">{t("contentRoles.sales")}</option>
+              </select>
+            </div>
+
+            {form.status === "published" && (
+              <input
+                type="date"
+                name="published_at"
+                value={form.published_at}
+                onChange={handleChange}
+              />
+            )}
+
+            {/* TOPICS */}
+            {topics.length > 0 && (
+              <div className="modal__topics">
+                <p className="modal__label">{t("contents.topicsLabel")}</p>
+
+                {/* SELECTED CHIPS */}
+                {selectedTopicIds.length > 0 && (
+                  <div className="modal__topic-chips">
+                    {selectedTopicIds.map((id) => {
+                      const topic = topics.find((t) => t.id === id);
+                      if (!topic) return null;
+                      return (
+                        <span
+                          key={id}
+                          className="topic-chip topic-chip--active"
+                        >
+                          {topic.name}
+                          <button
+                            type="button"
+                            className="topic-chip__remove"
+                            onClick={() => handleToggleTopic(id)}
+                          >
+                            ×
+                          </button>
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* SEARCH INPUT */}
+                <TopicCombobox
+                  topics={topics}
+                  selectedIds={selectedTopicIds}
+                  onToggle={handleToggleTopic}
+                />
+              </div>
+            )}
+
+            {/* LOCATION */}
+            <input
+              name="location"
+              placeholder={t("contents.locationPlaceholder")}
+              value={form.location}
+              onChange={handleChange}
+            />
+
+            {submitError && <p className="modal__error">{submitError}</p>}
+
+            <div className="modal-actions">
+              <button
+                type="button"
+                onClick={handleClose}
+                className="btn-secondary"
+              >
+                {t("common.cancel")}
+              </button>
+
+              <button type="submit" className="btn-primary" disabled={loading}>
+                {loading
+                  ? isEditMode
+                    ? t("contents.updating")
+                    : t("contents.creating")
+                  : isEditMode
+                    ? t("common.update")
+                    : idea
+                      ? t("contents.createFromCombination")
+                      : t("common.create")}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
