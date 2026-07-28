@@ -2,7 +2,7 @@ export type DashboardData = {
   total_contents: number;
   platforms_used: number;
   total_all_time: number;
-  ideas_without_content: number;
+  ideas_without_brief: number;
 };
 
 export type PlatformData = {

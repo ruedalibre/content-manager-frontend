@@ -80,11 +80,11 @@ export default function Dashboard() {
   if (loading) return <p>{t("activity.loadingActivity")}</p>;
   if (!data) return <p>{t("activity.noDataAvailable")}</p>;
 
-  const ideasWithoutContentLabel =
-    data.ideas_without_content === 1
-      ? t("activity.ideaWithoutContentSingular", { count: 1 })
-      : t("activity.ideasWithoutContentPlural", {
-          count: data.ideas_without_content,
+  const ideasWithoutBriefLabel =
+    data.ideas_without_brief === 1
+      ? t("activity.ideaWithoutBriefSingular", { count: 1 })
+      : t("activity.ideasWithoutBriefPlural", {
+          count: data.ideas_without_brief,
         });
 
   /* =========================
@@ -188,7 +188,7 @@ export default function Dashboard() {
         >
           <div className="dashboard__ideas-hint" style={{ display: "flex", alignItems: "center" }}>
             <Lightbulb size={15} />&nbsp;
-            <span>{ideasWithoutContentLabel}</span>
+            <span>{ideasWithoutBriefLabel}</span>
           </div>
 
           <select

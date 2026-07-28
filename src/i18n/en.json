@@ -481,8 +481,8 @@
     "chartContents": "Contents",
     "chartCumulative": "Cumulative contents",
     "subtitle": "The pulse of your creative process",
-    "ideaWithoutContentSingular": "{{count}} idea waiting to become a content brief",
-    "ideasWithoutContentPlural": "{{count}} ideas waiting to become content briefs"
+    "ideaWithoutBriefSingular": "{{count}} idea waiting to become a content brief",
+    "ideasWithoutBriefPlural": "{{count}} ideas waiting to become content briefs"
   },
   "recipe": {
     "angle": "Angle",

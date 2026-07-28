@@ -470,8 +470,8 @@
     "chartContents": "Contenidos",
     "chartCumulative": "Contenidos acumulados",
     "subtitle": "El pulso de tu proceso creativo",
-    "ideaWithoutContentSingular": "{{count}} idea esperando convertirse en un brief de contenido",
-    "ideasWithoutContentPlural": "{{count}} ideas esperando convertirse en briefs de contenido"
+    "ideaWithoutBriefSingular": "{{count}} idea esperando convertirse en un brief de contenido",
+    "ideasWithoutBriefPlural": "{{count}} ideas esperando convertirse en briefs de contenido"
   },
   "recipe": {
     "angle": "Ángulo",
