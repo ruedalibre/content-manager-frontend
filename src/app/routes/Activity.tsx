@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Calendar, BarChart3 } from "lucide-react";
+import { Calendar, BarChart3, Lightbulb } from "lucide-react";
 import { useDashboardData } from "../../features/dashboard/hooks/useDashboardData.ts";
 import ProfileNudge from "../../components/ui/ProfileNudge.tsx";
 
@@ -69,23 +69,9 @@ export default function Dashboard() {
   ========================= */
 
   useEffect(() => {
-    if (loading) {
-      setTopbarContext(t("activity.loadingActivity"));
-      return;
-    }
-
-    if (data) {
-      const labels = {
-        "7d": t("activity.last7days"),
-        "30d": t("activity.last30days"),
-        "90d": t("activity.last90days"),
-      };
-
-      setTopbarContext(`${data.total_contents} contents · ${labels[period]}`);
-    }
-
+    setTopbarContext(t("activity.subtitle"));
     return () => setTopbarContext(null);
-  }, [loading, data, period, setTopbarContext]);
+  }, [setTopbarContext, t]);
 
   /* =========================
      LOADING
@@ -93,6 +79,13 @@ export default function Dashboard() {
 
   if (loading) return <p>{t("activity.loadingActivity")}</p>;
   if (!data) return <p>{t("activity.noDataAvailable")}</p>;
+
+  const ideasWithoutContentLabel =
+    data.ideas_without_content === 1
+      ? t("activity.ideaWithoutContentSingular", { count: 1 })
+      : t("activity.ideasWithoutContentPlural", {
+          count: data.ideas_without_content,
+        });
 
   /* =========================
      EMPTY STATE - NO CONTENTS IN PERIOD
@@ -186,8 +179,18 @@ export default function Dashboard() {
       <div className="dashboard__performance">
         <div
           className="dashboard__controls"
-          style={{ display: "flex", justifyContent: "flex-end" }}
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
         >
+          <div className="dashboard__ideas-hint" style={{ display: "flex", alignItems: "center" }}>
+            <Lightbulb size={15} />&nbsp;
+            <span>{ideasWithoutContentLabel}</span>
+          </div>
+
           <select
             className="admin-filter"
             value={period}
