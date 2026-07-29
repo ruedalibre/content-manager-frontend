@@ -38,6 +38,11 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(() =>
+    searchParams.get("reason") === "idle"
+      ? t("login.sessionExpiredIdle")
+      : null,
+  );
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
@@ -57,6 +62,7 @@ export default function Login() {
     setConfirmPassword("");
     setError(null);
     setSuccess(null);
+    setInfo(null);
   };
 
   const switchMode = (newMode: Mode) => {
@@ -380,6 +386,7 @@ export default function Login() {
               </div>
             )}
 
+            {info && <p className="login-info">{info}</p>}
             {error && <p className="login-error">{error}</p>}
             {success && <p className="login-success">{success}</p>}
 

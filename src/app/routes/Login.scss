@@ -490,3 +490,11 @@
     color: var(--success);
   }
 }
+
+.login-info {
+  color: var(--text-secondary);
+  background: var(--bg-muted);
+  padding: var(--s-2) var(--s-3);
+  border-radius: var(--r-3);
+  font-size: var(--fs-13);
+}

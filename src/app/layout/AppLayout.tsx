@@ -10,6 +10,8 @@ import TourInvitation from "../../features/profile/components/TourInvitation.tsx
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile.ts";
 import PastDueBanner from "../../components/ui/PastDueBanner";
 import { WorkspaceProvider } from "../../features/workspace/hooks/useWorkspace.tsx";
+import { useIdleTimer } from "../../hooks/useIdleTimer.ts";
+import IdleWarningModal from "../../components/ui/IdleWarningModal.tsx";
 
 export default function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -59,6 +61,14 @@ export default function AppLayout() {
   const handleLogout = async () => {
     await supabase.auth.signOut();
   };
+
+  const handleIdleTimeout = async () => {
+    await supabase.auth.signOut();
+    window.location.href = "/login?reason=idle";
+  };
+
+  const { showWarning, secondsLeft, stayActive } =
+    useIdleTimer(handleIdleTimeout);
 
   const handleTourStart = () => {
     setShowTourInvite(false);
@@ -139,6 +149,13 @@ export default function AppLayout() {
         )}
 
         {showTour && <div className="tour-backdrop" aria-hidden="true" />}
+
+        {showWarning && (
+          <IdleWarningModal
+            secondsLeft={secondsLeft}
+            onStayActive={stayActive}
+          />
+        )}
       </div>
     </WorkspaceProvider>
   );

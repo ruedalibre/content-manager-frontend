@@ -921,5 +921,11 @@
     "descriptionLabel": "Descripción",
     "upgradeTitle": "Crea workspaces adicionales",
     "upgradeDesc": "Organiza tu trabajo por cliente, marca o proyecto. Disponible en el plan Creator."
+  },
+  "session": {
+    "idleWarningTitle": "Your session is about to end",
+    "idleWarningBody": "We'll sign you out soon due to inactivity. Are you still there?",
+    "stayActive": "Keep working",
+    "sessionExpiredIdle": "Your session ended due to inactivity. Please sign in again."
   }
 }

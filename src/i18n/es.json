@@ -907,5 +907,11 @@
     "descriptionLabel": "Description",
     "upgradeTitle": "Create additional workspaces",
     "upgradeDesc": "Organize your work by client, brand, or project. Available on the Creator plan."
+  },
+  "session": {
+    "idleWarningTitle": "Tu sesión está por cerrarse",
+    "idleWarningBody": "Por tu inactividad, cerraremos tu sesión pronto. ¿Sigues aquí?",
+    "stayActive": "Seguir trabajando",
+    "sessionExpiredIdle": "Tu sesión se cerró por inactividad. Inicia sesión de nuevo."
   }
 }
