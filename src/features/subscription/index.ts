@@ -1,7 +1,7 @@
-export { useSubscription } from "./hooks/useSubscription";
+export { useSubscription, SubscriptionProvider } from "./hooks/useSubscription.tsx";
 
-export type { 
-    Subscription, 
-    SubscriptionPlan, 
-    SubscriptionStatus 
-} from "./hooks/useSubscription.ts";
+export type {
+    Subscription,
+    SubscriptionPlan,
+    SubscriptionStatus
+} from "./hooks/useSubscription.tsx";

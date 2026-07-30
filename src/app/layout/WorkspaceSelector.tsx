@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Folder, ChevronDown, Check, Plus, Lock } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.tsx";
-import { useSubscription } from "../../features/subscription/hooks/useSubscription.ts";
+import { useSubscription } from "../../features/subscription/hooks/useSubscription.tsx";
 import CreateWorkspaceModal from "../../features/workspace/modals/CreateWorkspaceModal.tsx";
 import "./WorkspaceSelector.scss";
 

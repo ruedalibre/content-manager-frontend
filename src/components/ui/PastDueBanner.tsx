@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useSubscription } from "../../features/subscription/hooks/useSubscription.ts";
+import { useSubscription } from "../../features/subscription/hooks/useSubscription.tsx";
 import { useCheckout } from "../../features/subscription/hooks/useCheckout.ts";
 import "./PastDueBanner.scss";
 

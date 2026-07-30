@@ -15,6 +15,10 @@ import {
 } from "../../features/workspace/hooks/useWorkspace.tsx";
 import { useIdleTimer } from "../../hooks/useIdleTimer.ts";
 import IdleWarningModal from "../../components/ui/IdleWarningModal.tsx";
+import {
+  SubscriptionProvider,
+  useSubscription,
+} from "../../features/subscription/hooks/useSubscription.tsx";
 
 type OnboardingData = {
   time_availability?: string;
@@ -113,31 +117,33 @@ export default function AppLayout() {
   const showWelcome = !profileLoading && (isFirstSession || needsOnboarding);
 
   return (
-    <WorkspaceProvider>
-      <AppLayoutContent
-        isSidebarOpen={isSidebarOpen}
-        setIsSidebarOpen={setIsSidebarOpen}
-        isSidebarCollapsed={isSidebarCollapsed}
-        setIsSidebarCollapsed={setIsSidebarCollapsed}
-        topbarContext={topbarContext}
-        setTopbarContext={setTopbarContext}
-        isAdmin={isAdmin}
-        handleLogout={handleLogout}
-        showTour={showTour}
-        tourStep={tourStep}
-        handleTourAction={handleTourAction}
-        showWelcome={showWelcome}
-        completeOnboarding={completeOnboarding}
-        skipOnboarding={skipOnboarding}
-        showTourInvite={showTourInvite}
-        handleTourStart={handleTourStart}
-        handleTourLater={handleTourLater}
-        handleTourDismiss={handleTourDismiss}
-        showWarning={showWarning}
-        secondsLeft={secondsLeft}
-        stayActive={stayActive}
-      />
-    </WorkspaceProvider>
+    <SubscriptionProvider>
+      <WorkspaceProvider>
+        <AppLayoutContent
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={setIsSidebarOpen}
+          isSidebarCollapsed={isSidebarCollapsed}
+          setIsSidebarCollapsed={setIsSidebarCollapsed}
+          topbarContext={topbarContext}
+          setTopbarContext={setTopbarContext}
+          isAdmin={isAdmin}
+          handleLogout={handleLogout}
+          showTour={showTour}
+          tourStep={tourStep}
+          handleTourAction={handleTourAction}
+          showWelcome={showWelcome}
+          completeOnboarding={completeOnboarding}
+          skipOnboarding={skipOnboarding}
+          showTourInvite={showTourInvite}
+          handleTourStart={handleTourStart}
+          handleTourLater={handleTourLater}
+          handleTourDismiss={handleTourDismiss}
+          showWarning={showWarning}
+          secondsLeft={secondsLeft}
+          stayActive={stayActive}
+        />
+      </WorkspaceProvider>
+    </SubscriptionProvider>
   );
 }
 
@@ -199,26 +205,26 @@ function AppLayoutContent({
   stayActive,
 }: AppLayoutContentProps) {
   const { loadWorkspaces } = useWorkspace();
+  const { loadSubscription } = useSubscription();
 
   /* =========================
-     ONBOARDING + WORKSPACE SYNC
-     Tras completar o saltar el onboarding, create-user-profile
-     ya creó el workspace personal del usuario — pero el
-     WorkspaceProvider cargó su lista de workspaces al montar,
-     ANTES de que ese workspace existiera. Sin este refetch
-     explícito, el usuario quedaba con el WorkspaceSelector
-     vacío y sin poder crear ideas/contenido hasta hacer
-     logout/login manualmente.
+     ONBOARDING + SUBSCRIPTION SYNC
+     Mismo problema que con workspace: create-user-profile crea
+     la suscripción (trial) del usuario, pero SubscriptionProvider
+     ya había cargado su estado por defecto (plan free, sin trial)
+     antes de que el registro terminara. Sin este refetch, el
+     usuario veía "Obtener Creator" pese a tener trial activo
+     en la base de datos.
   ========================= */
 
   const handleOnboardingComplete = async (data: OnboardingData) => {
     await completeOnboarding(data);
-    await loadWorkspaces();
+    await Promise.all([loadWorkspaces(), loadSubscription()]);
   };
 
   const handleOnboardingSkip = async () => {
     await skipOnboarding();
-    await loadWorkspaces();
+    await Promise.all([loadWorkspaces(), loadSubscription()]);
   };
 
   return (

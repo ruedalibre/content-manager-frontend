@@ -8,7 +8,7 @@ import { useIdentityAI } from "../../features/insights/hooks/useIdentityAI.ts";
 import { useCreativeInsights } from "../../features/insights/hooks/useCreativeInsights.ts";
 import { useCreativeReport } from "../../features/insights/hooks/useCreativeReport";
 import { downloadReport } from "../../utils/downloadReport";
-import { useSubscription } from "../../features/subscription/hooks/useSubscription.ts";
+import { useSubscription } from "../../features/subscription/hooks/useSubscription.tsx";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
 import UpgradePrompt from "../../components/ui/UpgradePrompt.tsx";
 

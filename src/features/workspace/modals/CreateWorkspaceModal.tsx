@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useTranslation } from "react-i18next";
 import { useWorkspace } from "../hooks/useWorkspace.tsx";
-import { useSubscription } from "../../subscription/hooks/useSubscription";
+import { useSubscription } from "../../subscription/hooks/useSubscription.tsx";
 import UpgradePrompt from "../../../components/ui/UpgradePrompt";
 import "../../../styles/modals.scss";
 

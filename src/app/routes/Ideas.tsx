@@ -20,7 +20,7 @@ import EditIdeaModal from "../../features/ideas/components/EditIdeaModal.tsx";
 import StatusBadge from "../../features/ideas/components/StatusBadge.tsx";
 import { downloadBrief } from "../../utils/downloadBrief.ts";
 import { supabase } from "../../supabaseClient.ts";
-import { useSubscription } from "../../features/subscription/hooks/useSubscription";
+import { useSubscription } from "../../features/subscription/hooks/useSubscription.tsx";
 import UpgradePrompt from "../../components/ui/UpgradePrompt";
 import StepsGuide from "../../components/ui/StepsGuide";
 import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.tsx";
