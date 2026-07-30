@@ -8,10 +8,20 @@ import Footer from "./Footer.tsx";
 import WelcomeScreen from "../../features/profile/components/WelcomeScreen.tsx";
 import TourInvitation from "../../features/profile/components/TourInvitation.tsx";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile.ts";
-import PastDueBanner from "../../components/ui/PastDueBanner";
-import { WorkspaceProvider } from "../../features/workspace/hooks/useWorkspace.tsx";
+import PastDueBanner from "../../components/ui/PastDueBanner.tsx";
+import {
+  WorkspaceProvider,
+  useWorkspace,
+} from "../../features/workspace/hooks/useWorkspace.tsx";
 import { useIdleTimer } from "../../hooks/useIdleTimer.ts";
 import IdleWarningModal from "../../components/ui/IdleWarningModal.tsx";
+
+type OnboardingData = {
+  time_availability?: string;
+  production_setup?: string;
+  idea_sources?: string[];
+  referents?: string;
+};
 
 export default function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -104,59 +114,163 @@ export default function AppLayout() {
 
   return (
     <WorkspaceProvider>
-      <div className="app-layout">
-        <Sidebar
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-          onLogout={handleLogout}
-          isAdmin={isAdmin}
-          isCollapsed={isSidebarCollapsed}
-          onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
-          tourStep={showTour ? tourStep : null}
-          onTourAction={handleTourAction}
+      <AppLayoutContent
+        isSidebarOpen={isSidebarOpen}
+        setIsSidebarOpen={setIsSidebarOpen}
+        isSidebarCollapsed={isSidebarCollapsed}
+        setIsSidebarCollapsed={setIsSidebarCollapsed}
+        topbarContext={topbarContext}
+        setTopbarContext={setTopbarContext}
+        isAdmin={isAdmin}
+        handleLogout={handleLogout}
+        showTour={showTour}
+        tourStep={tourStep}
+        handleTourAction={handleTourAction}
+        showWelcome={showWelcome}
+        completeOnboarding={completeOnboarding}
+        skipOnboarding={skipOnboarding}
+        showTourInvite={showTourInvite}
+        handleTourStart={handleTourStart}
+        handleTourLater={handleTourLater}
+        handleTourDismiss={handleTourDismiss}
+        showWarning={showWarning}
+        secondsLeft={secondsLeft}
+        stayActive={stayActive}
+      />
+    </WorkspaceProvider>
+  );
+}
+
+/* =========================
+   INNER COMPONENT
+   Vive DENTRO de WorkspaceProvider — es el único lugar donde
+   useWorkspace() puede llamarse legítimamente. AppLayout (el
+   componente externo) es quien RENDERIZA WorkspaceProvider,
+   por lo tanto es su ancestro, no su descendiente — el Context
+   de React nunca estaría disponible ahí, sin importar que
+   WorkspaceProvider aparezca en su JSX.
+========================= */
+
+type AppLayoutContentProps = {
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (v: boolean) => void;
+  isSidebarCollapsed: boolean;
+  setIsSidebarCollapsed: (fn: (prev: boolean) => boolean) => void;
+  topbarContext: string | null;
+  setTopbarContext: (v: string | null) => void;
+  isAdmin: boolean;
+  handleLogout: () => Promise<void>;
+  showTour: boolean;
+  tourStep: number;
+  handleTourAction: (action: "next" | "skip") => void;
+  showWelcome: boolean;
+  completeOnboarding: (data: OnboardingData) => Promise<void>;
+  skipOnboarding: () => Promise<void>;
+  showTourInvite: boolean;
+  handleTourStart: () => void;
+  handleTourLater: () => void;
+  handleTourDismiss: () => Promise<void>;
+  showWarning: boolean;
+  secondsLeft: number;
+  stayActive: () => void;
+};
+
+function AppLayoutContent({
+  isSidebarOpen,
+  setIsSidebarOpen,
+  isSidebarCollapsed,
+  setIsSidebarCollapsed,
+  topbarContext,
+  setTopbarContext,
+  isAdmin,
+  handleLogout,
+  showTour,
+  tourStep,
+  handleTourAction,
+  showWelcome,
+  completeOnboarding,
+  skipOnboarding,
+  showTourInvite,
+  handleTourStart,
+  handleTourLater,
+  handleTourDismiss,
+  showWarning,
+  secondsLeft,
+  stayActive,
+}: AppLayoutContentProps) {
+  const { loadWorkspaces } = useWorkspace();
+
+  /* =========================
+     ONBOARDING + WORKSPACE SYNC
+     Tras completar o saltar el onboarding, create-user-profile
+     ya creó el workspace personal del usuario — pero el
+     WorkspaceProvider cargó su lista de workspaces al montar,
+     ANTES de que ese workspace existiera. Sin este refetch
+     explícito, el usuario quedaba con el WorkspaceSelector
+     vacío y sin poder crear ideas/contenido hasta hacer
+     logout/login manualmente.
+  ========================= */
+
+  const handleOnboardingComplete = async (data: OnboardingData) => {
+    await completeOnboarding(data);
+    await loadWorkspaces();
+  };
+
+  const handleOnboardingSkip = async () => {
+    await skipOnboarding();
+    await loadWorkspaces();
+  };
+
+  return (
+    <div className="app-layout">
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onLogout={handleLogout}
+        isAdmin={isAdmin}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
+        tourStep={showTour ? tourStep : null}
+        onTourAction={handleTourAction}
+      />
+
+      <div
+        className={`app-layout__content${isSidebarCollapsed ? " app-layout__content--expanded" : ""}`}
+      >
+        <Topbar
+          onMenuClick={() => setIsSidebarOpen(true)}
+          context={topbarContext}
         />
 
-        <div
-          className={`app-layout__content${isSidebarCollapsed ? " app-layout__content--expanded" : ""}`}
-        >
-          <Topbar
-            onMenuClick={() => setIsSidebarOpen(true)}
-            context={topbarContext}
-          />
+        <PastDueBanner />
 
-          <PastDueBanner />
+        <main className="app-layout__main">
+          <Outlet context={{ setTopbarContext, isAdmin }} />
+        </main>
 
-          <main className="app-layout__main">
-            <Outlet context={{ setTopbarContext, isAdmin }} />
-          </main>
-
-          <Footer />
-        </div>
-
-        {showWelcome && (
-          <WelcomeScreen
-            onComplete={completeOnboarding}
-            onSkip={skipOnboarding}
-          />
-        )}
-
-        {showTourInvite && !showWelcome && (
-          <TourInvitation
-            onStart={handleTourStart}
-            onLater={handleTourLater}
-            onDismiss={handleTourDismiss}
-          />
-        )}
-
-        {showTour && <div className="tour-backdrop" aria-hidden="true" />}
-
-        {showWarning && (
-          <IdleWarningModal
-            secondsLeft={secondsLeft}
-            onStayActive={stayActive}
-          />
-        )}
+        <Footer />
       </div>
-    </WorkspaceProvider>
+
+      {showWelcome && (
+        <WelcomeScreen
+          onComplete={handleOnboardingComplete}
+          onSkip={handleOnboardingSkip}
+        />
+      )}
+
+      {showTourInvite && !showWelcome && (
+        <TourInvitation
+          onStart={handleTourStart}
+          onLater={handleTourLater}
+          onDismiss={handleTourDismiss}
+        />
+      )}
+
+      {showTour && <div className="tour-backdrop" aria-hidden="true" />}
+
+      {showWarning && (
+        <IdleWarningModal secondsLeft={secondsLeft} onStayActive={stayActive} />
+      )}
+    </div>
   );
 }
