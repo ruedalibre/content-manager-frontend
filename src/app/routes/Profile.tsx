@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useOutletContext } from "react-router-dom";
-import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
+import { useUserProfile } from "../../features/profile/hooks/useUserProfile.tsx";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription.tsx";
 import { useCheckout } from "../../features/subscription/hooks/useCheckout";
 import { usePricingModal } from "../../features/subscription/context/PricingModalContext";
@@ -106,7 +106,6 @@ export default function Profile() {
         production_setup:  form.production_setup || null,
         referents:         form.referents || null,
       } as any);
-      globalThis.dispatchEvent(new CustomEvent("profile-updated"));
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch {

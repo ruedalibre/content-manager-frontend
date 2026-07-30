@@ -1,9 +1,8 @@
-import { useEffect } from "react";
 import { Lightbulb, FileText, Sparkles, BarChart3, Shield, User, X, ChevronLeft, ChevronRight, LogOut } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
-import WorkspaceSelector from "./WorkspaceSelector";
+import { useUserProfile } from "../../features/profile/hooks/useUserProfile.tsx";
+import WorkspaceSelector from "./WorkspaceSelector.tsx";
 import "./Sidebar.scss";
 
 type Props = {
@@ -29,14 +28,7 @@ const TOTAL_STEPS = TOUR_NAV.length;
 
 export default function Sidebar({ isOpen, onClose, onLogout, isAdmin, isCollapsed, onToggleCollapse, tourStep, onTourAction }: Props) {
   const { t } = useTranslation();
-  const { profile, loadProfile } = useUserProfile();
-
-  useEffect(() => {
-    const handler = () => loadProfile();
-    globalThis.addEventListener("profile-updated", handler);
-    return () => globalThis.removeEventListener("profile-updated", handler);
-  }, [loadProfile]);
-
+  const { profile } = useUserProfile();
   const displayName = profile?.display_name ?? null;
 
   function getInitials(name: string | null): string {

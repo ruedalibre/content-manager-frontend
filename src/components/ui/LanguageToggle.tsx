@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
+import { useUserProfile } from "../../features/profile/hooks/useUserProfile.tsx";
 import "./LanguageToggle.scss";
 
 export default function LanguageToggle() {

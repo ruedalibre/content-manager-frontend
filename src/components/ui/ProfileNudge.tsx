@@ -1,7 +1,7 @@
 import { UserCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
+import { useUserProfile } from "../../features/profile/hooks/useUserProfile.tsx";
 
 export default function ProfileNudge() {
   const { t } = useTranslation();

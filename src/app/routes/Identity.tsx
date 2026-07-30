@@ -9,7 +9,7 @@ import { useCreativeInsights } from "../../features/insights/hooks/useCreativeIn
 import { useCreativeReport } from "../../features/insights/hooks/useCreativeReport";
 import { downloadReport } from "../../utils/downloadReport";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription.tsx";
-import { useUserProfile } from "../../features/profile/hooks/useUserProfile";
+import { useUserProfile } from "../../features/profile/hooks/useUserProfile.tsx";
 import UpgradePrompt from "../../components/ui/UpgradePrompt.tsx";
 
 import { type AnalyticsInsight } from "../../features/insights/types/insights.types.ts";
