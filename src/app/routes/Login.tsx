@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "../../supabaseClient.ts";
-import LanguageToggle from "../../components/ui/LanguageToggle.tsx";
+import LanguagePublicToggle from "../../components/ui/LanguagePublicToggle.tsx";
 import "./Login.scss";
 import backgroundImage from "../../assets/login-background.jpg";
 
@@ -424,7 +424,7 @@ export default function Login() {
             <a href="https://usecreadora.com" className="login-back">
               {t("login.backToLanding")}
             </a>
-            <LanguageToggle />
+            <LanguagePublicToggle />
           </div>
         </div>
       </div>

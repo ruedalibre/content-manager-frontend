@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Eye, EyeOff } from "lucide-react";
 import { supabase } from "../../supabaseClient.ts";
-import LanguageToggle from "../../components/ui/LanguageToggle.tsx";
+import LanguagePublicToggle from "../../components/ui/LanguagePublicToggle.tsx";
 import backgroundImage from "../../assets/login-background.jpg";
 import "./Login.scss";
 
@@ -187,7 +187,7 @@ export default function UpdatePassword() {
           </form>
 
           <div className="login-footer">
-            <LanguageToggle />
+            <LanguagePublicToggle />
           </div>
         </div>
       </div>
