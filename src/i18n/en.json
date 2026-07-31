@@ -189,16 +189,7 @@
     "updatePassword": "Update password",
     "updatingPassword": "Updating...",
     "passwordUpdated": "Password updated — redirecting...",
-    "passwordRequirementsTitle": "Password must have:",
-    "passwordReq8chars": "At least 8 characters",
-    "passwordReqUppercase": "At least one uppercase letter",
-    "passwordReqNumber": "At least one number",
-    "passwordReqSpecial": "At least one special character (!@#$%^&*)",
-    "updatePasswordTitle": "Update your password",
-    "updatePasswordSub": "For security, please set a password that meets our new standards.",
-    "updatePasswordBtn": "Update password",
-    "updatingPasswordBtn": "Updating...",
-    "passwordUpdateSuccess": "Password updated. Redirecting...",
+    "accountDeactivated": "Your account has been deactivated. Contact support if you believe this is an error.",
     "errors": {
       "invalidCredentials": "Invalid email or password.",
       "passwordMismatch": "Passwords don't match.",
@@ -793,7 +784,17 @@
     "profileTimeDist": "Time availability",
     "profileRoleDist": "Creator role",
     "profileCountryDist": "Country distribution",
-    "loadingProfiles": "Loading profile data..."
+    "loadingProfiles": "Loading profile data...",
+    "accountStatus": "Account",
+    "enabled": "Enabled",
+    "deactivated": "Deactivated",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "processing": "Processing...",
+    "confirmDeactivateTitle": "Deactivate account",
+    "confirmDeactivateBody": "Deactivate access for {{email}}? You can reactivate it anytime.",
+    "confirmActivateTitle": "Activate account",
+    "confirmActivateBody": "Reactivate access for {{email}}?"
   },
   "insights": {
     "content_production": {

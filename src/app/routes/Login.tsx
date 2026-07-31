@@ -38,11 +38,12 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(() =>
-    searchParams.get("reason") === "idle"
-      ? t("login.sessionExpiredIdle")
-      : null,
-  );
+  const [info, setInfo] = useState<string | null>(() => {
+    const reason = searchParams.get("reason");
+    if (reason === "idle") return t("login.sessionExpiredIdle");
+    if (reason === "deactivated") return t("login.accountDeactivated");
+    return null;
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordTouched, setPasswordTouched] = useState(false);
