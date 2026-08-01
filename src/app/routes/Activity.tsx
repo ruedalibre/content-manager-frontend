@@ -12,6 +12,7 @@ import { getGrowthVisual } from "../../utils/growthRate.ts";
 
 import { useOutletContext, useNavigate } from "react-router-dom";
 import { useWorkspace } from "../../features/workspace/hooks/useWorkspace.tsx";
+import { PartyPopper } from "lucide-react";
 
 import "./Activity.scss";
 
@@ -186,8 +187,12 @@ export default function Dashboard() {
             justifyContent: "space-between",
           }}
         >
-          <div className="dashboard__ideas-hint" style={{ display: "flex", alignItems: "center" }}>
-            <Lightbulb size={15} />&nbsp;
+          <div
+            className="dashboard__ideas-hint"
+            style={{ display: "flex", alignItems: "center" }}
+          >
+            <Lightbulb size={15} />
+            &nbsp;
             <span>{ideasWithoutBriefLabel}</span>
           </div>
 
@@ -214,7 +219,11 @@ export default function Dashboard() {
               marginBottom: "var(--s-4)",
             }}
           >
-            🎉 {t("checkout.successMessage")}
+            <PartyPopper
+              size={16}
+              style={{ marginRight: "6px", verticalAlign: "text-bottom" }}
+            />
+            {t("checkout.successMessage")}
           </div>
         )}
         {checkoutStatus === "cancelled" && (
