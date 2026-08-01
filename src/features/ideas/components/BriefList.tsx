@@ -2,6 +2,7 @@ import { Download } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { type CreativeSession } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
+import { FileText } from "lucide-react";
 
 type BriefListProps = {
   sessions: CreativeSession[];
@@ -20,8 +21,9 @@ export default function BriefList({
 
   const activeSessions = sessions
     .filter((s) => s.status !== "discarded")
-    .sort((a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    .sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     );
 
   if (generating) {
@@ -32,7 +34,9 @@ export default function BriefList({
         </div>
         <div className="brief-list brief-list--generating">
           <div className="recipe-generating-dots">
-            <span /><span /><span />
+            <span />
+            <span />
+            <span />
           </div>
           <p className="brief-list__hint">{t("recipe.generating")}</p>
         </div>
@@ -45,10 +49,12 @@ export default function BriefList({
       <div className="brief-list-card">
         <div className="brief-list-card__head">
           <span className="brief-list-card__title">{t("recipe.briefs")}</span>
-          <span className="brief-list-card__count">0 {t("recipe.briefPlural")}</span>
+          <span className="brief-list-card__count">
+            0 {t("recipe.briefPlural")}
+          </span>
         </div>
         <div className="brief-list brief-list--empty">
-          <span className="brief-list__empty-icon">📄</span>
+          <FileText size={32} className="brief-list__empty-icon" />
           <p className="brief-list__empty-text">{t("recipe.noRecipeYet")}</p>
           <p className="brief-list__hint">{t("recipe.selectPlatformFormat")}</p>
         </div>
@@ -74,7 +80,9 @@ export default function BriefList({
             ? t(`formats.${session.format}`, { defaultValue: session.format })
             : "—";
           const role = session.content_role
-            ? t(`contentRoles.${session.content_role}`, { defaultValue: session.content_role })
+            ? t(`contentRoles.${session.content_role}`, {
+                defaultValue: session.content_role,
+              })
             : null;
           const date = new Date(session.created_at).toLocaleDateString();
 
