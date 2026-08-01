@@ -1380,10 +1380,12 @@
   background: none;
   border: none;
   cursor: pointer;
+  color: var(--text-secondary);
   opacity: 0.4;
   transition:
     opacity var(--transition-fast),
-    transform var(--transition-fast);
+    transform var(--transition-fast),
+    color var(--transition-fast);
   padding: 2px 4px;
 
   &:hover {
@@ -1394,6 +1396,7 @@
   &--active {
     opacity: 1;
     transform: scale(1.15);
+    color: var(--accent);
   }
 
   &--locked {

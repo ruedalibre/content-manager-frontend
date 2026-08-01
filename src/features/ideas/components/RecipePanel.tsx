@@ -12,8 +12,9 @@ import {
   ASPECTS_BY_FAMILY,
   type AspectDefinition,
 } from "../../../constants/aspectsByFamily.ts";
+import { Angry, Frown, Meh, Smile, Laugh } from "lucide-react";
 
-const EMOJIS = ["😞", "😕", "😐", "🙂", "😄"];
+const RATING_ICONS = [Angry, Frown, Meh, Smile, Laugh];
 const MAX_REGEN = 10;
 
 type RecipePanelProps = {
@@ -343,7 +344,7 @@ export default function RecipePanel({
         <div className="recipe-panel__aspect-header">
           <span className="recipe-panel__aspect-label">{label}</span>
           <div className="recipe-panel__rating">
-            {EMOJIS.map((emoji, i) => (
+            {RATING_ICONS.map((Icon, i) => (
               <button
                 key={i}
                 type="button"
@@ -352,7 +353,7 @@ export default function RecipePanel({
                 disabled={approved}
                 title={approved ? undefined : TOOLTIPS[i]}
               >
-                {emoji}
+                <Icon size={18} />
               </button>
             ))}
           </div>
