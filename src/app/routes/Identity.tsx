@@ -11,6 +11,7 @@ import { downloadReport } from "../../utils/downloadReport";
 import { useSubscription } from "../../features/subscription/hooks/useSubscription.tsx";
 import { useUserProfile } from "../../features/profile/hooks/useUserProfile.tsx";
 import UpgradePrompt from "../../components/ui/UpgradePrompt.tsx";
+import { Search, Sparkles, type LucideIcon } from "lucide-react";
 
 import { type AnalyticsInsight } from "../../features/insights/types/insights.types.ts";
 
@@ -85,18 +86,22 @@ function Collapsible({
   onToggle,
   children,
 }: {
-  icon: string;
+  icon: LucideIcon;
   title: string;
   subtitle: string;
   isOpen: boolean;
   onToggle: () => void;
   children: React.ReactNode;
 }) {
+  const Icon = icon;
+
   return (
     <div className="identity-collapsible">
       <div className="identity-collapsible__header" onClick={onToggle}>
         <div className="identity-collapsible__left">
-          <span className="identity-collapsible__icon">{icon}</span>
+          <span className="identity-collapsible__icon">
+            <Icon size={18} />
+          </span>
           <div>
             <div className="identity-collapsible__title">{title}</div>
             <div className="identity-collapsible__subtitle">{subtitle}</div>
@@ -129,7 +134,10 @@ export default function Identity() {
     "30d",
     currentWorkspaceId,
   );
-  const { result: aiResult, loading: aiLoading } = useIdentityAI(dna, currentWorkspaceId);
+  const { result: aiResult, loading: aiLoading } = useIdentityAI(
+    dna,
+    currentWorkspaceId,
+  );
   const { insights: creativeInsights, loading: creativeInsightsLoading } =
     useCreativeInsights(currentWorkspaceId);
   const {
@@ -486,7 +494,7 @@ export default function Identity() {
       {/* ── WORTH REFLECTING ON — colapsable ── */}
 
       <Collapsible
-        icon="🔍"
+        icon={Search}
         title={t("identity.worthReflecting")}
         subtitle={t("identity.worthReflectingSubtitle")}
         isOpen={openSections.reflecting}
@@ -522,7 +530,7 @@ export default function Identity() {
       {/* ── DEEP ANALYSIS — colapsable ── */}
 
       <Collapsible
-        icon="✦"
+        icon={Sparkles}
         title={t("identity.deepAnalysis")}
         subtitle={
           report
