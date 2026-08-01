@@ -141,8 +141,8 @@ export default function Contents() {
       }
 
       setSelectedIdea(data);
-      setContentToEdit(null); // importante
-      setIsModalOpen(true); // 🔥 abrir el mismo modal
+      setContentToEdit(null);
+      setIsModalOpen(true); 
     };
 
     loadIdea();
@@ -333,7 +333,7 @@ export default function Contents() {
 
   const handleEdit = (content: ContentItem) => {
     setContentToEdit(content);
-    setSelectedIdea(null); // 🔥 importante
+    setSelectedIdea(null);
     setIsModalOpen(true);
   };
 
