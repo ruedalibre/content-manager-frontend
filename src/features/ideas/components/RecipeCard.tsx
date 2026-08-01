@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { type CreativeSession } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
+import { RefreshCw, FileText } from "lucide-react";
 
 type RecipeCardProps = {
   session: CreativeSession | null;
@@ -36,7 +37,7 @@ export default function RecipeCard({
     return (
       <div className="recipe-card recipe-card--discarded">
         <div className="recipe-card__empty-content">
-          <span className="recipe-card__empty-icon">🔄</span>
+          <RefreshCw size={32} className="recipe-card__empty-icon" />
           <p className="recipe-card__empty-text">{t("recipe.discarded")}</p>
           <p className="recipe-card__empty-hint">
             {t("recipe.tryNewCombination")}
@@ -50,7 +51,7 @@ export default function RecipeCard({
     return (
       <div className="recipe-card recipe-card--empty">
         <div className="recipe-card__empty-content">
-          <span className="recipe-card__empty-icon">📄</span>
+          <FileText size={32} className="recipe-card__empty-icon" />
           <p className="recipe-card__empty-text">{t("recipe.noRecipeYet")}</p>
           <p className="recipe-card__empty-hint">
             {t("recipe.selectPlatformFormat")}
@@ -74,7 +75,9 @@ export default function RecipeCard({
       </div>
       <div className="recipe-card__footer">
         <span className="recipe-card__format">{session.format}</span>
-        <span className="recipe-card__cta">{t("recipe.verRecetaCompleta")}</span>
+        <span className="recipe-card__cta">
+          {t("recipe.verRecetaCompleta")}
+        </span>
       </div>
     </div>
   );

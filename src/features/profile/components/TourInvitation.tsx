@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import "./TourInvitation.scss";
+import { Hand } from "lucide-react";
 
 type Props = {
   onStart: () => void;
@@ -12,7 +13,7 @@ export default function TourInvitation({ onStart, onLater, onDismiss }: Props) {
   return (
     <div className="tour-invitation-overlay" aria-modal="true" role="dialog">
       <div className="tour-invitation">
-        <span className="tour-invitation__emoji" aria-hidden="true">👋</span>
+        <Hand size={40} className="tour-invitation__emoji" aria-hidden="true" />
         <h2 className="tour-invitation__title">
           {t("tour.invitation.title")}
         </h2>
