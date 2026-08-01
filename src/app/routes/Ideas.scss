@@ -333,10 +333,6 @@
     justify-content: space-between;
     padding: var(--s-2) var(--s-3) var(--s-1);
     cursor: pointer;
-
-    &:hover {
-      background: var(--bg-muted);
-    }
   }
 
   &__top-left {
@@ -358,10 +354,6 @@
   &__title-row {
     padding: 0 var(--s-3) var(--s-1);
     cursor: pointer;
-
-    &:hover {
-      background: var(--bg-muted);
-    }
   }
 
   &__meta-row {
@@ -2170,7 +2162,7 @@
 
 .idea-card__advanced-label {
   font-size: var(--fs-10);
-  color: var(--text-faint);
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: var(--tracking-wide);
   font-weight: 500;

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Archive, ChevronRight } from "lucide-react";
+import { Archive, Pencil, Copy, Trash2, ChevronRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { type Idea } from "../hooks/useIdeas.ts";
 import { type Topic } from "../hooks/useTopics.ts";
@@ -127,7 +127,7 @@ export default function IdeaCard({
               title={t("common.edit")}
               type="button"
             >
-              ✏️
+              <Pencil size={14} />
             </button>
             <button
               className="btn-icon"
@@ -135,7 +135,7 @@ export default function IdeaCard({
               title={t("ideas.duplicate")}
               type="button"
             >
-              ⧉
+              <Copy size={14} />
             </button>
             <button
               className="btn-icon"
@@ -151,7 +151,7 @@ export default function IdeaCard({
               title={t("common.delete")}
               type="button"
             >
-              🗑️
+              <Trash2 size={14} />
             </button>
           </div>
         )}
