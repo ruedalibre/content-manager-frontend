@@ -834,7 +834,7 @@ export default function Ideas() {
       {activeTab === "topics" && (
         <div className="ideas-tab-content">
           {/* ALPHABET + COUNT */}
-          <div className="topics-alphabet">
+          <div className="topics-alphabet" translate="no">
             {ALL_LETTERS.map((letter) => {
               const hasTopics = lettersWithTopics.has(letter);
               return (
