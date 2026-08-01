@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Archive, ChevronRight, Undo2, X } from "lucide-react";
+import { Pencil, Archive, ChevronRight, Undo2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useOutletContext, useNavigate } from "react-router-dom";
 import {
@@ -954,7 +954,7 @@ export default function Ideas() {
                                     type="button"
                                     title={t("common.edit")}
                                   >
-                                    ✏️
+                                    <Pencil size={14} />
                                   </button>
                                   <button
                                     className="btn-icon btn-icon--danger"
@@ -962,7 +962,7 @@ export default function Ideas() {
                                     type="button"
                                     title={t("common.archive")}
                                   >
-                                    🗄️
+                                    <Archive size={14} />
                                   </button>
                                 </div>
                               </>

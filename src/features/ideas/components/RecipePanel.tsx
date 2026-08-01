@@ -12,7 +12,18 @@ import {
   ASPECTS_BY_FAMILY,
   type AspectDefinition,
 } from "../../../constants/aspectsByFamily.ts";
-import { Angry, Frown, Meh, Smile, Laugh } from "lucide-react";
+import {
+  Angry,
+  Frown,
+  Meh,
+  Smile,
+  Laugh,
+  Lightbulb,
+  Tag,
+  Smartphone,
+  FileType,
+  Drama,
+} from "lucide-react";
 
 const RATING_ICONS = [Angry, Frown, Meh, Smile, Laugh];
 const MAX_REGEN = 10;
@@ -484,14 +495,14 @@ export default function RecipePanel({
               </h4>
               <div className="recipe-panel__combo-item">
                 <span className="recipe-panel__combo-label">
-                  {t("recipe.comboIdea")}
+                  <Lightbulb size={14} /> {t("recipe.comboIdea")}
                 </span>
                 <span className="recipe-panel__combo-value">{idea.title}</span>
               </div>
               {idea.topics && idea.topics.length > 0 && (
                 <div className="recipe-panel__combo-item">
                   <span className="recipe-panel__combo-label">
-                    {t("recipe.comboTopics")}
+                    <Tag size={14} /> {t("recipe.comboTopics")}
                   </span>
                   <div className="recipe-panel__combo-chips">
                     {idea.topics.map((t) => (
@@ -505,7 +516,7 @@ export default function RecipePanel({
               {platformName && (
                 <div className="recipe-panel__combo-item">
                   <span className="recipe-panel__combo-label">
-                    {t("recipe.comboPlatform")}
+                    <Smartphone size={14} /> {t("recipe.comboPlatform")}
                   </span>
                   <span className="recipe-panel__combo-value">
                     {platformName}
@@ -514,7 +525,7 @@ export default function RecipePanel({
               )}
               <div className="recipe-panel__combo-item">
                 <span className="recipe-panel__combo-label">
-                  {t("recipe.comboFormat")}
+                  <FileType size={14} /> {t("recipe.comboFormat")}
                 </span>
                 <span className="recipe-panel__combo-value">
                   {t(`formats.${session.format}`, {
@@ -525,7 +536,7 @@ export default function RecipePanel({
               {session.content_role && (
                 <div className="recipe-panel__combo-item">
                   <span className="recipe-panel__combo-label">
-                    {t("recipe.comboRole")}
+                    <Drama size={14} /> {t("recipe.comboRole")}
                   </span>
                   <span className="recipe-panel__combo-value">
                     {t(`contentRoles.${session.content_role}`, {
