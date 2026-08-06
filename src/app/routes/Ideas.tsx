@@ -891,7 +891,10 @@ export default function Ideas() {
                       {/* Grid 4 columnas */}
                       <div className="topics-alpha-group__grid">
                         {items.map((topic) => (
-                          <div key={topic.id} className="topic-list-item">
+                          <div
+                            key={topic.id}
+                            className={`topic-list-item${editingTopic?.id === topic.id ? " topic-list-item--editing" : ""}`}
+                          >
                             {editingTopic?.id === topic.id ? (
                               <div className="topic-list-item__edit">
                                 <input

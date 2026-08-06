@@ -1628,6 +1628,33 @@
     opacity: 1;
   }
 
+  &--editing {
+    grid-column: 1 / -1;
+  }
+
+  &__edit {
+    display: flex;
+    align-items: center;
+    gap: var(--s-2);
+    width: 100%;
+    max-width: 420px;
+
+    input {
+      flex: 1;
+      min-width: 0;
+      font-size: var(--fs-13);
+      padding: 4px 8px;
+      border-radius: var(--r-2);
+    }
+  }
+
+  &__edit-actions {
+    display: flex;
+    gap: var(--s-2);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
   &__edit {
     flex: 1;
     display: flex;
