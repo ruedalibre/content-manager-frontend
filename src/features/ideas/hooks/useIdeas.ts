@@ -224,7 +224,7 @@ export function useIdeas(
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.access_token}`,
       },
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ status, workspace_id: workspaceId }),
     });
     if (!res.ok) {
       const data = await res.json();
@@ -256,7 +256,11 @@ export function useIdeas(
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.access_token}`,
       },
-      body: JSON.stringify({ feedback, feedback_notes: notes }),
+      body: JSON.stringify({
+        feedback,
+        feedback_notes: notes,
+        workspace_id: workspaceId,
+      }),
     });
     if (!res.ok) {
       const data = await res.json();
@@ -287,7 +291,7 @@ export function useIdeas(
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.access_token}`,
       },
-      body: JSON.stringify(updates),
+      body: JSON.stringify({ ...updates, workspace_id: workspaceId }),
     });
     if (!res.ok) {
       const data = await res.json();
@@ -322,7 +326,7 @@ export function useIdeas(
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.access_token}`,
       },
-      body: JSON.stringify({ topic_ids: topicIds }),
+      body: JSON.stringify({ topic_ids: topicIds, workspace_id: workspaceId }),
     });
     if (!res.ok) {
       const data = await res.json();
@@ -380,7 +384,7 @@ export function useIdeas(
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.access_token}`,
       },
-      body: JSON.stringify({ recipe }),
+      body: JSON.stringify({ recipe, workspace_id: workspaceId }),
     });
     if (!res.ok) {
       const data = await res.json();
@@ -420,7 +424,10 @@ export function useIdeas(
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.access_token}`,
         },
-        body: JSON.stringify({ downloaded_at: downloadedAt }),
+        body: JSON.stringify({
+          downloaded_at: downloadedAt,
+          workspace_id: workspaceId,
+        }),
       });
     } catch {
       // Silent — el icono ya está visible en local
@@ -473,7 +480,7 @@ export function useIdeas(
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.access_token}`,
       },
-      body: JSON.stringify({ archived: true }),
+      body: JSON.stringify({ archived: true, workspace_id: workspaceId }),
     });
     if (!res.ok) {
       const data = await res.json();
@@ -495,7 +502,7 @@ export function useIdeas(
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.access_token}`,
       },
-      body: JSON.stringify({ archived: false }),
+      body: JSON.stringify({ archived: false, workspace_id: workspaceId }),
     });
     if (!res.ok) {
       const data = await res.json();
@@ -510,10 +517,13 @@ export function useIdeas(
 
   const deleteIdea = async (ideaId: string) => {
     const session = await getSession();
-    const res = await fetch(`${base}/delete-idea/${ideaId}`, {
-      method: "DELETE",
-      headers: { Authorization: `Bearer ${session?.access_token}` },
-    });
+    const res = await fetch(
+      `${base}/delete-idea/${ideaId}?workspace_id=${workspaceId}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      },
+    );
     if (!res.ok) {
       const data = await res.json();
       throw new Error(data.error || "Failed to delete idea");
