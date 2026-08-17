@@ -414,7 +414,7 @@ export default function Ideas() {
 
   useEffect(() => {
     if (activeTab === "archived") fetchArchivedIdeas();
-  }, [activeTab]);
+  }, [activeTab, currentWorkspaceId]);
 
   const handleArchiveIdea = (ideaId: string) => {
     openConfirm(
@@ -494,27 +494,15 @@ export default function Ideas() {
     navigate(`/contents?edit=${contentId}`);
   };
 
-  // Cargar solo el conteo de archivadas al montar — sin el contenido completo
   useEffect(() => {
     const fetchArchivedCount = async () => {
+      if (!currentWorkspaceId) return;
+
       try {
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
-        if (!user) return;
-
-        const { data: userRecord } = await supabase
-          .from("users")
-          .select("tenant_id")
-          .eq("id", user.id)
-          .single();
-
-        if (!userRecord) return;
-
         const { count } = await supabase
           .from("creative_units")
           .select("*", { count: "exact", head: true })
-          .eq("tenant_id", userRecord.tenant_id)
+          .eq("workspace_id", currentWorkspaceId)
           .not("archived_at", "is", null);
 
         setArchivedCount(count ?? 0);
@@ -524,7 +512,7 @@ export default function Ideas() {
     };
 
     fetchArchivedCount();
-  }, []); // Solo al montar
+  }, [currentWorkspaceId]);
 
   return (
     <div className="ideas-page">
