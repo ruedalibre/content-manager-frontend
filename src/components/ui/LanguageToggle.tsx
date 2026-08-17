@@ -1,38 +1,25 @@
-import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { useUserProfile } from "../../features/profile/hooks/useUserProfile.tsx";
 import "./LanguageToggle.scss";
 
-export default function LanguageToggle() {
-  const { i18n } = useTranslation();
-  const { profile, updateLanguage } = useUserProfile();
-  const current = i18n.language?.startsWith("es") ? "es" : "en";
+type Props = {
+  value: "en" | "es";
+  onChange: (lang: "en" | "es") => void;
+};
 
-  useEffect(() => {
-    if (profile?.preferred_language) {
-      i18n.changeLanguage(profile.preferred_language);
-    }
-  }, [profile?.preferred_language]);
-
-  const toggle = async (lang: "en" | "es") => {
-    i18n.changeLanguage(lang);
-    await updateLanguage(lang);
-  };
-
+export default function LanguageToggle({ value, onChange }: Props) {
   return (
     <div className="lang-toggle">
       <button
         type="button"
-        className={`lang-toggle__btn ${current === "en" ? "lang-toggle__btn--active" : ""}`}
-        onClick={() => toggle("en")}
+        className={`lang-toggle__btn ${value === "en" ? "lang-toggle__btn--active" : ""}`}
+        onClick={() => onChange("en")}
       >
         EN
       </button>
       <span className="lang-toggle__divider">|</span>
       <button
         type="button"
-        className={`lang-toggle__btn ${current === "es" ? "lang-toggle__btn--active" : ""}`}
-        onClick={() => toggle("es")}
+        className={`lang-toggle__btn ${value === "es" ? "lang-toggle__btn--active" : ""}`}
+        onClick={() => onChange("es")}
       >
         ES
       </button>

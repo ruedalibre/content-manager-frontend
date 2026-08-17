@@ -2,14 +2,36 @@
   max-width: 640px;
 }
 
+.profile-sticky-wrapper {
+  position: sticky;
+  top: -1.5rem;
+  z-index: 10;
+  background: var(--bg-canvas);
+  margin: -1.5rem -1.5rem 0 -1.5rem;
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+}
+
+.profile-sticky-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-surface);
+  gap: var(--s-3);
+  padding: var(--s-3) var(--s-4) var(--s-5) var(--s-4);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--r-4);
+}
+
 .profile-completion {
   display: flex;
   align-items: center;
   gap: var(--s-3);
-  margin-bottom: var(--s-5);
+  flex: 1;
+  min-width: 0;
 
   &__bar {
     flex: 1;
+    max-width: 240px;
     height: 4px;
     background: var(--bg-muted);
     border-radius: var(--r-pill);
@@ -59,9 +81,13 @@
   padding: var(--s-3) var(--s-4);
   border-bottom: 1px solid var(--border-subtle);
 
-  &:last-child { border-bottom: none; }
+  &:last-child {
+    border-bottom: none;
+  }
 
-  &--readonly { opacity: 0.6; }
+  &--readonly {
+    opacity: 0.6;
+  }
 
   &__label {
     font-size: var(--fs-12);
@@ -94,8 +120,9 @@
     border-radius: var(--r-3);
     color: var(--text);
     font-family: var(--font-sans);
-    transition: border-color var(--transition-fast),
-                box-shadow var(--transition-fast);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
 
     &:focus {
       outline: none;
@@ -118,13 +145,6 @@
   font-size: var(--fs-12);
   color: var(--danger);
   margin-bottom: var(--s-3);
-}
-
-.profile-footer {
-  padding-top: var(--s-4);
-  border-top: 1px solid var(--border-subtle);
-  display: flex;
-  justify-content: flex-end;
 }
 
 // ── Profile Nudge ──

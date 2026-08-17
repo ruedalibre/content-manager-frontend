@@ -23,6 +23,7 @@ import {
 } from "../../features/subscription/hooks/useSubscription.tsx";
 import { useIdleTimer } from "../../hooks/useIdleTimer.ts";
 import IdleWarningModal from "../../components/ui/IdleWarningModal.tsx";
+import { useTranslation } from "react-i18next";
 
 export default function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -123,6 +124,7 @@ function AppLayoutContent({
     useWorkspace();
   const { loadSubscription, isCreator } = useSubscription();
   const {
+    profile,
     isFirstSession,
     needsOnboarding,
     completeOnboarding,
@@ -131,6 +133,24 @@ function AppLayoutContent({
     showTourInvitation,
     updateTourStatus,
   } = useUserProfile();
+  const { i18n } = useTranslation();
+
+  /* =========================
+     SINCRONIZACIÓN GLOBAL DE IDIOMA
+     El perfil (Profile.tsx) es la única fuente de verdad del
+     idioma del usuario, con guardado explícito vía el botón
+     Guardar. Este efecto refleja ese idioma en TODA la app
+     (no solo en la página de Perfil), cada vez que el perfil
+     carga o cambia — sin esto, un cambio guardado en Profile
+     no se vería reflejado en el resto de la interfaz hasta
+     recargar la página.
+  ========================= */
+
+  useEffect(() => {
+    if (profile?.preferred_language) {
+      i18n.changeLanguage(profile.preferred_language);
+    }
+  }, [profile?.preferred_language, i18n]);
 
   /* =========================
      GATING DE WORKSPACES POR PLAN — solo al aterrizar
