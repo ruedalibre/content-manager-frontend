@@ -921,7 +921,8 @@
     "nameLabel": "Nombre",
     "descriptionLabel": "Descripción",
     "upgradeTitle": "Crea workspaces adicionales",
-    "upgradeDesc": "Organiza tu trabajo por cliente, marca o proyecto. Disponible en el plan Creator."
+    "upgradeDesc": "Organiza tu trabajo por cliente, marca o proyecto. Disponible en el plan Creator.",
+    "readOnlyHint": "This workspace is read-only — upgrade your plan to edit"
   },
   "session": {
     "idleWarningTitle": "Your session is about to end",

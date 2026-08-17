@@ -13,7 +13,7 @@ type Props = {
 export default function WorkspaceSelector({ isCollapsed }: Props) {
   const { t } = useTranslation();
   const { workspaces, currentWorkspace, switchWorkspace } = useWorkspace();
-  const { canCreateWorkspace } = useSubscription();
+  const { canCreateWorkspace, isCreator } = useSubscription();
   const [isOpen, setIsOpen] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -78,6 +78,7 @@ export default function WorkspaceSelector({ isCollapsed }: Props) {
                   onSelect={handleSelect}
                   onCreateClick={handleOpenCreateModal}
                   canCreate={canCreateWorkspace}
+                  isCreator={isCreator}
                   t={t}
                 />
               </div>
@@ -123,6 +124,7 @@ export default function WorkspaceSelector({ isCollapsed }: Props) {
                 onSelect={handleSelect}
                 onCreateClick={handleOpenCreateModal}
                 canCreate={canCreateWorkspace}
+                isCreator={isCreator}
                 t={t}
               />
             </div>
@@ -146,6 +148,7 @@ function WorkspaceList({
   onSelect,
   onCreateClick,
   canCreate,
+  isCreator,
   t,
 }: {
   workspaces: ReturnType<typeof useWorkspace>["workspaces"];
@@ -153,24 +156,32 @@ function WorkspaceList({
   onSelect: (id: string) => void;
   onCreateClick: () => void;
   canCreate: boolean;
+  isCreator: boolean;
   t: (key: string) => string;
 }) {
   return (
     <div className="workspace-selector__list">
-      {workspaces.map((ws) => (
-        <button
-          key={ws.id}
-          type="button"
-          className={`workspace-selector__item${ws.id === currentId ? " workspace-selector__item--active" : ""}`}
-          onClick={() => onSelect(ws.id)}
-        >
-          <Folder size={16} />
-          <span className="workspace-selector__item-name">
-            {ws.is_personal ? t("workspace.personal") : ws.name}
-          </span>
-          {ws.id === currentId && <Check size={16} />}
-        </button>
-      ))}
+      {workspaces.map((ws) => {
+        const isReadOnly = !ws.is_personal && !isCreator;
+        return (
+          <button
+            key={ws.id}
+            type="button"
+            className={`workspace-selector__item${ws.id === currentId ? " workspace-selector__item--active" : ""}${isReadOnly ? " workspace-selector__item--readonly" : ""}`}
+            onClick={() => onSelect(ws.id)}
+            title={isReadOnly ? t("workspace.readOnlyHint") : undefined}
+          >
+            <Folder size={16} />
+            <span className="workspace-selector__item-name">
+              {ws.is_personal ? t("workspace.personal") : ws.name}
+            </span>
+            {isReadOnly && (
+              <Lock size={13} className="workspace-selector__lock" />
+            )}
+            {ws.id === currentId && <Check size={16} />}
+          </button>
+        );
+      })}
 
       <div className="workspace-selector__divider" />
 

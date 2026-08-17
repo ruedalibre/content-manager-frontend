@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Outlet } from "react-router-dom";
 import { supabase } from "../../supabaseClient.ts";
 import Sidebar from "./Sidebar.tsx";
@@ -119,8 +119,9 @@ function AppLayoutContent({
   secondsLeft,
   stayActive,
 }: AppLayoutContentProps) {
-  const { loadWorkspaces } = useWorkspace();
-  const { loadSubscription } = useSubscription();
+  const { loadWorkspaces, currentWorkspace, workspaces, switchWorkspace } =
+    useWorkspace();
+  const { loadSubscription, isCreator } = useSubscription();
   const {
     isFirstSession,
     needsOnboarding,
@@ -130,6 +131,32 @@ function AppLayoutContent({
     showTourInvitation,
     updateTourStatus,
   } = useUserProfile();
+
+  /* =========================
+     GATING DE WORKSPACES POR PLAN — solo al aterrizar
+     Se ejecuta una única vez, cuando la app carga y el
+     workspace guardado como activo ya no es válido (por
+     ejemplo, justo después de revocar acceso piloto). Si el
+     usuario, después, navega deliberadamente a un workspace
+     bloqueado desde el selector, se respeta esa navegación
+     en modo lectura — no se lo vuelve a expulsar.
+  ========================= */
+
+  const hasCheckedInitialGating = useRef(false);
+
+  useEffect(() => {
+    if (hasCheckedInitialGating.current) return;
+    if (!currentWorkspace) return; // esperar a que cargue de verdad
+
+    hasCheckedInitialGating.current = true;
+
+    if (isCreator || currentWorkspace.is_personal) return;
+
+    const personalWorkspace = workspaces.find((w) => w.is_personal);
+    if (personalWorkspace) {
+      switchWorkspace(personalWorkspace.id);
+    }
+  }, [currentWorkspace, isCreator, workspaces, switchWorkspace]);
 
   const [showTourInvite, setShowTourInvite] = useState(false);
   const [showTour, setShowTour] = useState(false);

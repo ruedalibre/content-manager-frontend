@@ -917,7 +917,8 @@
     "nameLabel": "Name",
     "descriptionLabel": "Description",
     "upgradeTitle": "Create additional workspaces",
-    "upgradeDesc": "Organize your work by client, brand, or project. Available on the Creator plan."
+    "upgradeDesc": "Organize your work by client, brand, or project. Available on the Creator plan.",
+    "readOnlyHint": "Este workspace está en modo solo lectura — actualiza tu plan para editar"
   },
   "session": {
     "idleWarningTitle": "Tu sesión está por cerrarse",

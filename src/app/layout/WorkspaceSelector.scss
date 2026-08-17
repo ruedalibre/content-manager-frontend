@@ -93,9 +93,18 @@
     }
   }
 
+  &--readonly {
+    color: var(--text-secondary);
+  }
+
   span {
     flex: 1;
   }
+}
+
+.workspace-selector__lock {
+  color: var(--text-faint);
+  flex-shrink: 0;
 }
 
 .workspace-selector__divider {
