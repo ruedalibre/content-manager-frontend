@@ -695,6 +695,8 @@
     "status": "Status",
     "requested": "Requested",
     "registered": "Registered",
+    "colContents": "Content",
+    "colIdeas": "Ideas",
     "lastContent": "Last content",
     "lastLogin": "Last login",
     "systemInNumbers": "The system in numbers",

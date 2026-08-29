@@ -28,6 +28,7 @@ type ActiveUser = {
   email: string;
   created_at: string;
   total_contents: number;
+  total_ideas: number;
   last_content_date: string | null;
   last_sign_in_at: string | null;
   deactivated_at: string | null;
@@ -793,7 +794,8 @@ export default function Admin() {
                 <thead>
                   <tr>
                     <th>{t("admin.email")}</th>
-                    <th>{t("admin.totalContents")}</th>
+                    <th>{t("admin.colContents")}</th>
+                    <th>{t("admin.colIdeas")}</th>
                     <th>{t("admin.registered")}</th>
                     <th>{t("admin.lastContent")}</th>
                     <th>{t("admin.lastLogin")}</th>
@@ -812,6 +814,9 @@ export default function Admin() {
                         <td>{user.email}</td>
                         <td>
                           <strong>{user.total_contents}</strong>
+                        </td>
+                        <td>
+                          <strong>{user.total_ideas}</strong>
                         </td>
                         <td>
                           {new Date(user.created_at).toLocaleDateString()}

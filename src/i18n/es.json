@@ -691,6 +691,8 @@
     "status": "Estado",
     "requested": "Solicitado",
     "registered": "Registrado",
+    "colContents": "Contenidos",
+    "colIdeas": "Ideas",
     "lastContent": "Último contenido",
     "lastLogin": "Último login",
     "systemInNumbers": "El sistema en números",

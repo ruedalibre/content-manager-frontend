@@ -303,6 +303,7 @@ export default function Login() {
                 type="email"
                 value={email}
                 required
+                autoComplete="email"
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
@@ -319,6 +320,7 @@ export default function Login() {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   required={mode !== "forgot"}
+                  autoComplete={mode === "register" ? "new-password" : "current-password"}
                   onChange={(e) => setPassword(e.target.value)}
                   onBlur={() => setPasswordTouched(true)}
                 />
@@ -370,6 +372,7 @@ export default function Login() {
                     value={confirmPassword}
                     required
                     onChange={(e) => setConfirmPassword(e.target.value)}
+                    autoComplete="new-password"
                   />
                   <button
                     type="button"
