@@ -15,7 +15,6 @@ export type UserProfile = {
   time_availability: string | null;
   production_setup: string | null;
   idea_sources: string[];
-  referents: string | null;
   archetype: string | null;
   archetype_confidence: number;
   preferred_output_format: string | null;
@@ -39,7 +38,6 @@ export type OnboardingData = {
   time_availability?: string;
   production_setup?: string;
   idea_sources?: string[];
-  referents?: string;
   onboarding_completed?: boolean;
   onboarding_skipped?: boolean;
 };

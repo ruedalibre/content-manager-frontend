@@ -1130,6 +1130,7 @@ export default function Ideas() {
               platforms.find(
                 (p) => p.id === expandedSession.session.platform_id,
               )?.slug ?? "",
+              t,
             );
             await markAsDownloaded(expandedSession.session.id);
           }}

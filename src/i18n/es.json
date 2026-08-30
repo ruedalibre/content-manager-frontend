@@ -199,7 +199,8 @@
       "pendingInvite": "Tu correo está en la lista de espera pero aún no ha sido invitado. Te notificaremos cuando tu acceso esté listo.",
       "generic": "Algo salió mal. Intenta de nuevo.",
       "resetFailed": "No pudimos procesar la solicitud. Intenta de nuevo.",
-      "resetLinkExpired": "El link expiró o no es válido. Solicita uno nuevo."
+      "resetLinkExpired": "El link expiró o no es válido. Solicita uno nuevo.",
+      "requiresPasswordUpdate": "Por razones de seguridad, debes actualizar tu contraseña antes de continuar."
     }
   },
   "ideas": {
@@ -543,6 +544,26 @@
     "draft": "Borrador",
     "published": "Publicado",
     "archived": "Archivado"
+  },
+  "briefExport": {
+    "angle": "Ángulo",
+    "hook": "Gancho",
+    "tone": "Tono",
+    "structure": "Estructura",
+    "argument": "Argumento",
+    "cta": "Llamada a la acción (CTA)",
+    "retention": "Retención",
+    "engagement": "Interacción",
+    "seo": "SEO",
+    "format": "Formato",
+    "role": "Rol",
+    "topics": "Temas",
+    "strategicNote": "Nota estratégica",
+    "generatedBy": "Generado por",
+    "contentBrief": "BRIEF DE CONTENIDO",
+    "idea": "Idea",
+    "context": "Contexto",
+    "disclaimer": "Este brief es una guía creativa asistida por IA basada en tus patrones de contenido. Los resultados generados por IA podrían no ser elegibles para protección de derechos de autor. El contenido original que crees usando este brief como referencia es tuyo. Creadora no reclama derechos de propiedad intelectual sobre este resultado."
   },
   "onboarding": {
     "welcome": "Bienvenido a Creadora",
@@ -918,8 +939,8 @@
     "nameExists": "Ya existe un workspace con ese nombre.",
     "nameLabel": "Name",
     "descriptionLabel": "Description",
-    "upgradeTitle": "Create additional workspaces",
-    "upgradeDesc": "Organize your work by client, brand, or project. Available on the Creator plan.",
+    "upgradeTitle": "Crea workspaces adicionales",
+    "upgradeDesc": "Organiza tu trabajo por cliente, marca o proyecto. Disponible en el plan Creator.",
     "readOnlyHint": "Este workspace está en modo solo lectura — actualiza tu plan para editar"
   },
   "session": {

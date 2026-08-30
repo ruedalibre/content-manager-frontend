@@ -46,7 +46,6 @@ export default function Profile() {
     preferred_language: profile?.preferred_language ?? "en",
     time_availability: profile?.time_availability ?? "",
     production_setup: profile?.production_setup ?? "",
-    referents: profile?.referents ?? "",
   });
 
   useEffect(() => {
@@ -59,7 +58,6 @@ export default function Profile() {
       preferred_language: profile.preferred_language ?? "en",
       time_availability: profile.time_availability ?? "",
       production_setup: profile.production_setup ?? "",
-      referents: profile.referents ?? "",
     });
   }, [profile]);
 
@@ -106,7 +104,6 @@ export default function Profile() {
         creator_role: form.creator_role || null,
         time_availability: form.time_availability || null,
         production_setup: form.production_setup || null,
-        referents: form.referents || null,
       } as any);
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
@@ -123,9 +120,8 @@ export default function Profile() {
     form.creator_role,
     form.time_availability,
     form.production_setup,
-    form.referents,
   ].filter(Boolean).length;
-  const completionPct = Math.round((completedFields / 6) * 100);
+  const completionPct = Math.round((completedFields / 5) * 100);
 
   return (
     <div className="profile-page">
@@ -364,18 +360,6 @@ export default function Profile() {
                 </option>
               ))}
             </select>
-          </div>
-          <div className="profile-field">
-            <label className="profile-field__label">
-              {t("profile.referents")}
-            </label>
-            <input
-              name="referents"
-              value={form.referents}
-              onChange={handleChange}
-              placeholder={t("profile.referentsPlaceholder")}
-              className="profile-field__input"
-            />
           </div>
         </div>
       </section>
