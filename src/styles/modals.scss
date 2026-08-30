@@ -220,6 +220,20 @@
   gap: var(--s-1);
 }
 
+.modal__hint {
+  font-size: var(--fs-11);
+  color: var(--text-faint);
+  margin: 2px 0 var(--s-1) 0;
+}
+
+.modal__char-count {
+  font-size: var(--fs-11);
+  color: var(--text-faint);
+  display: block;
+  text-align: right;
+  margin-top: 4px;
+}
+
 .topic-chip__remove {
   background: none;
   border: none;

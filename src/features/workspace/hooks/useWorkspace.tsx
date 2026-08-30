@@ -27,7 +27,12 @@ type WorkspaceContextValue = {
   switchWorkspace: (workspaceId: string) => Promise<void>;
   createWorkspace: (
     name: string,
-    description?: string,
+    options?: {
+      description?: string;
+      referents?: string;
+      guidelines?: string;
+      workspace_type?: string;
+    },
   ) => Promise<{
     id: string;
     name: string;
@@ -107,7 +112,15 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const createWorkspace = async (name: string, description?: string) => {
+  const createWorkspace = async (
+    name: string,
+    options?: {
+      description?: string;
+      referents?: string;
+      guidelines?: string;
+      workspace_type?: string;
+    },
+  ) => {
     const session = await getSession();
     const res = await fetch(`${base}/create-workspace`, {
       method: "POST",
@@ -115,7 +128,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${session?.access_token}`,
       },
-      body: JSON.stringify({ name, description }),
+      body: JSON.stringify({ name, ...options }),
     });
 
     if (!res.ok) {
