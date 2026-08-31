@@ -12,9 +12,19 @@ export type Workspace = {
   id: string;
   name: string;
   description: string | null;
+  referents: string | null;
+  guidelines: string | null;
+  workspace_type: string | null;
   is_personal: boolean;
   role: "owner" | "editor" | "viewer";
   created_at: string;
+};
+
+type WorkspaceOptions = {
+  description?: string;
+  referents?: string;
+  guidelines?: string;
+  workspace_type?: string;
 };
 
 type WorkspaceContextValue = {
@@ -27,12 +37,7 @@ type WorkspaceContextValue = {
   switchWorkspace: (workspaceId: string) => Promise<void>;
   createWorkspace: (
     name: string,
-    options?: {
-      description?: string;
-      referents?: string;
-      guidelines?: string;
-      workspace_type?: string;
-    },
+    options?: WorkspaceOptions,
   ) => Promise<{
     id: string;
     name: string;
@@ -40,6 +45,11 @@ type WorkspaceContextValue = {
     is_personal: boolean;
     created_at: string;
   }>;
+  updateWorkspace: (
+    workspaceId: string,
+    options: WorkspaceOptions & { name?: string },
+  ) => Promise<void>;
+  archiveWorkspace: (workspaceId: string, archived?: boolean) => Promise<void>;
 };
 
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
@@ -112,15 +122,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const createWorkspace = async (
-    name: string,
-    options?: {
-      description?: string;
-      referents?: string;
-      guidelines?: string;
-      workspace_type?: string;
-    },
-  ) => {
+  const createWorkspace = async (name: string, options?: WorkspaceOptions) => {
     const session = await getSession();
     const res = await fetch(`${base}/create-workspace`, {
       method: "POST",
@@ -144,6 +146,58 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
     return workspace;
   };
 
+  const updateWorkspace = async (
+    workspaceId: string,
+    options: WorkspaceOptions & { name?: string },
+  ) => {
+    const session = await getSession();
+    const res = await fetch(`${base}/update-workspace/${workspaceId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify(options),
+    });
+
+    if (!res.ok) {
+      const body = await res.json();
+      throw new Error(body.error || "Failed to update workspace");
+    }
+
+    await loadWorkspaces();
+  };
+
+  const archiveWorkspace = async (
+    workspaceId: string,
+    archived: boolean = true,
+  ) => {
+    const session = await getSession();
+    const res = await fetch(`${base}/archive-workspace/${workspaceId}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${session?.access_token}`,
+      },
+      body: JSON.stringify({ archived }),
+    });
+
+    if (!res.ok) {
+      const body = await res.json();
+      throw new Error(body.error || "Failed to archive workspace");
+    }
+
+    // Si el workspace archivado era el activo, cambiar al Personal
+    if (archived && workspaceId === currentWorkspaceId) {
+      const personal = workspaces.find((w) => w.is_personal);
+      if (personal) {
+        await switchWorkspace(personal.id);
+      }
+    }
+
+    await loadWorkspaces();
+  };
+
   const currentWorkspace =
     workspaces.find((w) => w.id === currentWorkspaceId) ?? null;
 
@@ -162,6 +216,8 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
         loadWorkspaces,
         switchWorkspace,
         createWorkspace,
+        updateWorkspace,
+        archiveWorkspace,
       }}
     >
       {children}

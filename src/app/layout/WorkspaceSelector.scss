@@ -183,3 +183,47 @@
   width: 220px;
   right: auto;
 }
+
+.workspace-selector__item-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.workspace-selector__item {
+  flex: 1;
+  min-width: 0;
+
+  .workspace-selector__item-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.workspace-selector__item-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+  padding-right: var(--s-1);
+}
+
+.workspace-selector__item-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  background: none;
+  border: none;
+  border-radius: var(--r-2);
+  color: var(--text-faint);
+  cursor: pointer;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast);
+
+  &:hover {
+    background: var(--bg-muted);
+    color: var(--text);
+  }
+}

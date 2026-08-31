@@ -957,7 +957,17 @@
     "referentsPlaceholder": "e.g. National Geographic, @veritasium, Isaiah Berlin, Studio Koto...",
     "guidelinesLabel": "Guidelines",
     "guidelinesHint": "Boundaries or conventions the AI should always respect in this workspace.",
-    "guidelinesPlaceholder": "e.g. never mention competitors, avoid political topics, keep a warm tone..."
+    "guidelinesPlaceholder": "e.g. never mention competitors, avoid political topics, keep a warm tone...",
+    "editTooltip": "Edit workspace",
+    "archiveTooltip": "Archive workspace",
+    "confirmArchiveTitle": "Archive workspace",
+    "confirmArchiveBody": "Archive \"{{name}}\"? Your ideas, content and briefs will stay saved — you can see it again if you decide to restore it later.",
+    "archive": "Archive",
+    "archiving": "Archiving...",
+    "editTitle": "Edit workspace",
+    "personalNameHint": "The Personal workspace name cannot be changed.",
+    "updateError": "Couldn't update the workspace. Try again.",
+    "saving": "Saving..."
   },
   "session": {
     "idleWarningTitle": "Your session is about to end",

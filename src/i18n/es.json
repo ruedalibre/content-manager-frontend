@@ -954,7 +954,17 @@
     "referentsPlaceholder": "ej. National Geographic, @veritasium, Isaiah Berlin, Studio Koto...",
     "guidelinesLabel": "Puntos a tener en cuenta",
     "guidelinesHint": "Límites o convenciones que la IA debe respetar siempre en este workspace.",
-    "guidelinesPlaceholder": "ej. nunca mencionar a la competencia, evitar temas políticos, mantener tono cercano..."
+    "guidelinesPlaceholder": "ej. nunca mencionar a la competencia, evitar temas políticos, mantener tono cercano...",
+    "editTooltip": "Editar workspace",
+    "archiveTooltip": "Archivar workspace",
+    "confirmArchiveTitle": "Archivar workspace",
+    "confirmArchiveBody": "¿Archivar \"{{name}}\"? Tus ideas, contenidos y briefs quedarán guardados — podrás verlo de nuevo si decides restaurarlo más adelante.",
+    "archive": "Archivar",
+    "archiving": "Archivando...",
+    "editTitle": "Editar workspace",
+    "personalNameHint": "El nombre del workspace Personal no se puede cambiar.",
+    "updateError": "No se pudo actualizar el workspace. Intenta de nuevo.",
+    "saving": "Guardando..."
   },
   "session": {
     "idleWarningTitle": "Tu sesión está por cerrarse",
