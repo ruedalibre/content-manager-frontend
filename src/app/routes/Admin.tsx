@@ -349,7 +349,18 @@ export default function Admin() {
         } else if (usersFilter === "inactive") {
           filtered = users.filter((u: any) => u.total_contents === 0);
         }
-        setActiveUsers(filtered);
+
+        const sorted = [...filtered].sort((a: any, b: any) => {
+          if (!a.last_sign_in_at && !b.last_sign_in_at) return 0;
+          if (!a.last_sign_in_at) return 1;
+          if (!b.last_sign_in_at) return -1;
+          return (
+            new Date(b.last_sign_in_at).getTime() -
+            new Date(a.last_sign_in_at).getTime()
+          );
+        });
+
+        setActiveUsers(sorted);
       } catch (err) {
         console.error("Users load error:", err);
       }
