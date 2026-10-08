@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { X } from "lucide-react";
 import {
@@ -113,6 +113,8 @@ export default function RecipePanel({
     session.content_id,
   );
   const [navigating, setNavigating] = useState(false);
+  const [creatingContent, setCreatingContent] = useState(false);
+  const creatingContentRef = useRef(false);
   const [showUnsavedWarning, setShowUnsavedWarning] = useState(false);
   const [showContentToast, setShowContentToast] = useState(false);
 
@@ -618,13 +620,26 @@ export default function RecipePanel({
                 <button
                   className="btn-primary"
                   onClick={async () => {
-                    const contentId = await onCreateContent();
-                    setAlreadyConverted(true);
-                    setConvertedContentId(contentId);
-                    setShowContentToast(true);
-                    setTimeout(() => setShowContentToast(false), 3000);
+                    // Guard síncrono: el ref bloquea dobles clics antes de que
+                    // el re-render deshabilite el botón
+                    if (creatingContentRef.current) return;
+                    creatingContentRef.current = true;
+                    setCreatingContent(true);
+                    try {
+                      const contentId = await onCreateContent();
+                      setAlreadyConverted(true);
+                      setConvertedContentId(contentId);
+                      setShowContentToast(true);
+                      setTimeout(() => setShowContentToast(false), 3000);
+                    } catch (err) {
+                      console.error(err);
+                      // Permitir reintento solo si falló
+                      creatingContentRef.current = false;
+                    } finally {
+                      setCreatingContent(false);
+                    }
                   }}
-                  disabled={!canCreateContent}
+                  disabled={!canCreateContent || creatingContent}
                   title={
                     !canCreateContent
                       ? t("recipe.createContentLockedHint")
@@ -632,7 +647,9 @@ export default function RecipePanel({
                   }
                   type="button"
                 >
-                  {t("recipe.createContent")}
+                  {creatingContent
+                    ? t("contents.creating")
+                    : t("recipe.createContent")}
                 </button>
               )}
 
