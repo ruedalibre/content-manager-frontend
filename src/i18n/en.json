@@ -336,7 +336,6 @@
     "searchPlaceholder": "Search content...",
     "createContent": "Create Content",
     "editContent": "Edit Content",
-    "createFromCombination": "Create from Combination",
     "titleLabel": "Content title",
     "titlePlaceholder": "e.g. \"The Best Trick for Choosing Your Summer Outfit\"",
     "contextLabel": "Context",
@@ -390,7 +389,6 @@
     "savingIdea": "Saving...",
     "selectPlatform": "Select platform",
     "topicsLabel": "Topics",
-    "usingCombination": "Using combination from idea",
     "stepsGuide": {
       "step1_bold": "Add content",
       "step1_rest": " you've already published",

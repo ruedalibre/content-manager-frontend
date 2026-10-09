@@ -32,22 +32,11 @@ type Platform = {
   platform_types: { id: string; name: string };
 };
 
-type Idea = {
-  id: string;
-  title: string;
-  description?: string | null;
-  topics?: { id: string; name: string }[];
-  platform_id?: string;
-  format?: string;
-  content_role?: string;
-};
-
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   onCreated: () => void;
   contentToEdit?: ContentItem | null;
-  idea?: Idea | null;
 };
 
 /* =========================
@@ -115,7 +104,6 @@ export default function CreateContentModal({
   onClose,
   onCreated,
   contentToEdit,
-  idea,
 }: Props) {
   const { t } = useTranslation();
   const { currentWorkspaceId } = useWorkspace();
@@ -241,26 +229,6 @@ export default function CreateContentModal({
   }, [contentToEdit, currentWorkspaceId]);
 
   /* =========================
-     PREFILL FROM IDEA
-  ========================= */
-
-  useEffect(() => {
-    if (!idea || isEditMode) return;
-    setForm((prev) => ({
-      ...prev,
-      title: idea.title,
-      description: idea.description ?? "",
-      platform_id: idea.platform_id ?? "",
-      format: idea.format ?? "",
-      content_role: idea.content_role ?? "",
-    }));
-    setSelectedTopicIds(idea.topics?.map((t) => t.id) ?? []);
-    if (idea.platform_id) {
-      fetchFormats(idea.platform_id);
-    }
-  }, [idea, isEditMode]);
-
-  /* =========================
      RESET FORM
   ========================= */
 
@@ -344,7 +312,6 @@ export default function CreateContentModal({
             form.status === "published"
               ? form.published_at || new Date().toISOString().split("T")[0]
               : null,
-          creative_unit_id: idea?.id ?? null,
           workspace_id: currentWorkspaceId,
         }),
       });
@@ -372,21 +339,6 @@ export default function CreateContentModal({
             }),
           },
         );
-
-        // Si viene de una idea, vincularla también
-        if (idea?.id && !isEditMode) {
-          await fetch(
-            `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-content-ideas/${contentId}`,
-            {
-              method: "PUT",
-              headers,
-              body: JSON.stringify({
-                idea_ids: [idea.id],
-                workspace_id: currentWorkspaceId,
-              }),
-            },
-          );
-        }
       }
 
       onCreated();
@@ -421,9 +373,7 @@ export default function CreateContentModal({
           <h3>
             {isEditMode
               ? t("contents.editContent")
-              : idea
-                ? t("contents.createFromCombination")
-                : t("contents.createContent")}
+              : t("contents.createContent")}
           </h3>
           <button
             type="button"
@@ -436,15 +386,6 @@ export default function CreateContentModal({
         </div>
 
         <div className="modal__body">
-          {idea && !isEditMode && (
-            <div className="idea-context">
-              <span className="idea-context__label">
-                {t("contents.usingCombination")}
-              </span>
-              <strong className="idea-context__title">{idea.title}</strong>
-            </div>
-          )}
-
           <form onSubmit={handleSubmit}>
             {/* TITLE */}
             <label htmlFor="title" className="modal__label">
@@ -623,9 +564,7 @@ export default function CreateContentModal({
                     : t("contents.creating")
                   : isEditMode
                     ? t("common.update")
-                    : idea
-                      ? t("contents.createFromCombination")
-                      : t("common.create")}
+                    : t("common.create")}
               </button>
             </div>
           </form>

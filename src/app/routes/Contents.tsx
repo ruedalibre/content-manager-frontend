@@ -40,15 +40,6 @@ type OutletContext = {
   setTopbarContext: (value: string | null) => void;
 };
 
-type Idea = {
-  id: string;
-  title: string;
-  description: string | null;
-  tenant_id?: string;
-  created_at?: string;
-  source?: string;
-};
-
 /* =========================
    COMPONENT
 ========================= */
@@ -106,10 +97,7 @@ export default function Contents() {
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
   const [searchParams] = useSearchParams();
-  const ideaId = searchParams.get("idea");
   const editId = searchParams.get("edit");
-
-  const [selectedIdea, setSelectedIdea] = useState<Idea | null>(null);
 
   /* =========================
      TOAST
@@ -120,33 +108,6 @@ export default function Contents() {
     setShowSuccessToast(true);
     setTimeout(() => setShowSuccessToast(false), 3000);
   };
-
-  /* =========================
-     LOAD IDEA FROM QUERY PARAM
-  ========================= */
-  useEffect(() => {
-    const loadIdea = async () => {
-      if (!ideaId || !currentWorkspaceId) return;
-
-      const { data, error } = await supabase
-        .from("creative_units")
-        .select("*")
-        .eq("id", ideaId)
-        .eq("workspace_id", currentWorkspaceId)
-        .single();
-
-      if (error) {
-        console.error("Error loading idea:", error);
-        return;
-      }
-
-      setSelectedIdea(data);
-      setContentToEdit(null);
-      setIsModalOpen(true);
-    };
-
-    loadIdea();
-  }, [ideaId, currentWorkspaceId]);
 
   /* =========================
      OPEN EDIT FROM ?edit= QUERY PARAM
@@ -165,7 +126,6 @@ export default function Contents() {
         .single();
       if (data) {
         setContentToEdit(data as ContentItem);
-        setSelectedIdea(null);
         setIsModalOpen(true);
       }
     };
@@ -333,13 +293,11 @@ export default function Contents() {
 
   const handleEdit = (content: ContentItem) => {
     setContentToEdit(content);
-    setSelectedIdea(null);
     setIsModalOpen(true);
   };
 
   const handleCreate = () => {
     setContentToEdit(null);
-    setSelectedIdea(null);
     setIsModalOpen(true);
   };
 
@@ -958,7 +916,6 @@ export default function Contents() {
           onClose={() => {
             setIsModalOpen(false);
             setContentToEdit(null);
-            setSelectedIdea(null);
           }}
           onCreated={() => {
             const isEditing = !!contentToEdit;
@@ -970,7 +927,6 @@ export default function Contents() {
             );
           }}
           contentToEdit={contentToEdit}
-          idea={selectedIdea}
         />
 
         {isDeleteModalOpen && contentToDelete && (
