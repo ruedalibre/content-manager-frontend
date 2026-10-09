@@ -536,6 +536,7 @@ export default function CreateContentModal({
                 <option value="educational">
                   {t("contentRoles.educational")}
                 </option>
+                <option value="ugc">{t("contentRoles.ugc")}</option>
                 <option value="inspirational">
                   {t("contentRoles.inspirational")}
                 </option>

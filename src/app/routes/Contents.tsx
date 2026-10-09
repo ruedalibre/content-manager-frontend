@@ -142,7 +142,7 @@ export default function Contents() {
 
       setSelectedIdea(data);
       setContentToEdit(null);
-      setIsModalOpen(true); 
+      setIsModalOpen(true);
     };
 
     loadIdea();
@@ -578,6 +578,7 @@ export default function Contents() {
           >
             <option value="">{t("contents.allRoles")}</option>
             <option value="educational">{t("contentRoles.educational")}</option>
+            <option value="ugc">{t("contentRoles.ugc")}</option>
             <option value="inspirational">
               {t("contentRoles.inspirational")}
             </option>

@@ -327,7 +327,8 @@
     "personal": "Personal",
     "promotional": "Promotional",
     "curated": "Curated",
-    "sales": "Sales"
+    "sales": "Sales",
+    "ugc": "UGC"
   },
   "contents": {
     "title": "Contents",

@@ -322,6 +322,7 @@ export default function IdeaCard({
                   <option value="educational">
                     {t("contentRoles.educational")}
                   </option>
+                  <option value="ugc">{t("contentRoles.ugc")}</option>
                   <option value="inspirational">
                     {t("contentRoles.inspirational")}
                   </option>
