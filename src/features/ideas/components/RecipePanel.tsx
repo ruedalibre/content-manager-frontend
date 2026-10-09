@@ -231,7 +231,8 @@ export default function RecipePanel({
         | string
         | string[];
 
-      if (aspectKey === "structure" && typeof result.alternative === "string") {
+      const isListAspect = aspects.find((a) => a.key === aspectKey)?.isList;
+      if (isListAspect && typeof result.alternative === "string") {
         try {
           const clean = (result.alternative as string)
             .replace(/```json|```/g, "")
@@ -343,25 +344,29 @@ export default function RecipePanel({
     const aspectAlts = alternatives[aspectKey] ?? [];
     const regenCount = regenCounts[aspectKey] ?? 0;
     const atLimit = regenCount >= MAX_REGEN;
+    const isRated =
+      aspects.find((a) => a.key === aspectKey)?.requiresGoodRating ?? false;
 
     return (
       <div key={aspectKey} className="recipe-panel__aspect">
         <div className="recipe-panel__aspect-header">
           <span className="recipe-panel__aspect-label">{label}</span>
-          <div className="recipe-panel__rating">
-            {RATING_ICONS.map((Icon, i) => (
-              <button
-                key={i}
-                type="button"
-                className={`rating-emoji ${rating === i + 1 ? "rating-emoji--active" : ""} ${approved ? "rating-emoji--locked" : ""}`}
-                onClick={() => !approved && handleRate(aspectKey, i + 1)}
-                disabled={approved}
-                title={approved ? undefined : TOOLTIPS[i]}
-              >
-                <Icon size={18} />
-              </button>
-            ))}
-          </div>
+          {isRated && (
+            <div className="recipe-panel__rating">
+              {RATING_ICONS.map((Icon, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className={`rating-emoji ${rating === i + 1 ? "rating-emoji--active" : ""} ${approved ? "rating-emoji--locked" : ""}`}
+                  onClick={() => !approved && handleRate(aspectKey, i + 1)}
+                  disabled={approved}
+                  title={approved ? undefined : TOOLTIPS[i]}
+                >
+                  <Icon size={18} />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {isList ? (
@@ -377,7 +382,7 @@ export default function RecipePanel({
         )}
 
         {/* TRY AGAIN — solo si calificación baja */}
-        {rating > 0 && rating <= 3 && (
+        {isRated && rating > 0 && rating <= 3 && (
           <div className="recipe-panel__regenerate">
             {atLimit ? (
               <div className="recipe-panel__regen-limit">

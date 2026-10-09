@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { supabase } from "../../../supabaseClient.ts";
+import i18n from "i18next";
 
 export type UserProfile = {
   id: string;
@@ -23,8 +24,8 @@ export type UserProfile = {
   onboarding_completed: boolean;
   onboarding_skipped: boolean;
   onboarding_completed_at: string | null;
-  tour_status: 'pending' | 'completed' | 'dismissed' | null;
-  preferred_language: 'en' | 'es' | null;
+  tour_status: "pending" | "completed" | "dismissed" | null;
+  preferred_language: "en" | "es" | null;
   created_at: string;
   updated_at: string;
   display_name: string | null;
@@ -56,13 +57,11 @@ type UserProfileContextValue = {
   updateProfile: (data: Partial<UserProfile>) => Promise<void>;
   skipOnboarding: () => Promise<void>;
   completeOnboarding: (data: OnboardingData) => Promise<void>;
-  updateTourStatus: (status: 'completed' | 'dismissed') => Promise<void>;
-  updateLanguage: (lang: 'en' | 'es') => Promise<void>;
+  updateTourStatus: (status: "completed" | "dismissed") => Promise<void>;
+  updateLanguage: (lang: "en" | "es") => Promise<void>;
 };
 
-const UserProfileContext = createContext<UserProfileContextValue | null>(
-  null,
-);
+const UserProfileContext = createContext<UserProfileContextValue | null>(null);
 
 export function UserProfileProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -114,7 +113,10 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session?.access_token}`,
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify({
+          ...data,
+          preferred_language: i18n.language?.startsWith("es") ? "es" : "en",
+        }),
       });
 
       if (!res.ok) {
@@ -178,7 +180,7 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
   );
 
   const updateTourStatus = useCallback(
-    async (status: 'completed' | 'dismissed') => {
+    async (status: "completed" | "dismissed") => {
       try {
         await updateProfile({ tour_status: status } as Partial<UserProfile>);
       } catch (err) {
@@ -189,7 +191,7 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
   );
 
   const updateLanguage = useCallback(
-    async (lang: 'en' | 'es') => {
+    async (lang: "en" | "es") => {
       try {
         await updateProfile({
           preferred_language: lang,
@@ -217,16 +219,17 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
     !loading &&
     profile !== null &&
     (profile.onboarding_completed || profile.onboarding_skipped) &&
-    (profile.tour_status === 'pending' || profile.tour_status === null);
+    (profile.tour_status === "pending" || profile.tour_status === null);
 
   const showProfileNudge = Boolean(
     !loading &&
-      profile !== null &&
-      (profile.onboarding_completed || profile.onboarding_skipped) &&
-      profile.profile_nudge_dismissed_at === null &&
-      !isProfileComplete(profile) &&
-      new Date(profile.created_at) <
-        new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+    profile !== null &&
+    (profile.onboarding_completed || profile.onboarding_skipped) &&
+    profile.profile_nudge_dismissed_at === null &&
+    !isProfileComplete(profile) &&
+    new Date(profile.created_at) <
+      new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+  );
 
   const dismissProfileNudge = useCallback(async () => {
     try {
@@ -270,9 +273,7 @@ export function UserProfileProvider({ children }: { children: ReactNode }) {
 export function useUserProfile() {
   const ctx = useContext(UserProfileContext);
   if (!ctx) {
-    throw new Error(
-      "useUserProfile must be used within a UserProfileProvider",
-    );
+    throw new Error("useUserProfile must be used within a UserProfileProvider");
   }
   return ctx;
 }
