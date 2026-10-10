@@ -514,6 +514,16 @@ export default function Ideas() {
     fetchArchivedCount();
   }, [currentWorkspaceId]);
 
+  // Sesión del brief abierto, siempre actualizada: se toma de `ideas`
+  // (el hook la actualiza al elegir alternativas, calificar o cambiar estado).
+  // Si no se encuentra (p. ej. idea archivada), se usa la copia con que se abrió.
+  const liveSession: CreativeSession | null = expandedSession
+    ? (ideas
+        .find((i) => i.id === expandedSession.idea.id)
+        ?.sessions?.find((s) => s.id === expandedSession.session.id) ??
+      expandedSession.session)
+    : null;
+
   return (
     <div className="ideas-page">
       {/* PAGE HEADER */}
@@ -1107,7 +1117,7 @@ export default function Ideas() {
       {/* EXPANDED RECIPE PANEL */}
       {expandedSession && (
         <RecipePanel
-          session={expandedSession.session}
+          session={liveSession ?? expandedSession.session}
           idea={expandedSession.idea}
           onClose={() => setExpandedSession(null)}
           onApprove={async () => {
@@ -1121,7 +1131,7 @@ export default function Ideas() {
           onViewContent={handleViewContent}
           onDownload={async () => {
             downloadBrief(
-              expandedSession.session,
+              liveSession ?? expandedSession.session,
               {
                 title: expandedSession.idea.title,
                 description: expandedSession.idea.description,
