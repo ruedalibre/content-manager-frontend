@@ -21,6 +21,7 @@ type ContentItem = {
   location: string | null;
   published_at: string | null;
   content_role?: string | null;
+  has_session?: boolean;
 };
 
 type Platform = {
@@ -38,6 +39,14 @@ type Props = {
   onCreated: () => void;
   contentToEdit?: ContentItem | null;
 };
+
+// Fecha local YYYY-MM-DD (toISOString usa UTC y después de las 7 pm en Colombia da el día siguiente)
+function todayLocal() {
+  const d = new Date();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${mm}-${dd}`;
+}
 
 /* =========================
    TOPIC COMBOBOX
@@ -112,9 +121,9 @@ export default function CreateContentModal({
     description: "",
     platform_id: "",
     format: "",
-    status: "draft",
+    status: "published",
     location: "",
-    published_at: "",
+    published_at: todayLocal(),
     content_role: "",
   });
 
@@ -125,6 +134,16 @@ export default function CreateContentModal({
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const isEditMode = !!contentToEdit;
+  // Transiciones de estado permitidas (el backend aplica la misma regla)
+  const statusOptions: string[] = !isEditMode
+    ? ["published"]
+    : contentToEdit?.status === "published"
+      ? contentToEdit?.has_session
+        ? ["published", "archived"]
+        : ["published"]
+      : contentToEdit?.status === "archived"
+        ? ["archived", "published"]
+        : ["draft", "published", "archived"];
 
   const { topics } = useTopics();
 
@@ -238,9 +257,9 @@ export default function CreateContentModal({
       description: "",
       platform_id: "",
       format: "",
-      status: "draft",
+      status: "published",
       location: "",
-      published_at: "",
+      published_at: todayLocal(),
       content_role: "",
     });
     setFormats([]);
@@ -262,6 +281,9 @@ export default function CreateContentModal({
       ...prev,
       [name]:
         type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      ...(name === "status" && value === "published" && !prev.published_at
+        ? { published_at: todayLocal() }
+        : {}),
     }));
   };
 
@@ -310,7 +332,7 @@ export default function CreateContentModal({
           ...form,
           published_at:
             form.status === "published"
-              ? form.published_at || new Date().toISOString().split("T")[0]
+              ? form.published_at || todayLocal()
               : null,
           workspace_id: currentWorkspaceId,
         }),
@@ -462,10 +484,17 @@ export default function CreateContentModal({
 
             {/* STATUS + ROLE */}
             <div className="modal__row">
-              <select name="status" value={form.status} onChange={handleChange}>
-                <option value="draft">{t("status.draft")}</option>
-                <option value="published">{t("status.published")}</option>
-                <option value="archived">{t("status.archived")}</option>
+              <select
+                name="status"
+                value={form.status}
+                onChange={handleChange}
+                disabled={statusOptions.length === 1}
+              >
+                {statusOptions.map((s) => (
+                  <option key={s} value={s}>
+                    {t(`status.${s}`)}
+                  </option>
+                ))}
               </select>
 
               <select

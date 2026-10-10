@@ -125,7 +125,15 @@ export default function Contents() {
         .eq("is_deleted", false)
         .single();
       if (data) {
-        setContentToEdit(data as ContentItem);
+        const { count } = await supabase
+          .from("creative_sessions")
+          .select("id", { count: "exact", head: true })
+          .eq("content_id", editId);
+
+        setContentToEdit({
+          ...(data as ContentItem),
+          has_session: (count ?? 0) > 0,
+        });
         setIsModalOpen(true);
       }
     };
