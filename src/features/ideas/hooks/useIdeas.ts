@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../supabaseClient";
+import { type FormatFamily } from "../../../utils/formatFamily.ts";
 
 export type IdeaTopic = {
   id: string;
@@ -12,6 +13,7 @@ export type CreativeSession = {
   topic_ids: string[];
   platform_id: string;
   format: string;
+  family?: FormatFamily | null;
   content_role: string | null;
   content_goal: string | null;
   cta_intent: string | null;

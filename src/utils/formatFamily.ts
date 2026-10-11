@@ -59,3 +59,9 @@ export const getFormatFamily = (
   platform: string,
   format: string,
 ): FormatFamily => FORMAT_FAMILY_MAP[`${platform}:${format}`] ?? "default";
+
+export const getSessionFamily = (
+  session: { family?: FormatFamily | null; format: string },
+  platformSlug: string,
+): FormatFamily =>
+  session.family ?? getFormatFamily(platformSlug, session.format);

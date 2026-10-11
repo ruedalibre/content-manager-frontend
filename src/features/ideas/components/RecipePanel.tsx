@@ -7,7 +7,7 @@ import {
   type IdeaTopic,
 } from "../hooks/useIdeas.ts";
 import StatusBadge from "./StatusBadge.tsx";
-import { getFormatFamily } from "../../../utils/formatFamily.ts";
+import { getSessionFamily } from "../../../utils/formatFamily.ts";
 import {
   ASPECTS_BY_FAMILY,
   type AspectDefinition,
@@ -92,7 +92,7 @@ export default function RecipePanel({
     t("recipe.ratings.5"),
   ];
 
-  const formatFamily = getFormatFamily(platformSlug, session.format);
+  const formatFamily = getSessionFamily(session, platformSlug);
   const aspects: AspectDefinition[] =
     ASPECTS_BY_FAMILY[formatFamily] ?? ASPECTS_BY_FAMILY.default;
   const ratedAspects = aspects.filter((a) => a.requiresGoodRating);

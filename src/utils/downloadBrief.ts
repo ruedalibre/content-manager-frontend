@@ -10,12 +10,13 @@ import {
 } from "docx";
 import { saveAs } from "file-saver";
 import { trackDownload } from "./apiClient";
-import { getFormatFamily } from "./formatFamily";
+import { getSessionFamily, type FormatFamily } from "./formatFamily.ts";
 import { ASPECTS_BY_FAMILY } from "../constants/aspectsByFamily";
 
 type Session = {
   recipe: Record<string, string | string[]>;
   format: string;
+  family?: FormatFamily | null;
   content_role: string | null;
   created_at: string;
 };
@@ -34,7 +35,7 @@ export async function downloadBrief(
   platformSlug: string = "",
   t: TranslateFn,
 ) {
-  const family = getFormatFamily(platformSlug, session.format);
+  const family = getSessionFamily(session, platformSlug);
   const aspects = ASPECTS_BY_FAMILY[family] ?? ASPECTS_BY_FAMILY.default;
 
   const aspectParagraphs = aspects.flatMap((aspect) => {
