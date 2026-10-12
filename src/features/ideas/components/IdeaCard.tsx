@@ -11,7 +11,6 @@ type IdeaCardState = {
   content_goal?: string;
   cta_intent?: string;
   target_audience?: string;
-  ready_to_use: boolean;
   generating: boolean;
   error: string | null;
 };
@@ -47,7 +46,6 @@ type Props = {
   onGoalChange: (goal: string) => void;
   onCtaIntentChange: (cta: string) => void;
   onAudienceChange: (audience: string) => void;
-  onReadyToUseChange: (ready: boolean) => void;
   onGenerate: () => void;
   onOpenTopicSelector: () => void;
   onToggleTopic: (topicId: string) => void;
@@ -86,7 +84,6 @@ export default function IdeaCard({
   onGoalChange,
   onCtaIntentChange,
   onAudienceChange,
-  onReadyToUseChange,
   onGenerate,
   onOpenTopicSelector,
   onToggleTopic,
@@ -417,20 +414,6 @@ export default function IdeaCard({
                       maxLength={100}
                       className="idea-card__advanced-input"
                     />
-                  </div>
-
-                  <div className="idea-card__advanced-field idea-card__advanced-field--checkbox">
-                    <label className="idea-card__checkbox-label">
-                      <input
-                        type="checkbox"
-                        checked={state.ready_to_use ?? false}
-                        onChange={(e) => onReadyToUseChange(e.target.checked)}
-                      />
-                      <span>{t("ideas.readyToUse")}</span>
-                    </label>
-                    <p className="idea-card__checkbox-hint">
-                      {t("ideas.readyToUseHint")}
-                    </p>
                   </div>
                 </div>
               )}

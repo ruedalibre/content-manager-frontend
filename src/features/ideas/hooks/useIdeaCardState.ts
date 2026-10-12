@@ -9,7 +9,6 @@ type IdeaCardState = {
   content_goal?: string;
   cta_intent?: string;
   target_audience?: string;
-  ready_to_use: boolean;
   generating: boolean;
   error: string | null;
 };
@@ -18,35 +17,24 @@ type RecipeState = {
   [ideaId: string]: IdeaCardState;
 };
 
+// Estado inicial de cualquier idea que el usuario todavía no ha tocado.
+// Se crea bajo demanda (ver getRecipeStateForIdea / updateRecipeState),
+// sin necesidad de un efecto que pre-rellene el mapa.
+const EMPTY_CARD_STATE: IdeaCardState = {
+  platform_id: "",
+  format: "",
+  content_role: "",
+  content_goal: "",
+  cta_intent: "",
+  target_audience: "",
+  generating: false,
+  error: null,
+};
+
 export function useIdeaCardState(ideas: Idea[]) {
   const [recipeState, setRecipeState] = useState<RecipeState>({});
   const [ideaFormats, setIdeaFormats] = useState<{ [ideaId: string]: string[] }>({});
   const { loadFormats } = useFormats();
-
-  useEffect(() => {
-    if (!ideas.length) return;
-
-    setRecipeState((prev) => {
-      const updated = { ...prev };
-      ideas.forEach((idea) => {
-        if (updated[idea.id]) return;
-
-        updated[idea.id] = {
-          platform_id: "",
-          format: "",
-          content_role: "",
-          content_goal: "",
-          cta_intent: "",
-          target_audience: "",
-          ready_to_use: false,
-          generating: false,
-          error: null,
-        };
-      });
-      return updated;
-    });
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-  }, [ideas]);
 
   useEffect(() => {
     if (!ideas.length) return;
@@ -60,17 +48,7 @@ export function useIdeaCardState(ideas: Idea[]) {
   }, [recipeState]);
 
   const getRecipeStateForIdea = (ideaId: string): IdeaCardState =>
-    recipeState[ideaId] ?? {
-      platform_id: "",
-      format: "",
-      content_role: "",
-      content_goal: "",
-      cta_intent: "",
-      target_audience: "",
-      ready_to_use: false,
-      generating: false,
-      error: null,
-    };
+    recipeState[ideaId] ?? EMPTY_CARD_STATE;
 
   const updateRecipeState = (
     ideaId: string,
@@ -78,7 +56,7 @@ export function useIdeaCardState(ideas: Idea[]) {
   ) => {
     setRecipeState((prev) => ({
       ...prev,
-      [ideaId]: { ...getRecipeStateForIdea(ideaId), ...updates },
+      [ideaId]: { ...(prev[ideaId] ?? EMPTY_CARD_STATE), ...updates },
     }));
   };
 

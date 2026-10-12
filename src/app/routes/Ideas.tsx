@@ -216,7 +216,6 @@ export default function Ideas() {
           content_goal: state.content_goal || undefined,
           cta_intent: state.cta_intent || undefined,
           target_audience: state.target_audience || undefined,
-          ready_to_use: state.ready_to_use ?? false,
           workspace_id: currentWorkspaceId ?? "",
         });
         if (result.duplicate) {
@@ -793,9 +792,7 @@ export default function Ideas() {
                             target_audience: audience,
                           })
                         }
-                        onReadyToUseChange={(value) =>
-                          updateRecipeState(idea.id, { ready_to_use: value })
-                        }
+            
                         onGenerate={() => handleGenerateRecipe(idea)}
                         onOpenTopicSelector={() =>
                           handleOpenTopicSelector(idea)

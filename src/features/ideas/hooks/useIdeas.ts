@@ -18,7 +18,6 @@ export type CreativeSession = {
   content_goal: string | null;
   cta_intent: string | null;
   target_audience: string | null;
-  ready_to_use: boolean | null;
   recipe: Record<string, string | string[]>;
   feedback: Record<string, number> | null;
   status: "generated" | "reviewed" | "executed" | "discarded";
@@ -169,7 +168,6 @@ export function useIdeas(
     content_goal?: string;
     cta_intent?: string;
     target_audience?: string;
-    ready_to_use?: boolean;
     workspace_id: string;
   }): Promise<{
     session_id: string;
